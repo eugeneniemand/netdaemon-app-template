@@ -33,7 +33,7 @@ public class RoomPresenceTests : RxAppMock
         });
 
         Setup(n => n.States).Returns(MockState);
-        Setup(e => e.SetState(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<object>(), It.IsAny<bool>())).Callback<string, object, object, bool>((entityId, state, attributes, waitForResponse) => UpdateMockState(entityId, state.ToString() ?? string.Empty, attributes));
+        Setup(e => e.SetState(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<object>(), It.IsAny<bool>())).Returns<string, object, object, bool>((entityId, state, attributes, waitForResponse) => UpdateMockState(entityId, state.ToString() ?? string.Empty, attributes));
         Setup(s => s.RunIn(It.IsAny<TimeSpan>(), It.IsAny<Action>())).Returns<TimeSpan, Action>((span, action) =>
         {
             var result = new DisposableTimerResult(new CancellationToken());
@@ -43,12 +43,15 @@ public class RoomPresenceTests : RxAppMock
         });
     }
 
-    private void UpdateMockState(string entityId, string newState, object? attributes)
+    private EntityState UpdateMockState(string entityId, string newState, object? attributes)
     {
         var state = MockState.FirstOrDefault(e => e.EntityId == entityId);
-        if (state == null) return;
-        MockState.Remove(state);
-        MockState.Add(new EntityState() { EntityId = entityId, State = newState, Attribute = attributes });
+        if (state != null) 
+            MockState.Remove(state);
+        
+        var entityState = new EntityState() { EntityId = entityId, State = newState, Attribute = attributes };
+        MockState.Add(entityState);
+        return entityState;
     }
 
     [Fact]
@@ -454,12 +457,10 @@ public class RoomPresenceTests : RxAppMock
         MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
         MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "off" });
         MockState.Add(new() { EntityId = config.RoomPresenceEntityId, State = "idle" });
-        
+        MockState.Add(new() { EntityId = config.EnabledSwitchEntityId, State = "off" });
 
         app.Initialize();
         // ACT
-
-        MockState.Add(new() { EntityId = config.EnabledSwitchEntityId, State = "off" });
         TriggerStateChange(config.PresenceEntityIds.First(), "off", "on");
 
         // ASSERT
@@ -572,5 +573,100 @@ public class RoomPresenceTests : RxAppMock
         TestScheduler.AdvanceBy(TimeSpan.FromSeconds(180).Ticks); // 5:00
         VerifyState(config.ControlEntityIds.First(), "off");
         VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Once()); 
+    }
+
+    [Fact]
+    public void ScenarioTest2()
+    {
+        // ARRANGE
+        var config = new RoomConfig()
+        {
+            Name = "TestRoom",
+            PresenceEntityIds = new List<string>() { "binary_sensor.my_motion_sensor" },
+            ControlEntityIds = new List<string>() { "light.my_light" },
+            Timeout = 300
+        };
+        var app = new RoomPresenceImplementation(Object, config);
+
+        MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
+        MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "off" });
+        MockState.Add(new() { EntityId = config.RoomPresenceEntityId, State = "idle" });
+        TestScheduler.AdvanceTo("20:02:15");
+
+        app.Initialize();
+
+        TriggerStateChange(config.PresenceEntityIds.First(), "off", null, "off", new {last_seen = TestScheduler.Now});
+        TriggerStateChange(config.PresenceEntityIds.First(), "off", null, "on", new {last_seen = TestScheduler.Now});
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+
+        TestScheduler.AdvanceTo("20:03:18");
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+
+        TestScheduler.AdvanceTo("20:04:42");
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+
+        TestScheduler.AdvanceTo("20:05:46");
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+
+        TestScheduler.AdvanceTo("20:05:51");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+
+        TestScheduler.AdvanceTo("20:05:57");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        
+        TestScheduler.AdvanceTo("20:06:00");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        
+        TestScheduler.AdvanceTo("20:06:08");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+
+        TestScheduler.AdvanceTo("20:06:56");
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+        TestScheduler.AdvanceTo("20:06:57");
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+
+        TestScheduler.AdvanceTo("20:08:04");
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "on", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
+
+        TestScheduler.AdvanceTo("20:09:34");
+        TriggerStateChange(config.PresenceEntityIds.First(), "on", null, "off", new { last_seen = TestScheduler.Now });
+        VerifyState(config.ControlEntityIds.First(), "on");
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+        VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Never());
     }
 }

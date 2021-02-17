@@ -22,11 +22,6 @@ public class HouseModeTests : RxAppMock
         Setup(e => e.SetState(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<object>(), It.IsAny<bool>())).Callback<string, object, object, bool>((entityId, state, attributes, waitForResponse) => UpdateMockState(entityId, state.ToString() ?? string.Empty, attributes));
     }
 
-    public DateTime DateTimeFromString(string testTime)
-    {
-        return DateTime.ParseExact(testTime, "HH:mm:ss", new DateTimeFormatInfo());
-    }
-
     private void UpdateMockState(string entityId, string newState, object? attributes)
     {
         var state = MockState.FirstOrDefault(e => e.EntityId == entityId);
@@ -45,7 +40,7 @@ public class HouseModeTests : RxAppMock
         var app = new HouseModeImplementation(Object, TestScheduler);
         app.Initialize();
 
-        TestScheduler.AdvanceTo(DateTimeFromString("07:59:59").Ticks);
+        TestScheduler.AdvanceTo("07:59:59");
         TriggerStateChange("sensor.template_last_motion", "Master Motion", "Landing Motion");
         VerifyState("input_select.house_mode", "morning");
 
@@ -63,7 +58,7 @@ public class HouseModeTests : RxAppMock
         var app = new HouseModeImplementation(Object, TestScheduler);
         app.Initialize();
 
-        TestScheduler.AdvanceTo(DateTimeFromString("07:00:00").Ticks);
+        TestScheduler.AdvanceTo("07:00:00");
         TriggerStateChange("sensor.template_last_motion", "Master Motion", "Landing Motion");
         VerifyState("input_select.house_mode", "morning");
     }
@@ -91,7 +86,7 @@ public class HouseModeTests : RxAppMock
         var app = new HouseModeImplementation(Object, TestScheduler);
         app.Initialize();
 
-        TestScheduler.AdvanceTo(DateTimeFromString("07:59:59").Ticks);
+        TestScheduler.AdvanceTo("07:59:59");
         TriggerStateChange("sensor.template_last_motion", "Master Motion", "Landing Motion");
         VerifyState("input_select.house_mode", "morning");
     }
@@ -105,7 +100,7 @@ public class HouseModeTests : RxAppMock
         var app = new HouseModeImplementation(Object, TestScheduler);
         app.Initialize();
 
-        TestScheduler.AdvanceTo(DateTimeFromString("19:59:59").Ticks);
+        TestScheduler.AdvanceTo("19:59:59");
         TriggerStateChange("sensor.template_last_motion", "Master Motion", "Landing Motion");
         VerifyState("input_select.house_mode", "day");
 
@@ -135,7 +130,7 @@ public class HouseModeTests : RxAppMock
         var app = new HouseModeImplementation(Object, TestScheduler); // time is "00:00:00"
         app.Initialize();
 
-        TestScheduler.AdvanceTo(DateTimeFromString("20:00:00").Ticks);
+        TestScheduler.AdvanceTo("20:00:00");
         TriggerStateChange("sensor.template_last_motion", "Landing Motion", "Master Motion");
         TestScheduler.AdvanceBy(TimeSpan.FromMinutes(5).Ticks);
         VerifyState("input_select.house_mode", "sleeping");
