@@ -58,7 +58,7 @@ public class HouseModeTests : RxAppMock
         var app = new HouseModeImplementation(Object, TestScheduler);
         app.Initialize();
 
-        TestScheduler.AdvanceTo("07:00:00");
+        TestScheduler.AdvanceTo("06:55:00");
         TriggerStateChange("sensor.template_last_motion", "Master Motion", "Landing Motion");
         VerifyState("input_select.house_mode", "morning");
     }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using NetDaemon.Common.Reactive;
 
@@ -21,11 +23,11 @@ namespace Presence
         private readonly string[] _presenceEntityIds;
         private readonly RoomConfig _roomConfig;
         private readonly string _tracePrefix;
+        private IDisposable? BrightnessTimer;
 
         private TimeSpan _timeout => IsNightTime ? _nightTimeout : _normalTimeout;
 
         private string ActiveEntities => string.Join(", ", _presenceEntityIds.Union(_keepAliveEntityIds).Where(entityId => _app.State(entityId)?.State == "on"));
-        private bool NoPresence => string.IsNullOrEmpty(ActiveEntities);
 
         private string Expiry => DateTime.Now.AddSeconds(_timeout.TotalSeconds).ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -51,16 +53,20 @@ namespace Presence
             }
         }
 
+        private bool NoPresence => string.IsNullOrEmpty(ActiveEntities);
+
 
         private IDisposable? Timer { get; set; }
 
-        public RoomPresenceImplementation(INetDaemonRxApp app, RoomConfig roomConfig)
+        
+        public RoomPresenceImplementation(INetDaemonRxApp app, RoomConfig roomConfig, IScheduler? scheduler = null)
         {
             _app = app;
 
             try
             {
                 _roomConfig = roomConfig;
+                Scheduler = scheduler;
                 _tracePrefix = $"({_roomConfig.Name}) - ";
                 _normalTimeout = TimeSpan.FromSeconds(roomConfig.Timeout != 0 ? roomConfig.Timeout : 300);
                 _nightTimeout = TimeSpan.FromSeconds(roomConfig.NightTimeout != 0 ? roomConfig.NightTimeout : 60);
@@ -82,8 +88,7 @@ namespace Presence
 
             if (IsDisabled() || !LuxBelowThreshold()) return;
 
-            TurnOnControlEntities();
-            ResetTimer();
+            SetRoomState(RoomState.Active);
         }
 
 
@@ -94,6 +99,7 @@ namespace Presence
                 LogTrace("Initialize Started");
                 VerifyConfig(_roomConfig);
                 LogConfig(_roomConfig);
+                SetupEnabledSwitchEntity();
                 IsDisabled();
                 SetupSubscriptions();
                 StartGuardDog();
@@ -115,6 +121,8 @@ namespace Presence
             if (RoomIs(RoomState.Override))
             {
                 entities = _controlEntityIds.Union(_nightControlEntityIds);
+                LogDebug("Control Entities: {entities}", entities);
+                return entities;
             }
 
             LogTrace("Do Night Control entities exist");
@@ -133,31 +141,18 @@ namespace Presence
             return entities;
         }
 
-        private bool RoomIs(RoomState roomState)
-        {
-            LogTrace("Is RoomState: {s}?", roomState.ToString().ToLower());
-
-            string roomEntityState = "";
-            if (_app.States.Any(e => e.EntityId == _roomConfig.RoomPresenceEntityId)) 
-                roomEntityState = _app.State(_roomConfig.RoomPresenceEntityId)?.State?.ToString() ?? "";
-
-            LogTrace("RoomState is: {roomState}", roomEntityState);
-            return
-                roomEntityState == roomState.ToString().ToLower();
-        }
-
         private void HandleTimer()
         {
             LogTrace("Is there Presence?");
             if (NoPresence)
             {
                 LogTrace("Presence: {p}", false);
-                TurnOffControlEntities();
+                SetRoomState(RoomState.Idle);
             }
             else
             {
                 LogTrace("Presence: {p}", true);
-                ResetTimer();
+                SetRoomState(RoomState.Active);
             }
         }
 
@@ -165,23 +160,12 @@ namespace Presence
         {
             LogTrace("IsDisabled()");
 
-            if (RoomIs(RoomState.Active)) return false;
 
-            LogTrace("Does {switch} exist ", _roomConfig.EnabledSwitchEntityId);
             var switchEntity = _app.States.FirstOrDefault(e => e.EntityId == _roomConfig.EnabledSwitchEntityId);
+            LogTrace("{switch} is {state}?", _roomConfig.EnabledSwitchEntityId, switchEntity?.State);
 
-            if (switchEntity == null)
-            {
-                LogTrace("{switch} does not exist, creating and turning it on", _roomConfig.EnabledSwitchEntityId);
-                switchEntity = _app.SetState(_roomConfig.EnabledSwitchEntityId, "on", null);
-            }
 
-            LogTrace("Is {switch} on?", _roomConfig.EnabledSwitchEntityId);
-            if (switchEntity?.State == "on")
-            {
-                SetRoomState(RoomState.Idle);
-                return false;
-            }
+            if (switchEntity?.State != "off") return false;
             SetRoomState(RoomState.Disabled);
             return true;
         }
@@ -204,14 +188,14 @@ namespace Presence
             );
         }
 
-        private void LogTrace(string message, params object[] param)
-        {
-            _app.LogTrace($"{_tracePrefix}{message}", param);
-        }
-
         private void LogDebug(string message, params object[] param)
         {
             _app.LogDebug($"{_tracePrefix}{message}", param);
+        }
+
+        private void LogTrace(string message, params object[] param)
+        {
+            _app.LogTrace($"{_tracePrefix}{message}", param);
         }
 
         private bool LuxBelowThreshold()
@@ -219,7 +203,7 @@ namespace Presence
             if (_roomConfig.LuxEntityId == null)
                 return true;
 
-            
+
             var isBelowThreshold = Lux <= LuxLimit();
             LogDebug("Lux Below Threshold: {b} ({Lux})", isBelowThreshold, Lux);
             return isBelowThreshold;
@@ -248,20 +232,28 @@ namespace Presence
             return 1000;
         }
 
-        private void ResetTimer()
+        private bool RoomIs(RoomState roomState)
         {
-            LogTrace("ResetTimer()");
-            Timer?.Dispose();
-            Timer = _app.RunIn(_timeout, HandleTimer);
-            SetRoomState(RoomState.Active);
+            LogTrace("Is RoomState: {s}?", roomState.ToString().ToLower());
+
+            string roomEntityState = "";
+            if (_app.States.Any(e => e.EntityId == _roomConfig.RoomPresenceEntityId))
+                roomEntityState = _app.State(_roomConfig.RoomPresenceEntityId)?.State?.ToString() ?? "";
+
+            LogTrace("RoomState is: {roomState}", roomEntityState);
+            return
+                roomEntityState == roomState.ToString().ToLower();
         }
+
 
         private void SetRoomState(RoomState roomState)
         {
-
             switch (roomState)
             {
                 case RoomState.Idle:
+                    TurnOffControlEntities();
+                    BrightnessTimer?.Dispose();
+                    BrightnessTimer = null;
                     _app.SetState(_roomConfig.RoomPresenceEntityId, roomState.ToString().ToLower(), new
                     {
                         PresenceEntityIds = _presenceEntityIds,
@@ -271,6 +263,10 @@ namespace Presence
                     });
                     break;
                 case RoomState.Active:
+                    TurnOnControlEntities();
+                    Timer?.Dispose();
+                    Timer = null;
+                    Timer = _app.RunIn(_timeout, HandleTimer);
                     _app.SetState(_roomConfig.RoomPresenceEntityId, roomState.ToString().ToLower(), new
                     {
                         ActiveEntities,
@@ -282,6 +278,10 @@ namespace Presence
                     });
                     break;
                 case RoomState.Disabled:
+                    Timer?.Dispose();
+                    Timer = null;
+                    BrightnessTimer?.Dispose();
+                    BrightnessTimer = null;
                     _app.SetState(_roomConfig.RoomPresenceEntityId, roomState.ToString().ToLower(), null);
                     break;
                 case RoomState.Override:
@@ -298,7 +298,18 @@ namespace Presence
                 default:
                     throw new ArgumentOutOfRangeException(nameof(roomState), roomState, null);
             }
+
             LogDebug("Set Room State To: {roomState}", roomState.ToString());
+        }
+
+        private void SetupEnabledSwitchEntity()
+        {
+            LogTrace("If {switch} does not exist create it", _roomConfig.EnabledSwitchEntityId);
+            var switchEntity = _app.States.FirstOrDefault(e => e.EntityId == _roomConfig.EnabledSwitchEntityId);
+
+            if (switchEntity != null) return;
+            LogTrace("{switch} does not exist, creating and turning it on", _roomConfig.EnabledSwitchEntityId);
+            _app.SetState(_roomConfig.EnabledSwitchEntityId, "on", null);
         }
 
         private void SetupSubscriptions()
@@ -307,22 +318,30 @@ namespace Presence
             foreach (var entityId in _presenceEntityIds)
                 _app.Entity(entityId)
                     .StateAllChanges
-                    .Where(e => (e.Old?.State == "off" && e.New?.State == "on") || (e.Old?.State == "on" && e.New?.State == "on"))
+                    .Where(e => e.Old?.State == "off" && e.New?.State == "on" || e.Old?.State == "on" && e.New?.State == "on")
                     .Subscribe(s =>
                     {
-                        LogDebug("Presence Event: {entityId}", s.New.EntityId);
+                        LogDebug("Presence event: {entityId}", s.New.EntityId);
                         HandleEvent();
                     });
 
             foreach (var entityId in _keepAliveEntityIds)
                 _app.Entity(entityId)
                     .StateChanges
-                    .Where(e => (e.Old?.State == "off" && e.New?.State == "on") || (e.Old?.State == "on" && e.New?.State == "on"))
+                    .Where(e => e.Old?.State == "off" && e.New?.State == "on" || e.Old?.State == "on" && e.New?.State == "on")
                     .Subscribe(s =>
                     {
-                        LogDebug("Keep Alive Event: {entityId}", s.New.EntityId);
+                        LogDebug("Keep Alive event: {entityId}", s.New.EntityId);
                         HandleEvent();
                     });
+
+            _app.Entity(_roomConfig.EnabledSwitchEntityId)
+                .StateChanges
+                .Subscribe(s =>
+                {
+                    LogDebug("Enabled Switch event changed to: {state}", s.New.State);
+                    HandleEvent();
+                });
         }
 
         private void StartGuardDog()
@@ -350,7 +369,6 @@ namespace Presence
                 LogDebug("Turn Off Control Entity: {entityId}", entityId);
                 _app.Entity(entityId).TurnOff();
             }
-            SetRoomState(RoomState.Idle);
         }
 
         private void TurnOnControlEntities()
@@ -360,12 +378,63 @@ namespace Presence
                 if (_app.State(entityId)?.State == "off")
                 {
                     LogDebug("Turn On Control Entity: {entityId}", entityId);
-                    _app.Entity(entityId).TurnOn();
+
+                    if (_roomConfig.SunriseEnabled)
+                    {
+                        _app.Entity(entityId).TurnOn(new {brightness = _roomConfig.SunriseStartBrightness});
+                        _app.Delay(TimeSpan.FromMilliseconds(200));
+                        _app.Entity(entityId).TurnOn(new { kelvin = _roomConfig.SunriseStartKelvin });
+
+                        BrightnessTimer = _app.RunEvery(TimeSpan.FromMinutes(_roomConfig.SunriseUpdateInterval), () =>
+                        {
+                            UpdateBrightness(entityId);
+                            UpdateColour(entityId);
+                        });
+                    }
+                    else
+                    {
+                        _app.Entity(entityId).TurnOn();
+                    }
                 }
                 else
                 {
                     LogDebug("Entity already on: {entityId}", entityId);
                 }
+        }
+
+        public DateTime Now => Scheduler?.Now.DateTime ?? DateTime.Now;
+        private IScheduler? Scheduler { get; }
+
+        private void UpdateBrightness(string entityId)
+        {
+            if (_app.State(entityId)?.State == "off" || !_roomConfig.SunriseBrightnessEnabled) return;
+            var startTime = DateTime.ParseExact(_roomConfig.SunriseStartTime, "HH:mm", CultureInfo.InvariantCulture);
+            var endTime = DateTime.ParseExact(_roomConfig.SunriseEndTime, "HH:mm", CultureInfo.InvariantCulture);
+            var brightness = CalculateFractionBasedOnIntervalAndElapsedTime(startTime, endTime, _roomConfig.SunriseUpdateInterval, _roomConfig.SunriseStartBrightness, _roomConfig.SunriseEndBrightness);
+            _app.Entity(entityId).TurnOn(new { brightness });
+        }
+
+        private void UpdateColour(string entityId)
+        {
+            if (_app.State(entityId)?.State == "off" || !_roomConfig.SunriseColourEnabled) return;
+            var startTime = DateTime.ParseExact(_roomConfig.SunriseStartTime, "HH:mm", CultureInfo.InvariantCulture);
+            var endTime = DateTime.ParseExact(_roomConfig.SunriseEndTime, "HH:mm", CultureInfo.InvariantCulture);
+            var kelvin = CalculateFractionBasedOnIntervalAndElapsedTime(startTime, endTime, _roomConfig.SunriseUpdateInterval, _roomConfig.SunriseStartKelvin, _roomConfig.SunriseEndKelvin);
+            _app.Entity(entityId).TurnOn(new { kelvin });
+        }
+
+        private double CalculateFractionBasedOnIntervalAndElapsedTime(DateTime startTime, DateTime endTime, int interval, int startValue, int endValue)
+        {
+            var minutes = (endTime - startTime).TotalMinutes;
+            var fraction = minutes / interval;
+            var range = endValue - startValue;
+            var inc = range / fraction;
+
+            if (Now < startTime || Now > endTime) return startValue;
+
+            var minutesElapsed = (Now - startTime).TotalMinutes;
+            var intervalsElapsed = minutesElapsed / interval;
+            return startValue + (intervalsElapsed * inc);
         }
 
         private void VerifyConfig(RoomConfig roomConfig)
