@@ -13,6 +13,7 @@ presence:
       - light.study       
     lux_limit_entity_id: input_number.office_lux_limit
     lux_entity_id: sensor.office_lux
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_study
 
   - name: Dining
     presence_entity_ids:
@@ -29,7 +30,8 @@ presence:
       - night
       - sleeping
     night_control_entity_ids: 
-      - light.dining_wall_group
+      - light.dining_wall_group      
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_dining
 
   - name: Boys
     timeout: 300
@@ -45,7 +47,8 @@ presence:
       - night
       - sleeping
     night_control_entity_ids: 
-      - light.boys_4
+      - light.boys_4  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_boys
 
   - name: Hallway
     timeout: 300
@@ -55,7 +58,8 @@ presence:
     control_entity_ids:
       - light.entrance_2    
     lux_limit_entity_id: input_number.hallway_lux_limit
-    lux_entity_id: sensor.entrance_lux
+    lux_entity_id: sensor.entrance_lux  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_entrance
  
   - name: Entrance
     timeout: 300
@@ -64,7 +68,8 @@ presence:
     control_entity_ids:
       - light.entrance_1    
     lux_limit_entity_id: input_number.entrance_lux_limit
-    lux_entity_id: sensor.entrance_lux
+    lux_entity_id: sensor.entrance_lux  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_entrance
 
   - name: Master
     timeout: 300
@@ -80,7 +85,8 @@ presence:
       - night
       - sleeping
     night_control_entity_ids: 
-      - light.master_2
+      - light.master_2  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_master
 
   - name: Lounge
     timeout: 300
@@ -97,7 +103,8 @@ presence:
       - night
       - sleeping
     night_control_entity_ids: 
-      - light.floor
+      - light.floor  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_floor
 
   - name: Aaron
     timeout: 300
@@ -106,7 +113,8 @@ presence:
     control_entity_ids:
       - light.aaron    
     lux_entity_id: sensor.aaron_lux
-    lux_limit_entity_id: input_number.aaron_lux_limit
+    lux_limit_entity_id: input_number.aaron_lux_limit  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_aaron
 
   - name: Kitchen
     timeout: 300
@@ -116,7 +124,8 @@ presence:
     control_entity_ids:
       - light.kitchen    
     lux_entity_id: sensor.kitchen_lux
-    lux_limit_entity_id: input_number.kitchen_lux_limit
+    lux_limit_entity_id: input_number.kitchen_lux_limit  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_kitchen
 
   - name: Toilet
     timeout: 300
@@ -125,7 +134,8 @@ presence:
     control_entity_ids:
       - light.toilet    
     lux_entity_id: sensor.toilet_lux
-    lux_limit_entity_id: input_number.toilet_lux_limit
+    lux_limit_entity_id: input_number.toilet_lux_limit  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_toilet
 
   - name: Utility
     timeout: 300
@@ -134,4 +144,5 @@ presence:
     control_entity_ids:
       - light.utility    
     lux_entity_id: sensor.utility_lux
-    lux_limit_entity_id: input_number.utility_lux_limit
+    lux_limit_entity_id: input_number.utility_lux_limit  
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_utility

@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
 using System.Globalization;
 using Microsoft.Reactive.Testing;
 using Newtonsoft.Json;
@@ -27,5 +30,17 @@ public static class TestHelpers
         var actualJson = JsonConvert.SerializeObject(actual);
 
         return expectedJson == actualJson;
+    }
+
+
+
+    public static dynamic ToDynamic(this object value)
+    {
+        IDictionary<string, object> expando = new ExpandoObject();
+
+        foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(value.GetType()))
+            expando.Add(property.Name, property.GetValue(value));
+
+        return expando as ExpandoObject;
     }
 }

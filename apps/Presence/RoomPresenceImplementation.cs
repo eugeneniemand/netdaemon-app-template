@@ -26,6 +26,7 @@ namespace Presence
         private IDisposable? BrightnessTimer;
 
         private TimeSpan _timeout => IsNightTime ? _nightTimeout : _normalTimeout;
+        private TimeSpan _overrideTimeout;
 
         private string ActiveEntities => string.Join(", ", _presenceEntityIds.Union(_keepAliveEntityIds).Where(entityId => _app.State(entityId)?.State == "on"));
 
@@ -58,7 +59,7 @@ namespace Presence
 
         private IDisposable? Timer { get; set; }
 
-        
+
         public RoomPresenceImplementation(INetDaemonRxApp app, RoomConfig roomConfig, IScheduler? scheduler = null)
         {
             _app = app;
@@ -70,6 +71,7 @@ namespace Presence
                 _tracePrefix = $"({_roomConfig.Name}) - ";
                 _normalTimeout = TimeSpan.FromSeconds(roomConfig.Timeout != 0 ? roomConfig.Timeout : 300);
                 _nightTimeout = TimeSpan.FromSeconds(roomConfig.NightTimeout != 0 ? roomConfig.NightTimeout : 60);
+                _overrideTimeout = TimeSpan.FromSeconds(roomConfig.OverrideTimeout != 0 ? roomConfig.OverrideTimeout : 900);
                 _presenceEntityIds = roomConfig.PresenceEntityIds.ToArray();
                 _controlEntityIds = roomConfig.ControlEntityIds.ToArray();
                 _nightControlEntityIds = roomConfig.NightControlEntityIds?.ToArray() ?? Array.Empty<string>();
@@ -90,6 +92,8 @@ namespace Presence
 
             SetRoomState(RoomState.Active);
         }
+
+
 
 
         public void Initialize()
@@ -254,6 +258,8 @@ namespace Presence
                     TurnOffControlEntities();
                     BrightnessTimer?.Dispose();
                     BrightnessTimer = null;
+                    Timer?.Dispose();
+                    Timer = null;
                     _app.SetState(_roomConfig.RoomPresenceEntityId, roomState.ToString().ToLower(), new
                     {
                         PresenceEntityIds = _presenceEntityIds,
@@ -261,9 +267,11 @@ namespace Presence
                         ControlEntityIds = _controlEntityIds,
                         NightControlEntityIds = _nightControlEntityIds
                     });
+                    _app.Delay(TimeSpan.FromSeconds(1));
+                    EnableCircadian();
                     break;
                 case RoomState.Active:
-                    TurnOnControlEntities();
+                    if (_app.States.Any(e => e.EntityId == _roomConfig.RoomPresenceEntityId) && _app.State(_roomConfig.RoomPresenceEntityId)?.State?.ToLower() == RoomState.Override.ToString().ToLower()) break;
                     Timer?.Dispose();
                     Timer = null;
                     Timer = _app.RunIn(_timeout, HandleTimer);
@@ -276,6 +284,7 @@ namespace Presence
                         NightControlEntityIds = _nightControlEntityIds,
                         Expiry
                     });
+                    TurnOnControlEntities();
                     break;
                 case RoomState.Disabled:
                     Timer?.Dispose();
@@ -285,6 +294,10 @@ namespace Presence
                     _app.SetState(_roomConfig.RoomPresenceEntityId, roomState.ToString().ToLower(), null);
                     break;
                 case RoomState.Override:
+                    if (_app.States.Any(e => e.EntityId == _roomConfig.RoomPresenceEntityId) && _app.State(_roomConfig.RoomPresenceEntityId)?.State?.ToLower() == RoomState.Active.ToString().ToLower()) break;
+                    Timer?.Dispose();
+                    Timer = null;
+                    Timer = _app.RunIn(_overrideTimeout, HandleTimer);
                     _app.SetState(_roomConfig.RoomPresenceEntityId, roomState.ToString().ToLower(), new
                     {
                         ActiveEntities,
@@ -292,7 +305,7 @@ namespace Presence
                         KeepAliveEntities,
                         ControlEntityIds = _controlEntityIds,
                         NightControlEntityIds = _nightControlEntityIds,
-                        Expiry
+                        Expiry = DateTime.Now.AddSeconds(_overrideTimeout.TotalSeconds).ToString("yyyy-MM-dd HH:mm:ss")
                     });
                     break;
                 default:
@@ -335,13 +348,94 @@ namespace Presence
                         HandleEvent();
                     });
 
+            foreach (var entityId in _controlEntityIds.Union(_nightControlEntityIds))
+                _app.Entity(entityId)
+                    .StateChanges
+                    .Where(e => e.Old?.State == "on" && e.New?.State == "off")
+                    .Subscribe(s =>
+                    {
+                        LogDebug("Entitiy Manually Turned Off: {entityId}", s.New.EntityId);
+                        SetRoomState(RoomState.Idle);
+                    });
+
+            foreach (var entityId in _controlEntityIds.Union(_nightControlEntityIds))
+                _app.Entity(entityId)
+                    .StateAllChanges
+                    .Where(e => e.Old?.State == "on" && e.New?.State == "on"
+                           && e.New?.Context?.UserId != null
+                           && (e.Old?.Attribute?.brightness != e.New?.Attribute?.brightness || e.Old?.Attribute?.color_temp != e.New?.Attribute?.color_temp))
+
+                    .Subscribe(s =>
+                    {
+                        LogDebug("Brightness/Colour Manually Changed: {entityId}", s.New.EntityId);
+                        DisableCircadian();
+                    });
+
+            foreach (var entityId in _controlEntityIds.Union(_nightControlEntityIds))
+                _app.Entity(entityId)
+                    .StateChanges
+                    .Where(e => e.Old?.State == "off" && e.New?.State == "on")
+                    .Subscribe(s =>
+                    {
+                        LogDebug("Entitiy Manually Turned On: {entityId}", s.New.EntityId);
+                        SetRoomState(RoomState.Override);
+                    });
+
             _app.Entity(_roomConfig.EnabledSwitchEntityId)
                 .StateChanges
                 .Subscribe(s =>
                 {
                     LogDebug("Enabled Switch event changed to: {state}", s.New.State);
-                    HandleEvent();
+                    if (s.New.State == "on") SetRoomState(RoomState.Idle);
+                    if (s.New.State == "off") SetRoomState(RoomState.Disabled);
                 });
+
+            if (_app.States.Any(s => s.EntityId == _roomConfig.NightTimeEntityId))
+                _app.Entity(_roomConfig.NightTimeEntityId!)
+                   .StateChanges
+                   .Subscribe(s =>
+                   {
+                       LogDebug("Night Mode Switched: {state}", s.New.State);
+                       NightModeChanged(s.New.State);
+                       
+                   });
+        }
+
+        private void NightModeChanged(string nightMode)
+        {
+            if (nightMode == "on")
+            {
+                foreach (var entityId in _controlEntityIds.Except(_nightControlEntityIds))
+                {
+                    _app.Entity(entityId).TurnOff();
+                }
+                foreach (var entityId in _nightControlEntityIds)
+                {
+                    _app.Entity(entityId).TurnOn();
+                }
+            }
+
+            if (nightMode == "off")
+            {
+                foreach (var entityId in _nightControlEntityIds.Except(_controlEntityIds))
+                {
+                    _app.Entity(entityId).TurnOff();
+                }
+                foreach (var entityId in _controlEntityIds)
+                {
+                    _app.Entity(entityId).TurnOn();
+                }
+            }
+        }
+
+        private void DisableCircadian()
+        {
+            _app.Entity(_roomConfig.CircadianSwitchEntityId).TurnOff();
+        }
+
+        private void EnableCircadian()
+        {
+            _app.Entity(_roomConfig.CircadianSwitchEntityId).TurnOn();
         }
 
         private void StartGuardDog()
@@ -381,7 +475,7 @@ namespace Presence
 
                     if (_roomConfig.SunriseEnabled)
                     {
-                        _app.Entity(entityId).TurnOn(new {brightness = _roomConfig.SunriseStartBrightness});
+                        _app.Entity(entityId).TurnOn(new { brightness = _roomConfig.SunriseStartBrightness });
                         _app.Delay(TimeSpan.FromMilliseconds(200));
                         _app.Entity(entityId).TurnOn(new { kelvin = _roomConfig.SunriseStartKelvin });
 
@@ -443,7 +537,7 @@ namespace Presence
                 .Union(_roomConfig.PresenceEntityIds)
                 .Union(_roomConfig.KeepAliveEntityIds)
                 .Union(_roomConfig.NightControlEntityIds)
-                .Union(new List<string> {_roomConfig.LuxEntityId ?? "", _roomConfig.LuxLimitEntityId ?? "", _roomConfig.NightTimeEntityId ?? ""})
+                .Union(new List<string> { _roomConfig.LuxEntityId ?? "", _roomConfig.LuxLimitEntityId ?? "", _roomConfig.NightTimeEntityId ?? "" })
                 .Where(e => !string.IsNullOrEmpty(e))
                 .ToList();
 
