@@ -55,6 +55,7 @@ namespace Presence
         }
 
         private bool NoPresence => string.IsNullOrEmpty(ActiveEntities);
+        private bool Presence => !string.IsNullOrEmpty(ActiveEntities);
 
 
         private IDisposable? Timer { get; set; }
@@ -397,7 +398,7 @@ namespace Presence
                    {
                        LogDebug("Night Mode Switched: {state}", s.New.State);
                        NightModeChanged(s.New.State);
-                       
+
                    });
         }
 
@@ -442,9 +443,19 @@ namespace Presence
         {
             _app.RunEvery(TimeSpan.FromMinutes(1), () =>
             {
-                LogTrace("GuardDog()");
-                if (!NoPresence || !RoomIs(RoomState.Idle)) return;
-                foreach (var entityId in _controlEntityIds.Union(_nightControlEntityIds).Where(controlEntityId => _app.States.Any(e => e.EntityId == controlEntityId && e.State == "on")))
+                LogTrace("Guard Dog - Looking for Turned On Keep Alive Enitities()");
+                foreach (var entityId in _keepAliveEntityIds.Where(keepAliveEntityId => _app.States.Any(e => e.EntityId == keepAliveEntityId && e.State == "on")))
+                {
+                    SetRoomState(RoomState.Active);
+                }
+            });
+
+            _app.RunEvery(TimeSpan.FromMinutes(1), () =>
+            {
+                LogTrace("Guard Dog - Looking for Turned On Control Enitities()");
+                if (Presence || !RoomIs(RoomState.Idle)) return;
+                foreach (var entityId in _controlEntityIds.Union(_nightControlEntityIds)
+                                                          .Where(controlEntityId => _app.States.Any(e => e.EntityId == controlEntityId && e.State == "on")))
                 {
                     LogDebug("Guard Dog found: {entityId}", entityId);
                     Timer?.Dispose();

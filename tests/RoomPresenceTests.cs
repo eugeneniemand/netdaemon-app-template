@@ -142,6 +142,30 @@ public class RoomPresenceTests : RxAppMock
     }
 
     [Fact]
+    public void KeepAliveEntitiesArePolledAndTurnsOnControlEntitiesRegardlessOfPresence()
+    {
+        // ARRANGE 
+        var config = new RoomConfig
+        {
+            Name = "TestRoom",
+            PresenceEntityIds = new List<string> { "binary_sensor.my_motion_sensor" },
+            ControlEntityIds = new List<string> { "light.my_light" },
+            KeepAliveEntityIds = new List<string> { "sensor.keep_alive" }
+        };
+        var app = new RoomPresenceImplementation(Object, config);
+
+        MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
+        MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "off" });
+        MockState.Add(new() { EntityId = config.KeepAliveEntityIds.First(), State = "on" });
+        app.Initialize();
+        // ACT
+        TestScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
+
+        // ASSERT
+        VerifyEntityTurnOn(config.ControlEntityIds.First(), times: Times.AtLeast(1));
+    }
+
+        [Fact]
     public void DisableCircadianWhenControlEntityBrightnessOrColourIsChangedManually()
     {
         // ARRANGE 
