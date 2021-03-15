@@ -1,5 +1,6 @@
 presence:
   class: Presence.RoomPresence
+  nd_user_id: ef606e2918da4355ba036a019cdcc6a0
   rooms:
   - name: Study
     timeout: 300

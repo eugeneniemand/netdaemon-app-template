@@ -281,6 +281,40 @@ public class RoomPresenceTests : RxAppMock
         VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Idle.ToString().ToLower());
     }
 
+    [Fact]
+    public void TurnOffAnyControlEntityOnlyFiresForNonNdUser()
+    {
+        // ARRANGE 
+        var config = new RoomConfig
+        {
+            Name = "TestRoom",
+            PresenceEntityIds = new List<string> { "binary_sensor.my_motion_sensor" },
+            ControlEntityIds = new List<string> { "light.my_light" }
+        };
+        var app = new RoomPresenceImplementation(Object, config, ndUserId: "NetDaemon");
+
+
+        MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
+        MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "off" });
+
+        var oldState = new EntityState() { EntityId = config.ControlEntityIds.First(), State = "on", Attribute = null, Context = new Context() { UserId = "" } };
+        var newNdState = new EntityState() { EntityId = config.ControlEntityIds.First(), State = "off", Attribute = null, Context = new Context() { UserId = app.NdUserId } };
+        var newNonNdState = new EntityState() { EntityId = config.ControlEntityIds.First(), State = "off", Attribute = null, Context = new Context() { UserId = "eugene" } };
+
+
+        app.Initialize();
+        // ACT
+        TriggerStateChange(config.PresenceEntityIds.First(), "off", "on");
+
+        // ASSERT        
+        TriggerStateChange(oldState, newNdState);                
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Active.ToString().ToLower());
+
+        // ASSERT        
+        TriggerStateChange(oldState, newNonNdState);
+        VerifyState(config.RoomPresenceEntityId.ToLower(), RoomState.Idle.ToString().ToLower());
+    }
+
 
     [Fact]
     public void TurnOffAnyNightControlEntitySetsToIdle()
@@ -307,7 +341,7 @@ public class RoomPresenceTests : RxAppMock
     }
 
     [Fact]
-    public void SwitchFromNormalToNightModeDoesNotTurnOffNightEntitiesThatIsAlsoNormalEntities()
+    public void TurningOnNightModeDoesNotTurnOffNightEntitiesThatAreAlsoNormalEntities()
     {
         // ARRANGE 
         var config = new RoomConfig
@@ -316,6 +350,7 @@ public class RoomPresenceTests : RxAppMock
             PresenceEntityIds = new List<string> { "binary_sensor.my_motion_sensor" },
             ControlEntityIds = new List<string> { "light.my_light_1", "light.my_light_2" },
             NightControlEntityIds = new List<string> { "light.my_light_1" },
+            NightTimeEntityStates = new List<string> { "night" },
             NightTimeEntityId = "switch.night_mode"
         };
         var app = new RoomPresenceImplementation(Object, config);
@@ -325,11 +360,11 @@ public class RoomPresenceTests : RxAppMock
         foreach (var entityId in config.ControlEntityIds)
             MockState.Add(new() { EntityId = entityId, State = "on" });
 
-        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "off" });
+        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "day" });
 
         app.Initialize();
         // ACT
-        TriggerStateChange(config.NightTimeEntityId, "off", "on");
+        TriggerStateChange(config.NightTimeEntityId, "day", "night");
         // ASSERT        
         VerifyEntityTurnOff(config.ControlEntityIds.Single(e => e == "light.my_light_1"), times: Times.Never());
         VerifyEntityTurnOff(config.ControlEntityIds.Single(e => e == "light.my_light_2"), times: Times.Once());
@@ -337,7 +372,7 @@ public class RoomPresenceTests : RxAppMock
     }
 
     [Fact]
-    public void SwitchFromNormalToNightModeTurnsOnNightControlEntities()
+    public void TurningOnNightModeTurnsOnNightControlEntities()
     {
         // ARRANGE 
         var config = new RoomConfig
@@ -346,6 +381,7 @@ public class RoomPresenceTests : RxAppMock
             PresenceEntityIds = new List<string> { "binary_sensor.my_motion_sensor" },
             ControlEntityIds = new List<string> { "light.my_light" },
             NightControlEntityIds = new List<string> { "light.my_night_light" },
+            NightTimeEntityStates = new List<string> { "night" },
             NightTimeEntityId = "switch.night_mode"
         };
         var app = new RoomPresenceImplementation(Object, config);
@@ -353,17 +389,17 @@ public class RoomPresenceTests : RxAppMock
 
         MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
         MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "on" });
-        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "off" });
+        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "day" });
 
         app.Initialize();
         // ACT
-        TriggerStateChange(config.NightTimeEntityId, "off", "on");
+        TriggerStateChange(config.NightTimeEntityId, "day", "night");
         // ASSERT        
         VerifyEntityTurnOn(config.NightControlEntityIds.First(), times: Times.Once());
     }
 
     [Fact]
-    public void SwitchFromNormalToNightModeTurnsOffNormalControlEntities()
+    public void TurningOnNightModeTurnsOffNormalControlEntities()
     {
         // ARRANGE 
         var config = new RoomConfig
@@ -372,6 +408,7 @@ public class RoomPresenceTests : RxAppMock
             PresenceEntityIds = new List<string> { "binary_sensor.my_motion_sensor" },
             ControlEntityIds = new List<string> { "light.my_light" },
             NightControlEntityIds = new List<string> { "light.my_night_light" },
+            NightTimeEntityStates = new List<string> { "night" },
             NightTimeEntityId = "switch.night_mode"
         };
         var app = new RoomPresenceImplementation(Object, config);
@@ -379,17 +416,17 @@ public class RoomPresenceTests : RxAppMock
 
         MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
         MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "on" });
-        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "off" });
+        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "day" });
 
         app.Initialize();
         // ACT
-        TriggerStateChange(config.NightTimeEntityId, "off", "on");
+        TriggerStateChange(config.NightTimeEntityId, "day", "night");
         // ASSERT        
         VerifyEntityTurnOff(config.ControlEntityIds.First(), times: Times.Once());
     }
 
     [Fact]
-    public void SwitchFromNightToNormalModeTurnsOnNormalControlEntities()
+    public void TurningOffNightModeTurnsOnNormalControlEntities()
     {
         // ARRANGE 
         var config = new RoomConfig
@@ -398,6 +435,7 @@ public class RoomPresenceTests : RxAppMock
             PresenceEntityIds = new List<string> { "binary_sensor.my_motion_sensor" },
             ControlEntityIds = new List<string> { "light.my_light" },
             NightControlEntityIds = new List<string> { "light.my_night_light" },
+            NightTimeEntityStates = new List<string> { "night" },
             NightTimeEntityId = "switch.night_mode"
         };
         var app = new RoomPresenceImplementation(Object, config);
@@ -405,17 +443,17 @@ public class RoomPresenceTests : RxAppMock
 
         MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
         MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "off" });
-        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "on" });
+        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "night" });
 
         app.Initialize();
         // ACT
-        TriggerStateChange(config.NightTimeEntityId, "on", "off");
+        TriggerStateChange(config.NightTimeEntityId, "night", "day");
         // ASSERT        
         VerifyEntityTurnOn(config.ControlEntityIds.First(), times: Times.Once());
     }
 
     [Fact]
-    public void SwitchFromNightToNormalModeTurnsOffNightControlEntities()
+    public void TurningOffNightModeTurnsOffNightControlEntities()
     {
         // ARRANGE 
         var config = new RoomConfig
@@ -424,6 +462,7 @@ public class RoomPresenceTests : RxAppMock
             PresenceEntityIds = new List<string> { "binary_sensor.my_motion_sensor" },
             ControlEntityIds = new List<string> { "light.my_light" },
             NightControlEntityIds = new List<string> { "light.my_night_light" },
+            NightTimeEntityStates = new List<string> { "night" },
             NightTimeEntityId = "switch.night_mode"
         };
         var app = new RoomPresenceImplementation(Object, config);
@@ -431,11 +470,11 @@ public class RoomPresenceTests : RxAppMock
 
         MockState.Add(new() { EntityId = config.PresenceEntityIds.First(), State = "off" });
         MockState.Add(new() { EntityId = config.ControlEntityIds.First(), State = "off" });
-        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "on" });
+        MockState.Add(new() { EntityId = config.NightTimeEntityId, State = "night" });
 
         app.Initialize();
         // ACT
-        TriggerStateChange(config.NightTimeEntityId, "on", "off");
+        TriggerStateChange(config.NightTimeEntityId, "night", "day");
         // ASSERT        
         VerifyEntityTurnOff(config.NightControlEntityIds.First(), times: Times.Once());
     }
@@ -572,6 +611,12 @@ public class RoomPresenceTests : RxAppMock
         TriggerStateChange(config.PresenceEntityIds.First(), "off", "on");
         // ASSERT
         VerifyEntityTurnOn(config.ControlEntityIds.First(), times: Times.Once());
+    }
+
+    [Fact]
+    public void LightsTurnOnWhenMotionTriggeredAndLuxEntitiesAreNotDefined()
+    {
+        throw new NotImplementedException();
     }
 
     [Fact]

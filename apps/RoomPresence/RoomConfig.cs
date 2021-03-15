@@ -41,5 +41,6 @@ namespace Presence
         public int SunriseEndBrightness { get; set; } 
         public int SunriseEndKelvin { get; set; }
         public int SunriseUpdateInterval { get; set; }
+        public bool Debug { get; set; }
     }
 }

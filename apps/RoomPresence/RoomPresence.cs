@@ -12,18 +12,30 @@ namespace Presence
     {
         private readonly List<RoomPresenceImplementation> _roomServices = new();
         public IEnumerable<RoomConfig>? Rooms { get; set; }
-
+        public string NdUserId { get; set; }
         public override void Initialize()
         {
-            LogInformation($"Starting RoomPresence for {Rooms.Count()} rooms in config");
-            foreach (var room in Rooms)
+            if (Rooms.Any(r => r.Debug))
             {
-                LogInformation($"Initialise for {room.Name}");
-                var roomPresenceImplementation = new RoomPresenceImplementation(this, room);
-                _roomServices.Add( roomPresenceImplementation);
-                roomPresenceImplementation.Initialize();
+                Rooms.Where(r => r.Debug).ToList().ForEach(r =>
+                {
+                    LogInformation($"Initialise (DEBUG) for {r.Name}");
+                    InitRoom(r, NdUserId);
+                });
             }
-            
+            else
+            {
+                LogInformation($"Starting RoomPresence for {Rooms.Count()} rooms in config");
+                Rooms.ToList().ForEach(r => InitRoom(r, NdUserId));
+            }
+        }
+
+        private void InitRoom(RoomConfig room, string ndUserId)
+        {
+            LogInformation($"Initialise for {room.Name}");
+            var roomPresenceImplementation = new RoomPresenceImplementation(this, room, ndUserId: ndUserId);
+            _roomServices.Add(roomPresenceImplementation);
+            roomPresenceImplementation.Initialize();
         }
     }
 }
