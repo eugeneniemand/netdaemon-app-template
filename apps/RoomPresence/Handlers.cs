@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Presence
 {
@@ -33,7 +30,7 @@ namespace Presence
             }
         }
 
-        private void NightModeChanged(string nightMode)
+        private void NightModeChanged()
         {
             _app.Delay(TimeSpan.FromSeconds(1));
             if (IsNightTime)

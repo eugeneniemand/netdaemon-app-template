@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Presence
 {
@@ -36,7 +33,7 @@ namespace Presence
         {
             LogTrace("LogConfig");
 
-            var jsonConfig = JsonConvert.SerializeObject(roomConfig, Formatting.Indented);
+            var jsonConfig = JsonSerializer.Serialize(roomConfig, new JsonSerializerOptions() { WriteIndented = true });
             LogTrace($"{nameof(roomConfig)} for: {roomConfig.Name}");
             LogTrace(jsonConfig, new { });
         }

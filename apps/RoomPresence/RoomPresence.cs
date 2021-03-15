@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Timers;
 using NetDaemon.Common.Reactive;
 
 // Use unique namespaces for your apps if you going to share with others to avoid
