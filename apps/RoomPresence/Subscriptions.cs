@@ -29,8 +29,7 @@ namespace Presence
                    .Subscribe(s =>
                    {
                        LogDebug("Night Mode Switched: {state}", s.New.State);
-                       NightModeChanged(s.New.State);
-
+                       NightModeChanged();
                    });
         }
 
