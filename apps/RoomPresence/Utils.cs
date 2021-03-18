@@ -33,9 +33,14 @@ namespace Presence
         {
             LogTrace("LogConfig");
 
-            var jsonConfig = JsonSerializer.Serialize(roomConfig, new JsonSerializerOptions() { WriteIndented = true });
+            var jsonConfig = ToJson(roomConfig);
             LogTrace($"{nameof(roomConfig)} for: {roomConfig.Name}");
             LogTrace(jsonConfig, new { });
+        }
+
+        private static string ToJson(object obj)
+        {
+            return JsonSerializer.Serialize(obj, new JsonSerializerOptions() { WriteIndented = true });
         }
 
         private void LogDebug(string message, params object[] param)

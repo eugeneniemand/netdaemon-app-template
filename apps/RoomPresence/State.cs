@@ -27,7 +27,7 @@ namespace Presence
 
         private void SetRoomStateOverride()
         {
-            if (EntityState(_roomConfig.RoomPresenceEntityId).ToLower() == RoomState.Active.ToString().ToLower()) return;
+            if (string.Equals(EntityState(_roomConfig.RoomPresenceEntityId), RoomState.Active.ToString(), StringComparison.CurrentCultureIgnoreCase)) return;
             Timer?.Dispose();
             Timer = null;
             Timer = _app.RunIn(_overrideTimeout, HandleTimer);
@@ -53,7 +53,7 @@ namespace Presence
 
         private void SetRoomStateActive()
         {
-            if (EntityState(_roomConfig.RoomPresenceEntityId).ToLower() == RoomState.Override.ToString().ToLower()) return;
+            if (string.Equals(EntityState(_roomConfig.RoomPresenceEntityId), RoomState.Override.ToString(), StringComparison.CurrentCultureIgnoreCase)) return;
             Timer?.Dispose();
             Timer = null;
             Timer = _app.RunIn(_timeout, HandleTimer);

@@ -68,7 +68,7 @@ public class RoomPresenceTests : RxAppMock
         if (attributes is not null && attributes is not object)
             throw new NotSupportedException("attributes needs to be an object");
 
-        if (state is not null && state is not object)
+        if (state is not null && state is not object) 
             throw new NotSupportedException("state needs to be an object");
 
         var mockState = MockState.First(e => e.EntityId == entityId);
@@ -611,12 +611,6 @@ public class RoomPresenceTests : RxAppMock
         TriggerStateChange(config.PresenceEntityIds.First(), "off", "on");
         // ASSERT
         VerifyEntityTurnOn(config.ControlEntityIds.First(), times: Times.Once());
-    }
-
-    [Fact]
-    public void LightsTurnOnWhenMotionTriggeredAndLuxEntitiesAreNotDefined()
-    {
-        throw new NotImplementedException();
     }
 
     [Fact]

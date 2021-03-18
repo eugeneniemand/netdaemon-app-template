@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetDaemon.Common.Reactive;
+using System;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -14,7 +15,7 @@ namespace Presence
             SetupManualTurnOffSubscription();
             SetupManualTurnOnSubscription();
             SetupBrightnessColourSubscription();
-            SetupEnableSwitchSubscription();
+            SetupEnabledSwitchSubscription();
             SetupNightModeSubscription();
         }
 
@@ -30,7 +31,7 @@ namespace Presence
                    });
         }
 
-        private void SetupEnableSwitchSubscription()
+        private void SetupEnabledSwitchSubscription()
         {
             _app.Entity(_roomConfig.EnabledSwitchEntityId)
                 .StateChanges
@@ -105,7 +106,8 @@ namespace Presence
             foreach (var entityId in _presenceEntityIds)
                 _app.Entity(entityId)
                     .StateAllChanges
-                    .Where(e => e.Old?.State == "off" && e.New?.State == "on" || e.Old?.State == "on" && e.New?.State == "on")
+                    .Where(e => e.Old?.State == "off" && e.New?.State == "on" ||
+                                e.Old?.State == "on" && e.New?.State == "on" && (e.New?.LastUpdated! - e.Old?.LastUpdated!).Value.TotalSeconds < 80)
                     .Subscribe(s =>
                     {
                         LogDebug("Presence event: {entityId}", s.New.EntityId);
