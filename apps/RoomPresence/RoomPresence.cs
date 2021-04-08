@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NetDaemon.Common.Reactive;
@@ -10,10 +11,11 @@ namespace Presence
     {
         private readonly List<RoomPresenceImplementation> _roomServices = new();
         public IEnumerable<RoomConfig>? Rooms { get; set; }
-        public string NdUserId { get; set; }
+        public string? NdUserId { get; set; }
+
         public override void Initialize()
         {
-            if (Rooms.Any(r => r.Debug))
+            if (( Rooms ?? throw new ArgumentNullException(nameof(Rooms), "No Rooms Config Found") ).Any(r => r.Debug))
             {
                 Rooms.Where(r => r.Debug).ToList().ForEach(r =>
                 {
@@ -28,7 +30,7 @@ namespace Presence
             }
         }
 
-        private void InitRoom(RoomConfig room, string ndUserId)
+        private void InitRoom(RoomConfig room, string? ndUserId)
         {
             LogInformation($"Initialise for {room.Name}");
             var roomPresenceImplementation = new RoomPresenceImplementation(this, room, ndUserId: ndUserId);

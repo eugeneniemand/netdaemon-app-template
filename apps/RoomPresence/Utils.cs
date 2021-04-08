@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
@@ -6,11 +7,12 @@ namespace Presence
 {
     public partial class RoomPresenceImplementation
     {
-        private string EntityState(string entityId)
+        private string EntityState(string? entityId)
         {
+            if (entityId == null) return "EntityId not configured";
             if (_app.States.Any(e => e.EntityId == entityId))
-                return _app.State(entityId)?.State?.ToString() ?? string.Empty;
-            return string.Empty;
+                return _app.State(entityId)?.State?.ToString() ?? "Unknown";
+            return "Unknown";
         }
 
         private void VerifyConfig(RoomConfig roomConfig)
@@ -29,6 +31,33 @@ namespace Presence
                 _app.LogError($"{_roomConfig.Name} contains the following invalid EntityIds:\n{string.Join("\n  - ", invalidEntities)}");
         }
 
+        private void LogCurrentState(string message)
+        {
+            var state = ToJson(new
+            {
+                RoomPresenceState = new
+                {
+                    Lux,
+                    LuxLimit = LuxLimit(),
+                    LuxBelowThreshold = LuxBelowThreshold(),
+                    Enabled = IsDisabled(),
+                    ControlEntities = GetControlEntities(),
+                    ActiveEntities,
+                    Timer = Timer != null ? "NotDisposed" : "Disposed",
+                    IsNightTime,
+                },
+                RawStates = new {
+                    Lux = $"{EntityState(_roomConfig.LuxEntityId)} - {_roomConfig.LuxEntityId}",
+                    LuxLimit = $"{EntityState(_roomConfig.LuxLimitEntityId)} - {_roomConfig.LuxLimitEntityId}",
+                    Enabled = $"{EntityState(_roomConfig.EnabledSwitchEntityId)} - {_roomConfig.EnabledSwitchEntityId}",
+                    RoomState = $"{EntityState(_roomConfig.RoomPresenceEntityId)} - {_roomConfig.RoomPresenceEntityId}",
+                    NightTime = $"{EntityState(_roomConfig.NightTimeEntityId)} - {_roomConfig.NightTimeEntityId}",
+                }
+                
+            });
+            LogTrace("{message}\nState: {state}", message, state);
+        }
+
         private void LogConfig(RoomConfig roomConfig)
         {
             LogTrace("LogConfig");
@@ -45,12 +74,26 @@ namespace Presence
 
         private void LogDebug(string message, params object[] param)
         {
-            _app.LogDebug($"{_tracePrefix}{message}", param);
+            if (param.Length == 0) { _app.LogDebug($"{_tracePrefix}{message}"); return; }
+            if (param[0].GetType().Name.Contains("Anonymous") || param[0].GetType().Namespace != "System")
+            {
+                var json = ToJson(param[0]);
+                _app.LogDebug($"{_tracePrefix}{{message}}{{json}}", message, json, param.Length > 1 ? param.Skip(1): Array.Empty<object>());
+            }
+            else
+                _app.LogDebug($"{_tracePrefix}{message}", param);
         }
 
         private void LogTrace(string message, params object[] param)
         {
-            _app.LogTrace($"{_tracePrefix}{message}", param);
+            if (param.Length == 0) {_app.LogTrace($"{_tracePrefix}{message}"); return;}
+            if (param[0].GetType().Name.Contains("Anonymous") || param[0].GetType().Namespace != "System")
+            {
+                var json = ToJson(param[0]);
+                _app.LogTrace($"{_tracePrefix}{{message}}{{json}}", message, json, param.Length > 1 ? param.Skip(1) : Array.Empty<object>());
+            }
+            else
+                _app.LogTrace($"{_tracePrefix}{message}", param);
         }
     }
 }

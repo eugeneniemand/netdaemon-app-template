@@ -6,6 +6,7 @@ namespace Presence
     {
         private void SetRoomState(RoomState roomState)
         {
+            LogDebug("Attempt to set Room State To: {roomState}", roomState.ToString());
             switch (roomState)
             {
                 case RoomState.Idle:
@@ -19,15 +20,14 @@ namespace Presence
                     break;
                 case RoomState.Override:
                     SetRoomStateOverride();
-                    break;                
+                    break;
             }
-
-            LogDebug("Set Room State To: {roomState}", roomState.ToString());
         }
 
         private void SetRoomStateOverride()
         {
-            if (string.Equals(EntityState(_roomConfig.RoomPresenceEntityId), RoomState.Active.ToString(), StringComparison.CurrentCultureIgnoreCase)) return;
+            if (string.Equals(EntityState(_roomConfig.RoomPresenceEntityId), RoomState.Active.ToString(),
+                StringComparison.CurrentCultureIgnoreCase)) return;
             Timer?.Dispose();
             Timer = null;
             Timer = _app.RunIn(_overrideTimeout, HandleTimer);
@@ -46,23 +46,23 @@ namespace Presence
         {
             Timer?.Dispose();
             Timer = null;
-            BrightnessTimer?.Dispose();
-            BrightnessTimer = null;
+            _brightnessTimer?.Dispose();
+            _brightnessTimer = null;
             _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.Disabled.ToString().ToLower(), null);
         }
 
         private void SetRoomStateActive()
         {
-            if (string.Equals(EntityState(_roomConfig.RoomPresenceEntityId), RoomState.Override.ToString(), StringComparison.CurrentCultureIgnoreCase)) return;
+            if (RoomIs(RoomState.Override)) return;
             Timer?.Dispose();
             Timer = null;
-            Timer = _app.RunIn(_timeout, HandleTimer);
+            Timer = _app.RunIn(Timeout, HandleTimer);
             _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.Active.ToString().ToLower(), new
             {
                 ActiveEntities,
                 PresenceEntityIds = _presenceEntityIds,
                 KeepAliveEntities,
-                ControlEntityIds = _controlEntityIds,
+                ControlEntityIds      = _controlEntityIds,
                 NightControlEntityIds = _nightControlEntityIds,
                 Expiry
             });
@@ -72,15 +72,15 @@ namespace Presence
         private void SetRoomStateIdle()
         {
             TurnOffControlEntities();
-            BrightnessTimer?.Dispose();
-            BrightnessTimer = null;
+            _brightnessTimer?.Dispose();
+            _brightnessTimer = null;
             Timer?.Dispose();
             Timer = null;
             _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.Idle.ToString().ToLower(), new
             {
                 PresenceEntityIds = _presenceEntityIds,
                 KeepAliveEntities,
-                ControlEntityIds = _controlEntityIds,
+                ControlEntityIds      = _controlEntityIds,
                 NightControlEntityIds = _nightControlEntityIds
             });
             _app.Delay(TimeSpan.FromSeconds(1));

@@ -6,12 +6,13 @@ namespace Presence
     {
         public RoomConfig()
         {
-            PresenceEntityIds = new List<string>();
-            ControlEntityIds = new List<string>();
-            KeepAliveEntityIds = new List<string>();
+            PresenceEntityIds     = new List<string>();
+            ControlEntityIds      = new List<string>();
+            KeepAliveEntityIds    = new List<string>();
             NightControlEntityIds = new List<string>();
         }
-        public string Name { get; set; }
+
+        public string Name { get; set; } = null!;
         public int? LuxLimit { get; set; }
         public string? LuxEntityId { get; set; }
         public string? LuxLimitEntityId { get; set; }
@@ -21,8 +22,8 @@ namespace Presence
         public IEnumerable<string> ControlEntityIds { get; set; }
         public IEnumerable<string> KeepAliveEntityIds { get; set; }
         public IEnumerable<string> NightControlEntityIds { get; set; }
-        public IEnumerable<string> NightTimeEntityStates { get; set; }
-        public string? NightTimeEntityId { get; set; }        
+        public IEnumerable<string> NightTimeEntityStates { get; set; } = null!;
+        public string? NightTimeEntityId { get; set; }
         public int NightTimeout { get; set; }
         public int NightBrightness { get; set; }
         public int NightColour { get; set; }
@@ -31,14 +32,14 @@ namespace Presence
         public string? CircadianSwitchEntityId { get; set; }
 
 
-        public bool SunriseEnabled { get; set; } 
-        public bool SunriseColourEnabled { get; set; } 
-        public bool SunriseBrightnessEnabled { get; set; } 
-        public int SunriseStartBrightness { get; set; } 
-        public int SunriseStartKelvin { get; set; } 
-        public string SunriseStartTime { get; set; } 
-        public string SunriseEndTime { get; set; } 
-        public int SunriseEndBrightness { get; set; } 
+        public bool SunriseEnabled { get; set; }
+        public bool SunriseColourEnabled { get; set; }
+        public bool SunriseBrightnessEnabled { get; set; }
+        public int SunriseStartBrightness { get; set; }
+        public int SunriseStartKelvin { get; set; }
+        public string SunriseStartTime { get; set; } = null!;
+        public string SunriseEndTime { get; set; } = null!;
+        public int SunriseEndBrightness { get; set; }
         public int SunriseEndKelvin { get; set; }
         public int SunriseUpdateInterval { get; set; }
         public bool Debug { get; set; }

@@ -36,24 +36,14 @@ namespace Presence
             if (IsNightTime)
             {
                 foreach (var entityId in _controlEntityIds.Except(_nightControlEntityIds))
-                {
                     _app.Entity(entityId).TurnOff();
-                }
-                foreach (var entityId in _nightControlEntityIds)
-                {
-                    _app.Entity(entityId).TurnOn();
-                }
+                foreach (var entityId in _nightControlEntityIds) _app.Entity(entityId).TurnOn();
             }
             else
             {
                 foreach (var entityId in _nightControlEntityIds.Except(_controlEntityIds))
-                {
                     _app.Entity(entityId).TurnOff();
-                }
-                foreach (var entityId in _controlEntityIds)
-                {
-                    _app.Entity(entityId).TurnOn();
-                }
+                foreach (var entityId in _controlEntityIds) _app.Entity(entityId).TurnOn();
             }
         }
 
@@ -93,7 +83,7 @@ namespace Presence
                         _app.Delay(TimeSpan.FromMilliseconds(200));
                         _app.Entity(entityId).TurnOn(new { kelvin = _roomConfig.SunriseStartKelvin });
 
-                        BrightnessTimer = _app.RunEvery(TimeSpan.FromMinutes(_roomConfig.SunriseUpdateInterval), () =>
+                        _brightnessTimer = _app.RunEvery(TimeSpan.FromMinutes(_roomConfig.SunriseUpdateInterval), () =>
                         {
                             UpdateBrightness(entityId);
                             UpdateColour(entityId);
@@ -115,8 +105,10 @@ namespace Presence
         {
             if (_app.State(entityId)?.State == "off" || !_roomConfig.SunriseBrightnessEnabled) return;
             var startTime = DateTime.ParseExact(_roomConfig.SunriseStartTime, "HH:mm", CultureInfo.InvariantCulture);
-            var endTime = DateTime.ParseExact(_roomConfig.SunriseEndTime, "HH:mm", CultureInfo.InvariantCulture);
-            var brightness = CalculateFractionBasedOnIntervalAndElapsedTime(startTime, endTime, _roomConfig.SunriseUpdateInterval, _roomConfig.SunriseStartBrightness, _roomConfig.SunriseEndBrightness);
+            var endTime   = DateTime.ParseExact(_roomConfig.SunriseEndTime, "HH:mm", CultureInfo.InvariantCulture);
+            var brightness = CalculateFractionBasedOnIntervalAndElapsedTime(startTime, endTime,
+                _roomConfig.SunriseUpdateInterval, _roomConfig.SunriseStartBrightness,
+                _roomConfig.SunriseEndBrightness);
             _app.Entity(entityId).TurnOn(new { brightness });
         }
 
@@ -124,8 +116,9 @@ namespace Presence
         {
             if (_app.State(entityId)?.State == "off" || !_roomConfig.SunriseColourEnabled) return;
             var startTime = DateTime.ParseExact(_roomConfig.SunriseStartTime, "HH:mm", CultureInfo.InvariantCulture);
-            var endTime = DateTime.ParseExact(_roomConfig.SunriseEndTime, "HH:mm", CultureInfo.InvariantCulture);
-            var kelvin = CalculateFractionBasedOnIntervalAndElapsedTime(startTime, endTime, _roomConfig.SunriseUpdateInterval, _roomConfig.SunriseStartKelvin, _roomConfig.SunriseEndKelvin);
+            var endTime   = DateTime.ParseExact(_roomConfig.SunriseEndTime, "HH:mm", CultureInfo.InvariantCulture);
+            var kelvin = CalculateFractionBasedOnIntervalAndElapsedTime(startTime, endTime,
+                _roomConfig.SunriseUpdateInterval, _roomConfig.SunriseStartKelvin, _roomConfig.SunriseEndKelvin);
             _app.Entity(entityId).TurnOn(new { kelvin });
         }
     }

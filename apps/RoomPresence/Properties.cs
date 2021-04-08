@@ -6,14 +6,20 @@ namespace Presence
 {
     public partial class RoomPresenceImplementation
     {
-        private string ActiveEntities => string.Join(", ", _presenceEntityIds.Union(_keepAliveEntityIds).Where(entityId => EntityState(entityId) == "on"));
+        private string ActiveEntities => string.Join(", ",
+            _presenceEntityIds.Union(_keepAliveEntityIds).Where(entityId => EntityState(entityId) == "on"));
 
-        private string Expiry => DateTime.Now.AddSeconds(_timeout.TotalSeconds).ToString("yyyy-MM-dd HH:mm:ss");
+        private string Expiry => DateTime.Now.AddSeconds(Timeout.TotalSeconds).ToString("yyyy-MM-dd HH:mm:ss");
         private bool NoPresence => string.IsNullOrEmpty(ActiveEntities);
         private bool Presence => !string.IsNullOrEmpty(ActiveEntities);
         private string KeepAliveEntities => string.Join(", ", _keepAliveEntityIds);
-        private bool IsNightTime => _roomConfig.NightTimeEntityId != null && _roomConfig.NightTimeEntityStates.Contains(EntityState(_roomConfig.NightTimeEntityId));
-        private int Lux => _roomConfig.LuxEntityId == null ? 0 : int.TryParse(EntityState(_roomConfig.LuxEntityId), out var luxInt) ? luxInt : 0;
+
+        private bool IsNightTime => _roomConfig.NightTimeEntityId != null &&
+                                    _roomConfig.NightTimeEntityStates.Contains(
+                                        EntityState(_roomConfig.NightTimeEntityId));
+
+        private int Lux => _roomConfig.LuxEntityId == null ? 0 :
+            int.TryParse(EntityState(_roomConfig.LuxEntityId), out var luxInt) ? luxInt : 0;
 
         private IEnumerable<string> GetControlEntities()
         {
@@ -78,18 +84,19 @@ namespace Presence
                 return roomConfigLuxLimit;
             }
 
-            if (int.TryParse(_app.State(_roomConfig.LuxLimitEntityId)?.State?.ToString(), out int luxEntityVal))
+            if (int.TryParse(EntityState(_roomConfig.LuxLimitEntityId), out var luxEntityVal))
             {
                 LogTrace("Lux Limit from Entity");
                 LogDebug("Lux Limit: {luxEntityVal}", luxEntityVal);
                 return luxEntityVal;
             }
 
-            LogTrace($"Could Not Parse {_roomConfig.LuxLimitEntityId} roomState");
+            LogTrace(
+                $"Could Not Parse {_roomConfig.LuxLimitEntityId}: {EntityState(_roomConfig.LuxLimitEntityId)} roomState, returning default 1000");
             return 1000;
         }
 
-        private bool RoomIs(RoomState roomState)
+        public bool RoomIs(RoomState roomState)
         {
             LogTrace("Is RoomState: {s}?", roomState.ToString().ToLower());
 
@@ -100,18 +107,19 @@ namespace Presence
                 roomEntityState == roomState.ToString().ToLower();
         }
 
-        private double CalculateFractionBasedOnIntervalAndElapsedTime(DateTime startTime, DateTime endTime, int interval, int startValue, int endValue)
+        private double CalculateFractionBasedOnIntervalAndElapsedTime(DateTime startTime, DateTime endTime,
+                                                                      int interval, int startValue, int endValue)
         {
-            var minutes = (endTime - startTime).TotalMinutes;
+            var minutes  = ( endTime - startTime ).TotalMinutes;
             var fraction = minutes / interval;
-            var range = endValue - startValue;
-            var inc = range / fraction;
+            var range    = endValue - startValue;
+            var inc      = range / fraction;
 
             if (Now < startTime || Now > endTime) return startValue;
 
-            var minutesElapsed = (Now - startTime).TotalMinutes;
+            var minutesElapsed   = ( Now - startTime ).TotalMinutes;
             var intervalsElapsed = minutesElapsed / interval;
-            return startValue + (intervalsElapsed * inc);
+            return startValue + intervalsElapsed * inc;
         }
     }
 }

@@ -8,40 +8,42 @@ namespace Presence
     public partial class RoomPresenceImplementation
     {
         private readonly INetDaemonRxApp _app;
-        private readonly string[] _controlEntityIds;
-        private readonly string[] _keepAliveEntityIds;
-        private readonly string[] _nightControlEntityIds;
-        private readonly TimeSpan _nightTimeout;
-        private readonly TimeSpan _normalTimeout;
-        private readonly string[] _presenceEntityIds;
-        private readonly RoomConfig _roomConfig;
-        private readonly string _tracePrefix;
-        private IDisposable? BrightnessTimer;
-        private TimeSpan _timeout => IsNightTime ? _nightTimeout : _normalTimeout;
-        private TimeSpan _overrideTimeout;
+        private readonly string[]        _controlEntityIds;
+        private readonly string[]        _keepAliveEntityIds;
+        private readonly string[]        _nightControlEntityIds;
+        private readonly TimeSpan        _nightTimeout;
+        private readonly TimeSpan        _normalTimeout;
+        private readonly string[]        _presenceEntityIds;
+        private readonly RoomConfig      _roomConfig;
+        private readonly string          _tracePrefix;
+        private          IDisposable?    _brightnessTimer;
+        private TimeSpan Timeout => IsNightTime ? _nightTimeout : _normalTimeout;
+        private readonly TimeSpan _overrideTimeout;
         private IDisposable? Timer { get; set; }
         public DateTime Now => Scheduler?.Now.DateTime ?? DateTime.Now;
         private IScheduler? Scheduler { get; }
-        public string NdUserId { get; }
+        public string? NdUserId { get; }
 
 
-        public RoomPresenceImplementation(INetDaemonRxApp app, RoomConfig roomConfig, IScheduler? scheduler = null, string ndUserId = null)
+        public RoomPresenceImplementation(INetDaemonRxApp app, RoomConfig roomConfig, IScheduler? scheduler = null,
+                                          string? ndUserId = null!)
         {
             _app = app;
 
             try
             {
-                _roomConfig = roomConfig;
-                Scheduler = scheduler;
-                _tracePrefix = $"({_roomConfig.Name}) - ";
+                _roomConfig    = roomConfig;
+                Scheduler      = scheduler;
+                _tracePrefix   = $"({_roomConfig.Name}) - ";
                 _normalTimeout = TimeSpan.FromSeconds(roomConfig.Timeout != 0 ? roomConfig.Timeout : 300);
-                _nightTimeout = TimeSpan.FromSeconds(roomConfig.NightTimeout != 0 ? roomConfig.NightTimeout : 60);
-                _overrideTimeout = TimeSpan.FromSeconds(roomConfig.OverrideTimeout != 0 ? roomConfig.OverrideTimeout : 900);
-                _presenceEntityIds = roomConfig.PresenceEntityIds.ToArray();
-                _controlEntityIds = roomConfig.ControlEntityIds.ToArray();
-                _nightControlEntityIds = roomConfig.NightControlEntityIds?.ToArray() ?? Array.Empty<string>();
-                _keepAliveEntityIds = roomConfig.KeepAliveEntityIds.ToArray();
-                NdUserId = ndUserId;
+                _nightTimeout  = TimeSpan.FromSeconds(roomConfig.NightTimeout != 0 ? roomConfig.NightTimeout : 60);
+                _overrideTimeout =
+                    TimeSpan.FromSeconds(roomConfig.OverrideTimeout != 0 ? roomConfig.OverrideTimeout : 900);
+                _presenceEntityIds     = roomConfig.PresenceEntityIds.ToArray();
+                _controlEntityIds      = roomConfig.ControlEntityIds.ToArray();
+                _nightControlEntityIds = roomConfig.NightControlEntityIds.ToArray();
+                _keepAliveEntityIds    = roomConfig.KeepAliveEntityIds.ToArray();
+                NdUserId               = ndUserId;
             }
             catch (Exception e)
             {
@@ -54,9 +56,21 @@ namespace Presence
         {
             try
             {
-                LogTrace("Initialize Started");
+                LogTrace("Initialize Started", new
+                {
+                    _roomConfig,
+                    Scheduler?.Now,
+                    _tracePrefix,
+                    _normalTimeout   = _normalTimeout.TotalSeconds,
+                    _nightTimeout    = _nightTimeout.TotalSeconds,
+                    _overrideTimeout = _overrideTimeout.TotalSeconds,
+                    _presenceEntityIds,
+                    _controlEntityIds,
+                    _nightControlEntityIds,
+                    _keepAliveEntityIds,
+                    NdUserId
+                });
                 VerifyConfig(_roomConfig);
-                LogConfig(_roomConfig);
                 SetupEnabledSwitchEntity();
                 IsDisabled();
                 SetupSubscriptions();
