@@ -99,7 +99,7 @@ namespace Presence
             string roomEntityState = EntityState(_roomConfig.RoomPresenceEntityId);
 
             LogTrace("RoomState is: {roomState}", roomEntityState);
-            if (roomEntityState == "Unknown") throw new ArgumentException();
+            //if (roomEntityState == "Unknown") throw new ArgumentException();
             return
                 roomEntityState == roomState.ToString().ToLower();
         }
