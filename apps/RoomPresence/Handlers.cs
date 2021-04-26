@@ -6,32 +6,32 @@ namespace Presence
 {
     public partial class RoomPresenceImplementation
     {
-        public void HandleEvent()
+        private void OnPresence(object? sender, HassEventArgs args)
         {
-            LogTrace("HandleEvent()");
-
-            if (IsDisabled() || !LuxBelowThreshold()) return;
-
+            if (IsDisabled() || !Presence || !LuxBelowThreshold() || RoomIs(RoomState.Override)) return;
+            _eventEntity = args.EntityId;
             SetRoomState(RoomState.Active);
         }
 
-        private void HandleTimer()
+        private void OnManualTurnOn(object? sender, HassEventArgs args)
         {
-            LogTrace("Is there Presence?");
-            if (NoPresence)
-            {
-                LogTrace("Presence: {p}", false);
-                SetRoomState(RoomState.Idle);
-            }
-            else
-            {
-                LogTrace("Presence: {p}", true);
-                SetRoomState(RoomState.Active);
-            }
+            if (IsDisabled()) return;
+            _eventEntity = args.EntityId;
+            SetRoomState(RoomState.Override);
         }
 
-        private void NightModeChanged()
+        private void OnManualTurnOff(object? sender, HassEventArgs args)
         {
+            if (IsDisabled()) return;
+            _eventEntity = args.EntityId;
+            SetRoomState(RoomState.Idle);
+        }
+
+        private void OnNightModeChanged(object? sender, HassEventArgs args)
+        {
+            if (IsDisabled() || RoomIs(RoomState.Idle)) return;
+            _eventEntity = args.EntityId;
+
             _app.Delay(TimeSpan.FromSeconds(1));
             if (IsNightTime)
             {
@@ -47,15 +47,44 @@ namespace Presence
             }
         }
 
+        private void OnKeepAlive(object? sender, HassEventArgs args)
+        {
+            if (IsDisabled() || !Presence || !LuxBelowThreshold() || RoomIs(RoomState.Override)) return;
+            _eventEntity = args.EntityId;
+            SetRoomState(RoomState.Active);
+        }
+
+        private void OnGuardDog(object? sender, HassEventArgs args)
+        {
+            if (IsDisabled() || Timer != null && ( Presence || RoomIs(RoomState.Override) )) return;
+            _eventEntity = args.EntityId;
+            SetRoomState(RoomState.Override);
+        }
+
+        private void OnTimeoutEvent(object? sender, HassEventArgs args)
+        {
+            if (IsDisabled()) return;
+            if (Presence && LuxBelowThreshold())
+            {
+                _eventEntity = args.EntityId;
+                SetRoomState(RoomState.Active);
+            }
+            else
+            {
+                _eventEntity = "";
+                SetRoomState(RoomState.Idle);
+            }
+        }
+
         private void DisableCircadian()
         {
-            if (_roomConfig.CircadianSwitchEntityId == null) return;
+            if (IsDisabled() || _roomConfig.CircadianSwitchEntityId == null) return;
             _app.Entity(_roomConfig.CircadianSwitchEntityId).TurnOff();
         }
 
         private void EnableCircadian()
         {
-            if (_roomConfig.CircadianSwitchEntityId == null) return;
+            if (IsDisabled() || _roomConfig.CircadianSwitchEntityId == null) return;
             _app.Entity(_roomConfig.CircadianSwitchEntityId).TurnOn();
         }
 
@@ -73,7 +102,7 @@ namespace Presence
         {
             LogTrace("TurnOnControlEntities()");
             foreach (var entityId in GetControlEntities())
-                if (_app.State(entityId)?.State == "off")
+                if (EntityState(entityId) == "off")
                 {
                     LogDebug("Turn On Control Entity: {entityId}", entityId);
 

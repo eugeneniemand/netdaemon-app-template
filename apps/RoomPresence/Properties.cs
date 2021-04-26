@@ -30,12 +30,8 @@ namespace Presence
             if (RoomIs(RoomState.Override))
             {
                 entities = _controlEntityIds.Union(_nightControlEntityIds);
-                LogDebug("Control Entities: {entities}", entities);
-                return entities;
             }
-
-            LogTrace("Do Night Control entities exist");
-            if (!_nightControlEntityIds.Any())
+            else if (!_nightControlEntityIds.Any())
             {
                 LogTrace("Night Control entities doesnt exists");
                 entities = _controlEntityIds;
@@ -103,6 +99,7 @@ namespace Presence
             string roomEntityState = EntityState(_roomConfig.RoomPresenceEntityId);
 
             LogTrace("RoomState is: {roomState}", roomEntityState);
+            if (roomEntityState == "Unknown") throw new ArgumentException();
             return
                 roomEntityState == roomState.ToString().ToLower();
         }

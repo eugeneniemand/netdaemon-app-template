@@ -19,7 +19,9 @@ public class NotificationEngineTests : RxAppMock
     public NotificationEngineTests()
     {
         Setup(n => n.States).Returns(MockState);
-        Setup(e => e.SetState(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<object>(), It.IsAny<bool>())).Callback<string, object, object, bool>((entityId, state, attributes, waitForResponse) => UpdateMockState(entityId, state.ToString() ?? string.Empty, attributes));
+        Setup(e => e.SetState(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<object>(), It.IsAny<bool>()))
+            .Callback<string, object, object, bool>((entityId, state, attributes, waitForResponse) =>
+                UpdateMockState(entityId, state.ToString() ?? string.Empty, attributes));
     }
 
     private void UpdateMockState(string entityId, string newState, object? attributes)
@@ -27,7 +29,7 @@ public class NotificationEngineTests : RxAppMock
         var state = MockState.FirstOrDefault(e => e.EntityId == entityId);
         if (state == null) return;
         MockState.Remove(state);
-        MockState.Add(new EntityState {EntityId = entityId, State = newState, Attribute = attributes});
+        MockState.Add(new EntityState { EntityId = entityId, State = newState, Attribute = attributes });
     }
 
     private void AssertMessages(NotificationEngineImpl app, string voiceMessage, string instantMessage)
@@ -39,50 +41,43 @@ public class NotificationEngineTests : RxAppMock
     private void AssertMessages(NotificationEngineImpl app, List<string> voiceMessages, List<string> instantMessages)
     {
         Assert.Equal(string.Join("", voiceMessages.Select(voiceMessage => $"<s>{voiceMessage}</s>")), app.VoiceMessage);
-        Assert.Equal(string.Join("", instantMessages.Select(instantMessage => instantMessage + Environment.NewLine)), app.InstantMessage);
+        Assert.Equal(string.Join("", instantMessages.Select(instantMessage => instantMessage + Environment.NewLine)),
+            app.InstantMessage);
     }
 
     [Fact]
-    public void CarDoorsAreOpen()
+    public void VoiceMessageIsSentWhenStateIsMatched()
     {
-        var config = new NotificationEngineConfig(carDoorsEntityId: "sensor.doors");
+        var config = new NotificationEngineConfig()
+        {
+            EntityId = "sensor.some_sensor",
+            VoiceMsg = "Your car's doors are open"
+        };
 
-        MockState.Add(new() {EntityId = config.CarDoorsEntityId, State = "on"});
+        MockState.Add(new EntityState() { EntityId = config.EntityId, State = "off" });
 
-        var app = new NotificationEngineImpl(Object, config);
+        var app = new NotificationEngineImpl(Object,
+            new Dictionary<string, NotificationEngineConfig>() { { "test_message", config } });
         app.Initialize();
-        app.Notify(new() {"CarOpen"});
+        TriggerStateChange(config.EntityId, "off", "on");
         AssertMessages(app, "Your car's doors are open", "Car doors are open");
         VerifyCallService("notify", "alexa_media");
     }
 
-    [Fact]
-    public void CarIsLocked()
-    {
-        var config = new NotificationEngineConfig("sensor.door_locked");
+    //[Fact]
+    //public void GenerateMessagesConcatenatesAllMessages()
+    //{
+    //    var config = new NotificationEngineConfig(carDoorsEntityId: "sensor.doors");
 
-        MockState.Add(new() {EntityId = config.CarLockedEntityId, State = "on"});
+    //    MockState.Add(new EntityState() { EntityId = config.CarDoorsEntityId, State = "on" });
+    //    MockState.Add(new EntityState() { EntityId = config.CarLockedEntityId, State = "on" });
 
-        var app = new NotificationEngineImpl(Object, config);
-        app.Initialize();
-        app.Notify(new() {"CarLocked"});
-        AssertMessages(app, "Your car is not locked", "Car is not locked");
-        VerifyCallService("notify", "alexa_media");
-    }
+    //    var app = new NotificationEngineImpl(Object, config);
+    //    app.Initialize();
+    //    app.Notify(new List<string>() { "CarLocked", "CarOpen" });
 
-    [Fact]
-    public void GenerateMessagesConcatenatesAllMessages()
-    {
-        var config = new NotificationEngineConfig(carDoorsEntityId: "sensor.doors");
-
-        MockState.Add(new() {EntityId = config.CarDoorsEntityId, State = "on"});
-        MockState.Add(new() {EntityId = config.CarLockedEntityId, State = "on"});
-
-        var app = new NotificationEngineImpl(Object, config);
-        app.Initialize();
-        app.Notify(new() {"CarLocked", "CarOpen"});
-
-        AssertMessages(app, new List<string> {"Your car is not locked", "Your car's doors are open"}, new List<string> {"Car is not locked", "Car doors are open"});
-        VerifyCallService("notify", "alexa_media");
-    }
+    //    AssertMessages(app, new List<string> { "Your car is not locked", "Your car's doors are open" },
+    //        new List<string> { "Car is not locked", "Car doors are open" });
+    //    VerifyCallService("notify", "alexa_media");
+    //}
 }

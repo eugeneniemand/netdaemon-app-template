@@ -1,7 +1,7 @@
-﻿using NetDaemon.Common.Reactive;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reactive.Concurrency;
+using NetDaemon.Common.Reactive;
 
 namespace Presence
 {
@@ -13,37 +13,39 @@ namespace Presence
         private readonly string[]        _nightControlEntityIds;
         private readonly TimeSpan        _nightTimeout;
         private readonly TimeSpan        _normalTimeout;
+        private readonly TimeSpan        _overrideTimeout;
+        private readonly PresenceConfig  _presenceConfig;
         private readonly string[]        _presenceEntityIds;
         private readonly RoomConfig      _roomConfig;
         private readonly string          _tracePrefix;
         private          IDisposable?    _brightnessTimer;
-        private TimeSpan Timeout => IsNightTime ? _nightTimeout : _normalTimeout;
-        private readonly TimeSpan _overrideTimeout;
-        private IDisposable? Timer { get; set; }
-        public DateTime Now => Scheduler?.Now.DateTime ?? DateTime.Now;
-        private IScheduler? Scheduler { get; }
-        public string? NdUserId { get; }
+        private          string          _eventEntity;
 
 
-        public RoomPresenceImplementation(INetDaemonRxApp app, RoomConfig roomConfig, IScheduler? scheduler = null,
-                                          string? ndUserId = null!)
+        public RoomPresenceImplementation(INetDaemonRxApp app, PresenceConfig presenceConfig)
         {
-            _app = app;
+            _app            = app;
+            _presenceConfig = presenceConfig;
 
             try
             {
-                _roomConfig    = roomConfig;
-                Scheduler      = scheduler;
-                _tracePrefix   = $"({_roomConfig.Name}) - ";
-                _normalTimeout = TimeSpan.FromSeconds(roomConfig.Timeout != 0 ? roomConfig.Timeout : 300);
-                _nightTimeout  = TimeSpan.FromSeconds(roomConfig.NightTimeout != 0 ? roomConfig.NightTimeout : 60);
-                _overrideTimeout =
-                    TimeSpan.FromSeconds(roomConfig.OverrideTimeout != 0 ? roomConfig.OverrideTimeout : 900);
-                _presenceEntityIds     = roomConfig.PresenceEntityIds.ToArray();
-                _controlEntityIds      = roomConfig.ControlEntityIds.ToArray();
-                _nightControlEntityIds = roomConfig.NightControlEntityIds.ToArray();
-                _keepAliveEntityIds    = roomConfig.KeepAliveEntityIds.ToArray();
-                NdUserId               = ndUserId;
+                _roomConfig  = presenceConfig.RoomConfig;
+                Scheduler    = presenceConfig.Scheduler;
+                _tracePrefix = $"({_roomConfig.Name}) - ";
+                _normalTimeout = TimeSpan.FromSeconds(presenceConfig.RoomConfig.Timeout != 0
+                    ? presenceConfig.RoomConfig.Timeout
+                    : 300);
+                _nightTimeout = TimeSpan.FromSeconds(presenceConfig.RoomConfig.NightTimeout != 0
+                    ? presenceConfig.RoomConfig.NightTimeout
+                    : 60);
+                _overrideTimeout = TimeSpan.FromSeconds(presenceConfig.RoomConfig.OverrideTimeout != 0
+                    ? presenceConfig.RoomConfig.OverrideTimeout
+                    : 900);
+                _presenceEntityIds     = presenceConfig.RoomConfig.PresenceEntityIds.ToArray();
+                _controlEntityIds      = presenceConfig.RoomConfig.ControlEntityIds.ToArray();
+                _nightControlEntityIds = presenceConfig.RoomConfig.NightControlEntityIds.ToArray();
+                _keepAliveEntityIds    = presenceConfig.RoomConfig.KeepAliveEntityIds.ToArray();
+                NdUserId               = presenceConfig.NdUserId;
             }
             catch (Exception e)
             {
@@ -51,6 +53,12 @@ namespace Presence
                 throw;
             }
         }
+
+        public string? NdUserId { get; }
+        public DateTime Now => Scheduler?.Now.DateTime ?? DateTime.Now;
+        private IScheduler? Scheduler { get; }
+        private TimeSpan Timeout => IsNightTime ? _nightTimeout : _normalTimeout;
+        private IDisposable? Timer { get; set; }
 
         public void Initialize()
         {

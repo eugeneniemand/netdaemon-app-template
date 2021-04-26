@@ -1,9 +1,10 @@
 presence:
   class: Presence.RoomPresence
   nd_user_id: ef606e2918da4355ba036a019cdcc6a0
+  guard_timeout: 10
   rooms:
   - name: Study
-    timeout: 300
+    timeout: 90
     presence_entity_ids:
       - binary_sensor.office_motion
       - binary_sensor.study
@@ -32,7 +33,7 @@ presence:
       - sleeping
     night_control_entity_ids:
       - light.dining_wall_group
-    circadian_switch_entity_id: switch.circadian_lighting_circadian_dining
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_dining    
 
   - name: Boys
     timeout: 300
@@ -142,7 +143,7 @@ presence:
     circadian_switch_entity_id: switch.circadian_lighting_circadian_toilet
 
   - name: Utility
-    timeout: 300
+    timeout: 300    
     presence_entity_ids:
       - binary_sensor.utility_motion
     control_entity_ids:

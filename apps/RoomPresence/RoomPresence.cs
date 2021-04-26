@@ -9,32 +9,29 @@ namespace Presence
 {
     public class RoomPresence : NetDaemonRxApp
     {
-        private readonly List<RoomPresenceImplementation> _roomServices = new();
         public IEnumerable<RoomConfig>? Rooms { get; set; }
         public string? NdUserId { get; set; }
+        public int GuardTimeout { get; set; } = 900;
 
         public override void Initialize()
         {
             if (( Rooms ?? throw new ArgumentNullException(nameof(Rooms), "No Rooms Config Found") ).Any(r => r.Debug))
             {
-                Rooms.Where(r => r.Debug).ToList().ForEach(r =>
-                {
-                    LogInformation($"Initialise (DEBUG) for {r.Name}");
-                    InitRoom(r, NdUserId);
-                });
+                LogInformation($"Initialise (DEBUG) ");
+                Rooms.Where(r => r.Debug).ToList().ForEach(InitRoom);
             }
             else
             {
                 LogInformation($"Starting RoomPresence for {Rooms.Count()} rooms in config");
-                Rooms.ToList().ForEach(r => InitRoom(r, NdUserId));
+                Rooms.ToList().ForEach(InitRoom);
             }
         }
 
-        private void InitRoom(RoomConfig room, string? ndUserId)
+        private void InitRoom(RoomConfig room)
         {
             LogInformation($"Initialise for {room.Name}");
-            var roomPresenceImplementation = new RoomPresenceImplementation(this, room, ndUserId: ndUserId);
-            _roomServices.Add(roomPresenceImplementation);
+            var presenceConfig = new PresenceConfig(room) { NdUserId = NdUserId, GuardTimeout = GuardTimeout };
+            var roomPresenceImplementation = new RoomPresenceImplementation(this, presenceConfig);
             roomPresenceImplementation.Initialize();
         }
     }

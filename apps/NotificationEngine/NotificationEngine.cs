@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NetDaemon.Common;
 using NetDaemon.Common.Reactive;
 
 // Use unique namespaces for your apps if you going to share with others to avoid
@@ -10,23 +9,23 @@ namespace Niemand
 {
     public class NotificationEngineImpl
     {
-        private readonly INetDaemonRxApp _app;
-        private readonly NotificationEngineConfig _config;
-        private readonly Dictionary<string, Action> _messageBuilders = new();
+        private readonly INetDaemonRxApp                              _app;
+        private readonly Dictionary<string, NotificationEngineConfig> _config;
+        private readonly Dictionary<string, Action>                   _messageBuilders = new();
         public string InstantMessage { get; private set; }
         public string VoiceMessage { get; private set; }
 
-        public NotificationEngineImpl(INetDaemonRxApp app, NotificationEngineConfig config)
+        public NotificationEngineImpl(INetDaemonRxApp app, Dictionary<string, NotificationEngineConfig> config)
         {
-            _app = app;
+            _app    = app;
             _config = config;
-            _messageBuilders.Add("CarLocked", CarIsLocked);
-            _messageBuilders.Add("CarOpen", CarDoorsAreOpen);
         }
 
         public void Initialize()
         {
-            _app.LogInformation(_config.CarLockedEntityId);
+            _app.Entities(_config.Select(c => c.Value.EntityId))
+                .StateChanges
+                .Subscribe(s => { });
         }
 
         public void Notify(List<string> options)
@@ -43,23 +42,13 @@ namespace Niemand
 
         private void BuildMessages((string voiceMessage, string instantMessage) caller)
         {
-            VoiceMessage += "<s>" + caller.voiceMessage + "</s>";
+            VoiceMessage   += "<s>" + caller.voiceMessage + "</s>";
             InstantMessage += caller.instantMessage + Environment.NewLine;
-        }
-
-        private void CarDoorsAreOpen()
-        {
-            BuildMessages(GetStateOnMessage(_config.CarDoorsEntityId, "Your car's doors are open", "Car doors are open"));
-        }
-
-        private void CarIsLocked()
-        {
-            BuildMessages(GetStateOnMessage(_config.CarLockedEntityId, "Your car is not locked", "Car is not locked"));
         }
 
         private void ClearMessages()
         {
-            VoiceMessage = "";
+            VoiceMessage   = "";
             InstantMessage = "";
         }
 
@@ -69,9 +58,10 @@ namespace Niemand
             return state != null;
         }
 
-        private (string voiceMessage, string instantMessage) GetStateOnMessage(string entityId, string voiceMessage, string instantMessage)
+        private (string voiceMessage, string instantMessage) GetStateOnMessage(
+            string entityId, string voiceMessage, string instantMessage)
         {
-            return StateIsOn(entityId) ? (voiceMessage, instantMessage) : (string.Empty, string.Empty);
+            return StateIsOn(entityId) ? ( voiceMessage, instantMessage ) : ( string.Empty, string.Empty );
         }
 
         private void SendNotifications()
@@ -79,7 +69,7 @@ namespace Niemand
             _app.CallService("notify", "alexa_media", new
             {
                 message = $"<voice name=\"Emma\">{VoiceMessage}</voice>",
-                target = new List<string> {"media_player.downstairs"},
+                target  = new List<string> { "media_player.downstairs" },
                 data = new
                 {
                     type = "announce"
@@ -98,43 +88,12 @@ namespace Niemand
         }
     }
 
-    public class NotificationEngine : NetDaemonRxApp
-    {
-        private NotificationEngineImpl _impl;
-
-        public string CarDoorsEntityId { get; set; }
-        public string CarLockedEntityId { get; set; }
-
-        public override void Initialize()
-        {
-            var config = new NotificationEngineConfig(CarLockedEntityId, CarDoorsEntityId);
-            _impl = new NotificationEngineImpl(this, config);
-            _impl.Initialize();
-        }
-
-        [HomeAssistantServiceCall]
-        public void Notify(dynamic data)
-        {
-            if (!((IDictionary<string, object>)data).ContainsKey("options")) return;
-
-            var options = (data.options as object[] ?? Array.Empty<object>())
-                .Select(o => o as string)
-                .Where(o => !string.IsNullOrEmpty(o))!
-                .ToList<string>();
-            _impl.Notify(options);
-        }
-    }
-
     public class NotificationEngineConfig
     {
-        public string CarDoorsEntityId { get; }
-
-        public string CarLockedEntityId { get; }
-
-        public NotificationEngineConfig(string? carLockedEntityId = null, string? carDoorsEntityId = null)
-        {
-            CarLockedEntityId = carLockedEntityId;
-            CarDoorsEntityId = carDoorsEntityId;
-        }
+        public string EntityId { get; set; }
+        public string? VoiceMsg { get; set; }
+        public string? TextMsg { get; set; }
+        public string State { get; set; } = "on";
+        public int? Interval { get; set; }
     }
 }

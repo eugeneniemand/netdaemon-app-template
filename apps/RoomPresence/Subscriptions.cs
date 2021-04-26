@@ -4,10 +4,31 @@ using System.Reactive.Linq;
 
 namespace Presence
 {
+    public class HassEventArgs : EventArgs
+    {
+        public string EntityId { get; set; }
+    }
+
     public partial class RoomPresenceImplementation
     {
+        public event EventHandler<HassEventArgs> TimeoutEvent;
+        public event EventHandler<HassEventArgs> PresenceEvent;
+        public event EventHandler<HassEventArgs> GuardDogEvent;
+        public event EventHandler<HassEventArgs> KeepAliveEvent;
+        public event EventHandler<HassEventArgs> ManualTurnOnEvent;
+        public event EventHandler<HassEventArgs> ManualTurnOffEvent;
+        public event EventHandler<HassEventArgs> NightModeChangedEvent;
+
         private void SetupSubscriptions()
         {
+            PresenceEvent         += OnPresence;
+            ManualTurnOnEvent     += OnManualTurnOn;
+            ManualTurnOffEvent    += OnManualTurnOff;
+            KeepAliveEvent        += OnKeepAlive;
+            GuardDogEvent         += OnGuardDog;
+            TimeoutEvent          += OnTimeoutEvent;
+            NightModeChangedEvent += OnNightModeChanged;
+
             LogCurrentState("Before SetupSubscriptions");
             SetupPresenceSubscription();
             SetupKeepAliveSubscription();
@@ -19,6 +40,7 @@ namespace Presence
             LogCurrentState("After SetupSubscriptions");
         }
 
+
         private void SetupNightModeSubscription()
         {
             if (_app.States.Any(s => s.EntityId == _roomConfig.NightTimeEntityId))
@@ -28,7 +50,7 @@ namespace Presence
                     {
                         LogDebug("Night Mode Switched: {state}", s.New.State);
                         LogCurrentState("Before handling Night Mode Switched event");
-                        NightModeChanged();
+                        NightModeChangedEvent.Invoke(this, new HassEventArgs() { EntityId = _roomConfig.NightTimeEntityId! });
                         LogCurrentState("After handling Night Mode Switched event");
                     });
         }
@@ -58,7 +80,7 @@ namespace Presence
                     {
                         LogDebug("Entitiy Manually Turned On: {entityId}", s.New.EntityId);
                         LogCurrentState("Before handling Manually Turned On event");
-                        SetRoomState(RoomState.Override);
+                        ManualTurnOnEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
                         LogCurrentState("After handling Manually Turned On event");
                     });
         }
@@ -95,7 +117,7 @@ namespace Presence
                     {
                         LogDebug("Entity Manually Turned Off: {entityId}", s.New.EntityId);
                         LogCurrentState("Before handling Manually Turned Off event");
-                        SetRoomState(RoomState.Idle);
+                        ManualTurnOffEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
                         LogCurrentState("After handling Manually Turned Off event");
                     });
         }
@@ -104,14 +126,14 @@ namespace Presence
         {
             foreach (var entityId in _keepAliveEntityIds)
                 _app.Entity(entityId)
-                    .StateChanges
+                    .StateAllChanges
                     .Where(e => e.Old?.State == "off" && e.New?.State == "on" ||
                                 e.Old?.State == "on" && e.New?.State == "on")
                     .Subscribe(s =>
                     {
                         LogDebug("Keep Alive event: {entityId}", s.New.EntityId);
                         LogCurrentState("Before handling Keep Alive event");
-                        HandleEvent();
+                        KeepAliveEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
                         LogCurrentState("After handling Keep Alive event");
                     });
         }
@@ -128,32 +150,22 @@ namespace Presence
                     {
                         LogDebug("Presence event: {entityId}", s.New.EntityId);
                         LogCurrentState("Before handling Presence event");
-                        HandleEvent();
+                        PresenceEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
                         LogCurrentState("After handling Presence event");
                     });
         }
 
         private void StartGuardDog()
         {
-            _app.RunEvery(TimeSpan.FromMinutes(5), () =>
+            _app.RunEvery(TimeSpan.FromSeconds(_presenceConfig.GuardTimeout), () =>
             {
-                LogTrace("Guard Dog - Looking for Turned On Keep Alive Entities()");
-                if (_keepAliveEntityIds.Any(entityId => EntityState(entityId) == "on") && RoomIs(RoomState.Idle))
-                    HandleEvent();
-            });
-
-            _app.RunEvery(TimeSpan.FromMinutes(1), () =>
-            {
-                LogTrace("Guard Dog - Looking for Turned On Control Entities()");
-                if (Timer != null && ( Presence || RoomIs(RoomState.Override) )) return;
-                foreach (var entityId in _controlEntityIds.Union(_nightControlEntityIds)
-                                                          .Where(entityId => EntityState(entityId) == "on"))
-                {
-                    LogDebug("Guard Dog found: {entityId}", entityId);
-                    SetRoomState(RoomState.Override);
-                    Timer?.Dispose();
-                    Timer = _app.RunIn(TimeSpan.FromSeconds(_roomConfig.OverrideTimeout), HandleTimer);
-                }
+                LogTrace("Guard Dog - Looking for Turned On Control Entities");
+                var overrideEntities = string.Join(", ", _controlEntityIds
+                                                         .Union(_nightControlEntityIds)
+                                                         .Where(entityId => EntityState(entityId) == "on"));
+                if (string.IsNullOrWhiteSpace(overrideEntities)) return;
+                LogDebug("Guard Dog found: {entityId}", overrideEntities);
+                GuardDogEvent.Invoke(this, new HassEventArgs { EntityId = overrideEntities });
             });
         }
     }
