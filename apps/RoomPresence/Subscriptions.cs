@@ -7,6 +7,8 @@ namespace Presence
     public class HassEventArgs : EventArgs
     {
         public string EntityId { get; set; }
+        public string OldState { get; set; }
+        public string NewState { get; set; }
     }
 
     public partial class RoomPresenceImplementation
@@ -18,16 +20,18 @@ namespace Presence
         public event EventHandler<HassEventArgs> ManualTurnOnEvent;
         public event EventHandler<HassEventArgs> ManualTurnOffEvent;
         public event EventHandler<HassEventArgs> NightModeChangedEvent;
+        public event EventHandler<HassEventArgs> RandomEntityChangedEvent;
 
         private void SetupSubscriptions()
         {
-            PresenceEvent         += OnPresence;
-            ManualTurnOnEvent     += OnManualTurnOn;
-            ManualTurnOffEvent    += OnManualTurnOff;
-            KeepAliveEvent        += OnKeepAlive;
-            GuardDogEvent         += OnGuardDog;
-            TimeoutEvent          += OnTimeoutEvent;
-            NightModeChangedEvent += OnNightModeChanged;
+            PresenceEvent            += OnPresence;
+            ManualTurnOnEvent        += OnManualTurnOn;
+            ManualTurnOffEvent       += OnManualTurnOff;
+            KeepAliveEvent           += OnKeepAlive;
+            GuardDogEvent            += OnGuardDog;
+            TimeoutEvent             += OnTimeoutEvent;
+            NightModeChangedEvent    += OnNightModeChanged;
+            RandomEntityChangedEvent += OnRandomEntityChanged;
 
             LogCurrentState("Before SetupSubscriptions");
             SetupPresenceSubscription();
@@ -37,9 +41,24 @@ namespace Presence
             SetupBrightnessColourSubscription();
             SetupEnabledSwitchSubscription();
             SetupNightModeSubscription();
+            SetupRandomEntitySubscription();
             LogCurrentState("After SetupSubscriptions");
         }
 
+
+        private void SetupRandomEntitySubscription()
+        {
+            if (_app.States.Any(s => s.EntityId == _roomConfig.RandomEntityId))
+                _app.Entity(_roomConfig.RandomEntityId!)
+                    .StateChanges
+                    .Subscribe(s =>
+                    {
+                        LogDebug("Random Entity changed: {state}", s.New.State);
+                        LogCurrentState("Before handling Random Entity changed event");
+                        RandomEntityChangedEvent.Invoke(this, new HassEventArgs() { EntityId = _roomConfig.RandomEntityId!, OldState = s.Old.State?.ToString() ?? UNKNOWN, NewState = s.New.State?.ToString() ?? UNKNOWN });
+                        LogCurrentState("After handling Random Entity changed event");
+                    });
+        }
 
         private void SetupNightModeSubscription()
         {
@@ -126,7 +145,7 @@ namespace Presence
         {
             foreach (var entityId in _keepAliveEntityIds)
                 _app.Entity(entityId)
-                    .StateAllChanges
+                    .StateChanges
                     .Where(e => e.Old?.State == "off" && e.New?.State == "on" ||
                                 e.Old?.State == "on" && e.New?.State == "on")
                     .Subscribe(s =>

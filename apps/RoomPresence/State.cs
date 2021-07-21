@@ -22,6 +22,9 @@ namespace Presence
                 case RoomState.Override:
                     SetRoomStateOverride();
                     break;
+                case RoomState.RandomWait:
+                    SetRoomStateRandom();
+                    break;
             }
 
             void SetTimer(TimeSpan ts, Action action)
@@ -36,9 +39,45 @@ namespace Presence
                 Timer = null;
             }
 
+            void SetRoomStateRandom()
+            {
+                var waitDuration = _controller.GetRandomDuration();
+                SetRandomOnTimer(waitDuration);
+                _attributes = SetAttributes(RoomState.RandomWait, waitDuration);
+                _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.RandomWait.ToString().ToLower(), _attributes);
+            }
+
+            void SetRandomOnTimer(int duration)
+            {
+                SetTimer(TimeSpan.FromMinutes(duration), () =>
+                {
+                    if (!LuxBelowThreshold()) return;
+                    var onDuration = _controller.GetRandomDuration();
+
+                    TurnOnControlEntities();
+                    TurnOffRandomAndReset(onDuration);
+
+                    _attributes = SetAttributes(RoomState.RandomActive, onDuration);
+                    _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.RandomActive.ToString().ToLower(), _attributes);
+                });
+            }
+
+            void TurnOffRandomAndReset(int duration)
+            {
+                SetTimer(TimeSpan.FromMinutes(duration), () =>
+                {
+                    var offDuration = _controller.GetRandomDuration();
+                    SetRoomStateIdle();
+                    SetRandomOnTimer(offDuration);
+
+                    _attributes = SetAttributes(RoomState.RandomWait, offDuration);
+                    _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.RandomWait.ToString().ToLower(), _attributes);
+                });
+            }
+
             void SetRoomStateOverride()
             {
-                if (Timer != null && RoomIs(RoomState.Active)) return;
+                if (Timer != null && ( RoomIs(RoomState.Active) || RoomIs(RoomState.RandomActive) )) return;
 
                 SetTimer(_overrideTimeout, () => TimeoutEvent.Invoke(this, new HassEventArgs { EntityId = _eventEntity }));
                 _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.Override.ToString().ToLower(), _attributes);
@@ -70,8 +109,18 @@ namespace Presence
                 EnableCircadian();
             }
 
-            object SetAttributes(RoomState state)
+            object SetAttributes(RoomState state, int? randomDuration = null)
             {
+                string expiryAtt = "";
+                if (randomDuration == null)
+                    expiryAtt =
+                        state == RoomState.Override
+                            ? DateTime.Now.AddSeconds(_overrideTimeout.TotalSeconds).ToString("yyyy-MM-dd HH:mm:ss")
+                            : Expiry;
+                else
+                    expiryAtt = DateTime.Now.AddMinutes((int) randomDuration).ToString("yyyy-MM-dd HH:mm:ss");
+
+
                 return new
                 {
                     EventEntity = _eventEntity,
@@ -80,9 +129,10 @@ namespace Presence
                     KeepAliveEntities,
                     ControlEntityIds      = _controlEntityIds,
                     NightControlEntityIds = _nightControlEntityIds,
-                    Expiry = state == RoomState.Override
-                        ? DateTime.Now.AddSeconds(_overrideTimeout.TotalSeconds).ToString("yyyy-MM-dd HH:mm:ss")
-                        : Expiry
+                    _roomConfig.RandomEntityId,
+                    _roomConfig.RandomStates,
+                    RandomDuration = randomDuration ?? 0,
+                    Expiry         = expiryAtt
                 };
             }
         }

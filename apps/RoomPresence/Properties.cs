@@ -46,6 +46,12 @@ namespace Presence
             return entities;
         }
 
+        private bool ConditionMatched()
+        {
+            if (EntityState(_roomConfig.ConditionEntityId) == UNKNOWN) return true;
+            return EntityState(_roomConfig.ConditionEntityId) == _roomConfig.ConditionEntityState;
+        }
+
         private bool IsDisabled()
         {
             LogTrace("IsDisabled()");
@@ -99,7 +105,7 @@ namespace Presence
             string roomEntityState = EntityState(_roomConfig.RoomPresenceEntityId);
 
             LogTrace("RoomState is: {roomState}", roomEntityState);
-            //if (roomEntityState == "Unknown") throw new ArgumentException();
+            //if (roomEntityState == UNKNOWN) throw new ArgumentException();
             return
                 roomEntityState == roomState.ToString().ToLower();
         }

@@ -7,25 +7,27 @@ namespace Presence
 {
     public partial class RoomPresenceImplementation
     {
-        private readonly INetDaemonRxApp _app;
-        private readonly string[]        _controlEntityIds;
-        private readonly string[]        _keepAliveEntityIds;
-        private readonly string[]        _nightControlEntityIds;
-        private readonly TimeSpan        _nightTimeout;
-        private readonly TimeSpan        _normalTimeout;
-        private readonly TimeSpan        _overrideTimeout;
-        private readonly PresenceConfig  _presenceConfig;
-        private readonly string[]        _presenceEntityIds;
-        private readonly RoomConfig      _roomConfig;
-        private readonly string          _tracePrefix;
-        private          IDisposable?    _brightnessTimer;
-        private          string          _eventEntity;
+        private readonly INetDaemonRxApp   _app;
+        private readonly string[]          _controlEntityIds;
+        private readonly string[]          _keepAliveEntityIds;
+        private readonly string[]          _nightControlEntityIds;
+        private readonly TimeSpan          _nightTimeout;
+        private readonly TimeSpan          _normalTimeout;
+        private readonly TimeSpan          _overrideTimeout;
+        private readonly PresenceConfig    _presenceConfig;
+        private readonly IRandomController _controller;
+        private readonly string[]          _presenceEntityIds;
+        private readonly RoomConfig        _roomConfig;
+        private readonly string            _tracePrefix;
+        private          IDisposable?      _brightnessTimer;
+        private          string            _eventEntity;
 
 
-        public RoomPresenceImplementation(INetDaemonRxApp app, PresenceConfig presenceConfig)
+        public RoomPresenceImplementation(INetDaemonRxApp app, PresenceConfig presenceConfig, IRandomController controller)
         {
             _app            = app;
             _presenceConfig = presenceConfig;
+            _controller     = controller;
 
             try
             {

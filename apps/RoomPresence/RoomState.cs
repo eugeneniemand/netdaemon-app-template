@@ -5,6 +5,8 @@
         Idle,
         Active,
         Disabled,
-        Override
+        Override,
+        RandomWait,
+        RandomActive
     }
 }

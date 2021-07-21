@@ -8,7 +8,7 @@ namespace Presence
     {
         private void OnPresence(object? sender, HassEventArgs args)
         {
-            if (IsDisabled() || !Presence || !LuxBelowThreshold() || RoomIs(RoomState.Override)) return;
+            if (IsDisabled() || !Presence || !LuxBelowThreshold() || !ConditionMatched() || RoomIs(RoomState.Override)) return;
             _eventEntity = args.EntityId;
             SetRoomState(RoomState.Active);
         }
@@ -74,6 +74,11 @@ namespace Presence
                 _eventEntity = "";
                 SetRoomState(RoomState.Idle);
             }
+        }
+
+        private void OnRandomEntityChanged(object? sender, HassEventArgs e)
+        {
+            SetRoomState(_roomConfig.RandomStates.Contains(e.NewState) ? RoomState.RandomWait : RoomState.Idle);
         }
 
         private void DisableCircadian()

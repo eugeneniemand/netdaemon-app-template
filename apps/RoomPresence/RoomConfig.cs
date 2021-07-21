@@ -43,5 +43,9 @@ namespace Presence
         public int SunriseEndKelvin { get; set; }
         public int SunriseUpdateInterval { get; set; }
         public bool Debug { get; set; }
+        public string ConditionEntityId { get; set; }
+        public string ConditionEntityState { get; set; }
+        public string RandomEntityId { get; set; }
+        public IEnumerable<string> RandomStates { get; set; }
     }
 }
