@@ -8,13 +8,17 @@ namespace Presence
     {
         private void OnPresence(object? sender, HassEventArgs args)
         {
+            hassEventArgs = args;
             if (IsDisabled() || !Presence || !LuxBelowThreshold() || !ConditionMatched() || RoomIs(RoomState.Override)) return;
-            _eventEntity = args.EntityId;
+            _eventEntity = hassEventArgs.EntityId;
             SetRoomState(RoomState.Active);
         }
 
+        private HassEventArgs hassEventArgs;
+
         private void OnManualTurnOn(object? sender, HassEventArgs args)
         {
+            hassEventArgs = args;
             if (IsDisabled()) return;
             _eventEntity = args.EntityId;
             SetRoomState(RoomState.Override);
@@ -22,6 +26,7 @@ namespace Presence
 
         private void OnManualTurnOff(object? sender, HassEventArgs args)
         {
+            hassEventArgs = args;
             if (IsDisabled()) return;
             _eventEntity = args.EntityId;
             SetRoomState(RoomState.Idle);
@@ -29,6 +34,7 @@ namespace Presence
 
         private void OnNightModeChanged(object? sender, HassEventArgs args)
         {
+            hassEventArgs = args;
             if (IsDisabled() || RoomIs(RoomState.Idle)) return;
             _eventEntity = args.EntityId;
 
@@ -49,6 +55,7 @@ namespace Presence
 
         private void OnKeepAlive(object? sender, HassEventArgs args)
         {
+            hassEventArgs = args;
             if (IsDisabled() || !Presence || !LuxBelowThreshold() || RoomIs(RoomState.Override)) return;
             _eventEntity = args.EntityId;
             SetRoomState(RoomState.Active);
@@ -56,6 +63,7 @@ namespace Presence
 
         private void OnGuardDog(object? sender, HassEventArgs args)
         {
+            hassEventArgs = args;
             if (IsDisabled() || Timer != null && ( Presence || RoomIs(RoomState.Override) )) return;
             _eventEntity = args.EntityId;
             SetRoomState(RoomState.Override);
@@ -63,6 +71,7 @@ namespace Presence
 
         private void OnTimeoutEvent(object? sender, HassEventArgs args)
         {
+            hassEventArgs = args;
             if (IsDisabled()) return;
             if (Presence && LuxBelowThreshold())
             {
@@ -76,9 +85,10 @@ namespace Presence
             }
         }
 
-        private void OnRandomEntityChanged(object? sender, HassEventArgs e)
+        private void OnRandomEntityChanged(object? sender, HassEventArgs args)
         {
-            SetRoomState(_roomConfig.RandomStates.Contains(e.NewState) ? RoomState.RandomWait : RoomState.Idle);
+            hassEventArgs = args;
+            SetRoomState(_roomConfig.RandomStates.Contains(args.NewState) ? RoomState.RandomWait : RoomState.Idle);
         }
 
         private void DisableCircadian()
@@ -98,19 +108,17 @@ namespace Presence
             LogTrace("TurnOffControlEntities()");
             foreach (var entityId in GetControlEntities())
             {
-                LogDebug("Turn Off Control Entity: {entityId}", entityId);
+                LogDebugJson(hassEventArgs, method: nameof(TurnOffControlEntities), data: entityId);
                 _app.Entity(entityId).TurnOff();
             }
         }
 
         private void TurnOnControlEntities()
         {
-            LogTrace("TurnOnControlEntities()");
+            LogVerboseJson(hassEventArgs, "Start", nameof(TurnOnControlEntities), data: null);
             foreach (var entityId in GetControlEntities())
                 if (EntityState(entityId) == "off")
                 {
-                    LogDebug("Turn On Control Entity: {entityId}", entityId);
-
                     if (_roomConfig.SunriseEnabled)
                     {
                         _app.Entity(entityId).TurnOn(new { brightness = _roomConfig.SunriseStartBrightness });
@@ -126,12 +134,15 @@ namespace Presence
                     else
                     {
                         _app.Entity(entityId).TurnOn();
+                        LogInfoJson(hassEventArgs, "Entity turned on", nameof(TurnOnControlEntities), data: entityId);
                     }
                 }
                 else
                 {
-                    LogDebug("Entity already on: {entityId}", entityId);
+                    LogDebugJson(hassEventArgs, "Entity already on", nameof(TurnOnControlEntities), data: entityId);
                 }
+
+            LogVerboseJson(hassEventArgs, "Finish", nameof(TurnOnControlEntities), data: null);
         }
 
 

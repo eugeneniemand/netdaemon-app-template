@@ -3,7 +3,7 @@ presence:
   nd_user_id: ef606e2918da4355ba036a019cdcc6a0
   guard_timeout: 300
   min_duration: 5
-  max_duration: 30  
+  max_duration: 30
   rooms:
   - name: Study
     timeout: 90
@@ -14,12 +14,19 @@ presence:
       - binary_sensor.eugene_laptop_in_use
       - binary_sensor.haileys_macbook_air_active
     control_entity_ids:
-      - light.study
+      - light.office
+      - switch.office_skylight
+    night_time_entity_id: input_select.house_mode
+    night_time_entity_states:
+      - night
+      - sleeping
+    night_control_entity_ids:
+      - light.office
     lux_limit_entity_id: input_number.office_lux_limit
     lux_entity_id: sensor.office_lux
     circadian_switch_entity_id: switch.adaptive_lighting_study
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
     - armed_away
 
@@ -29,6 +36,7 @@ presence:
       - binary_sensor.dining
     control_entity_ids:
       - light.dining
+      - light.dining_wall
     timeout: 300
     nightTimeout: 90
     lux_entity_id: sensor.dining_lux
@@ -38,12 +46,26 @@ presence:
       - night
       - sleeping
     night_control_entity_ids:
-      - light.dining_wall_group
-    circadian_switch_entity_id: switch.adaptive_lighting_dining
+      - light.dining_1
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_dining
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
     - armed_away
+
+  - name: Fish
+    presence_entity_ids:
+      - binary_sensor.dining_motion
+      - binary_sensor.dining
+    control_entity_ids:
+      - switch.plug_2
+    timeout: 900
+    night_time_entity_id: input_select.house_mode
+    night_time_entity_states:
+      - night
+      - sleeping
+    night_control_entity_ids:
+      - light.dining_2
 
   - name: Landing
     presence_entity_ids:
@@ -62,7 +84,7 @@ presence:
     lux_entity_id: sensor.landing_lux
     lux_limit_entity_id: input_number.landing_lux_limit
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_away
 
   - name: Porch
@@ -75,24 +97,43 @@ presence:
     condition_entity_id: sun.sun
     condition_entity_state: below_horizon
 
-  - name: Boys
+  - name: Aaron
     timeout: 300
     nightTimeout: 90
     presence_entity_ids:
-      - binary_sensor.jayden_motion
+      - binary_sensor.aaron_motion
     control_entity_ids:
-      - light.boys
-    lux_entity_id: sensor.boys_lux
-    lux_limit_entity_id: input_number.boys_lux_limit
+      - light.aaron
+    lux_entity_id: sensor.aaron_lux
+    lux_limit_entity_id: input_number.aaron_lux_limit
     night_time_entity_id: input_select.house_mode
     night_time_entity_states:
       - night
       - sleeping
     night_control_entity_ids:
-      - light.boys_4
-    circadian_switch_entity_id: switch.circadian_lighting_circadian_boys
+      - light.aaron_2
+    circadian_switch_entity_id: switch.circadian_lighting_circadian_aaron
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
+    - armed_away
+
+  - name: Jayden
+    timeout: 300
+    nightTimeout: 600
+    presence_entity_ids:
+      - binary_sensor.jayden_motion
+    control_entity_ids:
+      - light.jayden
+    lux_entity_id: sensor.jayden_lux
+    lux_limit_entity_id: input_number.jayden_lux_limit
+    night_time_entity_id: input_select.house_mode
+    night_time_entity_states:
+      - night
+      - sleeping
+    night_control_entity_ids:
+      - switch.tuya_socket_3
+    random_entity_id: alarm_control_panel.alarmo
+    random_states:
     - armed_away
 
   - name: Hallway
@@ -101,12 +142,12 @@ presence:
       - binary_sensor.landing_motion
       - binary_sensor.hallway
     control_entity_ids:
-      - light.entrance_2
+      - light.hallway
     lux_limit_entity_id: input_number.hallway_lux_limit
     lux_entity_id: sensor.entrance_lux
-    circadian_switch_entity_id: switch.adaptive_lighting_entrance
+    circadian_switch_entity_id: switch.adaptive_lighting_hallway
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
     - armed_away
 
@@ -115,12 +156,12 @@ presence:
     presence_entity_ids:
       - binary_sensor.entrance_motion
     control_entity_ids:
-      - light.entrance_1
+      - light.entrance
     lux_limit_entity_id: input_number.entrance_lux_limit
     lux_entity_id: sensor.entrance_lux
     circadian_switch_entity_id: switch.adaptive_lighting_entrance
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
     - armed_away
 
@@ -141,7 +182,7 @@ presence:
       - light.master_2
     circadian_switch_entity_id: switch.circadian_lighting_circadian_master
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_away
 
   - name: Lounge
@@ -164,21 +205,20 @@ presence:
       - light.floor
     circadian_switch_entity_id: switch.adaptive_lighting_floor
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
     - armed_away
 
-  - name: Aaron
+  - name: Playroom
     timeout: 300
     presence_entity_ids:
-      - binary_sensor.aaron_motion
+      - binary_sensor.playroom_motion
     control_entity_ids:
-      - light.aaron
-    lux_entity_id: sensor.aaron_lux
-    lux_limit_entity_id: input_number.aaron_lux_limit
-    circadian_switch_entity_id: switch.circadian_lighting_circadian_aaron
+      - light.playroom
+    lux_entity_id: sensor.playroom_lux
+    lux_limit_entity_id: input_number.playroom_lux_limit
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_away
 
   - name: Kitchen
@@ -192,7 +232,7 @@ presence:
     lux_limit_entity_id: input_number.kitchen_lux_limit
     circadian_switch_entity_id: switch.adaptive_lighting_kitchen
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
     - armed_away
 
@@ -206,7 +246,7 @@ presence:
     lux_limit_entity_id: input_number.toilet_lux_limit
     circadian_switch_entity_id: switch.adaptive_lighting_toilet
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
     - armed_away
 
@@ -219,16 +259,13 @@ presence:
     lux_entity_id: sensor.utility_lux
     lux_limit_entity_id: input_number.utility_lux_limit
     circadian_switch_entity_id: switch.adaptive_lighting_utility
+    night_time_entity_id: input_select.house_mode
+    night_time_entity_states:
+      - night
+      - sleeping
+    night_control_entity_ids:
+      - light.utility_1
     random_entity_id: alarm_control_panel.alarmo
-    random_states: 
+    random_states:
     - armed_night
-    - armed_away
-
-  - name: Jayden
-    timeout: 300
-    presence_entity_ids:
-    control_entity_ids:
-      - light.jayden
-    random_entity_id: alarm_control_panel.alarmo
-    random_states: 
     - armed_away

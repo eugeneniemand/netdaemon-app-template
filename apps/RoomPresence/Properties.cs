@@ -23,26 +23,30 @@ namespace Presence
 
         private IEnumerable<string> GetControlEntities()
         {
-            LogTrace("GetControlEntities()");
             IEnumerable<string> entities = _controlEntityIds;
 
-            LogTrace("If room state is Override then get control and night control entities to enable guard dog");
-            if (RoomIs(RoomState.Override))
+            var roomState = RoomIs(RoomState.Override);
+            if (roomState)
             {
+                LogDebugJson(hassEventArgs, "Union Control Entities", data: roomState);
                 entities = _controlEntityIds.Union(_nightControlEntityIds);
-            }
-            else if (!_nightControlEntityIds.Any())
-            {
-                LogTrace("Night Control entities doesnt exists");
-                entities = _controlEntityIds;
             }
             else if (IsNightTime)
             {
-                LogTrace("Return Night Control Entities");
-                entities = _nightControlEntityIds;
+                LogVerboseJson(hassEventArgs, data: new { IsNightTime });
+                if (_nightControlEntityIds.Any())
+                {
+                    LogDebugJson(hassEventArgs, "Night Control Entities Exists");
+                    entities = _nightControlEntityIds;
+                }
+                else
+                {
+                    LogDebugJson(hassEventArgs, "No Night Control Entities Exists");
+                    entities = _controlEntityIds;
+                }
             }
 
-            LogDebug("Control Entities: {entities}", entities);
+            LogDebugJson(hassEventArgs, data: new { entities });
             return entities;
         }
 
@@ -54,14 +58,12 @@ namespace Presence
 
         private bool IsDisabled()
         {
-            LogTrace("IsDisabled()");
+            var isDisabled = EntityState(_roomConfig.EnabledSwitchEntityId) == "off";
 
-            var switchEntity = EntityState(_roomConfig.EnabledSwitchEntityId);
-            LogTrace("{switch} is {state}?", _roomConfig.EnabledSwitchEntityId, switchEntity);
+            LogInfoJson(hassEventArgs, data: new { isDisabled });
+            if (isDisabled) SetRoomState(RoomState.Disabled);
 
-            if (switchEntity != "off") return false;
-            SetRoomState(RoomState.Disabled);
-            return true;
+            return isDisabled;
         }
 
         private bool LuxBelowThreshold()
@@ -70,41 +72,35 @@ namespace Presence
                 return true;
 
             var isBelowThreshold = Lux <= LuxLimit();
-            LogDebug("Lux Below Threshold: {b} ({Lux})", isBelowThreshold, Lux);
+            LogDebugJson(hassEventArgs, data: isBelowThreshold);
+
             return isBelowThreshold;
         }
 
         private int LuxLimit()
         {
-            LogTrace("LuxLimit()");
-
             if (string.IsNullOrWhiteSpace(_roomConfig.LuxLimitEntityId))
             {
                 var roomConfigLuxLimit = _roomConfig.LuxLimit ?? 40;
-                LogTrace("Lux Limit from Config");
-                LogDebug("Lux Limit: {roomConfigLuxLimit}", roomConfigLuxLimit);
+                LogDebugJson(hassEventArgs, "ValueFromConfig", data: new { roomConfigLuxLimit });
                 return roomConfigLuxLimit;
             }
 
             if (int.TryParse(EntityState(_roomConfig.LuxLimitEntityId), out var luxEntityVal))
             {
-                LogTrace("Lux Limit from Entity");
-                LogDebug("Lux Limit: {luxEntityVal}", luxEntityVal);
+                LogDebugJson(hassEventArgs, "ValueFromEntity", data: new { luxEntityVal });
                 return luxEntityVal;
             }
 
-            LogTrace(
-                $"Could Not Parse {_roomConfig.LuxLimitEntityId}: {EntityState(_roomConfig.LuxLimitEntityId)} roomState, returning default 1000");
+            LogWarnJson(hassEventArgs, "Could Not Parse", data: new { _roomConfig.LuxLimitEntityId, entityValue = EntityState(_roomConfig.LuxLimitEntityId), returnValue = 1000 });
             return 1000;
         }
 
         public bool RoomIs(RoomState roomState)
         {
-            LogTrace("Is RoomState: {s}?", roomState.ToString().ToLower());
-
             string roomEntityState = EntityState(_roomConfig.RoomPresenceEntityId);
 
-            LogTrace("RoomState is: {roomState}", roomEntityState);
+            LogDebugJson(hassEventArgs, data: new { roomEntityState });
             //if (roomEntityState == UNKNOWN) throw new ArgumentException();
             return
                 roomEntityState == roomState.ToString().ToLower();

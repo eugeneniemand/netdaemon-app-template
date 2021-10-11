@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using NetDaemon.Common;
+using Serilog;
 
 namespace Presence
 {
@@ -33,31 +36,60 @@ namespace Presence
                 _app.LogError($"{_roomConfig.Name} contains the following invalid EntityIds:\n{string.Join("\n  - ", invalidEntities)}");
         }
 
-        private void LogCurrentState(string message)
+        private void LogDebugJson(HassEventArgs args, string message = "", [CallerMemberName] string method = "", [CallerLineNumber] long line = 0, object? data = null)
         {
-            var state = ToJson(new
+            var logMessageData = NewLogMessage(args, method, line, message, data);
+            _app.LogDebug("{text}", ToJson(logMessageData));
+        }
+
+        private void LogVerboseJson(HassEventArgs args, string message = "", [CallerMemberName] string method = "", [CallerLineNumber] long line = 0, object? data = null)
+        {
+            var logMessageData = NewLogMessage(args, method, line, message, data);
+            _app.LogTrace("{text}", ToJson(logMessageData));
+        }
+
+        private void LogInfoJson(HassEventArgs args, string message = "", [CallerMemberName] string method = "", [CallerLineNumber] long line = 0, object? data = null)
+        {
+            var logMessageData = NewLogMessage(args, method, line, message, data);
+            _app.LogInformation("{text}", ToJson(logMessageData));
+        }
+
+        private void LogWarnJson(HassEventArgs args, string message = "", [CallerMemberName] string method = "", [CallerLineNumber] long line = 0, object? data = null)
+        {
+            var logMessageData = NewLogMessage(args, method, line, message, data);
+            _app.LogWarning("{text}", ToJson(logMessageData));
+        }
+
+        private static object NewLogMessage(HassEventArgs args, string method, long line, string message, object? data)
+        {
+            var logMessageData = new
             {
-                RoomPresenceState = new
-                {
-                    Lux,
-                    LuxLimit          = LuxLimit(),
-                    LuxBelowThreshold = LuxBelowThreshold(),
-                    Enabled           = IsDisabled(),
-                    ControlEntities   = GetControlEntities(),
-                    ActiveEntities,
-                    Timer = Timer != null ? "NotDisposed" : "Disposed",
-                    IsNightTime
-                },
-                RawStates = new
-                {
-                    Lux       = $"{EntityState(_roomConfig.LuxEntityId)} - {_roomConfig.LuxEntityId}",
-                    LuxLimit  = $"{EntityState(_roomConfig.LuxLimitEntityId)} - {_roomConfig.LuxLimitEntityId}",
-                    Enabled   = $"{EntityState(_roomConfig.EnabledSwitchEntityId)} - {_roomConfig.EnabledSwitchEntityId}",
-                    RoomState = $"{EntityState(_roomConfig.RoomPresenceEntityId)} - {_roomConfig.RoomPresenceEntityId}",
-                    NightTime = $"{EntityState(_roomConfig.NightTimeEntityId)} - {_roomConfig.NightTimeEntityId}"
-                }
+                TimeStamp = $"{DateTime.Now:O}".Replace("\u002B", "Z"),
+                args.RoomName,
+                args.EventName,
+                args.CorrelationId,
+                args.EntityId,
+                method,
+                line,
+                message,
+                data
+            };
+            return logMessageData;
+        }
+
+        private void LogCurrentState(string message = "")
+        {
+            LogVerboseJson(hassEventArgs, message, data: new
+            {
+                Lux       = EntityState(_roomConfig.LuxEntityId),
+                LuxLimit  = EntityState(_roomConfig.LuxLimitEntityId),
+                Enabled   = EntityState(_roomConfig.EnabledSwitchEntityId),
+                RoomState = EntityState(_roomConfig.RoomPresenceEntityId),
+                NightTime = EntityState(_roomConfig.NightTimeEntityId),
+                ActiveEntities,
+                Timer = Timer != null ? "NotDisposed" : "Disposed",
+                IsNightTime
             });
-            LogTrace("{message}\nState: {state}", message, state);
         }
 
         private void LogConfig(RoomConfig roomConfig)
@@ -69,9 +101,9 @@ namespace Presence
             LogTrace(jsonConfig, new { });
         }
 
-        private static string ToJson(object obj)
+        private static string ToJson(object obj, bool writeIndented = false)
         {
-            return JsonSerializer.Serialize(obj, new JsonSerializerOptions() { WriteIndented = false });
+            return JsonSerializer.Serialize(obj, new JsonSerializerOptions() { WriteIndented = writeIndented });
         }
 
         private void LogDebug(string message, params object[] param)
@@ -109,6 +141,25 @@ namespace Presence
             else
             {
                 _app.LogTrace($"{_tracePrefix}{message}", param);
+            }
+        }
+
+        private void LogWarning(string message, params object[] param)
+        {
+            if (param.Length == 0)
+            {
+                _app.LogWarning($"{_tracePrefix}{message}");
+                return;
+            }
+
+            if (param[0].GetType().Name.Contains("Anonymous") || param[0].GetType().Namespace != "System")
+            {
+                var json = ToJson(param[0]);
+                _app.LogWarning($"{_tracePrefix}{{message}}{{json}}", message, json, param.Length > 1 ? param.Skip(1) : Array.Empty<object>());
+            }
+            else
+            {
+                _app.LogWarning($"{_tracePrefix}{message}", param);
             }
         }
     }

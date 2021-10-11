@@ -43,7 +43,7 @@ namespace Presence
                 _overrideTimeout = TimeSpan.FromSeconds(presenceConfig.RoomConfig.OverrideTimeout != 0
                     ? presenceConfig.RoomConfig.OverrideTimeout
                     : 900);
-                _presenceEntityIds     = presenceConfig.RoomConfig.PresenceEntityIds.ToArray();
+                _presenceEntityIds     = presenceConfig.RoomConfig.PresenceEntityIds?.ToArray() ?? Array.Empty<string>();
                 _controlEntityIds      = presenceConfig.RoomConfig.ControlEntityIds.ToArray();
                 _nightControlEntityIds = presenceConfig.RoomConfig.NightControlEntityIds.ToArray();
                 _keepAliveEntityIds    = presenceConfig.RoomConfig.KeepAliveEntityIds.ToArray();
@@ -64,9 +64,10 @@ namespace Presence
 
         public void Initialize()
         {
+            hassEventArgs = new HassEventArgs(_roomConfig.Name, "RoomInit");
             try
             {
-                LogTrace("Initialize Started", new
+                LogInfoJson(hassEventArgs, "Start", data: new
                 {
                     _roomConfig,
                     Scheduler?.Now,
@@ -94,13 +95,19 @@ namespace Presence
             }
         }
 
+        private static int TestCounter = 0;
+
         private void SetupEnabledSwitchEntity()
         {
-            LogTrace("If {switch} does not exist create it", _roomConfig.EnabledSwitchEntityId);
             var switchEntity = _app.States.FirstOrDefault(e => e.EntityId == _roomConfig.EnabledSwitchEntityId);
 
-            if (switchEntity != null) return;
-            LogTrace("{switch} does not exist, creating and turning it on", _roomConfig.EnabledSwitchEntityId);
+            if (switchEntity != null)
+            {
+                LogVerboseJson(hassEventArgs, $"Switch already exists", data: _roomConfig.EnabledSwitchEntityId);
+                return;
+            }
+
+            LogInfoJson(hassEventArgs, $"Switch does not exist, creating and switching on", data: _roomConfig.EnabledSwitchEntityId);
             _app.SetState(_roomConfig.EnabledSwitchEntityId, "on", null);
         }
     }

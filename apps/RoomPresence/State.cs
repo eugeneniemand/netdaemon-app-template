@@ -6,7 +6,7 @@ namespace Presence
     {
         private void SetRoomState(RoomState roomState)
         {
-            LogDebug("Attempt to set Room State To: {roomState}", roomState.ToString());
+            LogInfoJson(hassEventArgs, data: roomState.ToString());
             var _attributes = SetAttributes(roomState);
             switch (roomState)
             {
@@ -79,7 +79,7 @@ namespace Presence
             {
                 if (Timer != null && ( RoomIs(RoomState.Active) || RoomIs(RoomState.RandomActive) )) return;
 
-                SetTimer(_overrideTimeout, () => TimeoutEvent.Invoke(this, new HassEventArgs { EntityId = _eventEntity }));
+                SetTimer(_overrideTimeout, () => TimeoutEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(SetRoomStateOverride)) { EntityId = _eventEntity }));
                 _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.Override.ToString().ToLower(), _attributes);
             }
 
@@ -93,7 +93,7 @@ namespace Presence
 
             void SetRoomStateActive()
             {
-                SetTimer(Timeout, () => TimeoutEvent.Invoke(this, new HassEventArgs { EntityId = _eventEntity }));
+                SetTimer(Timeout, () => TimeoutEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(SetRoomStateActive)) { EntityId = _eventEntity }));
                 _app.SetState(_roomConfig.RoomPresenceEntityId, RoomState.Active.ToString().ToLower(), _attributes);
                 TurnOnControlEntities();
             }
@@ -121,7 +121,7 @@ namespace Presence
                     expiryAtt = DateTime.Now.AddMinutes((int) randomDuration).ToString("yyyy-MM-dd HH:mm:ss");
 
 
-                return new
+                var attrs = new
                 {
                     EventEntity = _eventEntity,
                     ActiveEntities,
@@ -134,6 +134,8 @@ namespace Presence
                     RandomDuration = randomDuration ?? 0,
                     Expiry         = expiryAtt
                 };
+                LogVerboseJson(hassEventArgs, data: attrs);
+                return attrs;
             }
         }
     }

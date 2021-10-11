@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -9,6 +10,18 @@ namespace Presence
         public string EntityId { get; set; }
         public string OldState { get; set; }
         public string NewState { get; set; }
+
+        public string CorrelationId;
+
+        public string RoomName { get; set; }
+        public string EventName { get; }
+
+        public HassEventArgs(string roomConfigName, string eventName)
+        {
+            CorrelationId = Guid.NewGuid().ToString();
+            RoomName      = roomConfigName;
+            EventName     = eventName;
+        }
     }
 
     public partial class RoomPresenceImplementation
@@ -55,7 +68,7 @@ namespace Presence
                     {
                         LogDebug("Random Entity changed: {state}", s.New.State);
                         LogCurrentState("Before handling Random Entity changed event");
-                        RandomEntityChangedEvent.Invoke(this, new HassEventArgs() { EntityId = _roomConfig.RandomEntityId!, OldState = s.Old.State?.ToString() ?? UNKNOWN, NewState = s.New.State?.ToString() ?? UNKNOWN });
+                        RandomEntityChangedEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(SetupRandomEntitySubscription)) { EntityId = _roomConfig.RandomEntityId!, OldState = s.Old.State?.ToString() ?? UNKNOWN, NewState = s.New.State?.ToString() ?? UNKNOWN });
                         LogCurrentState("After handling Random Entity changed event");
                     });
         }
@@ -69,7 +82,7 @@ namespace Presence
                     {
                         LogDebug("Night Mode Switched: {state}", s.New.State);
                         LogCurrentState("Before handling Night Mode Switched event");
-                        NightModeChangedEvent.Invoke(this, new HassEventArgs() { EntityId = _roomConfig.NightTimeEntityId! });
+                        NightModeChangedEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(SetupNightModeSubscription)) { EntityId = _roomConfig.NightTimeEntityId! });
                         LogCurrentState("After handling Night Mode Switched event");
                     });
         }
@@ -99,7 +112,7 @@ namespace Presence
                     {
                         LogDebug("Entitiy Manually Turned On: {entityId}", s.New.EntityId);
                         LogCurrentState("Before handling Manually Turned On event");
-                        ManualTurnOnEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
+                        ManualTurnOnEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(SetupManualTurnOnSubscription)) { EntityId = s.New.EntityId });
                         LogCurrentState("After handling Manually Turned On event");
                     });
         }
@@ -136,7 +149,7 @@ namespace Presence
                     {
                         LogDebug("Entity Manually Turned Off: {entityId}", s.New.EntityId);
                         LogCurrentState("Before handling Manually Turned Off event");
-                        ManualTurnOffEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
+                        ManualTurnOffEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(SetupManualTurnOffSubscription)) { EntityId = s.New.EntityId });
                         LogCurrentState("After handling Manually Turned Off event");
                     });
         }
@@ -152,7 +165,7 @@ namespace Presence
                     {
                         LogDebug("Keep Alive event: {entityId}", s.New.EntityId);
                         LogCurrentState("Before handling Keep Alive event");
-                        KeepAliveEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
+                        KeepAliveEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(SetupKeepAliveSubscription)) { EntityId = s.New.EntityId });
                         LogCurrentState("After handling Keep Alive event");
                     });
         }
@@ -161,16 +174,15 @@ namespace Presence
         {
             foreach (var entityId in _presenceEntityIds)
                 _app.Entity(entityId)
-                    .StateAllChanges
+                    .StateChanges
                     .Where(e => e.Old?.State == "off" && e.New?.State == "on" ||
-                                e.Old?.State == "on" && e.New?.State == "on" &&
-                                ( e.New?.LastUpdated! - e.Old?.LastUpdated! ).Value.TotalSeconds < 80)
+                                e.Old?.State == "on" && e.New?.State == "off")
                     .Subscribe(s =>
                     {
-                        LogDebug("Presence event: {entityId}", s.New.EntityId);
-                        LogCurrentState("Before handling Presence event");
-                        PresenceEvent.Invoke(this, new HassEventArgs { EntityId = s.New.EntityId });
-                        LogCurrentState("After handling Presence event");
+                        var hassEventArgs = new HassEventArgs(_roomConfig.Name, "Presence") { EntityId = s.New.EntityId };
+                        LogCurrentState();
+                        PresenceEvent.Invoke(this, hassEventArgs);
+                        LogCurrentState();
                     });
         }
 
@@ -184,7 +196,7 @@ namespace Presence
                                                          .Where(entityId => EntityState(entityId) == "on"));
                 if (string.IsNullOrWhiteSpace(overrideEntities)) return;
                 LogDebug("Guard Dog found: {entityId}", overrideEntities);
-                GuardDogEvent.Invoke(this, new HassEventArgs { EntityId = overrideEntities });
+                GuardDogEvent.Invoke(this, new HassEventArgs(_roomConfig.Name, nameof(StartGuardDog)) { EntityId = overrideEntities });
             });
         }
     }
