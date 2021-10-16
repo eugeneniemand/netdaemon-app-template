@@ -10,11 +10,12 @@ try
 {
     await Host.CreateDefaultBuilder(args)
               .UseSerilog(new LoggerConfiguration()
-                          .MinimumLevel.Verbose()
+                          //.MinimumLevel.Verbose()
                           .WriteTo.Console()
                           .WriteTo.File("logs/{Date}.log")
                           .CreateLogger())
               .UseNetDaemon()
+              .UseEnvironment("Development")
               .Build()
               .RunAsync();
 }
