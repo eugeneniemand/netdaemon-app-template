@@ -8,39 +8,36 @@ namespace LightsManager
 {
     public class Manager
     {
-        private readonly INetDaemonRxApp     _app;
-        private readonly LightsManagerConfig _config;
-        private          IDisposable?        _timer;
+        private readonly INetDaemonRxApp _app;
+        private          IDisposable?    _timer;
+        private readonly Configurator    _configurator;
 
-        private bool IsActive => _timer != null || _config.PresenceSensors.Any(e => string.Equals(e.State, "on", StringComparison.OrdinalIgnoreCase));
+        private bool IsActive => _timer != null || _configurator.PresenceSensors.Any(e => string.Equals(e.State, "on", StringComparison.OrdinalIgnoreCase));
 
-        public Manager(INetDaemonRxApp app, LightsManagerConfig config)
+        public Manager(INetDaemonRxApp app, Configurator configurator)
         {
-            _app    = app;
-            _config = config;
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            _config.Configure(_app);
-            var subscriptions = new Subscriptions(_app, _config, this);
+            _app          = app;
+            _configurator = configurator;
+            _configurator.Configure(_app);
+            Subscriptions.Setup(_app, _configurator, this);
         }
 
         private void TurnOffControlEntities()
         {
-            _config.Lights.ForEach(e => e.TurnOff());
-            _config.Switches.ForEach(e => e.TurnOff());
+            _configurator.Lights.ForEach(e => e.TurnOff());
+            _configurator.Switches.ForEach(e => e.TurnOff());
         }
 
         private void TurnOnControlEntities()
         {
-            _config.Lights.ForEach(e => e.TurnOn());
-            _config.Switches.ForEach(e => e.TurnOn());
+            _configurator.Lights.ForEach(e => e.TurnOn());
+            _configurator.Switches.ForEach(e => e.TurnOn());
         }
 
         public void OnPresenceStarted(object? sender, HassEventArgs args)
         {
+            if (_configurator.LuxAboveLimit) return;
+
             DisposeTimer(args);
             TurnOnControlEntities();
             _app.LogEventHandled(args);
@@ -55,7 +52,7 @@ namespace LightsManager
                 return;
             }
 
-            SetTimer(TimeSpan.FromSeconds(_config.TimeoutSeconds), () =>
+            SetTimer(TimeSpan.FromSeconds(_configurator.TimeoutSeconds), () =>
             {
                 TurnOffControlEntities();
                 _app.LogEventHandled(args);
@@ -66,12 +63,12 @@ namespace LightsManager
         {
             if (!IsActive)
             {
-                _config.Configure(_app); // Configure so entities are ready for next time
+                _configurator.Configure(_app); // Configure so entities are ready for next time
                 return;
             }
 
             TurnOffControlEntities();
-            _config.Configure(_app);
+            _configurator.Configure(_app);
             TurnOnControlEntities();
             _app.LogEventHandled(args);
         }

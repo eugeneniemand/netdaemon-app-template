@@ -9,21 +9,20 @@ namespace LightsManager
 {
     internal class Subscriptions
     {
-        public event EventHandler<HassEventArgs> PresenceStartedHandler;
-        public event EventHandler<HassEventArgs> PresenceStoppedHandler;
-        public event EventHandler<HassEventArgs> HouseModeChangedHandler;
+        public static event EventHandler<HassEventArgs> PresenceStartedHandler;
+        public static event EventHandler<HassEventArgs> PresenceStoppedHandler;
+        public static event EventHandler<HassEventArgs> HouseModeChangedHandler;
 
-        public Subscriptions(INetDaemonRxApp app, LightsManagerConfig config, Manager manager)
+        public static void Setup(INetDaemonRxApp app, Configurator configurator, Manager manager)
         {
             PresenceStartedHandler  += manager.OnPresenceStarted;
             PresenceStoppedHandler  += manager.OnPresenceStopped;
             HouseModeChangedHandler += manager.OnHouseModeChanged;
 
-            SetupSubscriptionHandler(app, EventType.PresenceStarted, PresenceStartedHandler, config.PresenceEntityIds.Union(config.KeepAliveEntityIds), config.Name, e => e.Old?.State == "off" && e.New?.State == "on");
-            SetupSubscriptionHandler(app, EventType.PresenceStopped, PresenceStoppedHandler, config.PresenceEntityIds.Union(config.KeepAliveEntityIds), config.Name, e => e.Old?.State == "on" && e.New?.State == "off");
-            SetupSubscriptionHandler(app, EventType.HouseModeChanged, HouseModeChangedHandler, config.NightTimeEntityId, config.Name);
+            SetupSubscriptionHandler(app, EventType.PresenceStarted, PresenceStartedHandler, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "off" && e.New?.State == "on");
+            SetupSubscriptionHandler(app, EventType.PresenceStopped, PresenceStoppedHandler, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "on" && e.New?.State == "off");
+            SetupSubscriptionHandler(app, EventType.HouseModeChanged, HouseModeChangedHandler, configurator.NightTime.EntityId, configurator.RoomName);
         }
-
 
         private static void SetupSubscriptionHandler(INetDaemonRxApp app, EventType eventType, EventHandler<HassEventArgs> handler, IEnumerable<string> configEntityIds, string roomName, Func<(EntityState Old, EntityState New), bool> predicate = null!)
         {

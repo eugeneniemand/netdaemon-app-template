@@ -1,5 +1,5 @@
 lightsManager:
-  class: LightsManager.Configurator
+  class: LightsManager.StartUp
   nd_user_id: ef606e2918da4355ba036a019cdcc6a0
   guard_timeout: 300
   min_duration: 5
@@ -88,6 +88,7 @@ lightsManager:
     random_entity_id: alarm_control_panel.alarmo
     random_states:
     - armed_away
+    # debug: true
 
   - name: Porch
     presence_entity_ids:

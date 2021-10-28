@@ -12,10 +12,10 @@ namespace LightsManager
     {
         public static string EntityState(this INetDaemonRxApp app, string? entityId)
         {
-            if (entityId == null) return Configurator.UNKNOWN;
+            if (entityId == null) return StartUp.UNKNOWN;
             if (app.States.Any(e => e.EntityId == entityId))
-                return app.State(entityId)?.State?.ToString() ?? Configurator.UNKNOWN;
-            return Configurator.UNKNOWN;
+                return app.State(entityId)?.State?.ToString() ?? StartUp.UNKNOWN;
+            return StartUp.UNKNOWN;
         }
 
         public static void LogEventHandled(this INetDaemonRxApp app, HassEventArgs args)

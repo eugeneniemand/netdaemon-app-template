@@ -5,8 +5,8 @@ namespace LightsManager
     public class HassEventArgs : EventArgs
     {
         public string EntityId { get; set; }
-        public string OldState { get; set; }
-        public string NewState { get; set; }
+        //public string OldState { get; set; }
+        //public string NewState { get; set; }
 
         public string CorrelationId;
 
