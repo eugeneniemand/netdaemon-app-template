@@ -22,13 +22,18 @@ namespace LightsManager
         public List<BinarySensorEntity> PresenceSensors { get; set; }
         public BinarySensorEntity NightTime { get; set; }
 
+        public LightEntityDummy Enabled { get; set; }
+
         private int Lux => _config.LuxEntityId == null ? 0 : int.Parse(_app.EntityState(_config.LuxEntityId));
         private int? LuxLimit => _config.LuxEntityId == null ? _config.LuxLimit : int.Parse(_app.EntityState(_config.LuxLimitEntityId));
         private bool IsNightTime => _config.NightTimeEntityId != null && _config.NightTimeEntityStates.Contains(_app.EntityState(_config.NightTimeEntityId));
+        public bool IsEnabled => _app.EntityState(_config.EnabledSwitchEntityId) == "on";
 
-        public int TimeoutSeconds => IsNightTime ? _config.NightTimeout : _config.Timeout;
+        public TimeSpan TimeoutSeconds => TimeSpan.FromSeconds(IsNightTime ? _config.NightTimeout == 0 ? 90 : _config.NightTimeout : _config.Timeout);
         public bool LuxAboveLimit => Lux >= LuxLimit;
         public string RoomName { get; set; }
+        public List<BinarySensorEntity> ActivePresenceSensors => PresenceSensors.Where(e => string.Equals(e.State, "on", StringComparison.OrdinalIgnoreCase)).ToList();
+        public string NdUserId => _config.NdUserId;
 
         public void Configure(INetDaemonRxApp app)
         {
@@ -42,8 +47,7 @@ namespace LightsManager
 
             PresenceSensors = new List<BinarySensorEntity>();
             foreach (var entityId in _config.PresenceEntityIds.Union(_config.KeepAliveEntityIds)) PresenceSensors.Add(new BinarySensorEntity(app, new[] { entityId }));
-
-
+            Enabled   = new LightEntityDummy(app, new[] { _config.EnabledSwitchEntityId });
             NightTime = new BinarySensorEntity(app, new[] { _config.NightTimeEntityId });
         }
 

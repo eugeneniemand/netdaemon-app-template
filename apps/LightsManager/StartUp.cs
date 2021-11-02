@@ -11,7 +11,7 @@ namespace LightsManager
     public class StartUp : NetDaemonRxApp
     {
         public IEnumerable<LightsManagerConfig>? Rooms { get; set; }
-        public string? NdUserId { get; set; }
+        public string NdUserId { get; set; }
         public int GuardTimeout { get; set; } = 900;
         public int MinDuration { get; set; }
         public int MaxDuration { get; set; }
@@ -19,14 +19,11 @@ namespace LightsManager
 
         public override void Initialize()
         {
-            //if (!( Rooms ?? throw new ArgumentNullException(nameof(Rooms), "No Rooms Config Found") ).Any(r => r.Debug)) return;
-
-            LogInformation($"Initialise (DEBUG) ");
-            foreach (var lightsManagerConfig in Rooms.Where(r => r.Debug).ToList())
+            var configs = Rooms.Any(r => r.Debug) ? Rooms.Where(r => r.Debug).ToList() : Rooms.ToList();
+            foreach (var config in configs)
             {
-                var configurator = new Configurator(lightsManagerConfig);
-                configurator.Configure(this);
-                var manager = new Manager(this, configurator);
+                config.NdUserId = NdUserId;
+                var manager = new Manager(this, config);
             }
         }
     }

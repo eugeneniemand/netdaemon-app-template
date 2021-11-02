@@ -17,10 +17,5 @@ namespace LightsManager
                 return app.State(entityId)?.State?.ToString() ?? StartUp.UNKNOWN;
             return StartUp.UNKNOWN;
         }
-
-        public static void LogEventHandled(this INetDaemonRxApp app, HassEventArgs args)
-        {
-            app.LogInformation("{CorrelationId} - Event Handled: {EventType}", args.CorrelationId, args.EventType);
-        }
     }
 }

@@ -29,7 +29,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Dining
     presence_entity_ids:
@@ -53,7 +53,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Fish
     presence_entity_ids:
@@ -88,7 +88,7 @@ lightsManager:
     random_entity_id: alarm_control_panel.alarmo
     random_states:
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Porch
     presence_entity_ids:
@@ -153,7 +153,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Entrance
     timeout: 300
@@ -168,7 +168,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Master
     timeout: 300
@@ -213,7 +213,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Playroom
     timeout: 300
@@ -241,7 +241,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Toilet
     timeout: 300
@@ -256,7 +256,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true
 
   - name: Utility
     timeout: 300
@@ -277,4 +277,4 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    # debug: true
+    debug: true

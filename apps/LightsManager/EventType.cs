@@ -4,6 +4,10 @@ namespace LightsManager
     {
         PresenceStarted,
         PresenceStopped,
-        HouseModeChanged
+        HouseModeChanged,
+        ManagerStateChanged,
+        ManagerResetTimer,
+        ManagerEnabledChanged,
+        ManualOverride
     }
 }

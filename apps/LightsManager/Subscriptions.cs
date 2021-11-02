@@ -12,16 +12,17 @@ namespace LightsManager
         public static event EventHandler<HassEventArgs> PresenceStartedHandler;
         public static event EventHandler<HassEventArgs> PresenceStoppedHandler;
         public static event EventHandler<HassEventArgs> HouseModeChangedHandler;
+        public static event EventHandler<HassEventArgs> ManagerEnabledChangedHandler;
+        public static event EventHandler<HassEventArgs> ManualEntityStateChange;
 
-        public static void Setup(INetDaemonRxApp app, Configurator configurator, Manager manager)
+
+        public static void Setup(INetDaemonRxApp app, Configurator configurator)
         {
-            PresenceStartedHandler  += manager.OnPresenceStarted;
-            PresenceStoppedHandler  += manager.OnPresenceStopped;
-            HouseModeChangedHandler += manager.OnHouseModeChanged;
-
             SetupSubscriptionHandler(app, EventType.PresenceStarted, PresenceStartedHandler, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "off" && e.New?.State == "on");
             SetupSubscriptionHandler(app, EventType.PresenceStopped, PresenceStoppedHandler, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "on" && e.New?.State == "off");
+            SetupSubscriptionHandler(app, EventType.ManualOverride, ManualEntityStateChange, configurator.Lights.Select(p => p.EntityId), configurator.RoomName, e => e.New?.Context?.UserId == null || e.New?.Context?.UserId != configurator.NdUserId);
             SetupSubscriptionHandler(app, EventType.HouseModeChanged, HouseModeChangedHandler, configurator.NightTime.EntityId, configurator.RoomName);
+            SetupSubscriptionHandler(app, EventType.ManagerEnabledChanged, ManagerEnabledChangedHandler, configurator.Enabled.EntityId, configurator.RoomName);
         }
 
         private static void SetupSubscriptionHandler(INetDaemonRxApp app, EventType eventType, EventHandler<HassEventArgs> handler, IEnumerable<string> configEntityIds, string roomName, Func<(EntityState Old, EntityState New), bool> predicate = null!)
@@ -34,9 +35,9 @@ namespace LightsManager
                    .Where(predicate ?? DefaultPredicate)
                    .Subscribe(s =>
                    {
-                       var args = new HassEventArgs(roomName, eventType) { EntityId = s.New.EntityId };
-                       app.LogInformation("{correlationId} - Event Fired: {eventType} for {RoomName} by {EntityId} changing from {OldState} to {NewState}", args.CorrelationId, args.EventType, args.RoomName, args.EntityId, s.Old.State, s.New.State);
-                       handler.Invoke(app, args);
+                       var args = new HassEventArgs(roomName, eventType, s) { EntityId = s.New.EntityId };
+                       app.LogInformation("{correlationId} - Event Raised: {eventType} for {RoomName} by {EntityId} changing from {OldState} to {NewState}", args.CorrelationId, args.EventType, args.RoomName, args.EntityId, s.Old.State, s.New.State);
+                       handler?.Invoke(roomName, args);
                    });
             }
         }

@@ -15,6 +15,8 @@ namespace LightsManager
             EntityId = entityIds.First();
         }
 
+        public string State => _app.EntityState(EntityId);
+
         public void TurnOn()
         {
             _app.Entity(EntityId).TurnOn();
