@@ -23,8 +23,18 @@ namespace LightsManager
             foreach (var config in configs)
             {
                 config.NdUserId = NdUserId;
+                SetupEnabledSwitchEntity(config);
                 var manager = new Manager(this, config);
             }
+        }
+
+        private void SetupEnabledSwitchEntity(LightsManagerConfig config)
+        {
+            var switchEntity = States.FirstOrDefault(e => e.EntityId == config.EnabledSwitchEntityId);
+
+            if (switchEntity != null) return;
+
+            SetState(config.EnabledSwitchEntityId, "on");
         }
     }
 }

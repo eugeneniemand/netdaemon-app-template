@@ -19,6 +19,7 @@ namespace LightsManager
 
         public List<LightEntityDummy> Lights { get; set; }
         public List<LightEntityDummy> Switches { get; set; }
+        public List<LightEntityDummy> AllControlEntities { get; set; }
         public List<BinarySensorEntity> PresenceSensors { get; set; }
         public BinarySensorEntity NightTime { get; set; }
 
@@ -44,6 +45,9 @@ namespace LightsManager
 
             Switches = new List<LightEntityDummy>();
             foreach (var entityId in FilterControlEntities("switch.")) Switches.Add(new LightEntityDummy(app, new[] { entityId }));
+
+            AllControlEntities = new List<LightEntityDummy>();
+            foreach (var entityId in _config.ControlEntityIds.Union(_config.NightControlEntityIds)) AllControlEntities.Add(new LightEntityDummy(app, new[] { entityId }));
 
             PresenceSensors = new List<BinarySensorEntity>();
             foreach (var entityId in _config.PresenceEntityIds.Union(_config.KeepAliveEntityIds)) PresenceSensors.Add(new BinarySensorEntity(app, new[] { entityId }));

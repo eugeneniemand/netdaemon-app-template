@@ -26,7 +26,7 @@ namespace LightsManager
 
         public int Timeout { get; set; }
 
-        // public int OverrideTimeout { get; set; }
+        public int OverrideTimeout { get; set; } = 900;
         public IEnumerable<string> PresenceEntityIds { get; set; }
         public IEnumerable<string> ControlEntityIds { get; set; }
         public IEnumerable<string> KeepAliveEntityIds { get; set; }

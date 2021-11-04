@@ -8,18 +8,19 @@ using Xunit;
 
 public partial class LightsManagerTests
 {
-    private const string              _andAfterSecondsTemplate         = "and after <b>{0}</b> seconds";
-    private const string              _theControlEntityIsTemplate      = "and the <b>control</b> entity <b>{0}</b> is <b>{1}</b>";
-    private const string              _theKeepAliveEntityIsTemplate    = "and the <b>keep alive</b> entity <b>{0}</b> is <b>{1}</b>";
-    private const string              _theNightControlEntityIsTemplate = "and the <b>night control</b> entity <b>{0}</b> is <b>{1}</b>";
-    private const string              _thePresenceEntityIsTemplate     = "and the <b>presence</b> entity <b>{0}</b> is <b>{1}</b>";
-    private const string              _thenEntityTurnsTemplate         = "then <b>{0}</b> turns <b>{1}</b>";
-    private const string              _whenEntityTurnsTemplate         = "when <b>{0}</b> turns <b>{1}</b>";
-    private const string              _thenEntityTurnedOffTemplate     = "then <b>{0}</b> has <b>{1}</b> turned <b>off</b>";
-    private const string              _thenEntityTurnedOnTemplate      = "then <b>{0}</b> has <b>{1}</b> turned <b>on</b>";
-    private const string              _stateChangedTemplate            = "when <b>{0}</b> changes from <b>{1}</b> to <b>{2}</b>";
-    private       LightsManagerConfig _config;
-    private       Manager             _manager;
+    private const string                                    _andAfterSecondsTemplate         = "and after <b>{0}</b> seconds";
+    private const string                                    _theControlEntityIsTemplate      = "and the <b>control</b> entity <b>{0}</b> is <b>{1}</b>";
+    private const string                                    _theKeepAliveEntityIsTemplate    = "and the <b>keep alive</b> entity <b>{0}</b> is <b>{1}</b>";
+    private const string                                    _theNightControlEntityIsTemplate = "and the <b>night control</b> entity <b>{0}</b> is <b>{1}</b>";
+    private const string                                    _thePresenceEntityIsTemplate     = "and the <b>presence</b> entity <b>{0}</b> is <b>{1}</b>";
+    private const string                                    _thenEntityTurnsTemplate         = "then <b>{0}</b> turns <b>{1}</b>";
+    private const string                                    _whenEntityTurnsTemplate         = "when <b>{0}</b> turns <b>{1}</b>";
+    private const string                                    _thenEntityTurnedOffTemplate     = "then <b>{0}</b> has <b>{1}</b> turned <b>off</b>";
+    private const string                                    _thenEntityTurnedOnTemplate      = "then <b>{0}</b> has <b>{1}</b> turned <b>on</b>";
+    private const string                                    _stateChangedTemplate            = "when <b>{0}</b> changes from <b>{1}</b> to <b>{2}</b>";
+    private       LightsManagerConfig                       _config;
+    private       Manager                                   _manager;
+    private       List<(object sender, HassEventArgs args)> _managerFiredEvents;
 
     private void AfterSeconds(int seconds)
     {
@@ -161,7 +162,11 @@ public partial class LightsManagerTests
 
     private void TheManagerIsInitialised()
     {
-        _manager = new Manager(Object, _config);
+        _manager                     =  new Manager(Object, _config);
+        _managerFiredEvents          =  new List<(object, HassEventArgs)>();
+        _manager.ManagerTimerReset   += (s, e) => _managerFiredEvents.Add(( s, e ));
+        _manager.ManagerTimerSet     += (s, e) => _managerFiredEvents.Add(( s, e ));
+        _manager.ManagerStateChanged += (s, e) => _managerFiredEvents.Add(( s, e ));
     }
 
     private void ThePresenceEntityIs(string entityId, string state)
@@ -193,5 +198,36 @@ public partial class LightsManagerTests
     private void TheManagerStateIs(ManagerState state)
     {
         Assert.Equal(state, _manager.State);
+    }
+
+    private void VerifyManagerTimerResetEventFired(Times times)
+    {
+        VerifyEventFired(times, _managerFiredEvents.Where(e => e.args.GetType() == typeof(ManagerTimerResetEventArgs)));
+    }
+
+    private void VerifyManagerTimerSetEventFired(Times times, TimeSpan timeout)
+    {
+        var events = _managerFiredEvents.Where(e => e.args.GetType() == typeof(ManagerTimerSetEventArgs));
+        VerifyEventFired(times, events);
+        if (timeout != default && events.Count() > 1) throw new NotImplementedException("Checking timeouts for more than 1 event is not implemented");
+        Assert.Equal(timeout, ( (ManagerTimerSetEventArgs) events.First().args ).TimeoutSeconds);
+    }
+
+    private void VerifyManagerStateEventFired(Times times, ManagerState state = default)
+    {
+        VerifyEventFired(times,
+            state == default
+                ? _managerFiredEvents.Where(e => e.args.GetType() == typeof(ManagerStateEventArgs))
+                : _managerFiredEvents.Where(e =>
+                    e.args.GetType() == typeof(ManagerStateEventArgs) &&
+                    ( (ManagerStateEventArgs) e.args ).State == state));
+    }
+
+    private void VerifyEventFired(Times times, IEnumerable<(object, HassEventArgs)> events)
+    {
+        var eventCount = events.Count();
+        if (times == Times.Once()) Assert.Equal(1, eventCount);
+        else if (times == Times.Never()) Assert.Equal(0, eventCount);
+        else if (times == Times.AtLeastOnce()) Assert.True(eventCount >= 1);
     }
 }

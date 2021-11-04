@@ -154,6 +154,8 @@ public partial class LightsManagerTests : RxAppMock
             .BDDfy();
     }
 
+    // Timer is set when state chanes to override even if there are active sensors?
+
     [Fact]
     public void when_enabled_switch_is_turned_off_then_manager_state_is_disabled()
     {
@@ -398,17 +400,18 @@ public partial class LightsManagerTests : RxAppMock
             .BDDfy();
     }
 
-    [Fact]
-    public void on_control_entity_override_to_off_sets_state_idle()
-    {
-        this.Given(s => GivenTheRoom("Room1"))
-            .And(s => ThePresenceEntityIs("binary_sensor.my_motion_sensor", "off"), _thePresenceEntityIsTemplate)
-            .And(s => TheControlEntityIs("light.my_light", "off"), _theControlEntityIsTemplate)
-            .And(s => TheManagerIsInitialised())
-            .When(s => EntityTurns("binary_sensor.my_motion_sensor", "on"), _thenEntityTurnsTemplate)
-            .Then(s => TheManagerStateIs(ManagerState.Active))
-            .When(s => OverrideEntity("light.my_light", "off"), _thenEntityTurnsTemplate)
-            .Then(s => TheManagerStateIs(ManagerState.Idle))
-            .BDDfy();
-    }
+    // TODO DISCUSS If I have more than one control entity and I want to turn one off, should the state go back to Idle and so turn off all entities. Or should it stay active or even be set to override
+    //[Fact]
+    //public void on_control_entity_override_to_off_sets_state_idle()
+    //{
+    //    this.Given(s => GivenTheRoom("Room1"))
+    //        .And(s => ThePresenceEntityIs("binary_sensor.my_motion_sensor", "off"), _thePresenceEntityIsTemplate)
+    //        .And(s => TheControlEntityIs("light.my_light", "off"), _theControlEntityIsTemplate)
+    //        .And(s => TheManagerIsInitialised())
+    //        .When(s => EntityTurns("binary_sensor.my_motion_sensor", "on"), _thenEntityTurnsTemplate)
+    //        .Then(s => TheManagerStateIs(ManagerState.Active))
+    //        .When(s => OverrideEntity("light.my_light", "off"), _thenEntityTurnsTemplate)
+    //        .Then(s => TheManagerStateIs(ManagerState.Idle))
+    //        .BDDfy();
+    //}
 }

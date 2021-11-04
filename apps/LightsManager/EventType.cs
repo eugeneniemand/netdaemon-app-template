@@ -6,7 +6,8 @@ namespace LightsManager
         PresenceStopped,
         HouseModeChanged,
         ManagerStateChanged,
-        ManagerResetTimer,
+        ManagerTimerReset,
+        ManagerTimerSet,
         ManagerEnabledChanged,
         ManualOverride
     }

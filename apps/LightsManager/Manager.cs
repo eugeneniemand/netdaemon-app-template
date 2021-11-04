@@ -1,203 +1,220 @@
 using System;
 using System.Linq;
-using NetDaemon.Common;
 using NetDaemon.Common.Reactive;
-using NetDaemon.Common.Reactive.Services;
 
 namespace LightsManager
 {
     public class Manager
     {
-        public event EventHandler<ManagerStateEventArgs> ManagerStateIsIdle;
-        public event EventHandler<ManagerStateEventArgs> ManagerStateIsActive;
-        public event EventHandler<ManagerStateEventArgs> ManagerStateIsDisabled;
-        public event EventHandler<ManagerResetTimerEventArgs> ManagerResetTimer;
-        public event EventHandler<ManagerSetTimerEventArgs> ManagerSetTimer;
-        public event EventHandler<EntityOverrideEventArgs> EntityOverride;
-
         private readonly INetDaemonRxApp _app;
-        private          IDisposable?    _timer;
         private          DateTime        _expiry;
-
-
-        public ManagerState State { get; set; }
-        public Configurator Configurator { get; private set; }
-
-        private bool PresenceIsActive => _timer != null || Configurator.ActivePresenceSensors.Any();
+        private          IDisposable?    _timer;
 
         public Manager(INetDaemonRxApp app, LightsManagerConfig config)
         {
             _app = app;
             SetConfigurator(config);
-            SetupEnabledSwitchEntity();
             RegisterEventHandlers();
+            InitState(config);
+        }
+
+        public Configurator Configurator { get; private set; }
+        public ManagerState State { get; set; }
+
+        private bool PresenceIsActive => _timer != null || Configurator.ActivePresenceSensors.Any() && State != ManagerState.Override;
+
+        public event EventHandler<EntityOverrideEventArgs> EntityOverride;
+        public event EventHandler<ManagerStateEventArgs> ManagerStateChanged;
+        public event EventHandler<ManagerTimerResetEventArgs> ManagerTimerReset;
+        public event EventHandler<ManagerTimerSetEventArgs> ManagerTimerSet;
+
+        private bool IncorrectRoomEvent(object sender)
+        {
+            return sender.ToString() != Configurator.RoomName;
+        }
+
+        private void InitState(LightsManagerConfig config)
+        {
+            if (_app.EntityState(config.EnabledSwitchEntityId) == "off")
+            {
+                ManagerStateChanged.Invoke(config.Name, new ManagerStateEventArgs("Initialize", ManagerState.Disabled));
+                return;
+            }
+
+            if (Configurator.AllControlEntities.Select(e => e.EntityId).Any(entityId => _app.EntityState(entityId) != "off"))
+                ManagerStateChanged.Invoke(config.Name, new ManagerStateEventArgs("Initialize", ManagerState.Active));
+        }
+
+        private void OnEnabledChanged(object sender, HassEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            _app.LogInformation("{RoomName} | {CorrelationId} - Enabled Toggled: Enabled set to {Enabled}", sender, args.CorrelationId, Configurator.IsEnabled);
+            switch (Configurator.IsEnabled)
+            {
+                case true:
+                    ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Idle));
+                    break;
+                case false:
+                    ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Disabled));
+                    break;
+            }
+        }
+
+        private void OnEntityOverride(object sender, EntityOverrideEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            _app.LogInformation("{RoomName} | {CorrelationId} - Entity Override: {Entity} override to {State}", sender, args.CorrelationId, args.EntityId, args.NewState);
+            switch (args.NewState)
+            {
+                case null:
+                    return;
+                case "on":
+                    ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Override));
+                    break;
+                case "off":
+                    break;
+            }
+        }
+
+        private void OnHouseModeChanged(object sender, HassEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            _app.LogInformation("{RoomName} | {CorrelationId} - House Mode Changed: {State}", sender, args.CorrelationId, args.EntityStates.New.State);
+            if (!PresenceIsActive)
+            {
+                Configurator.Configure(_app); // Configure so entities are ready for next time
+                _app.LogInformation("{RoomName} | {CorrelationId} - Configurator Configured", sender, args.CorrelationId);
+                return;
+            }
+
+            if (State == ManagerState.Disabled)
+            {
+                _app.LogInformation("{RoomName} | {CorrelationId} - Manager Disabled", sender, args.CorrelationId);
+                return;
+            }
+
+            TurnOffControlEntities(sender, args);
+            Configurator.Configure(_app);
+            TurnOnControlEntities(sender, args);
+        }
+
+        private void OnManagerStateChanged(object sender, ManagerStateEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            var oldState = State;
+            State = args.State;
+            _app.LogInformation("{RoomName} | {CorrelationId} - Manager State Changed: {State}", sender, args.CorrelationId, args.State);
+            ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
+            if (oldState == State) return;
+            switch (args.State)
+            {
+                case ManagerState.Idle:
+                    TurnOffControlEntities(sender, args);
+                    break;
+                case ManagerState.Active:
+                    TurnOnControlEntities(sender, args);
+                    break;
+                case ManagerState.Disabled:
+                    break;
+                case ManagerState.Override:
+                    ManagerTimerSet.Invoke(sender, new ManagerTimerSetEventArgs(args.CorrelationId, TimeSpan.FromSeconds(900)));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            SetManagerHaState(sender, args);
+        }
+
+        private void OnManagerTimerReset(object sender, ManagerTimerResetEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            _timer?.Dispose();
+            _timer  = null;
+            _expiry = DateTime.MinValue;
+            _app.LogInformation("{RoomName} | {CorrelationId} - Timer Reset", sender, args.CorrelationId);
+        }
+
+        private void OnManagerTimerSet(object sender, ManagerTimerSetEventArgs args)
+        {
+            if (PresenceIsActive)
+            {
+                _app.LogInformation("{RoomName} | {CorrelationId} - No timer set: Active sensors {Sensors}", sender, args.CorrelationId, string.Join(", ", Configurator.ActivePresenceSensors.Select(p => p.EntityId)));
+                return;
+            }
+
+            _timer  = _app.RunIn(args.TimeoutSeconds, () => ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Idle)));
+            _expiry = DateTime.Now + args.TimeoutSeconds;
+            _app.LogInformation("{RoomName} | {CorrelationId} - Timer Set: Timeout of {Timeout} expiring at {Expiry}", sender, args.CorrelationId, args.TimeoutSeconds, _expiry);
+        }
+
+
+        private void OnManualEntityStateChange(object sender, HassEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            var newState = $"{args.EntityStates.New.State}";
+            _app.LogInformation("{RoomName} | {CorrelationId} - Manual State Change: {Entity} changed to {State}", sender, args.CorrelationId, args.EntityId, newState);
+            if (State == ManagerState.Disabled)
+            {
+                _app.LogInformation("{RoomName} | {CorrelationId} - Manager Disabled", sender, args.CorrelationId);
+                return;
+            }
+
+            EntityOverride.Invoke(sender, new EntityOverrideEventArgs(args.CorrelationId, newState) { EntityId = args.EntityId });
+        }
+
+        private void OnPresenceStarted(object sender, HassEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            _app.LogInformation("{RoomName} | {CorrelationId} - Presence Started", sender, args.CorrelationId);
+            if (State == ManagerState.Disabled)
+            {
+                _app.LogInformation("{RoomName} | {CorrelationId} - Manager Disabled", sender, args.CorrelationId);
+                return;
+            }
+
+            if (Configurator.LuxAboveLimit) return;
+            ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Active));
+        }
+
+        private void OnPresenceStopped(object sender, HassEventArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            _app.LogInformation("{RoomName} | {CorrelationId} - Presence Stopped", sender, args.CorrelationId);
+            if (State == ManagerState.Disabled)
+            {
+                _app.LogInformation("{RoomName} | {CorrelationId} - Manager Disabled", sender, args.CorrelationId);
+                return;
+            }
+
+            ManagerTimerSet.Invoke(sender, new ManagerTimerSetEventArgs(args.CorrelationId, Configurator.TimeoutSeconds));
+        }
+
+        private void RegisterEventHandlers()
+        {
+            ManagerStateChanged += OnManagerStateChanged;
+            ManagerTimerReset   += OnManagerTimerReset;
+            ManagerTimerSet     += OnManagerTimerSet;
+            EntityOverride      += OnEntityOverride;
+
+            Subscriptions.PresenceStarted         += OnPresenceStarted;
+            Subscriptions.PresenceStopped         += OnPresenceStopped;
+            Subscriptions.HouseModeChanged        += OnHouseModeChanged;
+            Subscriptions.ManagerEnabledChanged   += OnEnabledChanged;
+            Subscriptions.ManualEntityStateChange += OnManualEntityStateChange;
+            Subscriptions.Setup(_app, Configurator);
+            _app.LogInformation("Event Handlers Registered");
         }
 
         private void SetConfigurator(LightsManagerConfig config)
         {
             Configurator = new Configurator(config);
             Configurator.Configure(_app);
+            _app.LogInformation("Configurator Configured");
         }
 
-        private void RegisterEventHandlers()
+        private void SetManagerHaState(object sender, ManagerStateEventArgs args)
         {
-            ManagerStateIsIdle += OnManagerStateIsIdle;
-            ManagerStateIsIdle += OnManagerStateChanged;
-
-            ManagerStateIsActive += OnManagerStateIsActive;
-            ManagerStateIsActive += OnManagerStateChanged;
-
-            ManagerStateIsDisabled += OnManagerStateChanged;
-
-            ManagerResetTimer += OnManagerResetTimer;
-            ManagerSetTimer   += OnManagerSetTimer;
-
-            EntityOverride += OnEntityEntityOverride;
-
-            Subscriptions.PresenceStartedHandler       += OnPresenceStarted;
-            Subscriptions.PresenceStoppedHandler       += OnPresenceStopped;
-            Subscriptions.HouseModeChangedHandler      += OnHouseModeChanged;
-            Subscriptions.ManagerEnabledChangedHandler += OnEnabledChanged;
-            Subscriptions.ManualEntityStateChange      += OnManualEntityStateChange;
-            Subscriptions.Setup(_app, Configurator);
-        }
-
-        private void SetupEnabledSwitchEntity()
-        {
-            var switchEntity = _app.States.FirstOrDefault(e => e.EntityId == Configurator.Enabled.EntityId);
-
-            if (switchEntity != null) return;
-
-            _app.SetState(Configurator.Enabled.EntityId, "on", null);
-        }
-
-        private void OnManualEntityStateChange(object? sender, HassEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            EntityOverride.Invoke(sender, new EntityOverrideEventArgs(Configurator.RoomName, $"{args?.State.New?.State}"));
-        }
-
-        private void OnEntityEntityOverride(object? sender, EntityOverrideEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            switch (args.NewState)
-            {
-                case null:
-                    return;
-                case "on":
-                    ManagerSetTimer.Invoke(sender, new ManagerSetTimerEventArgs(Configurator.RoomName, args.CorrelationId, TimeSpan.FromSeconds(900)));
-                    ManagerStateIsActive.Invoke(sender, new ManagerStateEventArgs(Configurator.RoomName, ManagerState.Override));
-                    break;
-                case "off":
-                    ManagerStateIsIdle.Invoke(sender, new ManagerStateEventArgs(Configurator.RoomName, ManagerState.Idle));
-                    break;
-            }
-        }
-
-
-        private void OnEnabledChanged(object? sender, HassEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            switch (Configurator.IsEnabled)
-            {
-                case true:
-                    ManagerStateIsActive.Invoke(sender, new ManagerStateEventArgs(Configurator.RoomName, ManagerState.Idle));
-                    break;
-                case false:
-                    ManagerResetTimer.Invoke(sender, new ManagerResetTimerEventArgs(sender.ToString(), args.CorrelationId));
-                    ManagerStateIsDisabled.Invoke(sender, new ManagerStateEventArgs(Configurator.RoomName, ManagerState.Disabled));
-                    break;
-            }
-        }
-
-        private void OnManagerResetTimer(object sender, ManagerResetTimerEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            _timer?.Dispose();
-            _timer  = null;
-            _expiry = DateTime.MinValue;
-        }
-
-        private void OnManagerStateIsIdle(object sender, ManagerStateEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            ManagerResetTimer.Invoke(sender, new ManagerResetTimerEventArgs(sender.ToString(), args.CorrelationId));
-            TurnOffControlEntities();
-        }
-
-        private void OnManagerStateIsActive(object sender, ManagerStateEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            ManagerResetTimer.Invoke(sender, new ManagerResetTimerEventArgs(sender.ToString(), args.CorrelationId));
-            TurnOnControlEntities();
-        }
-
-        private void TurnOffControlEntities()
-        {
-            Configurator.Lights.ForEach(e => e.TurnOff());
-            Configurator.Switches.ForEach(e => e.TurnOff());
-        }
-
-        private void TurnOnControlEntities()
-        {
-            Configurator.Lights.ForEach(e => e.TurnOn());
-            Configurator.Switches.ForEach(e => e.TurnOn());
-        }
-
-        public void OnPresenceStarted(object sender, HassEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            if (State == ManagerState.Disabled) _app.LogInformation("{CorrelationId} - Manager Disabled: {RoomName}", args.CorrelationId, args.RoomName);
-            if (State != ManagerState.Idle || Configurator.LuxAboveLimit) return;
-            ManagerStateIsActive.Invoke(sender, new ManagerStateEventArgs(Configurator.RoomName, ManagerState.Active));
-        }
-
-        private bool IncorrectRoomEvent(object? sender)
-        {
-            return sender?.ToString() != Configurator.RoomName;
-        }
-
-        public void OnPresenceStopped(object sender, HassEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            ManagerSetTimer.Invoke(sender, new ManagerSetTimerEventArgs(sender.ToString(), args.CorrelationId, Configurator.TimeoutSeconds));
-        }
-
-        public void OnManagerSetTimer(object sender, ManagerSetTimerEventArgs args)
-        {
-            if (PresenceIsActive)
-            {
-                _app.LogInformation(
-                    "{CorrelationId} - Presence Active: {RoomName} no timer set. Active sensors {Sensors}",
-                    args.CorrelationId, args.RoomName,
-                    string.Join(", ", Configurator.ActivePresenceSensors.Select(p => p.EntityId)));
-                return;
-            }
-
-            _timer  = _app.RunIn(args.TimeoutSeconds, () => ManagerStateIsIdle.Invoke(sender, new ManagerStateEventArgs(Configurator.RoomName, ManagerState.Idle)));
-            _expiry = DateTime.Now + args.TimeoutSeconds;
-            _app.LogInformation("{CorrelationId} - Timer set: {RoomName} for {Timeout} at {Expiry}", args.CorrelationId, args.RoomName, args.TimeoutSeconds, _expiry);
-        }
-
-        public void OnHouseModeChanged(object sender, HassEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            if (!PresenceIsActive)
-            {
-                Configurator.Configure(_app); // Configure so entities are ready for next time
-                return;
-            }
-
-            TurnOffControlEntities();
-            Configurator.Configure(_app);
-            TurnOnControlEntities();
-        }
-
-        public void OnManagerStateChanged(object sender, ManagerStateEventArgs args)
-        {
-            if (IncorrectRoomEvent(sender)) return;
-            State = args.State;
-
             var stateString = args.State.ToString();
             var attrs = new
             {
@@ -210,15 +227,21 @@ namespace LightsManager
             };
 
             _app.SetState(Configurator.Enabled.EntityId, Configurator.Enabled.State, attrs);
-            _app.LogInformation("{CorrelationId} - Event Handled: {EventType} for {RoomName} to State {state}", args.CorrelationId, args.EventType, args.RoomName, args.State);
+            _app.LogInformation("{RoomName} | {CorrelationId} - HA State Set", sender, args.CorrelationId);
         }
-    }
 
-    public enum ManagerState
-    {
-        Idle,
-        Active,
-        Disabled,
-        Override
+        private void TurnOffControlEntities(object sender, HassEventArgs args)
+        {
+            var controlEntities = Configurator.Lights.Union(Configurator.Switches).ToList();
+            controlEntities.ForEach(e => e.TurnOff());
+            _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned Off: {Entities}", sender, args.CorrelationId, string.Join(", ", controlEntities.Select(e => e.EntityId)));
+        }
+
+        private void TurnOnControlEntities(object sender, HassEventArgs args)
+        {
+            var controlEntities = Configurator.Lights.Union(Configurator.Switches).ToList();
+            controlEntities.ForEach(e => e.TurnOn());
+            _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned On: {Entities}", sender, args.CorrelationId, string.Join(", ", controlEntities.Select(e => e.EntityId)));
+        }
     }
 }

@@ -9,20 +9,20 @@ namespace LightsManager
 {
     internal class Subscriptions
     {
-        public static event EventHandler<HassEventArgs> PresenceStartedHandler;
-        public static event EventHandler<HassEventArgs> PresenceStoppedHandler;
-        public static event EventHandler<HassEventArgs> HouseModeChangedHandler;
-        public static event EventHandler<HassEventArgs> ManagerEnabledChangedHandler;
+        public static event EventHandler<HassEventArgs> PresenceStarted;
+        public static event EventHandler<HassEventArgs> PresenceStopped;
+        public static event EventHandler<HassEventArgs> HouseModeChanged;
+        public static event EventHandler<HassEventArgs> ManagerEnabledChanged;
         public static event EventHandler<HassEventArgs> ManualEntityStateChange;
 
 
         public static void Setup(INetDaemonRxApp app, Configurator configurator)
         {
-            SetupSubscriptionHandler(app, EventType.PresenceStarted, PresenceStartedHandler, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "off" && e.New?.State == "on");
-            SetupSubscriptionHandler(app, EventType.PresenceStopped, PresenceStoppedHandler, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "on" && e.New?.State == "off");
-            SetupSubscriptionHandler(app, EventType.ManualOverride, ManualEntityStateChange, configurator.Lights.Select(p => p.EntityId), configurator.RoomName, e => e.New?.Context?.UserId == null || e.New?.Context?.UserId != configurator.NdUserId);
-            SetupSubscriptionHandler(app, EventType.HouseModeChanged, HouseModeChangedHandler, configurator.NightTime.EntityId, configurator.RoomName);
-            SetupSubscriptionHandler(app, EventType.ManagerEnabledChanged, ManagerEnabledChangedHandler, configurator.Enabled.EntityId, configurator.RoomName);
+            SetupSubscriptionHandler(app, EventType.PresenceStarted, PresenceStarted, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "off" && e.New?.State == "on");
+            SetupSubscriptionHandler(app, EventType.PresenceStopped, PresenceStopped, configurator.PresenceSensors.Select(p => p.EntityId), configurator.RoomName, e => e.Old?.State == "on" && e.New?.State == "off");
+            SetupSubscriptionHandler(app, EventType.ManualOverride, ManualEntityStateChange, configurator.AllControlEntities.Select(p => p.EntityId), configurator.RoomName, e => e.New?.Context?.UserId != null && e.New?.Context?.UserId != configurator.NdUserId);
+            SetupSubscriptionHandler(app, EventType.HouseModeChanged, HouseModeChanged, configurator.NightTime.EntityId, configurator.RoomName);
+            SetupSubscriptionHandler(app, EventType.ManagerEnabledChanged, ManagerEnabledChanged, configurator.Enabled.EntityId, configurator.RoomName);
         }
 
         private static void SetupSubscriptionHandler(INetDaemonRxApp app, EventType eventType, EventHandler<HassEventArgs> handler, IEnumerable<string> configEntityIds, string roomName, Func<(EntityState Old, EntityState New), bool> predicate = null!)
@@ -35,8 +35,8 @@ namespace LightsManager
                    .Where(predicate ?? DefaultPredicate)
                    .Subscribe(s =>
                    {
-                       var args = new HassEventArgs(roomName, eventType, s) { EntityId = s.New.EntityId };
-                       app.LogInformation("{correlationId} - Event Raised: {eventType} for {RoomName} by {EntityId} changing from {OldState} to {NewState}", args.CorrelationId, args.EventType, args.RoomName, args.EntityId, s.Old.State, s.New.State);
+                       var args = new HassEventArgs(eventType, s) { EntityId = s.New.EntityId };
+                       app.LogInformation("{RoomName} | {correlationId} - Event Raised: {eventType} by {EntityId} changing from {OldState} to {NewState} by UserId {User}", roomName, args.CorrelationId, eventType, entityId, s.Old.State, s.New.State, $"{s.New?.Context?.UserId}");
                        handler?.Invoke(roomName, args);
                    });
             }
