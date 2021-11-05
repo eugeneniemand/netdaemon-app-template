@@ -9,6 +9,7 @@ namespace LightsManager
         private readonly INetDaemonRxApp _app;
         private          DateTime        _expiry;
         private          IDisposable?    _timer;
+        public bool HasActiveTimer => _timer != null;
 
         public Manager(INetDaemonRxApp app, LightsManagerConfig config)
         {
@@ -21,7 +22,7 @@ namespace LightsManager
         public Configurator Configurator { get; private set; }
         public ManagerState State { get; set; }
 
-        private bool PresenceIsActive => _timer != null || Configurator.ActivePresenceSensors.Any() && State != ManagerState.Override;
+        private bool PresenceIsActive => HasActiveTimer || Configurator.ActivePresenceSensors.Any() && State != ManagerState.Override;
 
         public event EventHandler<EntityOverrideEventArgs> EntityOverride;
         public event EventHandler<ManagerStateEventArgs> ManagerStateChanged;
@@ -104,17 +105,20 @@ namespace LightsManager
             var oldState = State;
             State = args.State;
             _app.LogInformation("{RoomName} | {CorrelationId} - Manager State Changed: {State}", sender, args.CorrelationId, args.State);
-            ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
+
             if (oldState == State) return;
             switch (args.State)
             {
                 case ManagerState.Idle:
+                    ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
                     TurnOffControlEntities(sender, args);
                     break;
                 case ManagerState.Active:
+                    ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
                     TurnOnControlEntities(sender, args);
                     break;
                 case ManagerState.Disabled:
+                    ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
                     break;
                 case ManagerState.Override:
                     ManagerTimerSet.Invoke(sender, new ManagerTimerSetEventArgs(args.CorrelationId, TimeSpan.FromSeconds(900)));
@@ -137,12 +141,6 @@ namespace LightsManager
 
         private void OnManagerTimerSet(object sender, ManagerTimerSetEventArgs args)
         {
-            if (PresenceIsActive)
-            {
-                _app.LogInformation("{RoomName} | {CorrelationId} - No timer set: Active sensors {Sensors}", sender, args.CorrelationId, string.Join(", ", Configurator.ActivePresenceSensors.Select(p => p.EntityId)));
-                return;
-            }
-
             _timer  = _app.RunIn(args.TimeoutSeconds, () => ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Idle)));
             _expiry = DateTime.Now + args.TimeoutSeconds;
             _app.LogInformation("{RoomName} | {CorrelationId} - Timer Set: Timeout of {Timeout} expiring at {Expiry}", sender, args.CorrelationId, args.TimeoutSeconds, _expiry);
@@ -173,6 +171,7 @@ namespace LightsManager
                 return;
             }
 
+            ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
             if (Configurator.LuxAboveLimit) return;
             ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Active));
         }
@@ -184,6 +183,12 @@ namespace LightsManager
             if (State == ManagerState.Disabled)
             {
                 _app.LogInformation("{RoomName} | {CorrelationId} - Manager Disabled", sender, args.CorrelationId);
+                return;
+            }
+
+            if (PresenceIsActive)
+            {
+                _app.LogInformation("{RoomName} | {CorrelationId} - No timer set: Active sensors {Sensors}", sender, args.CorrelationId, string.Join(", ", Configurator.ActivePresenceSensors.Select(p => p.EntityId)));
                 return;
             }
 
