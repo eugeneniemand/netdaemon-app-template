@@ -88,4 +88,14 @@ public partial class LightsManagerTests
     {
         Assert.Equal(true, _manager.HasActiveTimer);
     }
+
+    private void ThenAllControlEntitiesAreOff()
+    {
+        Assert.Equal(false, _manager.Configurator.AllControlEntities.Any(e => e.State == ON));
+    }
+
+    private void ThenOneOrMoreControlEntitiesAreOn()
+    {
+        Assert.Equal(true, _manager.Configurator.AllControlEntities.Any(e => e.State == ON));
+    }
 }

@@ -58,7 +58,12 @@ public partial class LightsManagerTests
         }
     }
 
-    private void WhenOverrideEntity(string entityId, string newState)
+    private void WhenControlEntityIsManuallyTurned(string newState)
+    {
+        WhenControlEntityIsManuallyTurned(LightMyLight, newState);
+    }
+
+    private void WhenControlEntityIsManuallyTurned(string entityId, string newState)
     {
         EntityState oldEntityState;
         EntityState newEntityState;

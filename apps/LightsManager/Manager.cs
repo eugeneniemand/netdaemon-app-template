@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NetDaemon.Common.Reactive;
 
 namespace LightsManager
@@ -42,7 +43,7 @@ namespace LightsManager
                 return;
             }
 
-            if (Configurator.AllControlEntities.Select(e => e.EntityId).Any(entityId => _app.EntityState(entityId) != "off"))
+            if (Configurator.AllControlEntities.Select(e => e.EntityId).Any(entityId => _app.EntityState(entityId) == "on"))
                 ManagerStateChanged.Invoke(config.Name, new ManagerStateEventArgs("Initialize", ManagerState.Active));
         }
 
@@ -65,16 +66,11 @@ namespace LightsManager
         {
             if (IncorrectRoomEvent(sender)) return;
             _app.LogInformation("{RoomName} | {CorrelationId} - Entity Override: {Entity} override to {State}", sender, args.CorrelationId, args.EntityId, args.NewState);
-            switch (args.NewState)
-            {
-                case null:
-                    return;
-                case "on":
-                    ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Override));
-                    break;
-                case "off":
-                    break;
-            }
+
+            if (args.NewState == "on" || Configurator.AllControlEntities.Any(e => e.State == "on"))
+                ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Override));
+            else
+                ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Idle));
         }
 
         private void OnHouseModeChanged(object sender, HassEventArgs args)
@@ -123,8 +119,6 @@ namespace LightsManager
                 case ManagerState.Override:
                     ManagerTimerSet.Invoke(sender, new ManagerTimerSetEventArgs(args.CorrelationId, TimeSpan.FromSeconds(900)));
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
 
             SetManagerHaState(sender, args);
@@ -188,7 +182,7 @@ namespace LightsManager
 
             if (PresenceIsActive)
             {
-                _app.LogInformation("{RoomName} | {CorrelationId} - No timer set: Active sensors {Sensors}", sender, args.CorrelationId, string.Join(", ", Configurator.ActivePresenceSensors.Select(p => p.EntityId)));
+                _app.LogInformation("{RoomName} | {CorrelationId} - No timer set: Active sensors {Sensors}", sender, args.CorrelationId, Configurator.ActivePresenceSensors.ToEntityIdsString());
                 return;
             }
 
@@ -225,9 +219,9 @@ namespace LightsManager
             {
                 State                 = stateString,
                 EventEntity           = args.EntityId,
-                ActivePresenceSensors = Configurator.ActivePresenceSensors.Select(e => e.EntityId),
-                PresenceEntityIds     = Configurator.PresenceSensors.Select(e => e.EntityId),
-                ControlEntityIds      = Configurator.Lights.Union(Configurator.Switches).Select(e => e.EntityId),
+                ActivePresenceSensors = Configurator.ActivePresenceSensors.ToEntityIds(),
+                PresenceEntityIds     = Configurator.PresenceSensors.ToEntityIds(),
+                ControlEntityIds      = Configurator.AllControlEntities.ToEntityIds(),
                 Expiry                = _expiry != DateTime.MinValue ? _expiry.ToString("T") : ""
             };
 
@@ -237,16 +231,16 @@ namespace LightsManager
 
         private void TurnOffControlEntities(object sender, HassEventArgs args)
         {
-            var controlEntities = Configurator.Lights.Union(Configurator.Switches).ToList();
+            var controlEntities = Configurator.AllControlEntities;
             controlEntities.ForEach(e => e.TurnOff());
-            _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned Off: {Entities}", sender, args.CorrelationId, string.Join(", ", controlEntities.Select(e => e.EntityId)));
+            _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned Off: {Entities}", sender, args.CorrelationId, controlEntities.ToEntityIdsString());
         }
 
         private void TurnOnControlEntities(object sender, HassEventArgs args)
         {
             var controlEntities = Configurator.Lights.Union(Configurator.Switches).ToList();
             controlEntities.ForEach(e => e.TurnOn());
-            _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned On: {Entities}", sender, args.CorrelationId, string.Join(", ", controlEntities.Select(e => e.EntityId)));
+            _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned On: {Entities}", sender, args.CorrelationId, controlEntities.ToEntityIdsString());
         }
     }
 }

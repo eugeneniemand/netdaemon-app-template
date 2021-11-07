@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using NetDaemon.Common.Reactive;
+using NetDaemon.Common.Reactive.Services;
 
 namespace LightsManager
 {
-    public class LightEntityDummy
+    public class LightEntityDummy : RxEntityBase
     {
         private readonly INetDaemonRxApp _app;
         public readonly  string          EntityId;
 
-        public LightEntityDummy(INetDaemonRxApp app, IEnumerable<string> entityIds)
+        public LightEntityDummy(INetDaemonRxApp app, IEnumerable<string> entityIds) : base(app, entityIds)
         {
             _app     = app;
             EntityId = entityIds.First();

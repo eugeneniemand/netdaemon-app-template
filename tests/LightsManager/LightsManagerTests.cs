@@ -40,6 +40,7 @@ public partial class LightsManagerTests : RxAppMock
     private const string                                    SwitchMySwitch                   = "switch.my_switch";
     private const string                                    ON                               = "on";
     private const string                                    OFF                              = "off";
+    private const string                                    LightMyLightTwo                  = "light.my_light_2";
     private       LightsManagerConfig                       _config;
     private       Manager                                   _manager;
     private       List<(object sender, HassEventArgs args)> _managerFiredEvents;
@@ -64,8 +65,33 @@ public partial class LightsManagerTests : RxAppMock
             .And(s => GivenThePresenceEntityIs(OFF))
             .And(s => GivenTheControlEntityIs(OFF))
             .And(s => GivenTheManagerIsInitialised())
-            .When(s => WhenOverrideEntity(LightMyLight, ON), _thenEntityTurnsTemplate)
+            .When(s => WhenControlEntityIsManuallyTurned(ON))
             .Then(s => ThenTheManagerStateIs(ManagerState.Override))
+            .BDDfy();
+    }
+
+    [Fact]
+    public void on_init_if_enabled_switch_off_state_is_disabled()
+    {
+        this.Given(s => GivenTheRoom())
+            .And(s => GivenThePresenceEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(OFF))
+            .And(s => GivenTheManagerEnabledIs(OFF))
+            .And(s => GivenTheManagerIsInitialised())
+            .Then(s => ThenTheManagerStateIs(ManagerState.Disabled))
+            .BDDfy();
+    }
+
+    [Fact]
+    public void on_enabled_switch_changed_from_off_to_on_the_state_is_idle()
+    {
+        this.Given(s => GivenTheRoom())
+            .And(s => GivenThePresenceEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(OFF))
+            .And(s => GivenTheManagerEnabledIs(OFF))
+            .And(s => GivenTheManagerIsInitialised())
+            .When(s => WhenManagerIsTurned(ON))
+            .Then(s => ThenTheManagerStateIs(ManagerState.Idle))
             .BDDfy();
     }
 
@@ -75,10 +101,10 @@ public partial class LightsManagerTests : RxAppMock
         this.Given(s => GivenTheRoom())
             .And(s => GivenThePresenceEntityIs(OFF))
             .And(s => GivenTheControlEntityIs(OFF))
-            .And(s => GivenTheControlEntityIs("light.my_light_2", OFF))
+            .And(s => GivenTheControlEntityIs(LightMyLightTwo, OFF))
             .And(s => GivenTheManagerIsInitialised())
-            .When(s => WhenOverrideEntity(LightMyLight, ON), _thenEntityTurnsTemplate)
-            .When(s => WhenOverrideEntity("light.my_light_2", ON), _thenEntityTurnsTemplate)
+            .When(s => WhenControlEntityIsManuallyTurned(ON))
+            .When(s => WhenControlEntityIsManuallyTurned(LightMyLightTwo, ON))
             .Then(s => ThenTheManagerStateIs(ManagerState.Override))
             .And(s => ThenManagerTimerSetEventFired(Times.Exactly(2), TimeSpan.FromSeconds(_config.OverrideTimeout)))
             .And(s => ThenThereIsAnActiveTimer())
@@ -149,17 +175,18 @@ public partial class LightsManagerTests : RxAppMock
         this.Given(s => GivenTheRoom())
             .And(s => GivenThePresenceEntityIs(OFF))
             .And(s => GivenTheControlEntityIs(OFF))
-            .And(s => GivenTheControlEntityIs("light.my_light2", OFF), _theControlEntityIsTemplate)
-            .And(s => GivenTheNightControlEntityIs("light.my_light2", OFF), _theControlEntityIsTemplate)
+            .And(s => GivenTheControlEntityIs(LightMyLightTwo, OFF), _theControlEntityIsTemplate)
+            .And(s => GivenTheNightControlEntityIs(LightMyLightTwo, OFF), _theControlEntityIsTemplate)
             .And(s => GivenTheNightControlEntityIs(OFF))
             .And(s => GivenTheNightTimeEntityStatesAre("night"))
             .And(s => GivenTheNightTimeEntityIs("day"))
             .And(s => GivenTheManagerIsInitialised())
             .When(s => WhenHouseModeChangesTo("night"))
-            .Then(s => ThenTheControlEntitiesAre(LightMyLight, "light.my_light2"))
-            .Then(s => ThenTheNightControlEntitiesAre(LightMyNightLight, "light.my_light2"))
+            .Then(s => ThenTheControlEntitiesAre(LightMyLight, LightMyLightTwo))
+            .Then(s => ThenTheNightControlEntitiesAre(LightMyNightLight, LightMyLightTwo))
             .BDDfy();
     }
+
 
     [Fact]
     public void on_keep_alive_entity_turns_off_control_entities_turns_off_after_timeout()
@@ -191,38 +218,39 @@ public partial class LightsManagerTests : RxAppMock
             .And(s => GivenTheControlEntityIs(OFF))
             .And(s => GivenTheManagerEnabledIs(ON))
             .And(s => GivenTheManagerIsInitialised())
-            .When(s => WhenEntityTurns(_config.EnabledSwitchEntityId, OFF), _thenEntityTurnsTemplate)
+            .When(s => WhenManagerIsTurned(OFF))
             .Then(s => ThenTheManagerStateIs(ManagerState.Disabled))
             .BDDfy();
     }
 
-    // Timer is set when state chanes to override even if there are active sensors?
-
     [Fact]
-    public void when_enabled_switch_is_turned_off_then_manager_state_is_disabled_simple()
+    public void on_control_entity_override_to_off_state_stays_override_if_other_control_entities_are_on()
     {
         this.Given(s => GivenTheRoom())
             .And(s => GivenThePresenceEntityIs(OFF))
             .And(s => GivenTheControlEntityIs(OFF))
-            .And(s => GivenTheManagerEnabledIs(ON))
+            .And(s => GivenTheControlEntityIs(LightMyLightTwo, OFF))
             .And(s => GivenTheManagerIsInitialised())
-            .When(s => WhenEntityTurns(_config.EnabledSwitchEntityId, OFF), _thenEntityTurnsTemplate)
-            .Then(s => ThenTheManagerStateIs(ManagerState.Disabled))
+            .When(s => WhenPresenceEntityTurns(ON))
+            .And(s => WhenControlEntityIsManuallyTurned(LightMyLightTwo, OFF))
+            .Then(s => ThenTheControlEntityTurned(OFF, Times.Never()))
+            .And(s => ThenTheManagerStateIs(ManagerState.Override))
             .BDDfy();
     }
 
-    // TODO DISCUSS If I have more than one control entity and I want to turn one off, should the state go back to Idle and so turn off all entities. Or should it stay active or even be set to override
-    //[Fact]
-    //public void on_control_entity_override_to_off_sets_state_idle()
-    //{
-    //    this.Given(s => GivenTheRoom("Room1"))
-    //        .And(s => ThePresenceEntityIs( OFF), _thePresenceEntityIsTemplate)
-    //        .And(s => TheControlEntityIs( OFF), _theControlEntityIsTemplate)
-    //        .And(s => TheManagerIsInitialised())
-    //        .When(s => PresenceEntityTurns(ON))
-    //        .Then(s => TheManagerStateIs(ManagerState.Active))
-    //        .When(s => OverrideEntity(LightMyLight, OFF), _thenEntityTurnsTemplate)
-    //        .Then(s => TheManagerStateIs(ManagerState.Idle))
-    //        .BDDfy();
-    //}
+    [Fact]
+    public void on_control_entity_override_to_off_sets_state_idle_if_all_control_entities_are_off()
+    {
+        this.Given(s => GivenTheRoom())
+            .And(s => GivenThePresenceEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(LightMyLightTwo, OFF))
+            .And(s => GivenTheManagerIsInitialised())
+            .When(s => WhenPresenceEntityTurns(ON))
+            .And(s => WhenControlEntityIsManuallyTurned(OFF))
+            .And(s => WhenControlEntityIsManuallyTurned(LightMyLightTwo, OFF))
+            .Then(s => ThenAllControlEntitiesAreOff())
+            .And(s => ThenTheManagerStateIs(ManagerState.Idle))
+            .BDDfy();
+    }
 }

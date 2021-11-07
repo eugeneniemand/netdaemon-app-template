@@ -67,7 +67,8 @@ lightsManager:
       - night
       - sleeping
     night_control_entity_ids:
-      - light.dining_2
+      - light.dining_1
+    debug: true
 
   - name: Landing
     presence_entity_ids:
@@ -94,11 +95,14 @@ lightsManager:
     presence_entity_ids:
       - binary_sensor.front_door
       - binary_sensor.niemand_front_door_motion
+    keep_alive_entity_ids:
+      - binary_sensor.front_door
     control_entity_ids:
       - light.porch
     timeout: 90
     condition_entity_id: sun.sun
     condition_entity_state: below_horizon
+    debug: true
 
   - name: Aaron
     timeout: 300
