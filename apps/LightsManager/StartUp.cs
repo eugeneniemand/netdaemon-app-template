@@ -22,7 +22,9 @@ namespace LightsManager
             var configs = Rooms.Any(r => r.Debug) ? Rooms.Where(r => r.Debug).ToList() : Rooms.ToList();
             foreach (var config in configs)
             {
-                config.NdUserId = NdUserId;
+                config.NdUserId     = NdUserId;
+                config.GuardTimeout = GuardTimeout;
+
                 SetupEnabledSwitchEntity(config);
                 var manager = new Manager(this, config);
             }

@@ -63,6 +63,12 @@ public partial class LightsManagerTests
         WhenControlEntityIsManuallyTurned(LightMyLight, newState);
     }
 
+    private void WhenTheGuardDogPatrols()
+    {
+        TestScheduler.AdvanceBy(TimeSpan.FromSeconds(_config.GuardTimeout).Ticks);
+    }
+
+
     private void WhenControlEntityIsManuallyTurned(string entityId, string newState)
     {
         EntityState oldEntityState;
@@ -100,6 +106,7 @@ public partial class LightsManagerTests
                     Attribute = null,
                     Context   = new Context { UserId = "Eugene" }
                 };
+
                 break;
             default:
                 throw new ArgumentException($"EntityTurnsAsNetDaemon is not configured for supplied value: '{newState}'", nameof(newState));

@@ -29,7 +29,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Dining
     presence_entity_ids:
@@ -53,7 +53,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Fish
     presence_entity_ids:
@@ -68,7 +68,7 @@ lightsManager:
       - sleeping
     night_control_entity_ids:
       - light.dining_1
-    debug: true
+    # debug: true
 
   - name: Landing
     presence_entity_ids:
@@ -89,7 +89,7 @@ lightsManager:
     random_entity_id: alarm_control_panel.alarmo
     random_states:
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Porch
     presence_entity_ids:
@@ -102,7 +102,7 @@ lightsManager:
     timeout: 90
     condition_entity_id: sun.sun
     condition_entity_state: below_horizon
-    debug: true
+    # debug: true
 
   - name: Aaron
     timeout: 300
@@ -118,7 +118,7 @@ lightsManager:
       - night
       - sleeping
     night_control_entity_ids:
-      - light.aaron_2
+      - light.aaron_4
     circadian_switch_entity_id: switch.circadian_lighting_circadian_aaron
     random_entity_id: alarm_control_panel.alarmo
     random_states:
@@ -157,7 +157,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Entrance
     timeout: 300
@@ -172,7 +172,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Master
     timeout: 300
@@ -188,7 +188,7 @@ lightsManager:
       - night
       - sleeping
     night_control_entity_ids:
-      - light.master_2
+      - light.master_4
     circadian_switch_entity_id: switch.circadian_lighting_circadian_master
     random_entity_id: alarm_control_panel.alarmo
     random_states:
@@ -217,7 +217,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Playroom
     timeout: 300
@@ -245,7 +245,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Toilet
     timeout: 300
@@ -260,7 +260,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Utility
     timeout: 300
@@ -281,4 +281,4 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true

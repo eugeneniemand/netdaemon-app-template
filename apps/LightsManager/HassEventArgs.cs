@@ -58,4 +58,12 @@ namespace LightsManager
             CorrelationId  = correlationId;
         }
     }
+
+    public class ManagerGuardDogArgs : HassEventArgs
+    {
+        public ManagerGuardDogArgs(string correlationId) : base(EventType.GuardDogPatrolling)
+        {
+            CorrelationId = correlationId;
+        }
+    }
 }

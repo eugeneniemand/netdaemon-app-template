@@ -9,6 +9,7 @@ namespace LightsManager
         ManagerTimerReset,
         ManagerTimerSet,
         ManagerEnabledChanged,
-        ManualOverride
+        ManualOverride,
+        GuardDogPatrolling
     }
 }

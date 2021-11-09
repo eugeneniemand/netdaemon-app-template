@@ -29,6 +29,7 @@ namespace LightsManager
         public event EventHandler<ManagerStateEventArgs> ManagerStateChanged;
         public event EventHandler<ManagerTimerResetEventArgs> ManagerTimerReset;
         public event EventHandler<ManagerTimerSetEventArgs> ManagerTimerSet;
+        public event EventHandler<ManagerGuardDogArgs> ManagerGuardDogPatrolling;
 
         private bool IncorrectRoomEvent(object sender)
         {
@@ -45,6 +46,8 @@ namespace LightsManager
 
             if (Configurator.AllControlEntities.Select(e => e.EntityId).Any(entityId => _app.EntityState(entityId) == "on"))
                 ManagerStateChanged.Invoke(config.Name, new ManagerStateEventArgs("Initialize", ManagerState.Active));
+
+            _app.RunEvery(TimeSpan.FromSeconds(config.GuardTimeout), () => { ManagerGuardDogPatrolling.Invoke(config.Name, new ManagerGuardDogArgs(Guid.NewGuid().ToString())); });
         }
 
         private void OnEnabledChanged(object sender, HassEventArgs args)
@@ -117,7 +120,7 @@ namespace LightsManager
                     ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
                     break;
                 case ManagerState.Override:
-                    ManagerTimerSet.Invoke(sender, new ManagerTimerSetEventArgs(args.CorrelationId, TimeSpan.FromSeconds(900)));
+                    ManagerTimerSet.Invoke(sender, new ManagerTimerSetEventArgs(args.CorrelationId, Configurator.OverrideTimeoutSeconds));
                     break;
             }
 
@@ -140,6 +143,13 @@ namespace LightsManager
             _app.LogInformation("{RoomName} | {CorrelationId} - Timer Set: Timeout of {Timeout} expiring at {Expiry}", sender, args.CorrelationId, args.TimeoutSeconds, _expiry);
         }
 
+        private void OnManagerGuardDogPatrolling(object sender, ManagerGuardDogArgs args)
+        {
+            if (Configurator.AllControlEntities.Any(e => e.State == "on"))
+                ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Override));
+            _app.LogInformation("{RoomName} | {CorrelationId} - Guard Dog Patrolling", sender, args.CorrelationId);
+        }
+
 
         private void OnManualEntityStateChange(object sender, HassEventArgs args)
         {
@@ -159,15 +169,23 @@ namespace LightsManager
         {
             if (IncorrectRoomEvent(sender)) return;
             _app.LogInformation("{RoomName} | {CorrelationId} - Presence Started", sender, args.CorrelationId);
-            if (State == ManagerState.Disabled)
-            {
-                _app.LogInformation("{RoomName} | {CorrelationId} - Manager Disabled", sender, args.CorrelationId);
-                return;
-            }
-
-            ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
             if (Configurator.LuxAboveLimit) return;
-            ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Active));
+
+            switch (State)
+            {
+                case ManagerState.Disabled:
+                    _app.LogInformation("{RoomName} | {CorrelationId} - Manager Disabled", sender, args.CorrelationId);
+                    return;
+                case ManagerState.Override:
+                    ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Override));
+                    break;
+                case ManagerState.Idle:
+                case ManagerState.Active:
+                    ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Active));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void OnPresenceStopped(object sender, HassEventArgs args)
@@ -191,10 +209,11 @@ namespace LightsManager
 
         private void RegisterEventHandlers()
         {
-            ManagerStateChanged += OnManagerStateChanged;
-            ManagerTimerReset   += OnManagerTimerReset;
-            ManagerTimerSet     += OnManagerTimerSet;
-            EntityOverride      += OnEntityOverride;
+            ManagerGuardDogPatrolling += OnManagerGuardDogPatrolling;
+            ManagerStateChanged       += OnManagerStateChanged;
+            ManagerTimerReset         += OnManagerTimerReset;
+            ManagerTimerSet           += OnManagerTimerSet;
+            EntityOverride            += OnEntityOverride;
 
             Subscriptions.PresenceStarted         += OnPresenceStarted;
             Subscriptions.PresenceStopped         += OnPresenceStopped;

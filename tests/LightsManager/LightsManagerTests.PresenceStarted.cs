@@ -38,11 +38,10 @@ public partial class LightsManagerTests
         this.Given(s => GivenTheRoom())
             .And(s => GivenThePresenceEntityIs(OFF))
             .And(s => GivenTheControlEntityIs(OFF))
-            .And(s => GivenTheControlEntityIs(LightMyLightTwo, ON))
+            .And(s => GivenTheControlEntityIs(LightMyLightTwo, OFF))
             .And(s => GivenTheManagerIsInitialised())
             .And(s => WhenControlEntityIsManuallyTurned(ON))
             .Then(s => ThenTheManagerStateIs(ManagerState.Override))
-            .And(s => ThenTheControlEntityTurned(ON, Times.Once()))
             .When(s => WhenPresenceEntityTurns(ON))
             .Then(s => ThenTheEntityTurnedOnTimes(LightMyLightTwo, Times.Never()))
             .And(s => ThenTheManagerStateIs(ManagerState.Override))
@@ -65,7 +64,7 @@ public partial class LightsManagerTests
     }
 
     [Fact]
-    public void on_presence_started_event_resets_timer_when_state_is_override_and_lux_is_above_limit()
+    public void on_presence_started_event_does_not_reset_timer_when_state_is_override_and_lux_is_above_limit()
     {
         this.Given(s => GivenTheRoom())
             .And(s => GivenThePresenceEntityIs(OFF))
@@ -81,7 +80,7 @@ public partial class LightsManagerTests
             .Then(s => ThenManagerTimerSetEventFired(Times.Once(), TimeSpan.FromSeconds(_config.OverrideTimeout)))
             .When(s => WhenLuxChangesTo(100))
             .And(s => WhenPresenceEntityTurns(ON))
-            .Then(s => ThenThereIsNoActiveTimer())
+            .Then(s => ThenManagerTimerResetEventFired(Times.Once()))
             .BDDfy();
     }
 

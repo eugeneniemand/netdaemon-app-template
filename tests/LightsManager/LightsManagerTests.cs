@@ -56,6 +56,14 @@ public partial class LightsManagerTests : RxAppMock
                       .Subscribe(_ => action(), result.Token);
             return result;
         });
+
+        Setup(s => s.RunEvery(It.IsAny<TimeSpan>(), It.IsAny<Action>())).Returns<TimeSpan, Action>((span, action) =>
+        {
+            var result = new DisposableTimerResult(new CancellationToken());
+            Observable.Interval(span, TestScheduler)
+                      .Subscribe(_ => action(), result.Token);
+            return result;
+        });
     }
 
     [Fact]
@@ -67,6 +75,20 @@ public partial class LightsManagerTests : RxAppMock
             .And(s => GivenTheManagerIsInitialised())
             .When(s => WhenControlEntityIsManuallyTurned(ON))
             .Then(s => ThenTheManagerStateIs(ManagerState.Override))
+            .BDDfy();
+    }
+
+    [Fact]
+    public void guard_dog_finds_entities_that_are_on_with_no_timer_and_turns_them_off()
+    {
+        this.Given(s => GivenTheRoom())
+            .And(s => GivenThePresenceEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(ON))
+            .And(s => GivenTheManagerIsInitialised())
+            .When(s => WhenTheGuardDogPatrols())
+            .Then(s => ThenTheManagerStateIs(ManagerState.Override))
+            .When(s => WhenAfterSeconds(_config.OverrideTimeout))
+            .Then(s => ThenTheControlEntityTurned(OFF, Times.Once()))
             .BDDfy();
     }
 
@@ -110,7 +132,6 @@ public partial class LightsManagerTests : RxAppMock
             .And(s => ThenThereIsAnActiveTimer())
             .BDDfy();
     }
-
 
     [Fact]
     public void on_house_mode_changed_to_day_turns_off_night_entities_and_turns_on_day_entities()

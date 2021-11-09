@@ -58,5 +58,6 @@ namespace LightsManager
         public string RandomEntityId { get; set; }
         public IEnumerable<string> RandomStates { get; set; }
         public string NdUserId { get; set; }
+        public int GuardTimeout { get; set; } = 900;
     }
 }

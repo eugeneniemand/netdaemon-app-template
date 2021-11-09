@@ -29,8 +29,10 @@ namespace LightsManager
         private int? LuxLimit => _config.LuxEntityId == null ? _config.LuxLimit : int.Parse(_app.EntityState(_config.LuxLimitEntityId));
         private bool IsNightTime => _config.NightTimeEntityId != null && _config.NightTimeEntityStates.Contains(_app.EntityState(_config.NightTimeEntityId));
         public bool IsEnabled => _app.EntityState(_config.EnabledSwitchEntityId) == "on";
+        public TimeSpan OverrideTimeoutSeconds => TimeSpan.FromSeconds(_config.OverrideTimeout);
 
         public TimeSpan TimeoutSeconds => TimeSpan.FromSeconds(IsNightTime ? _config.NightTimeout == 0 ? 90 : _config.NightTimeout : _config.Timeout);
+
         public bool LuxAboveLimit => Lux >= LuxLimit;
         public string RoomName { get; set; }
         public List<BinarySensorEntity> ActivePresenceSensors => PresenceSensors.Where(e => string.Equals(e.State, "on", StringComparison.OrdinalIgnoreCase)).ToList();
