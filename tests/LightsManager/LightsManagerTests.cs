@@ -79,7 +79,7 @@ public partial class LightsManagerTests : RxAppMock
     }
 
     [Fact]
-    public void guard_dog_finds_entities_that_are_on_with_no_timer_and_turns_them_off()
+    public void on_guard_dog_patrols_entities_that_are_on_with_no_timer_are_turned_off()
     {
         this.Given(s => GivenTheRoom())
             .And(s => GivenThePresenceEntityIs(OFF))
@@ -89,6 +89,23 @@ public partial class LightsManagerTests : RxAppMock
             .Then(s => ThenTheManagerStateIs(ManagerState.Override))
             .When(s => WhenAfterSeconds(_config.OverrideTimeout))
             .Then(s => ThenTheControlEntityTurned(OFF, Times.Once()))
+            .BDDfy();
+    }
+
+    [Fact]
+    public void on_guard_dog_patrols_entities_that_are_on_when_state_is_active_are_not_turned_off()
+    {
+        this.Given(s => GivenTheRoom())
+            .And(s => GivenThePresenceEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(OFF))
+            .And(s => GivenTheTimeoutIsSeconds(60))
+            .And(s => GivenTheGuardTimeoutIsSeconds(10))
+            .And(s => GivenTheManagerIsInitialised())
+            .When(s => WhenPresenceEntityTurns(ON))
+            .Then(s => ThenTheManagerStateIs(ManagerState.Active))
+            .When(s => WhenTheGuardDogPatrols())
+            .Then(s => ThenTheManagerStateIs(ManagerState.Active))
+            .Then(s => ThenTheEntityStateIs(LightMyLight, OFF, Times.Never()))
             .BDDfy();
     }
 
@@ -180,7 +197,7 @@ public partial class LightsManagerTests : RxAppMock
             .And(s => GivenTheManagerIsInitialised())
             .When(s => WhenPresenceEntityTurns(ON))
             .And(s => WhenKeepAliveEntityTurns(ON))
-            .Then(s => ThenTheControlEntityTurned(ON, Times.Once()))
+            .Then(s => ThenTheControlEntityTurned(ON, Times.AtLeastOnce()))
             .When(s => WhenPresenceEntityTurns(OFF))
             .And(s => WhenAfterSeconds(_config.Timeout))
             .Then(s => ThenTheControlEntityTurned(OFF, Times.Never()))
@@ -220,7 +237,7 @@ public partial class LightsManagerTests : RxAppMock
             .And(s => GivenTheManagerIsInitialised())
             .When(s => WhenPresenceEntityTurns(ON))
             .When(s => WhenKeepAliveEntityTurns(ON))
-            .Then(s => ThenTheControlEntityTurned(ON, Times.Once()))
+            .Then(s => ThenTheControlEntityTurned(ON, Times.AtLeastOnce()))
             .When(s => WhenPresenceEntityTurns(OFF))
             .And(s => WhenAfterSeconds(_config.Timeout))
             .Then(s => ThenTheControlEntityTurned(OFF, Times.Never()))

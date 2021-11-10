@@ -34,7 +34,7 @@ public partial class LightsManagerTests
     {
         var events = _managerFiredEvents.Where(e => e.args.GetType() == typeof(ManagerTimerSetEventArgs));
         ThenEventFired(times, events);
-        if (timeout != default && events.Count() > 1) throw new NotImplementedException("Checking timeouts for more than 1 event is not implemented");
+        //if (timeout != default && events.Count() > 1) throw new NotImplementedException("Checking timeouts for more than 1 event is not implemented");
         Assert.Equal(timeout, ( (ManagerTimerSetEventArgs) events.First().args ).TimeoutSeconds);
     }
 
@@ -69,6 +69,11 @@ public partial class LightsManagerTests
     private void ThenTheNightControlEntitiesAre(params string[] entityIds)
     {
         Assert.Equal(_config.NightControlEntityIds.ToList().OrderBy(i => i), entityIds.ToList().OrderBy(i => i));
+    }
+
+    private void ThenTheEntityStateIs(string entityId, dynamic? state, Times times)
+    {
+        VerifyEntitySetState(entityId, state: state, times: times);
     }
 
     private void ThenTheNightControlEntityTurned(string state, Times times)

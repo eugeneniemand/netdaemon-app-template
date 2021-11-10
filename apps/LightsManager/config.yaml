@@ -138,7 +138,7 @@ lightsManager:
       - night
       - sleeping
     night_control_entity_ids:
-      - switch.tuya_socket_3
+      - switch.jayden_bedside
     random_entity_id: alarm_control_panel.alarmo
     random_states:
     - armed_away

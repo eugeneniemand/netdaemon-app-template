@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NetDaemon.Common.Reactive;
 
 namespace LightsManager
@@ -10,7 +9,6 @@ namespace LightsManager
         private readonly INetDaemonRxApp _app;
         private          DateTime        _expiry;
         private          IDisposable?    _timer;
-        public bool HasActiveTimer => _timer != null;
 
         public Manager(INetDaemonRxApp app, LightsManagerConfig config)
         {
@@ -21,15 +19,16 @@ namespace LightsManager
         }
 
         public Configurator Configurator { get; private set; }
+        public bool HasActiveTimer => _timer != null;
         public ManagerState State { get; set; }
 
         private bool PresenceIsActive => HasActiveTimer || Configurator.ActivePresenceSensors.Any() && State != ManagerState.Override;
 
         public event EventHandler<EntityOverrideEventArgs> EntityOverride;
+        public event EventHandler<ManagerGuardDogArgs> ManagerGuardDogPatrolling;
         public event EventHandler<ManagerStateEventArgs> ManagerStateChanged;
         public event EventHandler<ManagerTimerResetEventArgs> ManagerTimerReset;
         public event EventHandler<ManagerTimerSetEventArgs> ManagerTimerSet;
-        public event EventHandler<ManagerGuardDogArgs> ManagerGuardDogPatrolling;
 
         private bool IncorrectRoomEvent(object sender)
         {
@@ -43,9 +42,6 @@ namespace LightsManager
                 ManagerStateChanged.Invoke(config.Name, new ManagerStateEventArgs("Initialize", ManagerState.Disabled));
                 return;
             }
-
-            if (Configurator.AllControlEntities.Select(e => e.EntityId).Any(entityId => _app.EntityState(entityId) == "on"))
-                ManagerStateChanged.Invoke(config.Name, new ManagerStateEventArgs("Initialize", ManagerState.Active));
 
             _app.RunEvery(TimeSpan.FromSeconds(config.GuardTimeout), () => { ManagerGuardDogPatrolling.Invoke(config.Name, new ManagerGuardDogArgs(Guid.NewGuid().ToString())); });
         }
@@ -98,6 +94,14 @@ namespace LightsManager
             TurnOnControlEntities(sender, args);
         }
 
+        private void OnManagerGuardDogPatrols(object sender, ManagerGuardDogArgs args)
+        {
+            if (IncorrectRoomEvent(sender)) return;
+            if (Configurator.AllControlEntities.Any(e => e.State == "on") && State == ManagerState.Idle)
+                ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Override));
+            _app.LogInformation("{RoomName} | {CorrelationId} - Guard Dog Patrolling", sender, args.CorrelationId);
+        }
+
         private void OnManagerStateChanged(object sender, ManagerStateEventArgs args)
         {
             if (IncorrectRoomEvent(sender)) return;
@@ -105,7 +109,7 @@ namespace LightsManager
             State = args.State;
             _app.LogInformation("{RoomName} | {CorrelationId} - Manager State Changed: {State}", sender, args.CorrelationId, args.State);
 
-            if (oldState == State) return;
+            //if (oldState == State) return;
             switch (args.State)
             {
                 case ManagerState.Idle:
@@ -141,13 +145,6 @@ namespace LightsManager
             _timer  = _app.RunIn(args.TimeoutSeconds, () => ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Idle)));
             _expiry = DateTime.Now + args.TimeoutSeconds;
             _app.LogInformation("{RoomName} | {CorrelationId} - Timer Set: Timeout of {Timeout} expiring at {Expiry}", sender, args.CorrelationId, args.TimeoutSeconds, _expiry);
-        }
-
-        private void OnManagerGuardDogPatrolling(object sender, ManagerGuardDogArgs args)
-        {
-            if (Configurator.AllControlEntities.Any(e => e.State == "on"))
-                ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Override));
-            _app.LogInformation("{RoomName} | {CorrelationId} - Guard Dog Patrolling", sender, args.CorrelationId);
         }
 
 
@@ -209,7 +206,7 @@ namespace LightsManager
 
         private void RegisterEventHandlers()
         {
-            ManagerGuardDogPatrolling += OnManagerGuardDogPatrolling;
+            ManagerGuardDogPatrolling += OnManagerGuardDogPatrols;
             ManagerStateChanged       += OnManagerStateChanged;
             ManagerTimerReset         += OnManagerTimerReset;
             ManagerTimerSet           += OnManagerTimerSet;

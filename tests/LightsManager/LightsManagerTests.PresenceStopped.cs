@@ -93,7 +93,7 @@ public partial class LightsManagerTests
             .Then(s => ThenTheControlEntityTurned(OFF, Times.Never()))
             .When(s => WhenTimeoutExpired())
             .Then(s => ThenTheControlEntityTurned(OFF, Times.Once()))
-            .And(s => ThenTheControlEntityTurned(ON, Times.Once()))
+            .And(s => ThenTheControlEntityTurned(ON, Times.AtLeastOnce()))
             .BDDfy();
     }
 
@@ -101,13 +101,14 @@ public partial class LightsManagerTests
     public void on_presence_stopped_turns_off_control_entities_after_night_timeout()
     {
         this.Given(s => GivenTheRoom())
-            .And(s => GivenThePresenceEntityIs(ON))
-            .And(s => GivenTheControlEntityIs(ON))
+            .And(s => GivenThePresenceEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(OFF))
             .And(s => GivenTheNightTimeEntityIs("night"))
             .And(s => GivenTheNightTimeEntityStatesAre("night"))
             .And(s => GivenTheTimeoutIsSeconds(60))
             .And(s => GivenTheNightTimeoutIsSeconds(30))
             .And(s => GivenTheManagerIsInitialised())
+            .When(s => WhenPresenceEntityTurns(ON))
             .When(s => WhenPresenceEntityTurns(OFF))
             .And(s => WhenAfterSeconds(10))
             .Then(s => ThenTheControlEntityTurned(OFF, Times.Never()))
@@ -120,11 +121,12 @@ public partial class LightsManagerTests
     public void on_presence_stopped_turns_off_control_entities_after_timeout()
     {
         this.Given(s => GivenTheRoom())
-            .And(s => GivenThePresenceEntityIs(ON))
-            .And(s => GivenTheControlEntityIs(ON))
+            .And(s => GivenThePresenceEntityIs(OFF))
+            .And(s => GivenTheControlEntityIs(OFF))
             .And(s => GivenTheControlEntityIs(SwitchMySwitch, ON), _theControlEntityIsTemplate)
             .And(s => GivenTheTimeoutIsSeconds(60))
             .And(s => GivenTheManagerIsInitialised())
+            .When(s => WhenPresenceEntityTurns(ON))
             .When(s => WhenPresenceEntityTurns(OFF))
             .And(s => WhenAfterSeconds(10))
             .Then(s => ThenTheControlEntityTurned(OFF, Times.Never()))

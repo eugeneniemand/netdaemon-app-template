@@ -123,4 +123,9 @@ public partial class LightsManagerTests
     {
         _config.Timeout = timeout;
     }
+
+    private void GivenTheGuardTimeoutIsSeconds(int timeout)
+    {
+        _config.GuardTimeout = timeout;
+    }
 }
