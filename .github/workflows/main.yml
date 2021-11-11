@@ -23,4 +23,4 @@ jobs:
     steps:      
       # Runs a single command using the runners shell
       - name: Call Hass Webook
-        run: curl -X POST ${{ secrets.HASS_WEBOOK }}
+        run: curl -X POST ${{ secrets.HASS_WEBHOOK }}
