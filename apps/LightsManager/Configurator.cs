@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using NetDaemon.Common.Reactive;
 using NetDaemon.Common.Reactive.Services;
+using NetDaemon.HassModel.Common;
+using NetDaemon.HassModel.Entities;
 
 namespace LightsManager
 {
@@ -17,9 +19,9 @@ namespace LightsManager
             RoomName = _config.Name;
         }
 
-        public List<LightEntityDummy> Lights { get; set; }
-        public List<LightEntityDummy> Switches { get; set; }
-        public List<LightEntityDummy> AllControlEntities { get; set; }
+        public List<Entity> Lights { get; set; }
+        public List<Entity> Switches { get; set; }
+        public List<Entity> AllControlEntities { get; set; }
         public List<BinarySensorEntity> PresenceSensors { get; set; }
         public BinarySensorEntity NightTime { get; set; }
 
@@ -38,18 +40,18 @@ namespace LightsManager
         public List<BinarySensorEntity> ActivePresenceSensors => PresenceSensors.Where(e => string.Equals(e.State, "on", StringComparison.OrdinalIgnoreCase)).ToList();
         public string NdUserId => _config.NdUserId;
 
-        public void Configure(INetDaemonRxApp app)
+        public void Configure(INetDaemonRxApp app, IHaContext ha)
         {
             _app = app;
 
-            Lights = new List<LightEntityDummy>();
-            foreach (var entityId in FilterControlEntities("light.")) Lights.Add(new LightEntityDummy(app, new[] { entityId }));
+            Lights = new List<Entity>();
+            foreach (var entityId in FilterControlEntities("light.")) Lights.Add(new Entity(ha,  entityId ));
 
-            Switches = new List<LightEntityDummy>();
-            foreach (var entityId in FilterControlEntities("switch.")) Switches.Add(new LightEntityDummy(app, new[] { entityId }));
+            Switches = new List<Entity>();
+            foreach (var entityId in FilterControlEntities("switch.")) Switches.Add(new Entity(ha, entityId));
 
-            AllControlEntities = new List<LightEntityDummy>();
-            foreach (var entityId in _config.ControlEntityIds.Union(_config.NightControlEntityIds)) AllControlEntities.Add(new LightEntityDummy(app, new[] { entityId }));
+            AllControlEntities = new List<Entity>();
+            foreach (var entityId in _config.ControlEntityIds.Union(_config.NightControlEntityIds)) AllControlEntities.Add(new Entity(ha, entityId));
 
             PresenceSensors = new List<BinarySensorEntity>();
             foreach (var entityId in _config.PresenceEntityIds.Union(_config.KeepAliveEntityIds)) PresenceSensors.Add(new BinarySensorEntity(app, new[] { entityId }));

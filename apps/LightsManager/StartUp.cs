@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NetDaemon.Common;
 using NetDaemon.Common.Reactive;
-
+using NetDaemon.HassModel.Common;
 
 namespace LightsManager
 {
@@ -15,8 +15,13 @@ namespace LightsManager
         public int GuardTimeout { get; set; } = 900;
         public int MinDuration { get; set; }
         public int MaxDuration { get; set; }
-        public const string UNKNOWN = "Unknown";
+        public IHaContext Ha { get; }
 
+        public const string UNKNOWN = "Unknown";
+        public StartUp(IHaContext ha)
+        {
+            Ha = ha;
+        }
         public override void Initialize()
         {
             var configs = Rooms.Any(r => r.Debug) ? Rooms.Where(r => r.Debug).ToList() : Rooms.ToList();
@@ -26,7 +31,7 @@ namespace LightsManager
                 config.GuardTimeout = GuardTimeout;
 
                 SetupEnabledSwitchEntity(config);
-                var manager = new Manager(this, config);
+                var manager = new Manager(this, config, Ha);
             }
         }
 

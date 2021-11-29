@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LightsManager;
 using NetDaemon.Common.Reactive;
 using NetDaemon.Common.Reactive.Services;
+using NetDaemon.HassModel.Entities;
 
 namespace LightsManager
 {
@@ -24,7 +25,17 @@ namespace LightsManager
             return entities.Select(e => e.EntityId).ToList();
         }
 
+        public static List<string> ToEntityIds(this IEnumerable<Entity> entities)
+        {
+            return entities.Select(e => e.EntityId).ToList();
+        }
+
         public static string ToEntityIdsString(this IEnumerable<RxEntityBase> entities)
+        {
+            return string.Join(", ", entities.Select(e => e.EntityId).ToList());
+        }
+
+        public static string ToEntityIdsString(this IEnumerable<Entity> entities)
         {
             return string.Join(", ", entities.Select(e => e.EntityId).ToList());
         }

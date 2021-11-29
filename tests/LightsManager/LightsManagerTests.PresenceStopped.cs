@@ -4,6 +4,7 @@ using System.Linq;
 using LightsManager;
 using Moq;
 using NetDaemon.Common;
+using NetDaemon.HassModel.Common;
 using TestStack.BDDfy;
 using Xunit;
 
@@ -50,8 +51,8 @@ public partial class LightsManagerTests
         MockState.Add(new EntityState { EntityId = room1.ControlEntityIds.First(), State  = OFF });
         MockState.Add(new EntityState { EntityId = room2.ControlEntityIds.First(), State  = OFF });
 
-        var room1App = new Manager(Object, room1);
-        var room2App = new Manager(Object, room2);
+        var room1App = new Manager(Object, room1, new Mock<IHaContext>().Object);
+        var room2App = new Manager(Object, room2, new Mock<IHaContext>().Object);
 
         // ACT
         TriggerStateChange(room1.PresenceEntityIds.First(), OFF, ON);

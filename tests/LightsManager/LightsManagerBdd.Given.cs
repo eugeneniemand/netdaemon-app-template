@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LightsManager;
+using Moq;
 using NetDaemon.Common;
+using NetDaemon.HassModel.Common;
 
 public partial class LightsManagerTests
 {
@@ -58,7 +60,7 @@ public partial class LightsManagerTests
 
     private void GivenTheManagerIsInitialised()
     {
-        _manager                     =  new Manager(Object, _config);
+        _manager                     =  new Manager(Object, _config, new Mock<IHaContext>().Object );
         _managerFiredEvents          =  new List<(object, HassEventArgs)>();
         _manager.ManagerTimerReset   += (s, e) => _managerFiredEvents.Add(( s, e ));
         _manager.ManagerTimerSet     += (s, e) => _managerFiredEvents.Add(( s, e ));

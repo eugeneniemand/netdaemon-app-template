@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using NetDaemon.Common.Reactive;
+using NetDaemon.HassModel.Common;
 
 namespace LightsManager
 {
@@ -8,19 +9,21 @@ namespace LightsManager
     {
         private readonly INetDaemonRxApp _app;
         private          DateTime        _expiry;
-        private          IDisposable?    _timer;
+        private          IDisposable?    _lightTimer;
 
-        public Manager(INetDaemonRxApp app, LightsManagerConfig config)
+        public Manager(INetDaemonRxApp app, LightsManagerConfig config, IHaContext ha)
         {
             _app = app;
+            Ha = ha;
             SetConfigurator(config);
             RegisterEventHandlers();
             InitState(config);
         }
 
         public Configurator Configurator { get; private set; }
-        public bool HasActiveTimer => _timer != null;
+        public bool HasActiveTimer => _lightTimer != null;
         public ManagerState State { get; set; }
+        public IHaContext Ha { get; }
 
         private bool PresenceIsActive => HasActiveTimer || Configurator.ActivePresenceSensors.Any() && State != ManagerState.Override;
 
@@ -78,7 +81,7 @@ namespace LightsManager
             _app.LogInformation("{RoomName} | {CorrelationId} - House Mode Changed: {State}", sender, args.CorrelationId, args.EntityStates.New.State);
             if (!PresenceIsActive)
             {
-                Configurator.Configure(_app); // Configure so entities are ready for next time
+                Configurator.Configure(_app, Ha); // Configure so entities are ready for next time
                 _app.LogInformation("{RoomName} | {CorrelationId} - Configurator Configured", sender, args.CorrelationId);
                 return;
             }
@@ -90,7 +93,7 @@ namespace LightsManager
             }
 
             TurnOffControlEntities(sender, args);
-            Configurator.Configure(_app);
+            Configurator.Configure(_app, Ha);
             TurnOnControlEntities(sender, args);
         }
 
@@ -124,6 +127,7 @@ namespace LightsManager
                     ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
                     break;
                 case ManagerState.Override:
+                    ManagerTimerReset.Invoke(sender, new ManagerTimerResetEventArgs(args.CorrelationId));
                     ManagerTimerSet.Invoke(sender, new ManagerTimerSetEventArgs(args.CorrelationId, Configurator.OverrideTimeoutSeconds));
                     break;
             }
@@ -134,15 +138,17 @@ namespace LightsManager
         private void OnManagerTimerReset(object sender, ManagerTimerResetEventArgs args)
         {
             if (IncorrectRoomEvent(sender)) return;
-            _timer?.Dispose();
-            _timer  = null;
+            _lightTimer?.Dispose();
+            _lightTimer  = null;
             _expiry = DateTime.MinValue;
             _app.LogInformation("{RoomName} | {CorrelationId} - Timer Reset", sender, args.CorrelationId);
         }
 
         private void OnManagerTimerSet(object sender, ManagerTimerSetEventArgs args)
         {
-            _timer  = _app.RunIn(args.TimeoutSeconds, () => ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Idle)));
+            _lightTimer?.Dispose();
+            _lightTimer = null;
+            _lightTimer = _app.RunIn(args.TimeoutSeconds, () => ManagerStateChanged.Invoke(sender, new ManagerStateEventArgs(args.CorrelationId, ManagerState.Idle)));
             _expiry = DateTime.Now + args.TimeoutSeconds;
             _app.LogInformation("{RoomName} | {CorrelationId} - Timer Set: Timeout of {Timeout} expiring at {Expiry}", sender, args.CorrelationId, args.TimeoutSeconds, _expiry);
         }
@@ -224,7 +230,7 @@ namespace LightsManager
         private void SetConfigurator(LightsManagerConfig config)
         {
             Configurator = new Configurator(config);
-            Configurator.Configure(_app);
+            Configurator.Configure(_app, Ha);
             _app.LogInformation("Configurator Configured");
         }
 
@@ -248,15 +254,17 @@ namespace LightsManager
         private void TurnOffControlEntities(object sender, HassEventArgs args)
         {
             var controlEntities = Configurator.AllControlEntities;
-            controlEntities.ForEach(e => e.TurnOff());
+            controlEntities.ForEach(e => e.CallService("turn_off"));
             _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned Off: {Entities}", sender, args.CorrelationId, controlEntities.ToEntityIdsString());
         }
 
         private void TurnOnControlEntities(object sender, HassEventArgs args)
         {
             var controlEntities = Configurator.Lights.Union(Configurator.Switches).ToList();
-            controlEntities.ForEach(e => e.TurnOn());
+            controlEntities.ForEach(e => e.CallService("turn_on"));
             _app.LogInformation("{RoomName} | {CorrelationId} - Control Entities Turned On: {Entities}", sender, args.CorrelationId, controlEntities.ToEntityIdsString());
+
+            
         }
     }
 }
