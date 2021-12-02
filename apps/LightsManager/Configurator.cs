@@ -25,7 +25,7 @@ namespace LightsManager
 
         public LightEntityDummy Enabled { get; set; }
 
-        private int Lux => _config.LuxEntityId == null ? 0 : int.Parse(_app.EntityState(_config.LuxEntityId));
+        private int Lux => _config.LuxEntityId == null || _app.EntityState(_config.LuxEntityId).ToUpper() == "UNKNOWN" ? 0 : int.Parse(_app.EntityState(_config.LuxEntityId));
         private int? LuxLimit => _config.LuxEntityId == null ? _config.LuxLimit : int.Parse(_app.EntityState(_config.LuxLimitEntityId));
         private bool IsNightTime => _config.NightTimeEntityId != null && _config.NightTimeEntityStates.Contains(_app.EntityState(_config.NightTimeEntityId));
         public bool IsEnabled => _app.EntityState(_config.EnabledSwitchEntityId) == "on";

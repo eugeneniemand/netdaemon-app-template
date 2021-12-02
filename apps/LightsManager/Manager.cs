@@ -166,7 +166,10 @@ namespace LightsManager
         {
             if (IncorrectRoomEvent(sender)) return;
             _app.LogInformation("{RoomName} | {CorrelationId} - Presence Started", sender, args.CorrelationId);
-            if (Configurator.LuxAboveLimit) return;
+            if (Configurator.LuxAboveLimit) {
+                _app.LogInformation("{RoomName} | {CorrelationId} - Lux Above Limit", sender, args.CorrelationId);
+                return; 
+            }
 
             switch (State)
             {
