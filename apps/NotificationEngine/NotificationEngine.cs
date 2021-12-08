@@ -1,99 +1,86 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
-using NetDaemon.Common.Reactive;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using NetDaemon.Common;
+using NetDaemon.HassModel.Common;
+using NetDaemon.HassModel.Entities;
+using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
+using NetDaemon.Extensions.Scheduler;
+using Niemand.Daemons;
 
-// Use unique namespaces for your apps if you going to share with others to avoid
-// conflicting names
-namespace Niemand
+namespace Niemand;
+
+[Focus]
+[NetDaemonApp]
+public class NotificationEngine
 {
-    public class NotificationEngineImpl
+    private readonly Entities _entities;
+    private readonly Services _services;
+    private bool Whisper => _entities.InputSelect.HouseMode.State == "night";
+    private readonly Dictionary<Notification, DateTime> _lastNotification = new();
+    private readonly IServiceProvider?                  _serviceProvider;
+
+    public NotificationEngine(IHaContext ha, INetDaemonScheduler scheduler)
     {
-        private readonly INetDaemonRxApp                              _app;
-        private readonly Dictionary<string, NotificationEngineConfig> _config;
-        private readonly Dictionary<string, Action>                   _messageBuilders = new();
-        public string InstantMessage { get; private set; }
-        public string VoiceMessage { get; private set; }
+        var serviceCollection = new ServiceCollection()
+                                .AddSingleton(ha)
+                                .AddSingleton(scheduler);
+        _serviceProvider = new DefaultServiceProviderFactory().CreateServiceProvider(serviceCollection);
 
-        public NotificationEngineImpl(INetDaemonRxApp app, Dictionary<string, NotificationEngineConfig> config)
+        _entities = new Entities(ha);
+        _services = new Services(ha);
+
+        Initialise();
+    }
+
+    private void Initialise()
+    {
+        var type = typeof(INotificationDaemon);
+        var types = AppDomain.CurrentDomain.GetAssemblies()
+                             .SelectMany(s => s.GetTypes())
+                             .Where(p => type.IsAssignableFrom(p) && p.IsClass);
+
+        foreach (var t in types)
         {
-            _app    = app;
-            _config = config;
-        }
-
-        public void Initialize()
-        {
-            _app.Entities(_config.Select(c => c.Value.EntityId))
-                .StateChanges
-                .Subscribe(s => { });
-        }
-
-        public void Notify(List<string> options)
-        {
-            ClearMessages();
-
-            foreach (var option in options) _messageBuilders[option].Invoke();
-
-            _app.LogInformation($"VoiceMessage: {VoiceMessage}");
-            _app.LogInformation($"InstantMessage: {InstantMessage}");
-
-            SendNotifications();
-        }
-
-        private void BuildMessages((string voiceMessage, string instantMessage) caller)
-        {
-            VoiceMessage   += "<s>" + caller.voiceMessage + "</s>";
-            InstantMessage += caller.instantMessage + Environment.NewLine;
-        }
-
-        private void ClearMessages()
-        {
-            VoiceMessage   = "";
-            InstantMessage = "";
-        }
-
-        private bool GetEntityState(string entityId, out string? state)
-        {
-            state = _app.States.FirstOrDefault(e => e.EntityId == entityId)?.State?.ToString();
-            return state != null;
-        }
-
-        private (string voiceMessage, string instantMessage) GetStateOnMessage(
-            string entityId, string voiceMessage, string instantMessage)
-        {
-            return StateIsOn(entityId) ? ( voiceMessage, instantMessage ) : ( string.Empty, string.Empty );
-        }
-
-        private void SendNotifications()
-        {
-            _app.CallService("notify", "alexa_media", new
-            {
-                message = $"<voice name=\"Emma\">{VoiceMessage}</voice>",
-                target  = new List<string> { "media_player.downstairs" },
-                data = new
-                {
-                    type = "announce"
-                }
-            });
-
-            _app.CallService("notify", "twinstead", new
-            {
-                message = InstantMessage
-            });
-        }
-
-        private bool StateIsOn(string entityId, string onState = "on")
-        {
-            return GetEntityState(entityId, out var state) && state.ToLower() == onState;
+            var instance = (INotificationDaemon)ActivatorUtilities.CreateInstance(_serviceProvider!, t)!;
+            instance.Initialise();
+            ValidateSetup(instance);
+            instance.NotificationRaised += Announce;
         }
     }
 
-    public class NotificationEngineConfig
+    private void ValidateSetup(INotificationDaemon instance)
     {
-        public string EntityId { get; set; }
-        public string? VoiceMsg { get; set; }
-        public string? TextMsg { get; set; }
-        public string State { get; set; } = "on";
-        public int? Interval { get; set; }
+        if (instance.Config == null) throw new ArgumentException("Null Notification Config", nameof(instance.Config));
+        if (!instance.Config.Targets.Any()) throw new ArgumentException("Target list is empty", nameof(instance.Config.Targets));
+    }
+
+    private void Announce(object? sender, NotificationEventArgs args)
+    {
+        var config = args.Config;
+
+        if (_lastNotification.ContainsKey(config.Type))
+        {
+            if (( DateTime.Now - _lastNotification[config.Type] ).TotalMinutes < config.Snooze)
+                return;
+        }
+        else
+        {
+            _lastNotification.Add(config.Type, DateTime.Now);
+        }
+
+        foreach (var entity in config.Targets)
+            entity.VolumeSet(( Whisper ? 1 : 5 ) / 10.0);
+        var message     = args.Config.Message(args.MessageParams);
+        var ssmlMessage = !Whisper ? $"<voice name=\"Emma\">{message}</voice>" : $"<amazon:effect name=\"whispered\">{message}</amazon:effect>";
+        var data        = new { type = "announce" };
+        _services.Notify.AlexaMedia(ssmlMessage, target: config.Targets.Select(e => e.EntityId), data: data);
+        _lastNotification[config.Type] = DateTime.Now;
     }
 }
