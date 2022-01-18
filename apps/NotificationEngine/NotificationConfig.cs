@@ -22,7 +22,7 @@ namespace Niemand;
 //    public string Message => MessageParams.Any() ? string.Format(MessageTemplate, MessageParams) : MessageTemplate;
 //};
 
-public record NotificationConfig(Notification Type, string MessageTemplate, List<MediaPlayerEntity> Targets, double Snooze = 5)
+public record NotificationConfig(NotificationEnum Type, string MessageTemplate, List<MediaPlayerEntity> Targets, double Snooze = 5)
 {
     public string Message(object[] messageParams)
     {

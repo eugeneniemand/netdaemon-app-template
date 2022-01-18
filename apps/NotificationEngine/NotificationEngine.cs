@@ -21,25 +21,30 @@ namespace Niemand;
 public class NotificationEngine
 {
     private readonly Entities _entities;
-    private readonly Services _services;
+    public Services HaServices { get; set; }
     private bool Whisper => _entities.InputSelect.HouseMode.State == "night";
-    private readonly Dictionary<Notification, DateTime> _lastNotification = new();
-    private readonly IServiceProvider?                  _serviceProvider;
+    private readonly Dictionary<NotificationEnum, DateTime> _lastNotification = new();
+    private readonly IServiceProvider?                      _serviceProvider;
 
-    public NotificationEngine(IHaContext ha, INetDaemonScheduler scheduler)
+    public NotificationEngine(IHaContext ha, INetDaemonScheduler scheduler, INotificationDaemon? testDaemon = null)
     {
+        _entities  = new Entities(ha);
+        HaServices = new Services(ha);
         var serviceCollection = new ServiceCollection()
                                 .AddSingleton(ha)
-                                .AddSingleton(scheduler);
+                                .AddSingleton(scheduler)
+                                .AddSingleton<IEntities>(_entities)
+                                .AddSingleton(HaServices);
+
         _serviceProvider = new DefaultServiceProviderFactory().CreateServiceProvider(serviceCollection);
 
-        _entities = new Entities(ha);
-        _services = new Services(ha);
-
-        Initialise();
+        if (testDaemon == null)
+            Initialise().GetAwaiter().GetResult();
+        else
+            Initialise(testDaemon).GetAwaiter().GetResult();
     }
 
-    private void Initialise()
+    public async Task Initialise()
     {
         var type = typeof(INotificationDaemon);
         var types = AppDomain.CurrentDomain.GetAssemblies()
@@ -49,10 +54,15 @@ public class NotificationEngine
         foreach (var t in types)
         {
             var instance = (INotificationDaemon)ActivatorUtilities.CreateInstance(_serviceProvider!, t)!;
-            instance.Initialise();
-            ValidateSetup(instance);
-            instance.NotificationRaised += Announce;
+            await Initialise(instance);
         }
+    }
+
+    public async Task Initialise(INotificationDaemon instance)
+    {
+        await instance.Initialise();
+        ValidateSetup(instance);
+        instance.NotificationRaised += Announce;
     }
 
     private void ValidateSetup(INotificationDaemon instance)
@@ -79,8 +89,7 @@ public class NotificationEngine
             entity.VolumeSet(( Whisper ? 1 : 5 ) / 10.0);
         var message     = args.Config.Message(args.MessageParams);
         var ssmlMessage = !Whisper ? $"<voice name=\"Emma\">{message}</voice>" : $"<amazon:effect name=\"whispered\">{message}</amazon:effect>";
-        var data        = new { type = "announce" };
-        _services.Notify.AlexaMedia(ssmlMessage, target: config.Targets.Select(e => e.EntityId), data: data);
+        HaServices.Notify.AlexaMedia(ssmlMessage, null, config.Targets.Select(e => e.EntityId).ToList(), new { type = "announce" });
         _lastNotification[config.Type] = DateTime.Now;
     }
 }

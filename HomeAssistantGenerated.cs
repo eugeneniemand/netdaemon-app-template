@@ -3894,6 +3894,11 @@ public class Services : IServices
 {
     private readonly NetDaemon.HassModel.Common.IHaContext _haContext;
 
+    public Services()
+    {
+
+    }
+
     public Services(NetDaemon.HassModel.Common.IHaContext haContext)
     {
         _haContext = haContext;
@@ -3935,7 +3940,7 @@ public class Services : IServices
     public MinMaxServices MinMax => new(_haContext);
     public MqttServices Mqtt => new(_haContext);
     public NetdaemonServices Netdaemon => new(_haContext);
-    public NotifyServices Notify => new(_haContext);
+    public virtual NotifyServices Notify => new(_haContext);
     public NumberServices Number => new(_haContext);
     public OctopusagileServices Octopusagile => new(_haContext);
     public PersistentNotificationServices PersistentNotification => new(_haContext);
@@ -6588,7 +6593,10 @@ public record NetdaemonRegisterServiceParameters
 public class NotifyServices
 {
     private readonly NetDaemon.HassModel.Common.IHaContext _haContext;
-
+    public NotifyServices()
+    {
+        
+    }
     public NotifyServices(NetDaemon.HassModel.Common.IHaContext haContext)
     {
         _haContext = haContext;
@@ -6599,7 +6607,7 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media", null, data);
     }
 
-    public void AlexaMedia(string @message, string? @title = null, object? @target = null, object? @data = null)
+    public virtual void AlexaMedia(string @message, string? @title = null, object? @target = null, object? @data = null)
     {
         _haContext.CallService("notify", "alexa_media", null, new
             {

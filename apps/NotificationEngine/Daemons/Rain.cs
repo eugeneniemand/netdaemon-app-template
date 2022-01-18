@@ -24,7 +24,7 @@ public class Rain : INotificationDaemon
         _entities = new Entities(ha);
 
         Config = new NotificationConfig(
-            Notification.Rain,
+            NotificationEnum.Rain,
             "Take an umbrella<break />Rain in {0} minutes. Max intensity is {1}",
             new List<MediaPlayerEntity> { _entities.MediaPlayer.Dining });
     }
