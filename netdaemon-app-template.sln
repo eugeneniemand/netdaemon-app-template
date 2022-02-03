@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32002.185
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "daemonapp", "daemonapp.csproj", "{699C4C4F-6C57-4717-AFDE-422128772A0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "daemonapp", "daemonapp.csproj", "{699C4C4F-6C57-4717-AFDE-422128772A0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "daemonapp_test", "tests\daemonapp_test.csproj", "{E279326D-AFA5-4304-8681-A908AACEA4C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "daemonapp_test", "tests\daemonapp_test.csproj", "{E279326D-AFA5-4304-8681-A908AACEA4C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{699C4C4F-6C57-4717-AFDE-422128772A0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +41,11 @@ Global
 		{E279326D-AFA5-4304-8681-A908AACEA4C5}.Release|x64.Build.0 = Release|Any CPU
 		{E279326D-AFA5-4304-8681-A908AACEA4C5}.Release|x86.ActiveCfg = Release|Any CPU
 		{E279326D-AFA5-4304-8681-A908AACEA4C5}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FB22D3E4-51BB-40B8-A4B5-9A12FEB44C6D}
 	EndGlobalSection
 EndGlobal

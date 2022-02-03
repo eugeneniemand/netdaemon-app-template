@@ -10,13 +10,12 @@ using NetDaemon.Common;
 using NetDaemon.HassModel.Common;
 using NetDaemon.HassModel.Entities;
 using System.Text.Json;
+using Ha.Daemons;
 using Microsoft.Extensions.DependencyInjection;
 using NetDaemon.Extensions.Scheduler;
-using Niemand.Daemons;
 
-namespace Niemand;
+namespace Ha;
 
-[Focus]
 [NetDaemonApp]
 public class NotificationEngine
 {

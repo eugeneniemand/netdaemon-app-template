@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Niemand;
+namespace Ha;
 
 //public class NotificationConfig
 //{

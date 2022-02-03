@@ -9,7 +9,7 @@ using NetDaemon.Extensions.Scheduler;
 using NetDaemon.HassModel.Common;
 using NetDaemon.HassModel.Entities;
 
-namespace Niemand.Daemons;
+namespace Ha.Daemons;
 
 public class MorningMode : INotificationDaemon
 {

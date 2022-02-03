@@ -5,31 +5,30 @@ using NetDaemon.Common.Reactive;
 
 // Use unique namespaces for your apps if you going to share with others to avoid
 // conflicting names
-namespace Niemand
-{
-    /// <summary>
-    ///     Hello world showcase
-    /// </summary>
-    public class VoiceTimer : NetDaemonRxApp
-    {
+namespace Ha;
 
-        public override void Initialize()
-        {
-            Entity("input_number.timer_interval_minutes")
-                .StateChanges
-                .Where(s => int.Parse(s.New.State.ToString()) >= 0)
-                .Subscribe(tuple =>
+/// <summary>
+///     Hello world showcase
+/// </summary>
+public class VoiceTimer : NetDaemonRxApp
+{
+    public override void Initialize()
+    {
+        Entity("input_number.timer_interval_minutes")
+            .StateChanges
+            .Where(s => int.Parse(s.New.State.ToString()) >= 0)
+            .Subscribe(tuple =>
                 {
                     LogInformation($"Minutes Remaining: {tuple.New.State}");
 
                     var minutesRemaining = int.Parse(tuple.New.State.ToString());
-                    string timerMediaPlayer = $"media_player.{State("input_select.timer_speaker")?.State?.ToString() ?? "dining"}";
+                    var timerMediaPlayer = $"media_player.{State("input_select.timer_speaker")?.State?.ToString() ?? "dining"}";
                     if (minutesRemaining > 0)
                     {
                         CallService("notify", "alexa_media", new
                         {
                             message = $"<voice name=\"Emma\">{minutesRemaining} minutes remaining</voice>",
-                            target = new List<string>() {timerMediaPlayer},
+                            target  = new List<string>() { timerMediaPlayer },
                             data = new
                             {
                                 type = "announce"
@@ -43,14 +42,14 @@ namespace Niemand
                     {
                         CallService("media_player", "play_media", new
                         {
-                            entity_id = timerMediaPlayer,
+                            entity_id          = timerMediaPlayer,
                             media_content_type = "sound",
-                            media_content_id = "air_horn_03"
+                            media_content_id   = "air_horn_03"
                         });
                         CallService("notify", "alexa_media", new
                         {
                             message = $"<voice name=\"Emma\">Timer has finished</voice>",
-                            target = new List<string>() {timerMediaPlayer},
+                            target  = new List<string>() { timerMediaPlayer },
                             data = new
                             {
                                 type = "announce"
@@ -60,6 +59,5 @@ namespace Niemand
                     }
                 }
             );
-        }
     }
 }

@@ -1,15 +1,14 @@
-namespace LightsManager
+namespace LightManager;
+
+public enum EventType
 {
-    public enum EventType
-    {
-        PresenceStarted,
-        PresenceStopped,
-        HouseModeChanged,
-        ManagerStateChanged,
-        ManagerTimerReset,
-        ManagerTimerSet,
-        ManagerEnabledChanged,
-        ManualOverride,
-        GuardDogPatrolling
-    }
+    PresenceStarted,
+    PresenceStopped,
+    HouseModeChanged,
+    ManagerStateChanged,
+    ManagerTimerReset,
+    ManagerTimerSet,
+    ManagerEnabledChanged,
+    ManualOverride,
+    GuardDogPatrolling
 }

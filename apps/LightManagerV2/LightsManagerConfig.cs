@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using NetDaemon.Common;
 using NetDaemon.Common.Reactive;
 
-namespace LightManager;
+namespace LightManagerV2;
 
 public class LightsManagerConfig
 {
-    private          INetDaemonRxApp _app;
-    private readonly Configurator    _configurator;
+    private INetDaemonRxApp _app;
 
     public LightsManagerConfig()
     {
@@ -15,7 +14,6 @@ public class LightsManagerConfig
         ControlEntityIds      = new List<string>();
         KeepAliveEntityIds    = new List<string>();
         NightControlEntityIds = new List<string>();
-        _configurator         = new Configurator(this);
     }
 
 

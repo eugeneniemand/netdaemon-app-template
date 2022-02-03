@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LightsManager;
+using LightManager;
 using Moq;
 using Xunit;
 
@@ -22,7 +22,7 @@ public partial class LightsManagerTests
                 ? _managerFiredEvents.Where(e => e.args.GetType() == typeof(ManagerStateEventArgs))
                 : _managerFiredEvents.Where(e =>
                     e.args.GetType() == typeof(ManagerStateEventArgs) &&
-                    ( (ManagerStateEventArgs) e.args ).State == state));
+                    ( (ManagerStateEventArgs)e.args ).State == state));
     }
 
     private void ThenManagerTimerResetEventFired(Times times)
@@ -35,7 +35,7 @@ public partial class LightsManagerTests
         var events = _managerFiredEvents.Where(e => e.args.GetType() == typeof(ManagerTimerSetEventArgs));
         ThenEventFired(times, events);
         //if (timeout != default && events.Count() > 1) throw new NotImplementedException("Checking timeouts for more than 1 event is not implemented");
-        Assert.Equal(timeout, ( (ManagerTimerSetEventArgs) events.First().args ).TimeoutSeconds);
+        Assert.Equal(timeout, ( (ManagerTimerSetEventArgs)events.First().args ).TimeoutSeconds);
     }
 
     private void ThenTheControlEntitiesAre(params string[] entityIds)

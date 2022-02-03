@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LightsManager;
+using LightManager;
 using Moq;
 using NetDaemon.Common;
 using TestStack.BDDfy;

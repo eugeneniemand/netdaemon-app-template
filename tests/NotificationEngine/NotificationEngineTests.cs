@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Tests.Entities;
-using Niemand;
-using Niemand.Daemons;
+using Ha;
+using Ha.Daemons;
 using Xunit;
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -26,30 +26,30 @@ public partial class NotificationEngineTests
     [Fact]
     public async Task LaundryDoneNotification()
     {
-        var haContextMock = new HaContextMock();
-        var entities      = new Entities(haContextMock.Object);
+        var ha       = new HaContextMock();
+        var entities = new Entities(ha.Object);
 
         var daemon = new LaundryDone(entities);
         await daemon.Initialise();
 
         using var daemonMonitor = daemon.Monitor();
 
-        NotificationEventArgs _args = null!;
-        daemon.NotificationRaised += (sender, args) =>
-        {
-            _args = args;
-            _output.WriteLine(args.Config.Message(args.MessageParams));
-        };
-
-        var entity = new Entity(haContextMock.Object, entities.BinarySensor.Kitchen.EntityId);
-        haContextMock.StateAllChangeSubject.OnNext(new StateChange(entity,
+        var entity = new Entity(ha.Object, entities.BinarySensor.Kitchen.EntityId);
+        ha.StateAllChangeSubject.OnNext(new StateChange(entity,
             new EntityState { State = "off" },
             new EntityState { State = "on" }));
 
 
         daemonMonitor.Should().Raise("NotificationRaised").WithArgs<NotificationEventArgs>(args => args.MessageParams == Array.Empty<object>());
-        ;
-        //_args!.Config.Message(_args.MessageParams).Should().Be("Your laundry is done</ break>Have you checked the machines?");
+
+        var data = ha.ServiceCalls
+                     .ForDomain("notify")
+                     .ForService("alexa_media")
+                     .First()
+                     .Data();
+        data["message"].Should().Be("<voice name=\"Emma\">Dummy Message</voice>");
+        data["target"].Should().BeEquivalentTo(new List<string> { mediaPlayer1.EntityId });
+        data["data"].ToDictionary()["type"].Should().Be("announce");
     }
 
     [Fact]

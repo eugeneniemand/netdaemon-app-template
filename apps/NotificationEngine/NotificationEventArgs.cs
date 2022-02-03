@@ -1,4 +1,4 @@
-﻿namespace Niemand.Daemons;
+﻿namespace Ha.Daemons;
 
 public class NotificationEventArgs
 {

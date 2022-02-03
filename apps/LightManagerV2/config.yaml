@@ -1,5 +1,5 @@
 lightsManager:
-  class: LightManager.LightsManager
+  class: LightManagerV2.LightsManager
   nd_user_id: ef606e2918da4355ba036a019cdcc6a0
   guard_timeout: 300
   min_duration: 5
@@ -29,7 +29,7 @@ lightsManager:
     random_states:
     - armed_night
     - armed_away
-    debug: true
+    # debug: true
 
   - name: Dining
     presence_entity_ids:
@@ -138,7 +138,7 @@ lightsManager:
       - night
       - sleeping
     night_control_entity_ids:
-      - switch.jayden_bedside
+      - light.jayden_3
     random_entity_id: alarm_control_panel.alarmo
     random_states:
     - armed_away
@@ -188,7 +188,7 @@ lightsManager:
       - night
       - sleeping
     night_control_entity_ids:
-      - light.master_4
+      - light.master_5
     circadian_switch_entity_id: switch.circadian_lighting_circadian_master
     random_entity_id: alarm_control_panel.alarmo
     random_states:
@@ -202,16 +202,18 @@ lightsManager:
       - binary_sensor.lounge
     control_entity_ids:
       - light.lounge
+      - switch.tuya_socket_2
     lux_entity_id: sensor.lounge_lux
     lux_limit_entity_id: input_number.lounge_lux_limit
     keep_alive_entity_ids:
-      - switch.lg_tv
+      - media_player.lounge_tv
     night_time_entity_id: input_select.house_mode
     night_time_entity_states:
       - night
       - sleeping
     night_control_entity_ids:
       - light.floor
+      - switch.tuya_socket_2
     circadian_switch_entity_id: switch.adaptive_lighting_floor
     random_entity_id: alarm_control_panel.alarmo
     random_states:

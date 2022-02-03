@@ -1,10 +1,9 @@
-namespace LightsManager
+namespace LightManager;
+
+public enum ManagerState
 {
-    public enum ManagerState
-    {
-        Idle,
-        Active,
-        Disabled,
-        Override
-    }
+    Idle,
+    Active,
+    Disabled,
+    Override
 }

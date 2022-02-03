@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using NetDaemon.Extensions.Scheduler;
 using NetDaemon.HassModel.Common;
 
-namespace Niemand.Daemons;
+namespace Ha.Daemons;
 
 public interface INotificationDaemon
 {

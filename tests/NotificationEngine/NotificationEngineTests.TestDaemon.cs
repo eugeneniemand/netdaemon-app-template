@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Niemand;
-using Niemand.Daemons;
+using Ha;
+using Ha.Daemons;
 
 public partial class NotificationEngineTests
 {

@@ -1,5 +1,5 @@
 using System;
-using LightsManager;
+using LightManager;
 using Moq;
 using TestStack.BDDfy;
 using Xunit;
