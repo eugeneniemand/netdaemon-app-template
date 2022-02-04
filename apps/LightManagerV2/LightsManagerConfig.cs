@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Ha;
 using NetDaemon.Common;
 using NetDaemon.Common.Reactive;
 
@@ -10,34 +11,21 @@ public class LightsManagerConfig
 
     public LightsManagerConfig()
     {
-        PresenceEntityIds     = new List<string>();
-        ControlEntityIds      = new List<string>();
-        KeepAliveEntityIds    = new List<string>();
-        NightControlEntityIds = new List<string>();
+        //PresenceEntityIds     = new List<BinarySensorEntity>();
+        //ControlEntityIds      = new List<LightEntity>();
+        //KeepAliveEntityIds    = new List<BinarySensorEntity>();
+        //NightControlEntityIds = new List<LightEntity>();
     }
 
 
-    public string Name { get; set; } = null!;
-    public int? LuxLimit { get; set; }
-    public string? LuxEntityId { get; set; }
-    public string? LuxLimitEntityId { get; set; }
-
-    public int Timeout { get; set; }
-
-    public int OverrideTimeout { get; set; } = 900;
-    public IEnumerable<string> PresenceEntityIds { get; set; }
-    public IEnumerable<string> ControlEntityIds { get; set; }
-    public IEnumerable<string> KeepAliveEntityIds { get; set; }
-    public IEnumerable<string> NightControlEntityIds { get; set; }
-    public IEnumerable<string> NightTimeEntityStates { get; set; } = null!;
-    public string? NightTimeEntityId { get; set; }
-
     public int NightTimeout { get; set; }
     public int NightBrightness { get; set; }
+
     public int NightColour { get; set; }
-    public string RoomPresenceEntityId => $"sensor.light_manager_{Name.ToLower()}";
-    public string EnabledSwitchEntityId => $"switch.light_manager_{Name.ToLower()}";
-    public string? CircadianSwitchEntityId { get; set; }
+
+    //public string RoomPresenceEntityId => $"sensor.light_manager_{Name.ToLower()}";
+    //public string EnabledSwitchEntityId => $"switch.light_manager_{Name.ToLower()}";
+    public int OverrideTimeout { get; set; } = 900;
 
 
     public bool SunriseEnabled { get; set; }
