@@ -42,8 +42,9 @@ public class LightsManager : IInitializable
 
 public class Manager
 {
-    private ILogger<LightsManager> _logger;
-    private string                 _ndUserId;
+    private          ILogger<LightsManager> _logger;
+    private          string                 _ndUserId;
+    private readonly List<string>           _onStates = new() { "on", "playing" };
     public bool Debug { get; set; }
     public IEnumerable<BinarySensorEntity> KeepAliveEntities { get; set; } = new List<BinarySensorEntity>();
     public IEnumerable<BinarySensorEntity> PresenceEntities { get; set; } = new List<BinarySensorEntity>();
@@ -61,10 +62,10 @@ public class Manager
 
     private bool IsAnyControlEntityOn => AllControlEntities.Any(e => e.IsOn());
     private bool IsNightMode => NightTimeEntity != null && NightTimeEntityStates.Contains(NightTimeEntity.State);
-    private bool IsOccupied => PresenceEntities.Union(KeepAliveEntities).Any(entity => entity.IsOn());
+    private bool IsOccupied => PresenceEntities.Union(KeepAliveEntities).Any(entity => entity.IsOn() || _onStates.Contains(entity.State!));
     private bool IsTooBright => LuxEntity != null && ( LuxLimitEntity != null ? LuxEntity.State >= LuxLimitEntity.State : LuxEntity.State >= LuxLimit );
     private List<LightEntity> AllControlEntities => ControlEntities.Union(NightControlEntities).ToList();
-    private TimeSpan DynamicTimeout => TimeSpan.FromSeconds(IsNightMode ? NightTimeout : Timeout);
+    private TimeSpan DynamicTimeout => TimeSpan.FromSeconds(IsNightMode ? NightTimeout == 0 ? 90 : NightTimeout : Timeout);
 
     public void Init(ILogger<LightsManager> logger, string ndUserId)
     {
@@ -152,7 +153,7 @@ public class Manager
                             TurnOnEntities();
 
                             if (CircadianSwitchEntity == null) return;
-                            _logger.LogInformation("{room} Turn off circadian switch", Name);
+                            _logger.LogInformation("{room} Turn on circadian switch", Name);
                             CircadianSwitchEntity.TurnOn();
                         });
     }

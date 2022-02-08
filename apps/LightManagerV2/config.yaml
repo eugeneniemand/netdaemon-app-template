@@ -89,7 +89,7 @@ lightsManager:
     # random_entity: alarm_control_panel.alarmo
     # random_states:
     # - armed_away
-    # # debug: true
+    # debug: true
 
   - name: Porch
     presence_entities:
@@ -206,6 +206,7 @@ lightsManager:
     lux_entity: sensor.lounge_lux
     lux_limit_entity: input_number.lounge_lux_limit
     keep_alive_entities:
+      - media_player.lounge
       - media_player.lounge_tv
     night_time_entity: input_select.house_mode
     night_time_entity_states:
