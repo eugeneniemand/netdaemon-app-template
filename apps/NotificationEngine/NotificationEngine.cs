@@ -1,27 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
-using NetDaemon.Common;
-using NetDaemon.HassModel.Common;
-using NetDaemon.HassModel.Entities;
-using System.Text.Json;
 using Ha.Daemons;
+using HomeAssistantGenerated;
 using Microsoft.Extensions.DependencyInjection;
+using NetDaemon.Common;
 using NetDaemon.Extensions.Scheduler;
+using NetDaemon.HassModel;
 
 namespace Ha;
 
 [NetDaemonApp]
 public class NotificationEngine
 {
-    private readonly Entities _entities;
-    public Services HaServices { get; set; }
-    private bool Whisper => _entities.InputSelect.HouseMode.State == "night";
+    private readonly Entities                               _entities;
     private readonly Dictionary<NotificationEnum, DateTime> _lastNotification = new();
     private readonly IServiceProvider?                      _serviceProvider;
 
@@ -42,6 +35,9 @@ public class NotificationEngine
         else
             Initialise(testDaemon).GetAwaiter().GetResult();
     }
+
+    public Services HaServices { get; set; }
+    private bool Whisper => _entities.InputSelect.HouseMode.State == "night";
 
     public async Task Initialise()
     {
@@ -64,12 +60,6 @@ public class NotificationEngine
         instance.NotificationRaised += Announce;
     }
 
-    private void ValidateSetup(INotificationDaemon instance)
-    {
-        if (instance.Config == null) throw new ArgumentException("Null Notification Config", nameof(instance.Config));
-        if (!instance.Config.Targets.Any()) throw new ArgumentException("Target list is empty", nameof(instance.Config.Targets));
-    }
-
     private void Announce(object? sender, NotificationEventArgs args)
     {
         var config = args.Config;
@@ -90,5 +80,11 @@ public class NotificationEngine
         var ssmlMessage = !Whisper ? $"<voice name=\"Emma\">{message}</voice>" : $"<amazon:effect name=\"whispered\">{message}</amazon:effect>";
         HaServices.Notify.AlexaMedia(ssmlMessage, null, config.Targets.Select(e => e.EntityId).ToList(), new { type = "announce" });
         _lastNotification[config.Type] = DateTime.Now;
+    }
+
+    private void ValidateSetup(INotificationDaemon instance)
+    {
+        if (instance.Config == null) throw new ArgumentException("Null Notification Config", nameof(instance.Config));
+        if (!instance.Config.Targets.Any()) throw new ArgumentException("Target list is empty", nameof(instance.Config.Targets));
     }
 }

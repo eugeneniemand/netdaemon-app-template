@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reactive.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using NetDaemon.Extensions.Scheduler;
-using NetDaemon.HassModel.Common;
+using HomeAssistantGenerated;
+using NetDaemon.HassModel;
 using NetDaemon.HassModel.Entities;
 
 namespace Ha.Daemons;
 
 public class Rain : INotificationDaemon
 {
-    private Entities _entities;
-
-    public NotificationConfig Config { get; private set; }
-
-    public event EventHandler<NotificationEventArgs> NotificationRaised;
+    private readonly Entities _entities;
 
     public Rain(IHaContext ha)
     {
@@ -29,12 +23,7 @@ public class Rain : INotificationDaemon
             new List<MediaPlayerEntity> { _entities.MediaPlayer.Dining });
     }
 
-    private Dictionary<DateTime, double> ParseRadarData()
-    {
-        var timeSlotsString = _entities.Sensor.NeerslagBuienradarRegenData.Attributes?.Data.ToString().Split(" ").Take(24);
-        var time            = DateTime.Now;
-        return ( timeSlotsString ?? Array.Empty<string>() ).Select(slot => slot.Split('|')).ToDictionary(_ => time += TimeSpan.FromMinutes(5), forecast => Convert.ToDouble(forecast[0].Replace(',', '.')));
-    }
+    public NotificationConfig Config { get; }
 
     public async Task Initialise()
     {
@@ -43,6 +32,15 @@ public class Rain : INotificationDaemon
             .StateChanges()
             .Where(s => s.Old.IsOff() && s.New.IsOn())
             .Subscribe(change => { RaiseNotification(); });
+    }
+
+    public event EventHandler<NotificationEventArgs> NotificationRaised;
+
+    private Dictionary<DateTime, double> ParseRadarData()
+    {
+        var timeSlotsString = _entities.Sensor.NeerslagBuienradarRegenData.Attributes?.Data.ToString().Split(" ").Take(24);
+        var time            = DateTime.Now;
+        return ( timeSlotsString ?? Array.Empty<string>() ).Select(slot => slot.Split('|')).ToDictionary(_ => time += TimeSpan.FromMinutes(5), forecast => Convert.ToDouble(forecast[0].Replace(',', '.')));
     }
 
     private void RaiseNotification()

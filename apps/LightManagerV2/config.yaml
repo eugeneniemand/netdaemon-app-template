@@ -2,8 +2,9 @@ lightsManager:
   class: LightManagerV2.LightsManager
   nd_user_id: ef606e2918da4355ba036a019cdcc6a0
   guard_timeout: 300
-  min_duration: 5
-  max_duration: 30
+  min_duration: "0.00:05:00"
+  max_duration: "0.00:30:00"
+  random_switch_entity: alarm_control_panel.alarmo
   rooms:
   - name: Study
     timeout: 300
@@ -24,11 +25,10 @@ lightsManager:
       - light.office
     lux_limit_entity: input_number.office_lux_limit
     lux_entity: sensor.office_lux
-    circadian_switch_entity: switch.adaptive_lighting_study
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    circadian_switch_entity: switch.adaptive_lighting_study    
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true
 
   - name: Dining
@@ -49,10 +49,9 @@ lightsManager:
     night_control_entities:
       - light.dining_1
     circadian_switch_entity: switch.circadian_lighting_circadian_dining
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true
 
   - name: Fish
@@ -86,9 +85,8 @@ lightsManager:
     timeout: 90
     lux_entity: sensor.landing_lux
     lux_limit_entity: input_number.landing_lux_limit
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_away
+    random_states:
+    - armed_away
     # debug: true
 
   - name: Porch
@@ -120,9 +118,8 @@ lightsManager:
     night_control_entities:
       - light.aaron_4
     circadian_switch_entity: switch.circadian_lighting_circadian_aaron
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_away
+    random_states:
+    - armed_away
 
   - name: Jayden
     timeout: 300
@@ -139,9 +136,8 @@ lightsManager:
       - sleeping
     night_control_entities:
       - light.jayden_3
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_away
+    random_states:
+    - armed_away
 
   - name: Hallway
     timeout: 300
@@ -153,10 +149,9 @@ lightsManager:
     lux_limit_entity: input_number.hallway_lux_limit
     lux_entity: sensor.entrance_lux
     circadian_switch_entity: switch.adaptive_lighting_hallway
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true
 
   - name: Entrance
@@ -168,10 +163,9 @@ lightsManager:
     lux_limit_entity: input_number.entrance_lux_limit
     lux_entity: sensor.entrance_lux
     circadian_switch_entity: switch.adaptive_lighting_entrance
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true
 
   - name: Master
@@ -190,9 +184,8 @@ lightsManager:
     night_control_entities:
       - light.master_5
     circadian_switch_entity: switch.circadian_lighting_circadian_master
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_away
+    random_states:
+    - armed_away
 
   - name: Lounge
     timeout: 300
@@ -216,10 +209,9 @@ lightsManager:
       - light.floor
       - switch.tuya_socket_2
     circadian_switch_entity: switch.adaptive_lighting_floor
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true
 
   - name: Playroom
@@ -230,9 +222,8 @@ lightsManager:
       - light.playroom
     lux_entity: sensor.playroom_lux
     lux_limit_entity: input_number.playroom_lux_limit
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_away
+    random_states:
+    - armed_away
 
   - name: Kitchen
     timeout: 300
@@ -244,10 +235,9 @@ lightsManager:
     lux_entity: sensor.kitchen_lux
     lux_limit_entity: input_number.kitchen_lux_limit
     circadian_switch_entity: switch.adaptive_lighting_kitchen
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true
 
   - name: Toilet
@@ -259,10 +249,9 @@ lightsManager:
     lux_entity: sensor.toilet_lux
     lux_limit_entity: input_number.toilet_lux_limit
     circadian_switch_entity: switch.adaptive_lighting_toilet
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true
 
   - name: Utility
@@ -280,8 +269,7 @@ lightsManager:
       - sleeping
     night_control_entities:
       - light.utility_1
-    # random_entity: alarm_control_panel.alarmo
-    # random_states:
-    # - armed_night
-    # - armed_away
+    random_states:
+    - armed_night
+    - armed_away
     # debug: true

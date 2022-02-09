@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
-using NetDaemon.HassModel.Common;
-using NetDaemon.HassModel.Entities;
 using System.Text.Json.Serialization;
+using NetDaemon.HassModel;
+using NetDaemon.HassModel.Entities;
 
-namespace Ha;
+namespace HomeAssistantGenerated;
 
 public interface IEntities
 {
@@ -45,6 +44,8 @@ public interface IEntities
     NumberEntities Number { get; }
 
     OctopusagileEntities Octopusagile { get; }
+
+    PersistentNotificationEntities PersistentNotification { get; }
 
     PersonEntities Person { get; }
 
@@ -95,6 +96,7 @@ public class Entities : IEntities
     public MediaPlayerEntities MediaPlayer => new(_haContext);
     public NumberEntities Number => new(_haContext);
     public OctopusagileEntities Octopusagile => new(_haContext);
+    public PersistentNotificationEntities PersistentNotification => new(_haContext);
     public PersonEntities Person => new(_haContext);
     public RemoteEntities Remote => new(_haContext);
     public ScriptEntities Script => new(_haContext);
@@ -147,6 +149,9 @@ public class AutomationEntities
     ///<summary>Ding Blinks Office</summary>
     public AutomationEntity DingBlinksOffice => new(_haContext, "automation.ding_blinks_office");
 
+    ///<summary>Doorbell</summary>
+    public AutomationEntity Doorbell => new(_haContext, "automation.doorbell");
+
     ///<summary>Door Chime</summary>
     public AutomationEntity DoorChime => new(_haContext, "automation.door_chime");
 
@@ -158,9 +163,6 @@ public class AutomationEntities
 
     ///<summary>Door Notify</summary>
     public AutomationEntity DoorNotify => new(_haContext, "automation.door_notify");
-
-    ///<summary>Doorbell</summary>
-    public AutomationEntity Doorbell => new(_haContext, "automation.doorbell");
 
     ///<summary>Dryer Done Response</summary>
     public AutomationEntity DryerDoneResponse => new(_haContext, "automation.dryer_done_response");
@@ -242,6 +244,9 @@ public class AutomationEntities
 
     ///<summary>Snow machine</summary>
     public AutomationEntity SnowMachine => new(_haContext, "automation.snow_machine");
+
+    ///<summary>Turn off Lights when leaving home</summary>
+    public AutomationEntity TurnOffLightsWhenLeavingHome => new(_haContext, "automation.turn_off_lights_when_leaving_home");
 
     ///<summary>Update Netdaemon and restart container</summary>
     public AutomationEntity UpdateNetdaemonAndRestartContainer => new(_haContext, "automation.update_netdaemon_and_restart_container");
@@ -468,6 +473,9 @@ public class BinarySensorEntities
 
     ///<summary>Officer Contact  on_off</summary>
     public BinarySensorEntity LumiLumiSensorMagnetAq2OnOff => new(_haContext, "binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off");
+
+    ///<summary>Manager Test</summary>
+    public BinarySensorEntity ManagerTest => new(_haContext, "binary_sensor.manager_test");
 
     ///<summary>Master Motion</summary>
     public BinarySensorEntity MasterMotion => new(_haContext, "binary_sensor.master_motion");
@@ -766,9 +774,6 @@ public class DeviceTrackerEntities
         _haContext = haContext;
     }
 
-    ///<summary>247D4D7D6C90-mysimplelink</summary>
-    public DeviceTrackerEntity E247d4d7d6c90Mysimplelink => new(_haContext, "device_tracker.247d4d7d6c90_mysimplelink");
-
     ///<summary>Aaron Echo</summary>
     public DeviceTrackerEntity AaronEcho => new(_haContext, "device_tracker.aaron_echo");
 
@@ -813,6 +818,9 @@ public class DeviceTrackerEntities
 
     ///<summary>dryer</summary>
     public DeviceTrackerEntity Dryer => new(_haContext, "device_tracker.dryer");
+
+    ///<summary>247D4D7D6C90-mysimplelink</summary>
+    public DeviceTrackerEntity E247d4d7d6c90Mysimplelink => new(_haContext, "device_tracker.247d4d7d6c90_mysimplelink");
 
     ///<summary>Entrance</summary>
     public DeviceTrackerEntity Entrance => new(_haContext, "device_tracker.entrance");
@@ -862,14 +870,14 @@ public class DeviceTrackerEntities
     ///<summary>hailey_iphone_ip</summary>
     public DeviceTrackerEntity HaileyIphoneIp => new(_haContext, "device_tracker.hailey_iphone_ip");
 
-    ///<summary>Hailey's iPhone</summary>
-    public DeviceTrackerEntity HaileySIphone => new(_haContext, "device_tracker.hailey_s_iphone");
-
     ///<summary>Haileys-Air</summary>
     public DeviceTrackerEntity HaileysAir => new(_haContext, "device_tracker.haileys_air");
 
     ///<summary>Haileys-iPhone</summary>
     public DeviceTrackerEntity HaileysIphone => new(_haContext, "device_tracker.haileys_iphone");
+
+    ///<summary>Hailey's iPhone</summary>
+    public DeviceTrackerEntity HaileySIphone => new(_haContext, "device_tracker.hailey_s_iphone");
 
     ///<summary>Haileys-iPhone</summary>
     public DeviceTrackerEntity HaileysIphone2 => new(_haContext, "device_tracker.haileys_iphone_2");
@@ -1076,6 +1084,10 @@ public class InputBooleanEntities
 
     public InputBooleanEntity AlaramPanic => new(_haContext, "input_boolean.alaram_panic");
     public InputBooleanEntity BackDoorChecked => new(_haContext, "input_boolean.back_door_checked");
+
+    ///<summary>dev_netdaemon_debug_host_apps_extensions_throttle_queue_app</summary>
+    public InputBooleanEntity DevNetdaemonDebugHostAppsExtensionsThrottleQueueApp => new(_haContext, "input_boolean.dev_netdaemon_debug_host_apps_extensions_throttle_queue_app");
+
     public InputBooleanEntity DiningDoorChecked => new(_haContext, "input_boolean.dining_door_checked");
     public InputBooleanEntity DryerAck => new(_haContext, "input_boolean.dryer_ack");
     public InputBooleanEntity FrontDoorChecked => new(_haContext, "input_boolean.front_door_checked");
@@ -1083,6 +1095,22 @@ public class InputBooleanEntities
     public InputBooleanEntity KidsInBed => new(_haContext, "input_boolean.kids_in_bed");
     public InputBooleanEntity LoungeDoorChecked => new(_haContext, "input_boolean.lounge_door_checked");
     public InputBooleanEntity LoungeMotionLightsDisabled => new(_haContext, "input_boolean.lounge_motion_lights_disabled");
+
+    ///<summary>netdaemon_apps_concurrency_test_app</summary>
+    public InputBooleanEntity NetdaemonAppsConcurrencyTestApp => new(_haContext, "input_boolean.netdaemon_apps_concurrency_test_app");
+
+    ///<summary>netdaemon_apps_concurrency_test_app2</summary>
+    public InputBooleanEntity NetdaemonAppsConcurrencyTestApp2 => new(_haContext, "input_boolean.netdaemon_apps_concurrency_test_app2");
+
+    ///<summary>netdaemon_apps_hello_app</summary>
+    public InputBooleanEntity NetdaemonAppsHelloApp => new(_haContext, "input_boolean.netdaemon_apps_hello_app");
+
+    ///<summary>netdaemon_apps_yaml_app</summary>
+    public InputBooleanEntity NetdaemonAppsYamlApp => new(_haContext, "input_boolean.netdaemon_apps_yaml_app");
+
+    ///<summary>netdaemon_debug_host_apps_extensions_mqtt_entity_manager_app</summary>
+    public InputBooleanEntity NetdaemonDebugHostAppsExtensionsMqttEntityManagerApp => new(_haContext, "input_boolean.netdaemon_debug_host_apps_extensions_mqtt_entity_manager_app");
+
     public InputBooleanEntity NotifyEugeneTelegram => new(_haContext, "input_boolean.notify_eugene_telegram");
     public InputBooleanEntity WasherAck => new(_haContext, "input_boolean.washer_ack");
 }
@@ -1537,6 +1565,19 @@ public class OctopusagileEntities
     public OctopusagileEntity YearlyUsage => new(_haContext, "octopusagile.yearly_usage");
 }
 
+public class PersistentNotificationEntities
+{
+    private readonly IHaContext _haContext;
+
+    public PersistentNotificationEntities(IHaContext haContext)
+    {
+        _haContext = haContext;
+    }
+
+    ///<summary>Login attempt failed</summary>
+    public PersistentNotificationEntity HttpLogin => new(_haContext, "persistent_notification.http_login");
+}
+
 public class PersonEntities
 {
     private readonly IHaContext _haContext;
@@ -1648,12 +1689,6 @@ public class SensorEntities
     {
         _haContext = haContext;
     }
-
-    ///<summary>247D4D7D6C90-mysimplelink RX</summary>
-    public NumericSensorEntity E247d4d7d6c90MysimplelinkRx => new(_haContext, "sensor.247d4d7d6c90_mysimplelink_rx");
-
-    ///<summary>247D4D7D6C90-mysimplelink TX</summary>
-    public NumericSensorEntity E247d4d7d6c90MysimplelinkTx => new(_haContext, "sensor.247d4d7d6c90_mysimplelink_tx");
 
     ///<summary>Aaron Echo RX</summary>
     public NumericSensorEntity AaronEchoRx => new(_haContext, "sensor.aaron_echo_rx");
@@ -1835,17 +1870,17 @@ public class SensorEntities
     ///<summary>Aubrecia Front Door Battery</summary>
     public NumericSensorEntity AubreciaFrontDoorBattery => new(_haContext, "sensor.aubrecia_front_door_battery");
 
-    ///<summary>Aubrecia Steps</summary>
-    public NumericSensorEntity AubreciaSteps => new(_haContext, "sensor.aubrecia_steps");
-
-    ///<summary>Aubrecia Storage</summary>
-    public NumericSensorEntity AubreciaStorage => new(_haContext, "sensor.aubrecia_storage");
-
     ///<summary>AubreciasiPhone RX</summary>
     public NumericSensorEntity AubreciasiphoneRx => new(_haContext, "sensor.aubreciasiphone_rx");
 
     ///<summary>AubreciasiPhone TX</summary>
     public NumericSensorEntity AubreciasiphoneTx => new(_haContext, "sensor.aubreciasiphone_tx");
+
+    ///<summary>Aubrecia Steps</summary>
+    public NumericSensorEntity AubreciaSteps => new(_haContext, "sensor.aubrecia_steps");
+
+    ///<summary>Aubrecia Storage</summary>
+    public NumericSensorEntity AubreciaStorage => new(_haContext, "sensor.aubrecia_storage");
 
     ///<summary>Audi Q7 Mileage</summary>
     public NumericSensorEntity AudiQ7MileageKm => new(_haContext, "sensor.audi_q7_mileage_km");
@@ -2041,6 +2076,12 @@ public class SensorEntities
 
     ///<summary>dryer TX</summary>
     public NumericSensorEntity DryerTx => new(_haContext, "sensor.dryer_tx");
+
+    ///<summary>247D4D7D6C90-mysimplelink RX</summary>
+    public NumericSensorEntity E247d4d7d6c90MysimplelinkRx => new(_haContext, "sensor.247d4d7d6c90_mysimplelink_rx");
+
+    ///<summary>247D4D7D6C90-mysimplelink TX</summary>
+    public NumericSensorEntity E247d4d7d6c90MysimplelinkTx => new(_haContext, "sensor.247d4d7d6c90_mysimplelink_tx");
 
     ///<summary>Electric Consumption (Today)</summary>
     public NumericSensorEntity ElectricConsumptionToday => new(_haContext, "sensor.electric_consumption_today");
@@ -2285,6 +2326,12 @@ public class SensorEntities
     ///<summary>hacs</summary>
     public NumericSensorEntity Hacs => new(_haContext, "sensor.hacs");
 
+    ///<summary>Haileys-Air RX</summary>
+    public NumericSensorEntity HaileysAirRx => new(_haContext, "sensor.haileys_air_rx");
+
+    ///<summary>Haileys-Air TX</summary>
+    public NumericSensorEntity HaileysAirTx => new(_haContext, "sensor.haileys_air_tx");
+
     ///<summary>Hailey's iPhone Average Active Pace</summary>
     public NumericSensorEntity HaileySIphoneAverageActivePace => new(_haContext, "sensor.hailey_s_iphone_average_active_pace");
 
@@ -2300,23 +2347,17 @@ public class SensorEntities
     ///<summary>Hailey's iPhone Floors Descended</summary>
     public NumericSensorEntity HaileySIphoneFloorsDescended => new(_haContext, "sensor.hailey_s_iphone_floors_descended");
 
-    ///<summary>Hailey's iPhone Steps</summary>
-    public NumericSensorEntity HaileySIphoneSteps => new(_haContext, "sensor.hailey_s_iphone_steps");
-
-    ///<summary>Hailey's iPhone Storage</summary>
-    public NumericSensorEntity HaileySIphoneStorage => new(_haContext, "sensor.hailey_s_iphone_storage");
-
-    ///<summary>Haileys-Air RX</summary>
-    public NumericSensorEntity HaileysAirRx => new(_haContext, "sensor.haileys_air_rx");
-
-    ///<summary>Haileys-Air TX</summary>
-    public NumericSensorEntity HaileysAirTx => new(_haContext, "sensor.haileys_air_tx");
-
     ///<summary>Haileys-iPhone RX</summary>
     public NumericSensorEntity HaileysIphoneRx => new(_haContext, "sensor.haileys_iphone_rx");
 
     ///<summary>Haileys-iPhone RX</summary>
     public NumericSensorEntity HaileysIphoneRx2 => new(_haContext, "sensor.haileys_iphone_rx_2");
+
+    ///<summary>Hailey's iPhone Steps</summary>
+    public NumericSensorEntity HaileySIphoneSteps => new(_haContext, "sensor.hailey_s_iphone_steps");
+
+    ///<summary>Hailey's iPhone Storage</summary>
+    public NumericSensorEntity HaileySIphoneStorage => new(_haContext, "sensor.hailey_s_iphone_storage");
 
     ///<summary>Haileys-iPhone TX</summary>
     public NumericSensorEntity HaileysIphoneTx => new(_haContext, "sensor.haileys_iphone_tx");
@@ -3092,6 +3133,12 @@ public class SensorEntities
     ///<summary>Washing machine powerEnergy</summary>
     public NumericSensorEntity WashingMachinePowerenergy2 => new(_haContext, "sensor.washing_machine_powerenergy_2");
 
+    ///<summary>WiserHeat031C5E RX</summary>
+    public NumericSensorEntity Wiserheat031c5eRx => new(_haContext, "sensor.wiserheat031c5e_rx");
+
+    ///<summary>WiserHeat031C5E TX</summary>
+    public NumericSensorEntity Wiserheat031c5eTx => new(_haContext, "sensor.wiserheat031c5e_tx");
+
     ///<summary>Wiser iTRV-Boys Battery Level</summary>
     public NumericSensorEntity WiserItrvBoysBatteryLevel => new(_haContext, "sensor.wiser_itrv_boys_battery_level");
 
@@ -3127,15 +3174,6 @@ public class SensorEntities
 
     ///<summary>Wiser RoomStat-Utility Battery Level</summary>
     public NumericSensorEntity WiserRoomstatUtilityBatteryLevel => new(_haContext, "sensor.wiser_roomstat_utility_battery_level");
-
-    ///<summary>WiserHeat031C5E RX</summary>
-    public NumericSensorEntity Wiserheat031c5eRx => new(_haContext, "sensor.wiserheat031c5e_rx");
-
-    ///<summary>WiserHeat031C5E TX</summary>
-    public NumericSensorEntity Wiserheat031c5eTx => new(_haContext, "sensor.wiserheat031c5e_tx");
-
-    ///<summary>247D4D7D6C90-mysimplelink Uptime</summary>
-    public SensorEntity E247d4d7d6c90MysimplelinkUptime => new(_haContext, "sensor.247d4d7d6c90_mysimplelink_uptime");
 
     ///<summary>Aaron 1 Light Last Seen</summary>
     public SensorEntity Aaron1LightLastSeen => new(_haContext, "sensor.aaron_1_light_last_seen");
@@ -3221,11 +3259,11 @@ public class SensorEntities
     ///<summary>Aubrecia SIM 2</summary>
     public SensorEntity AubreciaSim2 => new(_haContext, "sensor.aubrecia_sim_2");
 
-    ///<summary>Aubrecia SSID</summary>
-    public SensorEntity AubreciaSsid => new(_haContext, "sensor.aubrecia_ssid");
-
     ///<summary>AubreciasiPhone Uptime</summary>
     public SensorEntity AubreciasiphoneUptime => new(_haContext, "sensor.aubreciasiphone_uptime");
+
+    ///<summary>Aubrecia SSID</summary>
+    public SensorEntity AubreciaSsid => new(_haContext, "sensor.aubrecia_ssid");
 
     ///<summary>Audi Q7 Doors/Boot state</summary>
     public SensorEntity AudiQ7DoorsBootState => new(_haContext, "sensor.audi_q7_doors_boot_state");
@@ -3257,6 +3295,21 @@ public class SensorEntities
     ///<summary>ASAZ-5CG127498B Uptime</summary>
     public SensorEntity DesktopIpurn8tUptime => new(_haContext, "sensor.desktop_ipurn8t_uptime");
 
+    ///<summary>Dining1 Light Last Seen</summary>
+    public SensorEntity Dining1LightLastSeen => new(_haContext, "sensor.dining1_light_last_seen");
+
+    ///<summary>Dining2 Light Last Seen</summary>
+    public SensorEntity Dining2LightLastSeen => new(_haContext, "sensor.dining2_light_last_seen");
+
+    ///<summary>Dining3 Light Last Seen</summary>
+    public SensorEntity Dining3LightLastSeen => new(_haContext, "sensor.dining3_light_last_seen");
+
+    ///<summary>Dining4 Light Last Seen</summary>
+    public SensorEntity Dining4LightLastSeen => new(_haContext, "sensor.dining4_light_last_seen");
+
+    ///<summary>Dining5 Light Last Seen</summary>
+    public SensorEntity Dining5LightLastSeen => new(_haContext, "sensor.dining5_light_last_seen");
+
     ///<summary>Dining Door Last Seen</summary>
     public SensorEntity DiningDoorLastSeen => new(_haContext, "sensor.dining_door_last_seen");
 
@@ -3275,21 +3328,6 @@ public class SensorEntities
     ///<summary>Dining Wall 2 Light Last Seen</summary>
     public SensorEntity DiningWall2LightLastSeen => new(_haContext, "sensor.dining_wall_2_light_last_seen");
 
-    ///<summary>Dining1 Light Last Seen</summary>
-    public SensorEntity Dining1LightLastSeen => new(_haContext, "sensor.dining1_light_last_seen");
-
-    ///<summary>Dining2 Light Last Seen</summary>
-    public SensorEntity Dining2LightLastSeen => new(_haContext, "sensor.dining2_light_last_seen");
-
-    ///<summary>Dining3 Light Last Seen</summary>
-    public SensorEntity Dining3LightLastSeen => new(_haContext, "sensor.dining3_light_last_seen");
-
-    ///<summary>Dining4 Light Last Seen</summary>
-    public SensorEntity Dining4LightLastSeen => new(_haContext, "sensor.dining4_light_last_seen");
-
-    ///<summary>Dining5 Light Last Seen</summary>
-    public SensorEntity Dining5LightLastSeen => new(_haContext, "sensor.dining5_light_last_seen");
-
     ///<summary>Downstairs Info</summary>
     public SensorEntity DownstairsInfo => new(_haContext, "sensor.downstairs_info");
 
@@ -3301,6 +3339,9 @@ public class SensorEntities
 
     ///<summary>dryer Uptime</summary>
     public SensorEntity DryerUptime => new(_haContext, "sensor.dryer_uptime");
+
+    ///<summary>247D4D7D6C90-mysimplelink Uptime</summary>
+    public SensorEntity E247d4d7d6c90MysimplelinkUptime => new(_haContext, "sensor.247d4d7d6c90_mysimplelink_uptime");
 
     ///<summary>Entrance 1 Light Last Seen</summary>
     public SensorEntity Entrance1LightLastSeen => new(_haContext, "sensor.entrance_1_light_last_seen");
@@ -3395,33 +3436,6 @@ public class SensorEntities
     ///<summary>Spare echo next Timer</summary>
     public SensorEntity EugeneS3rdEchoDotNextTimer => new(_haContext, "sensor.eugene_s_3rd_echo_dot_next_timer");
 
-    ///<summary>Lounge LG Alexa next Alarm</summary>
-    public SensorEntity EugeneSLgOledWebos2021TvNextAlarm => new(_haContext, "sensor.eugene_s_lg_oled_webos_2021_tv_next_alarm");
-
-    ///<summary>Lounge LG Alexa next Reminder</summary>
-    public SensorEntity EugeneSLgOledWebos2021TvNextReminder => new(_haContext, "sensor.eugene_s_lg_oled_webos_2021_tv_next_reminder");
-
-    ///<summary>Lounge LG Alexa next Timer</summary>
-    public SensorEntity EugeneSLgOledWebos2021TvNextTimer => new(_haContext, "sensor.eugene_s_lg_oled_webos_2021_tv_next_timer");
-
-    ///<summary>Master LG Alexa next Alarm</summary>
-    public SensorEntity EugeneSLgWebos2020TvNextAlarm => new(_haContext, "sensor.eugene_s_lg_webos_2020_tv_next_alarm");
-
-    ///<summary>Master LG Alexa next Reminder</summary>
-    public SensorEntity EugeneSLgWebos2020TvNextReminder => new(_haContext, "sensor.eugene_s_lg_webos_2020_tv_next_reminder");
-
-    ///<summary>Master LG Alexa next Timer</summary>
-    public SensorEntity EugeneSLgWebos2020TvNextTimer => new(_haContext, "sensor.eugene_s_lg_webos_2020_tv_next_timer");
-
-    ///<summary>Lounge next Alarm</summary>
-    public SensorEntity EugeneSSonosArcNextAlarm => new(_haContext, "sensor.eugene_s_sonos_arc_next_alarm");
-
-    ///<summary>Lounge next Reminder</summary>
-    public SensorEntity EugeneSSonosArcNextReminder => new(_haContext, "sensor.eugene_s_sonos_arc_next_reminder");
-
-    ///<summary>Lounge next Timer</summary>
-    public SensorEntity EugeneSSonosArcNextTimer => new(_haContext, "sensor.eugene_s_sonos_arc_next_timer");
-
     ///<summary>Eugene’s iPhone Activity</summary>
     public SensorEntity EugenesIphoneActivity => new(_haContext, "sensor.eugenes_iphone_activity");
 
@@ -3452,8 +3466,35 @@ public class SensorEntities
     ///<summary>Eugenes-iPhone Uptime</summary>
     public SensorEntity EugenesIphoneUptime => new(_haContext, "sensor.eugenes_iphone_uptime");
 
+    ///<summary>Lounge LG Alexa next Alarm</summary>
+    public SensorEntity EugeneSLgOledWebos2021TvNextAlarm => new(_haContext, "sensor.eugene_s_lg_oled_webos_2021_tv_next_alarm");
+
+    ///<summary>Lounge LG Alexa next Reminder</summary>
+    public SensorEntity EugeneSLgOledWebos2021TvNextReminder => new(_haContext, "sensor.eugene_s_lg_oled_webos_2021_tv_next_reminder");
+
+    ///<summary>Lounge LG Alexa next Timer</summary>
+    public SensorEntity EugeneSLgOledWebos2021TvNextTimer => new(_haContext, "sensor.eugene_s_lg_oled_webos_2021_tv_next_timer");
+
+    ///<summary>Master LG Alexa next Alarm</summary>
+    public SensorEntity EugeneSLgWebos2020TvNextAlarm => new(_haContext, "sensor.eugene_s_lg_webos_2020_tv_next_alarm");
+
+    ///<summary>Master LG Alexa next Reminder</summary>
+    public SensorEntity EugeneSLgWebos2020TvNextReminder => new(_haContext, "sensor.eugene_s_lg_webos_2020_tv_next_reminder");
+
+    ///<summary>Master LG Alexa next Timer</summary>
+    public SensorEntity EugeneSLgWebos2020TvNextTimer => new(_haContext, "sensor.eugene_s_lg_webos_2020_tv_next_timer");
+
     ///<summary>EugenespleWatch Uptime</summary>
     public SensorEntity EugenesplewatchUptime => new(_haContext, "sensor.eugenesplewatch_uptime");
+
+    ///<summary>Lounge next Alarm</summary>
+    public SensorEntity EugeneSSonosArcNextAlarm => new(_haContext, "sensor.eugene_s_sonos_arc_next_alarm");
+
+    ///<summary>Lounge next Reminder</summary>
+    public SensorEntity EugeneSSonosArcNextReminder => new(_haContext, "sensor.eugene_s_sonos_arc_next_reminder");
+
+    ///<summary>Lounge next Timer</summary>
+    public SensorEntity EugeneSSonosArcNextTimer => new(_haContext, "sensor.eugene_s_sonos_arc_next_timer");
 
     ///<summary>floor_light-2086 Uptime</summary>
     public SensorEntity FloorLight2086Uptime => new(_haContext, "sensor.floor_light_2086_uptime");
@@ -3503,6 +3544,9 @@ public class SensorEntities
     ///<summary>Garden Volume</summary>
     public SensorEntity GardenVolume2 => new(_haContext, "sensor.garden_volume_2");
 
+    ///<summary>Haileys-Air Uptime</summary>
+    public SensorEntity HaileysAirUptime => new(_haContext, "sensor.haileys_air_uptime");
+
     ///<summary>Hailey's iPhone Activity</summary>
     public SensorEntity HaileySIphoneActivity => new(_haContext, "sensor.hailey_s_iphone_activity");
 
@@ -3529,9 +3573,6 @@ public class SensorEntities
 
     ///<summary>Hailey's iPhone SSID</summary>
     public SensorEntity HaileySIphoneSsid => new(_haContext, "sensor.hailey_s_iphone_ssid");
-
-    ///<summary>Haileys-Air Uptime</summary>
-    public SensorEntity HaileysAirUptime => new(_haContext, "sensor.haileys_air_uptime");
 
     ///<summary>Haileys-iPhone Uptime</summary>
     public SensorEntity HaileysIphoneUptime => new(_haContext, "sensor.haileys_iphone_uptime");
@@ -4145,6 +4186,9 @@ public class SensorEntities
     ///<summary>Wiser Cloud Status</summary>
     public SensorEntity WiserCloudStatus => new(_haContext, "sensor.wiser_cloud_status");
 
+    ///<summary>WiserHeat031C5E Uptime</summary>
+    public SensorEntity Wiserheat031c5eUptime => new(_haContext, "sensor.wiserheat031c5e_uptime");
+
     ///<summary>Wiser Heathub</summary>
     public SensorEntity WiserHeathub => new(_haContext, "sensor.wiser_heathub");
 
@@ -4192,9 +4236,6 @@ public class SensorEntities
 
     ///<summary>Wiser RoomStat-Utility</summary>
     public SensorEntity WiserRoomstatUtility => new(_haContext, "sensor.wiser_roomstat_utility");
-
-    ///<summary>WiserHeat031C5E Uptime</summary>
-    public SensorEntity Wiserheat031c5eUptime => new(_haContext, "sensor.wiserheat031c5e_uptime");
 }
 
 public class SunEntities
@@ -4249,6 +4290,9 @@ public class SwitchEntities
     ///<summary>Adaptive Lighting Adapt Brightness: Lounge</summary>
     public SwitchEntity AdaptiveLightingAdaptBrightnessLounge => new(_haContext, "switch.adaptive_lighting_adapt_brightness_lounge");
 
+    ///<summary>Adaptive Lighting Adapt Brightness: Master nightlight</summary>
+    public SwitchEntity AdaptiveLightingAdaptBrightnessMasterNightlight => new(_haContext, "switch.adaptive_lighting_adapt_brightness_master_nightlight");
+
     ///<summary>Adaptive Lighting Adapt Brightness: Study</summary>
     public SwitchEntity AdaptiveLightingAdaptBrightnessStudy => new(_haContext, "switch.adaptive_lighting_adapt_brightness_study");
 
@@ -4278,6 +4322,9 @@ public class SwitchEntities
 
     ///<summary>Adaptive Lighting Adapt Color: Lounge</summary>
     public SwitchEntity AdaptiveLightingAdaptColorLounge => new(_haContext, "switch.adaptive_lighting_adapt_color_lounge");
+
+    ///<summary>Adaptive Lighting Adapt Color: Master nightlight</summary>
+    public SwitchEntity AdaptiveLightingAdaptColorMasterNightlight => new(_haContext, "switch.adaptive_lighting_adapt_color_master_nightlight");
 
     ///<summary>Adaptive Lighting Adapt Color: Study</summary>
     public SwitchEntity AdaptiveLightingAdaptColorStudy => new(_haContext, "switch.adaptive_lighting_adapt_color_study");
@@ -4309,6 +4356,9 @@ public class SwitchEntities
     ///<summary>Adaptive Lighting: Lounge</summary>
     public SwitchEntity AdaptiveLightingLounge => new(_haContext, "switch.adaptive_lighting_lounge");
 
+    ///<summary>Adaptive Lighting: Master nightlight</summary>
+    public SwitchEntity AdaptiveLightingMasterNightlight => new(_haContext, "switch.adaptive_lighting_master_nightlight");
+
     ///<summary>Adaptive Lighting Sleep Mode: Entrance</summary>
     public SwitchEntity AdaptiveLightingSleepModeEntrance => new(_haContext, "switch.adaptive_lighting_sleep_mode_entrance");
 
@@ -4329,6 +4379,9 @@ public class SwitchEntities
 
     ///<summary>Adaptive Lighting Sleep Mode: Lounge</summary>
     public SwitchEntity AdaptiveLightingSleepModeLounge => new(_haContext, "switch.adaptive_lighting_sleep_mode_lounge");
+
+    ///<summary>Adaptive Lighting Sleep Mode: Master nightlight</summary>
+    public SwitchEntity AdaptiveLightingSleepModeMasterNightlight => new(_haContext, "switch.adaptive_lighting_sleep_mode_master_nightlight");
 
     ///<summary>Adaptive Lighting Sleep Mode: Study</summary>
     public SwitchEntity AdaptiveLightingSleepModeStudy => new(_haContext, "switch.adaptive_lighting_sleep_mode_study");
@@ -4600,6 +4653,9 @@ public class SwitchEntities
     ///<summary>netdaemon_appmodelhelloyamlapp</summary>
     public SwitchEntity NetdaemonAppmodelhelloyamlapp => new(_haContext, "switch.netdaemon_appmodelhelloyamlapp");
 
+    ///<summary>netdaemon_automations</summary>
+    public SwitchEntity NetdaemonAutomations => new(_haContext, "switch.netdaemon_automations");
+
     ///<summary>netdaemon_automationsapp</summary>
     public SwitchEntity NetdaemonAutomationsapp => new(_haContext, "switch.netdaemon_automationsapp");
 
@@ -4621,6 +4677,9 @@ public class SwitchEntities
     ///<summary>netdaemon_house</summary>
     public SwitchEntity NetdaemonHouse => new(_haContext, "switch.netdaemon_house");
 
+    ///<summary>netdaemon_housemode</summary>
+    public SwitchEntity NetdaemonHousemode => new(_haContext, "switch.netdaemon_housemode");
+
     ///<summary>netdaemon_housemodeapp</summary>
     public SwitchEntity NetdaemonHousemodeapp => new(_haContext, "switch.netdaemon_housemodeapp");
 
@@ -4641,6 +4700,12 @@ public class SwitchEntities
 
     ///<summary>netdaemon_presence</summary>
     public SwitchEntity NetdaemonPresence => new(_haContext, "switch.netdaemon_presence");
+
+    ///<summary>netdaemon_roompresence</summary>
+    public SwitchEntity NetdaemonRoompresence => new(_haContext, "switch.netdaemon_roompresence");
+
+    ///<summary>netdaemon_voicetimer</summary>
+    public SwitchEntity NetdaemonVoicetimer => new(_haContext, "switch.netdaemon_voicetimer");
 
     ///<summary>netdaemon_wakeupsimulator</summary>
     public SwitchEntity NetdaemonWakeupsimulator => new(_haContext, "switch.netdaemon_wakeupsimulator");
@@ -5126,6 +5191,17 @@ public record OctopusagileEntity : Entity<OctopusagileEntity, EntityState<Octopu
     }
 }
 
+public record PersistentNotificationEntity : Entity<PersistentNotificationEntity, EntityState<PersistentNotificationAttributes>, PersistentNotificationAttributes>
+{
+    public PersistentNotificationEntity(IHaContext haContext, string entityId) : base(haContext, entityId)
+    {
+    }
+
+    public PersistentNotificationEntity(Entity entity) : base(entity)
+    {
+    }
+}
+
 public record PersonEntity : Entity<PersonEntity, EntityState<PersonAttributes>, PersonAttributes>
 {
     public PersonEntity(IHaContext haContext, string entityId) : base(haContext, entityId)
@@ -5249,17 +5325,18 @@ public record ZoneEntity : Entity<ZoneEntity, EntityState<ZoneAttributes>, ZoneA
 
 public record AlarmControlPanelAttributes
 {
-    [JsonPropertyName("arm_mode")] public object? ArmMode { get; init; }
-
-    [JsonPropertyName("bypassed_sensors")] public object? BypassedSensors { get; init; }
-
-    [JsonPropertyName("changed_by")] public object? ChangedBy { get; init; }
-
     [JsonPropertyName("code_arm_required")]
     public bool? CodeArmRequired { get; init; }
 
     [JsonPropertyName("code_disarm_required")]
     public bool? CodeDisarmRequired { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("bypassed_sensors")] public object? BypassedSensors { get; init; }
+
+    [JsonPropertyName("changed_by")] public object? ChangedBy { get; init; }
 
     [JsonPropertyName("code_format")] public object? CodeFormat { get; init; }
 
@@ -5267,19 +5344,23 @@ public record AlarmControlPanelAttributes
 
     [JsonPropertyName("expiration")] public object? Expiration { get; init; }
 
+    [JsonPropertyName("open_sensors")] public object? OpenSensors { get; init; }
+
+    [JsonPropertyName("arm_mode")] public string? ArmMode { get; init; }
+
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
     [JsonPropertyName("icon")] public string? Icon { get; init; }
-
-    [JsonPropertyName("open_sensors")] public object? OpenSensors { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
 }
 
 public record AutomationAttributes
 {
+    [JsonPropertyName("restored")] public bool? Restored { get; init; }
+
     [JsonPropertyName("current")] public double? Current { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
 
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
@@ -5288,16 +5369,53 @@ public record AutomationAttributes
     [JsonPropertyName("last_triggered")] public string? LastTriggered { get; init; }
 
     [JsonPropertyName("mode")] public string? Mode { get; init; }
-
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
 }
 
 public record BinarySensorAttributes
 {
     [JsonPropertyName("assumed_state")] public bool? AssumedState { get; init; }
+
+    [JsonPropertyName("Fast User Switched")]
+    public bool? FastUserSwitched { get; init; }
+
+    [JsonPropertyName("Idle")] public bool? Idle { get; init; }
+
+    [JsonPropertyName("Locked")] public bool? Locked { get; init; }
+
+    [JsonPropertyName("motionDetectionEnabled")]
+    public bool? MotionDetectionEnabled { get; init; }
+
+    [JsonPropertyName("personDetected")] public bool? PersonDetected { get; init; }
+
+    [JsonPropertyName("restored")] public bool? Restored { get; init; }
+
+    [JsonPropertyName("Screen Off")] public bool? ScreenOff { get; init; }
+
+    [JsonPropertyName("Screensaver")] public bool? Screensaver { get; init; }
+
+    [JsonPropertyName("Sleeping")] public bool? Sleeping { get; init; }
+
+    [JsonPropertyName("Terminating")] public bool? Terminating { get; init; }
+
+    [JsonPropertyName("lastDing")] public double? LastDing { get; init; }
+
+    [JsonPropertyName("lastMotion")] public double? LastMotion { get; init; }
+
+    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
+
+    [JsonPropertyName("round_trip_time_avg")]
+    public double? RoundTripTimeAvg { get; init; }
+
+    [JsonPropertyName("round_trip_time_max")]
+    public double? RoundTripTimeMax { get; init; }
+
+    [JsonPropertyName("round_trip_time_min")]
+    public double? RoundTripTimeMin { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("attribute1")] public string? Attribute1 { get; init; }
 
     [JsonPropertyName("attribution")] public string? Attribution { get; init; }
 
@@ -5307,20 +5425,11 @@ public record BinarySensorAttributes
 
     [JsonPropertyName("device_class")] public string? DeviceClass { get; init; }
 
-    [JsonPropertyName("Fast User Switched")]
-    public bool? FastUserSwitched { get; init; }
-
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
     [JsonPropertyName("icon")] public string? Icon { get; init; }
 
-    [JsonPropertyName("Idle")] public bool? Idle { get; init; }
-
-    [JsonPropertyName("lastDing")] public double? LastDing { get; init; }
-
     [JsonPropertyName("lastDingTime")] public string? LastDingTime { get; init; }
-
-    [JsonPropertyName("lastMotion")] public double? LastMotion { get; init; }
 
     [JsonPropertyName("lastMotionTime")] public string? LastMotionTime { get; init; }
 
@@ -5328,49 +5437,18 @@ public record BinarySensorAttributes
 
     [JsonPropertyName("latest_version")] public string? LatestVersion { get; init; }
 
-    [JsonPropertyName("Locked")] public bool? Locked { get; init; }
-
     [JsonPropertyName("Manufacturer")] public string? Manufacturer { get; init; }
 
     [JsonPropertyName("model")] public string? Model { get; init; }
 
     [JsonPropertyName("model_family")] public string? ModelFamily { get; init; }
 
-    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
-
-    [JsonPropertyName("motionDetectionEnabled")]
-    public bool? MotionDetectionEnabled { get; init; }
-
     [JsonPropertyName("newest_version")] public string? NewestVersion { get; init; }
-
-    [JsonPropertyName("personDetected")] public bool? PersonDetected { get; init; }
 
     [JsonPropertyName("release_notes")] public string? ReleaseNotes { get; init; }
 
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
-
-    [JsonPropertyName("round_trip_time_avg")]
-    public double? RoundTripTimeAvg { get; init; }
-
-    [JsonPropertyName("round_trip_time_max")]
-    public double? RoundTripTimeMax { get; init; }
-
     [JsonPropertyName("round_trip_time_mdev")]
     public string? RoundTripTimeMdev { get; init; }
-
-    [JsonPropertyName("round_trip_time_min")]
-    public double? RoundTripTimeMin { get; init; }
-
-    [JsonPropertyName("Screen Off")] public bool? ScreenOff { get; init; }
-
-    [JsonPropertyName("Screensaver")] public bool? Screensaver { get; init; }
-
-    [JsonPropertyName("Sleeping")] public bool? Sleeping { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
-
-    [JsonPropertyName("Terminating")] public bool? Terminating { get; init; }
 
     [JsonPropertyName("title")] public string? Title { get; init; }
 
@@ -5386,13 +5464,32 @@ public record ButtonAttributes
 
 public record CalendarAttributes
 {
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+    [JsonPropertyName("all_day")] public bool? AllDay { get; init; }
 
     [JsonPropertyName("offset_reached")] public bool? OffsetReached { get; init; }
+
+    [JsonPropertyName("description")] public object? Description { get; init; }
+
+    [JsonPropertyName("location")] public object? Location { get; init; }
+
+    [JsonPropertyName("end_time")] public string? EndTime { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("message")] public string? Message { get; init; }
+
+    [JsonPropertyName("start_time")] public string? StartTime { get; init; }
 }
 
 public record CameraAttributes
 {
+    [JsonPropertyName("last_video_id")] public double? LastVideoId { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("timestamp")] public double? Timestamp { get; init; }
+
     [JsonPropertyName("access_token")] public string? AccessToken { get; init; }
 
     [JsonPropertyName("attribution")] public string? Attribution { get; init; }
@@ -5404,13 +5501,6 @@ public record CameraAttributes
     [JsonPropertyName("frontend_stream_type")]
     public string? FrontendStreamType { get; init; }
 
-    [JsonPropertyName("last_video_id")] public double? LastVideoId { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
-
-    [JsonPropertyName("timestamp")] public double? Timestamp { get; init; }
-
     [JsonPropertyName("video_url")] public string? VideoUrl { get; init; }
 }
 
@@ -5419,29 +5509,15 @@ public record ClimateAttributes
     [JsonPropertyName("away_mode_supressed")]
     public bool? AwayModeSupressed { get; init; }
 
-    [JsonPropertyName("boost_end")] public string? BoostEnd { get; init; }
+    [JsonPropertyName("window_detection_active")]
+    public bool? WindowDetectionActive { get; init; }
 
     [JsonPropertyName("boost_remaining")] public double? BoostRemaining { get; init; }
-
-    [JsonPropertyName("control_output_state")]
-    public string? ControlOutputState { get; init; }
 
     [JsonPropertyName("current_temperature")]
     public double? CurrentTemperature { get; init; }
 
-    [JsonPropertyName("fan_mode")] public string? FanMode { get; init; }
-
-    [JsonPropertyName("fan_modes")] public object? FanModes { get; init; }
-
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
     [JsonPropertyName("heating_rate")] public double? HeatingRate { get; init; }
-
-    [JsonPropertyName("hvac_action")] public string? HvacAction { get; init; }
-
-    [JsonPropertyName("hvac_modes")] public object? HvacModes { get; init; }
-
-    [JsonPropertyName("icon")] public string? Icon { get; init; }
 
     [JsonPropertyName("max_temp")] public double? MaxTemp { get; init; }
 
@@ -5450,33 +5526,47 @@ public record ClimateAttributes
     [JsonPropertyName("percentage_demand")]
     public double? PercentageDemand { get; init; }
 
-    [JsonPropertyName("preset_mode")] public object? PresetMode { get; init; }
-
-    [JsonPropertyName("preset_modes")] public object? PresetModes { get; init; }
-
     [JsonPropertyName("supported_features")]
     public double? SupportedFeatures { get; init; }
-
-    [JsonPropertyName("swing_mode")] public string? SwingMode { get; init; }
-
-    [JsonPropertyName("swing_modes")] public object? SwingModes { get; init; }
 
     [JsonPropertyName("target_temp_step")] public double? TargetTempStep { get; init; }
 
     [JsonPropertyName("temperature")] public double? Temperature { get; init; }
 
-    [JsonPropertyName("vane_horizontal")] public string? VaneHorizontal { get; init; }
+    [JsonPropertyName("fan_modes")] public object? FanModes { get; init; }
+
+    [JsonPropertyName("hvac_modes")] public object? HvacModes { get; init; }
+
+    [JsonPropertyName("preset_mode")] public object? PresetMode { get; init; }
+
+    [JsonPropertyName("preset_modes")] public object? PresetModes { get; init; }
+
+    [JsonPropertyName("swing_modes")] public object? SwingModes { get; init; }
 
     [JsonPropertyName("vane_horizontal_positions")]
     public object? VaneHorizontalPositions { get; init; }
 
-    [JsonPropertyName("vane_vertical")] public string? VaneVertical { get; init; }
-
     [JsonPropertyName("vane_vertical_positions")]
     public object? VaneVerticalPositions { get; init; }
 
-    [JsonPropertyName("window_detection_active")]
-    public bool? WindowDetectionActive { get; init; }
+    [JsonPropertyName("boost_end")] public string? BoostEnd { get; init; }
+
+    [JsonPropertyName("control_output_state")]
+    public string? ControlOutputState { get; init; }
+
+    [JsonPropertyName("fan_mode")] public string? FanMode { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("hvac_action")] public string? HvacAction { get; init; }
+
+    [JsonPropertyName("icon")] public string? Icon { get; init; }
+
+    [JsonPropertyName("swing_mode")] public string? SwingMode { get; init; }
+
+    [JsonPropertyName("vane_horizontal")] public string? VaneHorizontal { get; init; }
+
+    [JsonPropertyName("vane_vertical")] public string? VaneVertical { get; init; }
 
     [JsonPropertyName("window_state")] public string? WindowState { get; init; }
 }
@@ -5485,39 +5575,17 @@ public record CoverAttributes
 {
     [JsonPropertyName("current_position")] public double? CurrentPosition { get; init; }
 
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
     [JsonPropertyName("device_class")] public string? DeviceClass { get; init; }
 
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
 }
 
 public record DeviceTrackerAttributes
 {
-    [JsonPropertyName("altitude")] public double? Altitude { get; init; }
-
-    [JsonPropertyName("ap_mac")] public string? ApMac { get; init; }
-
     [JsonPropertyName("authorized")] public bool? Authorized { get; init; }
-
-    [JsonPropertyName("battery_level")] public double? BatteryLevel { get; init; }
-
-    [JsonPropertyName("csid")] public string? Csid { get; init; }
-
-    [JsonPropertyName("essid")] public string? Essid { get; init; }
-
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
-    [JsonPropertyName("gps_accuracy")] public double? GpsAccuracy { get; init; }
-
-    [JsonPropertyName("hostname")] public string? Hostname { get; init; }
-
-    [JsonPropertyName("host_name")] public string? HostName { get; init; }
-
-    [JsonPropertyName("icon")] public string? Icon { get; init; }
-
-    [JsonPropertyName("ip")] public string? Ip { get; init; }
 
     [JsonPropertyName("is_11r")] public bool? Is11r { get; init; }
 
@@ -5527,9 +5595,46 @@ public record DeviceTrackerAttributes
 
     [JsonPropertyName("is_wired")] public bool? IsWired { get; init; }
 
+    [JsonPropertyName("qos_policy_applied")]
+    public bool? QosPolicyApplied { get; init; }
+
+    [JsonPropertyName("restored")] public bool? Restored { get; init; }
+
+    [JsonPropertyName("altitude")] public double? Altitude { get; init; }
+
+    [JsonPropertyName("battery_level")] public double? BatteryLevel { get; init; }
+
+    [JsonPropertyName("gps_accuracy")] public double? GpsAccuracy { get; init; }
+
     [JsonPropertyName("latitude")] public double? Latitude { get; init; }
 
     [JsonPropertyName("longitude")] public double? Longitude { get; init; }
+
+    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("vertical_accuracy")]
+    public double? VerticalAccuracy { get; init; }
+
+    [JsonPropertyName("vlan")] public double? Vlan { get; init; }
+
+    [JsonPropertyName("ap_mac")] public string? ApMac { get; init; }
+
+    [JsonPropertyName("csid")] public string? Csid { get; init; }
+
+    [JsonPropertyName("essid")] public string? Essid { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("hostname")] public string? Hostname { get; init; }
+
+    [JsonPropertyName("host_name")] public string? HostName { get; init; }
+
+    [JsonPropertyName("icon")] public string? Icon { get; init; }
+
+    [JsonPropertyName("ip")] public string? Ip { get; init; }
 
     [JsonPropertyName("mac")] public string? Mac { get; init; }
 
@@ -5537,50 +5642,37 @@ public record DeviceTrackerAttributes
 
     [JsonPropertyName("model_family")] public string? ModelFamily { get; init; }
 
-    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
-
     [JsonPropertyName("name")] public string? Name { get; init; }
 
     [JsonPropertyName("note")] public string? Note { get; init; }
 
     [JsonPropertyName("oui")] public string? Oui { get; init; }
 
-    [JsonPropertyName("qos_policy_applied")]
-    public bool? QosPolicyApplied { get; init; }
-
     [JsonPropertyName("radio")] public string? Radio { get; init; }
 
     [JsonPropertyName("radio_proto")] public string? RadioProto { get; init; }
 
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
-
     [JsonPropertyName("source_type")] public string? SourceType { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
 
     [JsonPropertyName("title")] public string? Title { get; init; }
 
-    [JsonPropertyName("vertical_accuracy")]
-    public double? VerticalAccuracy { get; init; }
-
     [JsonPropertyName("vin")] public string? Vin { get; init; }
-
-    [JsonPropertyName("vlan")] public double? Vlan { get; init; }
 }
 
 public record GroupAttributes
 {
+    [JsonPropertyName("order")] public double? Order { get; init; }
+
     [JsonPropertyName("entity_id")] public object? EntityId { get; init; }
 
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
-    [JsonPropertyName("order")] public double? Order { get; init; }
 }
 
 public record InputBooleanAttributes
 {
     [JsonPropertyName("editable")] public bool? Editable { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
     [JsonPropertyName("icon")] public string? Icon { get; init; }
 }
@@ -5589,29 +5681,29 @@ public record InputNumberAttributes
 {
     [JsonPropertyName("editable")] public bool? Editable { get; init; }
 
-    [JsonPropertyName("initial")] public object? Initial { get; init; }
+    [JsonPropertyName("restored")] public bool? Restored { get; init; }
 
     [JsonPropertyName("max")] public double? Max { get; init; }
 
     [JsonPropertyName("min")] public double? Min { get; init; }
 
-    [JsonPropertyName("mode")] public string? Mode { get; init; }
-
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
-
     [JsonPropertyName("step")] public double? Step { get; init; }
 
     [JsonPropertyName("supported_features")]
     public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("initial")] public object? Initial { get; init; }
+
+    [JsonPropertyName("mode")] public string? Mode { get; init; }
 }
 
 public record InputSelectAttributes
 {
     [JsonPropertyName("editable")] public bool? Editable { get; init; }
 
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
     [JsonPropertyName("options")] public object? Options { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 }
 
 public record InputTextAttributes
@@ -5622,51 +5714,51 @@ public record InputTextAttributes
 
     [JsonPropertyName("min")] public double? Min { get; init; }
 
-    [JsonPropertyName("mode")] public string? Mode { get; init; }
-
     [JsonPropertyName("pattern")] public object? Pattern { get; init; }
+
+    [JsonPropertyName("mode")] public string? Mode { get; init; }
 }
 
 public record LightAttributes
 {
-    [JsonPropertyName("attribution")] public string? Attribution { get; init; }
-
     [JsonPropertyName("brightness")] public double? Brightness { get; init; }
 
-    [JsonPropertyName("color_mode")] public string? ColorMode { get; init; }
-
     [JsonPropertyName("color_temp")] public double? ColorTemp { get; init; }
-
-    [JsonPropertyName("entity_id")] public object? EntityId { get; init; }
-
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
-    [JsonPropertyName("hs_color")] public object? HsColor { get; init; }
-
-    [JsonPropertyName("icon")] public string? Icon { get; init; }
 
     [JsonPropertyName("max_mireds")] public double? MaxMireds { get; init; }
 
     [JsonPropertyName("min_mireds")] public double? MinMireds { get; init; }
 
-    [JsonPropertyName("off_brightness")] public object? OffBrightness { get; init; }
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
 
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
+    [JsonPropertyName("entity_id")] public object? EntityId { get; init; }
+
+    [JsonPropertyName("hs_color")] public object? HsColor { get; init; }
+
+    [JsonPropertyName("off_brightness")] public object? OffBrightness { get; init; }
 
     [JsonPropertyName("rgb_color")] public object? RgbColor { get; init; }
 
     [JsonPropertyName("supported_color_modes")]
     public object? SupportedColorModes { get; init; }
 
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
-
     [JsonPropertyName("xy_color")] public object? XyColor { get; init; }
+
+    [JsonPropertyName("attribution")] public string? Attribution { get; init; }
+
+    [JsonPropertyName("color_mode")] public string? ColorMode { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("icon")] public string? Icon { get; init; }
 }
 
 public record LockAttributes
 {
     [JsonPropertyName("assumed_state")] public bool? AssumedState { get; init; }
+
+    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
 
     [JsonPropertyName("csid")] public string? Csid { get; init; }
 
@@ -5675,8 +5767,6 @@ public record LockAttributes
     [JsonPropertyName("model")] public string? Model { get; init; }
 
     [JsonPropertyName("model_family")] public string? ModelFamily { get; init; }
-
-    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
 
     [JsonPropertyName("title")] public string? Title { get; init; }
 
@@ -5687,26 +5777,52 @@ public record MediaPlayerAttributes
 {
     [JsonPropertyName("available")] public bool? Available { get; init; }
 
+    [JsonPropertyName("is_volume_muted")] public bool? IsVolumeMuted { get; init; }
+
+    [JsonPropertyName("last_called")] public bool? LastCalled { get; init; }
+
+    [JsonPropertyName("restored")] public bool? Restored { get; init; }
+
+    [JsonPropertyName("shuffle")] public bool? Shuffle { get; init; }
+
+    [JsonPropertyName("last_called_timestamp")]
+    public double? LastCalledTimestamp { get; init; }
+
+    [JsonPropertyName("media_duration")] public double? MediaDuration { get; init; }
+
+    [JsonPropertyName("media_position")] public double? MediaPosition { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("volume_level")] public double? VolumeLevel { get; init; }
+
     [JsonPropertyName("bluetooth_list")] public object? BluetoothList { get; init; }
 
     [JsonPropertyName("connected_bluetooth")]
     public object? ConnectedBluetooth { get; init; }
 
+    [JsonPropertyName("sonos_group")] public object? SonosGroup { get; init; }
+
+    [JsonPropertyName("source_list")] public object? SourceList { get; init; }
+
     [JsonPropertyName("device_class")] public string? DeviceClass { get; init; }
+
+    [JsonPropertyName("entity_picture")] public string? EntityPicture { get; init; }
+
+    [JsonPropertyName("entity_picture_local")]
+    public string? EntityPictureLocal { get; init; }
 
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
     [JsonPropertyName("icon")] public string? Icon { get; init; }
 
-    [JsonPropertyName("is_volume_muted")] public bool? IsVolumeMuted { get; init; }
-
-    [JsonPropertyName("last_called")] public bool? LastCalled { get; init; }
-
     [JsonPropertyName("last_called_summary")]
     public string? LastCalledSummary { get; init; }
 
-    [JsonPropertyName("last_called_timestamp")]
-    public double? LastCalledTimestamp { get; init; }
+    [JsonPropertyName("media_album_name")] public string? MediaAlbumName { get; init; }
+
+    [JsonPropertyName("media_artist")] public string? MediaArtist { get; init; }
 
     [JsonPropertyName("media_content_type")]
     public string? MediaContentType { get; init; }
@@ -5714,234 +5830,232 @@ public record MediaPlayerAttributes
     [JsonPropertyName("media_position_updated_at")]
     public string? MediaPositionUpdatedAt { get; init; }
 
+    [JsonPropertyName("media_title")] public string? MediaTitle { get; init; }
+
     [JsonPropertyName("repeat")] public string? Repeat { get; init; }
-
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
-
-    [JsonPropertyName("shuffle")] public bool? Shuffle { get; init; }
-
-    [JsonPropertyName("sonos_group")] public object? SonosGroup { get; init; }
 
     [JsonPropertyName("sound_output")] public string? SoundOutput { get; init; }
 
     [JsonPropertyName("source")] public string? Source { get; init; }
-
-    [JsonPropertyName("source_list")] public object? SourceList { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
-
-    [JsonPropertyName("volume_level")] public double? VolumeLevel { get; init; }
 }
 
 public record NumberAttributes
 {
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
-    [JsonPropertyName("icon")] public string? Icon { get; init; }
-
     [JsonPropertyName("max")] public double? Max { get; init; }
 
     [JsonPropertyName("min")] public double? Min { get; init; }
 
-    [JsonPropertyName("mode")] public string? Mode { get; init; }
-
     [JsonPropertyName("step")] public double? Step { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("icon")] public string? Icon { get; init; }
+
+    [JsonPropertyName("mode")] public string? Mode { get; init; }
 }
 
 public record OctopusagileAttributes
 {
-    [JsonPropertyName("2022-01-28T19:00:00Z")]
-    public double? HA20220128T190000Z { get; init; }
+    [JsonPropertyName("2022-02-08T19:00:00Z")]
+    public double? HA20220208T190000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T19:30:00Z")]
-    public double? HA20220128T193000Z { get; init; }
+    [JsonPropertyName("2022-02-08T19:30:00Z")]
+    public double? HA20220208T193000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T20:00:00Z")]
-    public double? HA20220128T200000Z { get; init; }
+    [JsonPropertyName("2022-02-08T20:00:00Z")]
+    public double? HA20220208T200000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T20:30:00Z")]
-    public double? HA20220128T203000Z { get; init; }
+    [JsonPropertyName("2022-02-08T20:30:00Z")]
+    public double? HA20220208T203000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T21:00:00Z")]
-    public double? HA20220128T210000Z { get; init; }
+    [JsonPropertyName("2022-02-08T21:00:00Z")]
+    public double? HA20220208T210000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T21:30:00Z")]
-    public double? HA20220128T213000Z { get; init; }
+    [JsonPropertyName("2022-02-08T21:30:00Z")]
+    public double? HA20220208T213000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T22:00:00Z")]
-    public double? HA20220128T220000Z { get; init; }
+    [JsonPropertyName("2022-02-08T22:00:00Z")]
+    public double? HA20220208T220000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T22:30:00Z")]
-    public double? HA20220128T223000Z { get; init; }
+    [JsonPropertyName("2022-02-08T22:30:00Z")]
+    public double? HA20220208T223000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T23:00:00Z")]
-    public double? HA20220128T230000Z { get; init; }
+    [JsonPropertyName("2022-02-08T23:00:00Z")]
+    public double? HA20220208T230000Z { get; init; }
 
-    [JsonPropertyName("2022-01-28T23:30:00Z")]
-    public double? HA20220128T233000Z { get; init; }
+    [JsonPropertyName("2022-02-08T23:30:00Z")]
+    public double? HA20220208T233000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T00:00:00Z")]
-    public double? HA20220129T000000Z { get; init; }
+    [JsonPropertyName("2022-02-09T00:00:00Z")]
+    public double? HA20220209T000000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T00:30:00Z")]
-    public double? HA20220129T003000Z { get; init; }
+    [JsonPropertyName("2022-02-09T00:30:00Z")]
+    public double? HA20220209T003000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T01:00:00Z")]
-    public double? HA20220129T010000Z { get; init; }
+    [JsonPropertyName("2022-02-09T01:00:00Z")]
+    public double? HA20220209T010000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T01:30:00Z")]
-    public double? HA20220129T013000Z { get; init; }
+    [JsonPropertyName("2022-02-09T01:30:00Z")]
+    public double? HA20220209T013000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T02:00:00Z")]
-    public double? HA20220129T020000Z { get; init; }
+    [JsonPropertyName("2022-02-09T02:00:00Z")]
+    public double? HA20220209T020000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T02:30:00Z")]
-    public double? HA20220129T023000Z { get; init; }
+    [JsonPropertyName("2022-02-09T02:30:00Z")]
+    public double? HA20220209T023000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T03:00:00Z")]
-    public double? HA20220129T030000Z { get; init; }
+    [JsonPropertyName("2022-02-09T03:00:00Z")]
+    public double? HA20220209T030000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T03:30:00Z")]
-    public double? HA20220129T033000Z { get; init; }
+    [JsonPropertyName("2022-02-09T03:30:00Z")]
+    public double? HA20220209T033000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T04:00:00Z")]
-    public double? HA20220129T040000Z { get; init; }
+    [JsonPropertyName("2022-02-09T04:00:00Z")]
+    public double? HA20220209T040000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T04:30:00Z")]
-    public double? HA20220129T043000Z { get; init; }
+    [JsonPropertyName("2022-02-09T04:30:00Z")]
+    public double? HA20220209T043000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T05:00:00Z")]
-    public double? HA20220129T050000Z { get; init; }
+    [JsonPropertyName("2022-02-09T05:00:00Z")]
+    public double? HA20220209T050000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T05:30:00Z")]
-    public double? HA20220129T053000Z { get; init; }
+    [JsonPropertyName("2022-02-09T05:30:00Z")]
+    public double? HA20220209T053000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T06:00:00Z")]
-    public double? HA20220129T060000Z { get; init; }
+    [JsonPropertyName("2022-02-09T06:00:00Z")]
+    public double? HA20220209T060000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T06:30:00Z")]
-    public double? HA20220129T063000Z { get; init; }
+    [JsonPropertyName("2022-02-09T06:30:00Z")]
+    public double? HA20220209T063000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T07:00:00Z")]
-    public double? HA20220129T070000Z { get; init; }
+    [JsonPropertyName("2022-02-09T07:00:00Z")]
+    public double? HA20220209T070000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T07:30:00Z")]
-    public double? HA20220129T073000Z { get; init; }
+    [JsonPropertyName("2022-02-09T07:30:00Z")]
+    public double? HA20220209T073000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T08:00:00Z")]
-    public double? HA20220129T080000Z { get; init; }
+    [JsonPropertyName("2022-02-09T08:00:00Z")]
+    public double? HA20220209T080000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T08:30:00Z")]
-    public double? HA20220129T083000Z { get; init; }
+    [JsonPropertyName("2022-02-09T08:30:00Z")]
+    public double? HA20220209T083000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T09:00:00Z")]
-    public double? HA20220129T090000Z { get; init; }
+    [JsonPropertyName("2022-02-09T09:00:00Z")]
+    public double? HA20220209T090000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T09:30:00Z")]
-    public double? HA20220129T093000Z { get; init; }
+    [JsonPropertyName("2022-02-09T09:30:00Z")]
+    public double? HA20220209T093000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T10:00:00Z")]
-    public double? HA20220129T100000Z { get; init; }
+    [JsonPropertyName("2022-02-09T10:00:00Z")]
+    public double? HA20220209T100000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T10:30:00Z")]
-    public double? HA20220129T103000Z { get; init; }
+    [JsonPropertyName("2022-02-09T10:30:00Z")]
+    public double? HA20220209T103000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T11:00:00Z")]
-    public double? HA20220129T110000Z { get; init; }
+    [JsonPropertyName("2022-02-09T11:00:00Z")]
+    public double? HA20220209T110000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T11:30:00Z")]
-    public double? HA20220129T113000Z { get; init; }
+    [JsonPropertyName("2022-02-09T11:30:00Z")]
+    public double? HA20220209T113000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T12:00:00Z")]
-    public double? HA20220129T120000Z { get; init; }
+    [JsonPropertyName("2022-02-09T12:00:00Z")]
+    public double? HA20220209T120000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T12:30:00Z")]
-    public double? HA20220129T123000Z { get; init; }
+    [JsonPropertyName("2022-02-09T12:30:00Z")]
+    public double? HA20220209T123000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T13:00:00Z")]
-    public double? HA20220129T130000Z { get; init; }
+    [JsonPropertyName("2022-02-09T13:00:00Z")]
+    public double? HA20220209T130000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T13:30:00Z")]
-    public double? HA20220129T133000Z { get; init; }
+    [JsonPropertyName("2022-02-09T13:30:00Z")]
+    public double? HA20220209T133000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T14:00:00Z")]
-    public double? HA20220129T140000Z { get; init; }
+    [JsonPropertyName("2022-02-09T14:00:00Z")]
+    public double? HA20220209T140000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T14:30:00Z")]
-    public double? HA20220129T143000Z { get; init; }
+    [JsonPropertyName("2022-02-09T14:30:00Z")]
+    public double? HA20220209T143000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T15:00:00Z")]
-    public double? HA20220129T150000Z { get; init; }
+    [JsonPropertyName("2022-02-09T15:00:00Z")]
+    public double? HA20220209T150000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T15:30:00Z")]
-    public double? HA20220129T153000Z { get; init; }
+    [JsonPropertyName("2022-02-09T15:30:00Z")]
+    public double? HA20220209T153000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T16:00:00Z")]
-    public double? HA20220129T160000Z { get; init; }
+    [JsonPropertyName("2022-02-09T16:00:00Z")]
+    public double? HA20220209T160000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T16:30:00Z")]
-    public double? HA20220129T163000Z { get; init; }
+    [JsonPropertyName("2022-02-09T16:30:00Z")]
+    public double? HA20220209T163000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T17:00:00Z")]
-    public double? HA20220129T170000Z { get; init; }
+    [JsonPropertyName("2022-02-09T17:00:00Z")]
+    public double? HA20220209T170000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T17:30:00Z")]
-    public double? HA20220129T173000Z { get; init; }
+    [JsonPropertyName("2022-02-09T17:30:00Z")]
+    public double? HA20220209T173000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T18:00:00Z")]
-    public double? HA20220129T180000Z { get; init; }
+    [JsonPropertyName("2022-02-09T18:00:00Z")]
+    public double? HA20220209T180000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T18:30:00Z")]
-    public double? HA20220129T183000Z { get; init; }
+    [JsonPropertyName("2022-02-09T18:30:00Z")]
+    public double? HA20220209T183000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T19:00:00Z")]
-    public double? HA20220129T190000Z { get; init; }
+    [JsonPropertyName("2022-02-09T19:00:00Z")]
+    public double? HA20220209T190000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T19:30:00Z")]
-    public double? HA20220129T193000Z { get; init; }
+    [JsonPropertyName("2022-02-09T19:30:00Z")]
+    public double? HA20220209T193000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T20:00:00Z")]
-    public double? HA20220129T200000Z { get; init; }
+    [JsonPropertyName("2022-02-09T20:00:00Z")]
+    public double? HA20220209T200000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T20:30:00Z")]
-    public double? HA20220129T203000Z { get; init; }
+    [JsonPropertyName("2022-02-09T20:30:00Z")]
+    public double? HA20220209T203000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T21:00:00Z")]
-    public double? HA20220129T210000Z { get; init; }
+    [JsonPropertyName("2022-02-09T21:00:00Z")]
+    public double? HA20220209T210000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T21:30:00Z")]
-    public double? HA20220129T213000Z { get; init; }
+    [JsonPropertyName("2022-02-09T21:30:00Z")]
+    public double? HA20220209T213000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T22:00:00Z")]
-    public double? HA20220129T220000Z { get; init; }
+    [JsonPropertyName("2022-02-09T22:00:00Z")]
+    public double? HA20220209T220000Z { get; init; }
 
-    [JsonPropertyName("2022-01-29T22:30:00Z")]
-    public double? HA20220129T223000Z { get; init; }
-
-    [JsonPropertyName("icon")] public string? Icon { get; init; }
+    [JsonPropertyName("2022-02-09T22:30:00Z")]
+    public double? HA20220209T223000Z { get; init; }
 
     [JsonPropertyName("timers")] public object? Timers { get; init; }
 
+    [JsonPropertyName("icon")] public string? Icon { get; init; }
+
     [JsonPropertyName("unit_of_measurement")]
     public string? UnitOfMeasurement { get; init; }
+}
+
+public record PersistentNotificationAttributes
+{
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("message")] public string? Message { get; init; }
+
+    [JsonPropertyName("title")] public string? Title { get; init; }
 }
 
 public record PersonAttributes
 {
     [JsonPropertyName("editable")] public bool? Editable { get; init; }
 
-    [JsonPropertyName("entity_picture")] public string? EntityPicture { get; init; }
-
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
     [JsonPropertyName("gps_accuracy")] public double? GpsAccuracy { get; init; }
-
-    [JsonPropertyName("id")] public string? Id { get; init; }
 
     [JsonPropertyName("latitude")] public double? Latitude { get; init; }
 
     [JsonPropertyName("longitude")] public double? Longitude { get; init; }
+
+    [JsonPropertyName("entity_picture")] public string? EntityPicture { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("id")] public string? Id { get; init; }
 
     [JsonPropertyName("source")] public string? Source { get; init; }
 
@@ -5950,44 +6064,118 @@ public record PersonAttributes
 
 public record RemoteAttributes
 {
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
     [JsonPropertyName("restored")] public bool? Restored { get; init; }
 
     [JsonPropertyName("supported_features")]
     public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 }
 
 public record ScriptAttributes
 {
     [JsonPropertyName("current")] public double? Current { get; init; }
 
+    [JsonPropertyName("max")] public double? Max { get; init; }
+
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
     [JsonPropertyName("last_triggered")] public string? LastTriggered { get; init; }
-
-    [JsonPropertyName("max")] public double? Max { get; init; }
 
     [JsonPropertyName("mode")] public string? Mode { get; init; }
 }
 
 public record SelectAttributes
 {
+    [JsonPropertyName("options")] public object? Options { get; init; }
+
     [JsonPropertyName("eventId")] public string? EventId { get; init; }
 
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
-    [JsonPropertyName("options")] public object? Options { get; init; }
 
     [JsonPropertyName("recordingUrl")] public string? RecordingUrl { get; init; }
 }
 
 public record NumericSensorAttributes
 {
+    [JsonPropertyName("assumed_state")] public bool? AssumedState { get; init; }
+
+    [JsonPropertyName("Battery Provides Time Remaining")]
+    public bool? BatteryProvidesTimeRemaining { get; init; }
+
+    [JsonPropertyName("Is Charged")] public bool? IsCharged { get; init; }
+
+    [JsonPropertyName("Is Charging")] public bool? IsCharging { get; init; }
+
+    [JsonPropertyName("Is Present")] public bool? IsPresent { get; init; }
+
+    [JsonPropertyName("Optimized Battery Charging Engaged")]
+    public bool? OptimizedBatteryChargingEngaged { get; init; }
+
+    [JsonPropertyName("restored")] public bool? Restored { get; init; }
+
+    [JsonPropertyName("source_value_valid")]
+    public bool? SourceValueValid { get; init; }
+
     [JsonPropertyName("age_coverage_ratio")]
     public double? AgeCoverageRatio { get; init; }
 
-    [JsonPropertyName("assumed_state")] public bool? AssumedState { get; init; }
+    [JsonPropertyName("buffer_usage_ratio")]
+    public double? BufferUsageRatio { get; init; }
+
+    [JsonPropertyName("bytes_received")] public double? BytesReceived { get; init; }
+
+    [JsonPropertyName("bytes_sent")] public double? BytesSent { get; init; }
+
+    [JsonPropertyName("colortemp")] public double? Colortemp { get; init; }
+
+    [JsonPropertyName("count_sensors")] public double? CountSensors { get; init; }
+
+    [JsonPropertyName("Current")] public double? Current { get; init; }
+
+    [JsonPropertyName("Current Capacity")] public double? CurrentCapacity { get; init; }
+
+    [JsonPropertyName("DesignCycleCount")] public double? DesignCycleCount { get; init; }
+
+    [JsonPropertyName("domains_blocked")] public double? DomainsBlocked { get; init; }
+
+    [JsonPropertyName("last")] public double? Last { get; init; }
+
+    [JsonPropertyName("last_period")] public double? LastPeriod { get; init; }
+
+    [JsonPropertyName("Max Capacity")] public double? MaxCapacity { get; init; }
+
+    [JsonPropertyName("max_value")] public double? MaxValue { get; init; }
+
+    [JsonPropertyName("mean")] public double? Mean { get; init; }
+
+    [JsonPropertyName("median")] public double? Median { get; init; }
+
+    [JsonPropertyName("min_value")] public double? MinValue { get; init; }
+
+    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
+
+    [JsonPropertyName("Power Source ID")] public double? PowerSourceID { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("Time to Empty")] public double? TimetoEmpty { get; init; }
+
+    [JsonPropertyName("Time to Full Charge")]
+    public double? TimetoFullCharge { get; init; }
+
+    [JsonPropertyName("wirelessSignal")] public double? WirelessSignal { get; init; }
+
+    [JsonPropertyName("battery_voltage")] public object? BatteryVoltage { get; init; }
+
+    [JsonPropertyName("repositories")] public object? Repositories { get; init; }
+
+    [JsonPropertyName("rgb_color")] public object? RgbColor { get; init; }
+
+    [JsonPropertyName("type")] public object? Type_0 { get; init; }
+
+    [JsonPropertyName("xy_color")] public object? XyColor { get; init; }
 
     [JsonPropertyName("attribution")] public string? Attribution { get; init; }
 
@@ -6008,37 +6196,13 @@ public record NumericSensorAttributes
 
     [JsonPropertyName("batteryLevel")] public string? BatteryLevel_1 { get; init; }
 
-    [JsonPropertyName("Battery Provides Time Remaining")]
-    public bool? BatteryProvidesTimeRemaining { get; init; }
-
-    [JsonPropertyName("battery_voltage")] public object? BatteryVoltage { get; init; }
-
-    [JsonPropertyName("buffer_usage_ratio")]
-    public double? BufferUsageRatio { get; init; }
-
-    [JsonPropertyName("bytes_received")] public double? BytesReceived { get; init; }
-
-    [JsonPropertyName("bytes_sent")] public double? BytesSent { get; init; }
-
-    [JsonPropertyName("colortemp")] public double? Colortemp { get; init; }
-
-    [JsonPropertyName("count_sensors")] public double? CountSensors { get; init; }
-
     [JsonPropertyName("cron pattern")] public string? Cronpattern { get; init; }
 
     [JsonPropertyName("csid")] public string? Csid { get; init; }
 
-    [JsonPropertyName("Current")] public double? Current { get; init; }
-
-    [JsonPropertyName("Current Capacity")] public double? CurrentCapacity { get; init; }
-
-    [JsonPropertyName("DesignCycleCount")] public double? DesignCycleCount { get; init; }
-
     [JsonPropertyName("device_class")] public string? DeviceClass { get; init; }
 
     [JsonPropertyName("direction")] public string? Direction { get; init; }
-
-    [JsonPropertyName("domains_blocked")] public double? DomainsBlocked { get; init; }
 
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
@@ -6047,59 +6211,26 @@ public record NumericSensorAttributes
 
     [JsonPropertyName("icon")] public string? Icon { get; init; }
 
-    [JsonPropertyName("Is Charged")] public bool? IsCharged { get; init; }
-
-    [JsonPropertyName("Is Charging")] public bool? IsCharging { get; init; }
-
-    [JsonPropertyName("Is Present")] public bool? IsPresent { get; init; }
-
-    [JsonPropertyName("last")] public double? Last { get; init; }
-
     [JsonPropertyName("last_entity_id")] public string? LastEntityId { get; init; }
-
-    [JsonPropertyName("last_period")] public double? LastPeriod { get; init; }
 
     [JsonPropertyName("last_reset")] public string? LastReset { get; init; }
 
     [JsonPropertyName("level")] public string? Level { get; init; }
 
-    [JsonPropertyName("Max Capacity")] public double? MaxCapacity { get; init; }
-
     [JsonPropertyName("max_entity_id")] public string? MaxEntityId { get; init; }
-
-    [JsonPropertyName("max_value")] public double? MaxValue { get; init; }
-
-    [JsonPropertyName("mean")] public double? Mean { get; init; }
-
-    [JsonPropertyName("median")] public double? Median { get; init; }
 
     [JsonPropertyName("meter_period")] public string? MeterPeriod { get; init; }
 
     [JsonPropertyName("min_entity_id")] public string? MinEntityId { get; init; }
 
-    [JsonPropertyName("min_value")] public double? MinValue { get; init; }
-
     [JsonPropertyName("model")] public string? Model { get; init; }
 
     [JsonPropertyName("model_family")] public string? ModelFamily { get; init; }
 
-    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
-
     [JsonPropertyName("Name")] public string? Name { get; init; }
-
-    [JsonPropertyName("Optimized Battery Charging Engaged")]
-    public bool? OptimizedBatteryChargingEngaged { get; init; }
-
-    [JsonPropertyName("Power Source ID")] public double? PowerSourceID { get; init; }
 
     [JsonPropertyName("Power Source State")]
     public string? PowerSourceState { get; init; }
-
-    [JsonPropertyName("repositories")] public object? Repositories { get; init; }
-
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
-
-    [JsonPropertyName("rgb_color")] public object? RgbColor { get; init; }
 
     [JsonPropertyName("server_country")] public string? ServerCountry { get; init; }
 
@@ -6109,28 +6240,15 @@ public record NumericSensorAttributes
 
     [JsonPropertyName("source")] public string? Source { get; init; }
 
-    [JsonPropertyName("source_value_valid")]
-    public bool? SourceValueValid { get; init; }
-
     [JsonPropertyName("state_class")] public string? StateClass { get; init; }
 
     [JsonPropertyName("status")] public string? Status { get; init; }
-
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
-
-    [JsonPropertyName("Time to Empty")] public double? TimetoEmpty { get; init; }
-
-    [JsonPropertyName("Time to Full Charge")]
-    public double? TimetoFullCharge { get; init; }
 
     [JsonPropertyName("title")] public string? Title { get; init; }
 
     [JsonPropertyName("Total")] public string? Total { get; init; }
 
     [JsonPropertyName("Transport Type")] public string? TransportType { get; init; }
-
-    [JsonPropertyName("type")] public object? Type_0 { get; init; }
 
     [JsonPropertyName("Type")] public string? Type_1 { get; init; }
 
@@ -6142,14 +6260,102 @@ public record NumericSensorAttributes
     [JsonPropertyName("vin")] public string? Vin { get; init; }
 
     [JsonPropertyName("wirelessNetwork")] public string? WirelessNetwork { get; init; }
-
-    [JsonPropertyName("wirelessSignal")] public double? WirelessSignal { get; init; }
-
-    [JsonPropertyName("xy_color")] public object? XyColor { get; init; }
 }
 
 public record SensorAttributes
 {
+    [JsonPropertyName("Allows VoIP")] public bool? AllowsVoIP { get; init; }
+
+    [JsonPropertyName("answered")] public bool? Answered { get; init; }
+
+    [JsonPropertyName("assumed_state")] public bool? AssumedState { get; init; }
+
+    [JsonPropertyName("Battery Provides Time Remaining")]
+    public bool? BatteryProvidesTimeRemaining { get; init; }
+
+    [JsonPropertyName("device_lock_enabled")]
+    public bool? DeviceLockEnabled { get; init; }
+
+    [JsonPropertyName("Is Charged")] public bool? IsCharged { get; init; }
+
+    [JsonPropertyName("Is Charging")] public bool? IsCharging { get; init; }
+
+    [JsonPropertyName("Is Hidden")] public bool? IsHidden { get; init; }
+
+    [JsonPropertyName("Is Present")] public bool? IsPresent { get; init; }
+
+    [JsonPropertyName("Low Power Mode")] public bool? LowPowerMode { get; init; }
+
+    [JsonPropertyName("Optimized Battery Charging Engaged")]
+    public bool? OptimizedBatteryChargingEngaged { get; init; }
+
+    [JsonPropertyName("Owns Menu Bar")] public bool? OwnsMenuBar { get; init; }
+
+    [JsonPropertyName("restored")] public bool? Restored { get; init; }
+
+    [JsonPropertyName("AwayModeTemperature")]
+    public double? AwayModeTemperature { get; init; }
+
+    [JsonPropertyName("battery_percent")] public double? BatteryPercent { get; init; }
+
+    [JsonPropertyName("controller_reception_RSSI")]
+    public double? ControllerReceptionRSSI { get; init; }
+
+    [JsonPropertyName("Current")] public double? Current { get; init; }
+
+    [JsonPropertyName("Current Capacity")] public double? CurrentCapacity { get; init; }
+
+    [JsonPropertyName("DesignCycleCount")] public double? DesignCycleCount { get; init; }
+
+    [JsonPropertyName("device_reception_LQI")]
+    public double? DeviceReceptionLQI { get; init; }
+
+    [JsonPropertyName("device_reception_RSSI")]
+    public double? DeviceReceptionRSSI { get; init; }
+
+    [JsonPropertyName("duration")] public double? Duration { get; init; }
+
+    [JsonPropertyName("humidity")] public double? Humidity { get; init; }
+
+    [JsonPropertyName("Max Capacity")] public double? MaxCapacity { get; init; }
+
+    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
+
+    [JsonPropertyName("node_id")] public double? NodeId { get; init; }
+
+    [JsonPropertyName("number_of_loaded_apps")]
+    public double? NumberOfLoadedApps { get; init; }
+
+    [JsonPropertyName("number_of_running_apps")]
+    public double? NumberOfRunningApps { get; init; }
+
+    [JsonPropertyName("parent_node_id")] public double? ParentNodeId { get; init; }
+
+    [JsonPropertyName("percentage_demand_Channel-1")]
+    public double? PercentageDemandChannel1 { get; init; }
+
+    [JsonPropertyName("Power Source ID")] public double? PowerSourceID { get; init; }
+
+    [JsonPropertyName("RandomDuration")] public double? RandomDuration { get; init; }
+
+    [JsonPropertyName("supported_features")]
+    public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("temperature")] public double? Temperature { get; init; }
+
+    [JsonPropertyName("Time to Empty")] public double? TimetoEmpty { get; init; }
+
+    [JsonPropertyName("Time to Full Charge")]
+    public double? TimetoFullCharge { get; init; }
+
+    [JsonPropertyName("total_active")] public double? TotalActive { get; init; }
+
+    [JsonPropertyName("total_all")] public double? TotalAll { get; init; }
+
+    [JsonPropertyName("wirelessSignal")] public double? WirelessSignal { get; init; }
+
+    [JsonPropertyName("zigbee_channel")] public double? ZigbeeChannel { get; init; }
+
     [JsonPropertyName("Active Audio Input")]
     public object? ActiveAudioInput { get; init; }
 
@@ -6158,30 +6364,48 @@ public record SensorAttributes
 
     [JsonPropertyName("Active Camera")] public object? ActiveCamera { get; init; }
 
-    [JsonPropertyName("ActiveEntities")] public string? ActiveEntities { get; init; }
-
-    [JsonPropertyName("Administrative Area")]
-    public string? AdministrativeArea { get; init; }
-
     [JsonPropertyName("All Audio Input")] public object? AllAudioInput { get; init; }
 
     [JsonPropertyName("All Audio Output")] public object? AllAudioOutput { get; init; }
 
     [JsonPropertyName("All Camera")] public object? AllCamera { get; init; }
 
-    [JsonPropertyName("Allows VoIP")] public bool? AllowsVoIP { get; init; }
+    [JsonPropertyName("ControlEntityIds")] public object? ControlEntityIds { get; init; }
 
-    [JsonPropertyName("answered")] public bool? Answered { get; init; }
+    [JsonPropertyName("data")] public object? Data { get; init; }
+
+    [JsonPropertyName("Display IDs")] public object? DisplayIDs { get; init; }
+
+    [JsonPropertyName("Display Names")] public object? DisplayNames { get; init; }
+
+    [JsonPropertyName("Location")] public object? Location { get; init; }
+
+    [JsonPropertyName("NightControlEntityIds")]
+    public object? NightControlEntityIds { get; init; }
+
+    [JsonPropertyName("PresenceEntityIds")]
+    public object? PresenceEntityIds { get; init; }
+
+    [JsonPropertyName("RandomStates")] public object? RandomStates { get; init; }
+
+    [JsonPropertyName("reminder")] public object? Reminder { get; init; }
+
+    [JsonPropertyName("room_ids_Channel-1")]
+    public object? RoomIdsChannel1 { get; init; }
+
+    [JsonPropertyName("Types")] public object? Types { get; init; }
+
+    [JsonPropertyName("Zones")] public object? Zones { get; init; }
+
+    [JsonPropertyName("ActiveEntities")] public string? ActiveEntities { get; init; }
+
+    [JsonPropertyName("Administrative Area")]
+    public string? AdministrativeArea { get; init; }
 
     [JsonPropertyName("Areas Of Interest")]
     public string? AreasOfInterest { get; init; }
 
-    [JsonPropertyName("assumed_state")] public bool? AssumedState { get; init; }
-
     [JsonPropertyName("attribution")] public string? Attribution { get; init; }
-
-    [JsonPropertyName("AwayModeTemperature")]
-    public double? AwayModeTemperature { get; init; }
 
     [JsonPropertyName("BatteryHealth")] public string? BatteryHealth { get; init; }
 
@@ -6191,11 +6415,6 @@ public record SensorAttributes
     [JsonPropertyName("battery_level")] public string? BatteryLevel_0 { get; init; }
 
     [JsonPropertyName("batteryLevel")] public string? BatteryLevel_1 { get; init; }
-
-    [JsonPropertyName("battery_percent")] public double? BatteryPercent { get; init; }
-
-    [JsonPropertyName("Battery Provides Time Remaining")]
-    public bool? BatteryProvidesTimeRemaining { get; init; }
 
     [JsonPropertyName("battery_voltage")] public string? BatteryVoltage { get; init; }
 
@@ -6210,49 +6429,21 @@ public record SensorAttributes
 
     [JsonPropertyName("Confidence")] public string? Confidence { get; init; }
 
-    [JsonPropertyName("ControlEntityIds")] public object? ControlEntityIds { get; init; }
-
-    [JsonPropertyName("controller_reception_RSSI")]
-    public double? ControllerReceptionRSSI { get; init; }
-
     [JsonPropertyName("Country")] public string? Country { get; init; }
 
     [JsonPropertyName("created_at")] public string? CreatedAt { get; init; }
 
     [JsonPropertyName("csid")] public string? Csid { get; init; }
 
-    [JsonPropertyName("Current")] public double? Current { get; init; }
-
-    [JsonPropertyName("Current Capacity")] public double? CurrentCapacity { get; init; }
-
     [JsonPropertyName("Current Radio Technology")]
     public string? CurrentRadioTechnology { get; init; }
 
-    [JsonPropertyName("data")] public object? Data { get; init; }
-
-    [JsonPropertyName("DesignCycleCount")] public double? DesignCycleCount { get; init; }
-
     [JsonPropertyName("device_class")] public string? DeviceClass { get; init; }
 
-    [JsonPropertyName("device_lock_enabled")]
-    public bool? DeviceLockEnabled { get; init; }
-
-    [JsonPropertyName("device_reception_LQI")]
-    public double? DeviceReceptionLQI { get; init; }
-
-    [JsonPropertyName("device_reception_RSSI")]
-    public double? DeviceReceptionRSSI { get; init; }
-
-    [JsonPropertyName("dismissed")] public object? Dismissed { get; init; }
+    [JsonPropertyName("dismissed")] public string? Dismissed { get; init; }
 
     [JsonPropertyName("displayed_signal_strength")]
     public string? DisplayedSignalStrength { get; init; }
-
-    [JsonPropertyName("Display IDs")] public object? DisplayIDs { get; init; }
-
-    [JsonPropertyName("Display Names")] public object? DisplayNames { get; init; }
-
-    [JsonPropertyName("duration")] public double? Duration { get; init; }
 
     [JsonPropertyName("event")] public string? Event { get; init; }
 
@@ -6273,23 +6464,13 @@ public record SensorAttributes
 
     [JsonPropertyName("hub_route")] public string? HubRoute { get; init; }
 
-    [JsonPropertyName("humidity")] public double? Humidity { get; init; }
-
     [JsonPropertyName("icon")] public string? Icon { get; init; }
 
     [JsonPropertyName("Inland Water")] public string? InlandWater { get; init; }
 
     [JsonPropertyName("integration")] public string? Integration { get; init; }
 
-    [JsonPropertyName("Is Charged")] public bool? IsCharged { get; init; }
-
-    [JsonPropertyName("Is Charging")] public bool? IsCharging { get; init; }
-
-    [JsonPropertyName("Is Hidden")] public bool? IsHidden { get; init; }
-
     [JsonPropertyName("ISO Country Code")] public string? ISOCountryCode { get; init; }
-
-    [JsonPropertyName("Is Present")] public bool? IsPresent { get; init; }
 
     [JsonPropertyName("KeepAliveEntities")]
     public string? KeepAliveEntities { get; init; }
@@ -6304,12 +6485,6 @@ public record SensorAttributes
 
     [JsonPropertyName("Locality")] public string? Locality { get; init; }
 
-    [JsonPropertyName("Location")] public object? Location { get; init; }
-
-    [JsonPropertyName("Low Power Mode")] public bool? LowPowerMode { get; init; }
-
-    [JsonPropertyName("Max Capacity")] public double? MaxCapacity { get; init; }
-
     [JsonPropertyName("Mobile Country Code")]
     public string? MobileCountryCode { get; init; }
 
@@ -6322,42 +6497,14 @@ public record SensorAttributes
 
     [JsonPropertyName("model_identifier")] public string? ModelIdentifier { get; init; }
 
-    [JsonPropertyName("model_year")] public double? ModelYear { get; init; }
-
     [JsonPropertyName("Name")] public string? Name { get; init; }
-
-    [JsonPropertyName("NightControlEntityIds")]
-    public object? NightControlEntityIds { get; init; }
-
-    [JsonPropertyName("node_id")] public double? NodeId { get; init; }
-
-    [JsonPropertyName("number_of_loaded_apps")]
-    public double? NumberOfLoadedApps { get; init; }
-
-    [JsonPropertyName("number_of_running_apps")]
-    public double? NumberOfRunningApps { get; init; }
 
     [JsonPropertyName("Ocean")] public string? Ocean { get; init; }
 
-    [JsonPropertyName("Optimized Battery Charging Engaged")]
-    public bool? OptimizedBatteryChargingEngaged { get; init; }
-
-    [JsonPropertyName("Owns Menu Bar")] public bool? OwnsMenuBar { get; init; }
-
-    [JsonPropertyName("parent_node_id")] public double? ParentNodeId { get; init; }
-
-    [JsonPropertyName("percentage_demand_Channel-1")]
-    public double? PercentageDemandChannel1 { get; init; }
-
     [JsonPropertyName("Postal Code")] public string? PostalCode { get; init; }
-
-    [JsonPropertyName("Power Source ID")] public double? PowerSourceID { get; init; }
 
     [JsonPropertyName("Power Source State")]
     public string? PowerSourceState { get; init; }
-
-    [JsonPropertyName("PresenceEntityIds")]
-    public object? PresenceEntityIds { get; init; }
 
     [JsonPropertyName("prior_value")] public string? PriorValue { get; init; }
 
@@ -6366,22 +6513,11 @@ public record SensorAttributes
 
     [JsonPropertyName("product_type")] public string? ProductType { get; init; }
 
-    [JsonPropertyName("RandomDuration")] public double? RandomDuration { get; init; }
-
     [JsonPropertyName("RandomEntityId")] public string? RandomEntityId { get; init; }
-
-    [JsonPropertyName("RandomStates")] public object? RandomStates { get; init; }
 
     [JsonPropertyName("recording_status")] public string? RecordingStatus { get; init; }
 
     [JsonPropertyName("recurrence")] public string? Recurrence { get; init; }
-
-    [JsonPropertyName("reminder")] public object? Reminder { get; init; }
-
-    [JsonPropertyName("restored")] public bool? Restored { get; init; }
-
-    [JsonPropertyName("room_ids_Channel-1")]
-    public object? RoomIdsChannel1 { get; init; }
 
     [JsonPropertyName("serial_number")] public string? SerialNumber { get; init; }
 
@@ -6404,33 +6540,17 @@ public record SensorAttributes
 
     [JsonPropertyName("Sub Thoroughfare")] public string? SubThoroughfare { get; init; }
 
-    [JsonPropertyName("supported_features")]
-    public double? SupportedFeatures { get; init; }
-
-    [JsonPropertyName("temperature")] public double? Temperature { get; init; }
-
     [JsonPropertyName("text")] public string? Text { get; init; }
 
     [JsonPropertyName("Thoroughfare")] public string? Thoroughfare { get; init; }
-
-    [JsonPropertyName("Time to Empty")] public double? TimetoEmpty { get; init; }
-
-    [JsonPropertyName("Time to Full Charge")]
-    public double? TimetoFullCharge { get; init; }
 
     [JsonPropertyName("Time Zone")] public string? TimeZone { get; init; }
 
     [JsonPropertyName("title")] public string? Title { get; init; }
 
-    [JsonPropertyName("total_active")] public double? TotalActive { get; init; }
-
-    [JsonPropertyName("total_all")] public double? TotalAll { get; init; }
-
     [JsonPropertyName("Transport Type")] public string? TransportType { get; init; }
 
     [JsonPropertyName("Type")] public string? Type { get; init; }
-
-    [JsonPropertyName("Types")] public object? Types { get; init; }
 
     [JsonPropertyName("vendor")] public string? Vendor { get; init; }
 
@@ -6439,16 +6559,12 @@ public record SensorAttributes
     [JsonPropertyName("vin")] public string? Vin { get; init; }
 
     [JsonPropertyName("wirelessNetwork")] public string? WirelessNetwork { get; init; }
-
-    [JsonPropertyName("wirelessSignal")] public double? WirelessSignal { get; init; }
-
-    [JsonPropertyName("zigbee_channel")] public double? ZigbeeChannel { get; init; }
-
-    [JsonPropertyName("Zones")] public object? Zones { get; init; }
 }
 
 public record SunAttributes
 {
+    [JsonPropertyName("rising")] public bool? Rising { get; init; }
+
     [JsonPropertyName("azimuth")] public double? Azimuth { get; init; }
 
     [JsonPropertyName("elevation")] public double? Elevation { get; init; }
@@ -6466,21 +6582,10 @@ public record SunAttributes
     [JsonPropertyName("next_rising")] public string? NextRising { get; init; }
 
     [JsonPropertyName("next_setting")] public string? NextSetting { get; init; }
-
-    [JsonPropertyName("rising")] public bool? Rising { get; init; }
 }
 
 public record SwitchAttributes
 {
-    [JsonPropertyName("actions")] public object? Actions { get; init; }
-
-    [JsonPropertyName("ActivePresenceSensors")]
-    public object? ActivePresenceSensors { get; init; }
-
-    [JsonPropertyName("app_state")] public string? AppState { get; init; }
-
-    [JsonPropertyName("attribution")] public string? Attribution { get; init; }
-
     [JsonPropertyName("AwayModeTemperature")]
     public double? AwayModeTemperature { get; init; }
 
@@ -6495,9 +6600,44 @@ public record SwitchAttributes
 
     [JsonPropertyName("color_temp_mired")] public double? ColorTempMired { get; init; }
 
+    [JsonPropertyName("minutes_remaining")]
+    public double? MinutesRemaining { get; init; }
+
+    [JsonPropertyName("next_slot")] public double? NextSlot { get; init; }
+
+    [JsonPropertyName("sun_position")] public double? SunPosition { get; init; }
+
+    [JsonPropertyName("actions")] public object? Actions { get; init; }
+
+    [JsonPropertyName("ActivePresenceSensors")]
+    public object? ActivePresenceSensors { get; init; }
+
     [JsonPropertyName("ControlEntityIds")] public object? ControlEntityIds { get; init; }
 
     [JsonPropertyName("current_slot")] public object? CurrentSlot { get; init; }
+
+    [JsonPropertyName("hs_color")] public object? HsColor { get; init; }
+
+    [JsonPropertyName("manual_control")] public object? ManualControl { get; init; }
+
+    [JsonPropertyName("PresenceEntityIds")]
+    public object? PresenceEntityIds { get; init; }
+
+    [JsonPropertyName("rgb_color")] public object? RgbColor { get; init; }
+
+    [JsonPropertyName("runtime_info")] public object? RuntimeInfo { get; init; }
+
+    [JsonPropertyName("tags")] public object? Tags { get; init; }
+
+    [JsonPropertyName("times")] public object? Times { get; init; }
+
+    [JsonPropertyName("weekdays")] public object? Weekdays { get; init; }
+
+    [JsonPropertyName("xy_color")] public object? XyColor { get; init; }
+
+    [JsonPropertyName("app_state")] public string? AppState { get; init; }
+
+    [JsonPropertyName("attribution")] public string? Attribution { get; init; }
 
     [JsonPropertyName("device_class")] public string? DeviceClass { get; init; }
 
@@ -6507,61 +6647,29 @@ public record SwitchAttributes
 
     [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 
-    [JsonPropertyName("hs_color")] public object? HsColor { get; init; }
-
     [JsonPropertyName("icon")] public string? Icon { get; init; }
 
     [JsonPropertyName("integration")] public string? Integration { get; init; }
 
-    [JsonPropertyName("manual_control")] public object? ManualControl { get; init; }
-
-    [JsonPropertyName("minutes_remaining")]
-    public double? MinutesRemaining { get; init; }
-
-    [JsonPropertyName("next_slot")] public double? NextSlot { get; init; }
-
     [JsonPropertyName("next_trigger")] public string? NextTrigger { get; init; }
-
-    [JsonPropertyName("PresenceEntityIds")]
-    public object? PresenceEntityIds { get; init; }
-
-    [JsonPropertyName("rgb_color")] public object? RgbColor { get; init; }
-
-    [JsonPropertyName("runtime_info")] public object? RuntimeInfo { get; init; }
 
     [JsonPropertyName("State")] public string? State { get; init; }
 
     [JsonPropertyName("status")] public string? Status { get; init; }
-
-    [JsonPropertyName("sun_position")] public double? SunPosition { get; init; }
-
-    [JsonPropertyName("tags")] public object? Tags { get; init; }
-
-    [JsonPropertyName("times")] public object? Times { get; init; }
-
-    [JsonPropertyName("weekdays")] public object? Weekdays { get; init; }
-
-    [JsonPropertyName("xy_color")] public object? XyColor { get; init; }
 }
 
 public record TimerAttributes
 {
-    [JsonPropertyName("icon")] public string? Icon { get; init; }
-
     [JsonPropertyName("restored")] public bool? Restored { get; init; }
 
     [JsonPropertyName("supported_features")]
     public double? SupportedFeatures { get; init; }
+
+    [JsonPropertyName("icon")] public string? Icon { get; init; }
 }
 
 public record WeatherAttributes
 {
-    [JsonPropertyName("attribution")] public string? Attribution { get; init; }
-
-    [JsonPropertyName("forecast")] public object? Forecast { get; init; }
-
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
     [JsonPropertyName("humidity")] public double? Humidity { get; init; }
 
     [JsonPropertyName("ozone")] public double? Ozone { get; init; }
@@ -6575,23 +6683,29 @@ public record WeatherAttributes
     [JsonPropertyName("wind_bearing")] public double? WindBearing { get; init; }
 
     [JsonPropertyName("wind_speed")] public double? WindSpeed { get; init; }
+
+    [JsonPropertyName("forecast")] public object? Forecast { get; init; }
+
+    [JsonPropertyName("attribution")] public string? Attribution { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
 }
 
 public record ZoneAttributes
 {
     [JsonPropertyName("editable")] public bool? Editable { get; init; }
 
-    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
-
-    [JsonPropertyName("icon")] public string? Icon { get; init; }
+    [JsonPropertyName("passive")] public bool? Passive { get; init; }
 
     [JsonPropertyName("latitude")] public double? Latitude { get; init; }
 
     [JsonPropertyName("longitude")] public double? Longitude { get; init; }
 
-    [JsonPropertyName("passive")] public bool? Passive { get; init; }
-
     [JsonPropertyName("radius")] public double? Radius { get; init; }
+
+    [JsonPropertyName("friendly_name")] public string? FriendlyName { get; init; }
+
+    [JsonPropertyName("icon")] public string? Icon { get; init; }
 }
 
 public interface IServices
@@ -6708,9 +6822,9 @@ public interface IServices
 
     SystemLogServices SystemLog { get; }
 
-    TelegramServices Telegram { get; }
-
     TelegramBotServices TelegramBot { get; }
+
+    TelegramServices Telegram { get; }
 
     TemplateServices Template { get; }
 
@@ -6833,17 +6947,17 @@ public class AdaptiveLightingServices
         _haContext.CallService("adaptive_lighting", "apply", null, data);
     }
 
-    ///<summary>Applies the current Adaptive Lighting settings to lights.</summary>
-    ///<param name="entityId">entity_id of the Adaptive Lighting switch. eg: switch.adaptive_lighting_default</param>
-    ///<param name="lights">entity_id(s) of lights, default: lights of the switch eg: light.bedroom_ceiling</param>
-    ///<param name="transition">Transition of the lights. eg: 10</param>
-    ///<param name="adaptBrightness">Adapt the 'brightness', default: true eg: True</param>
-    ///<param name="adaptColor">Adapt the color_temp/color_rgb, default: true eg: True</param>
-    ///<param name="preferRgbColor">Prefer to use color_rgb over color_temp if possible, default: false eg: False</param>
-    ///<param name="turnOnLights">Turn on the lights that are off, default: false eg: False</param>
-    public void Apply(string? @entityId = null, string? @lights = null, string? @transition = null, string? @adaptBrightness = null, string? @adaptColor = null, string? @preferRgbColor = null, string? @turnOnLights = null)
+    /// <summary>Applies the current Adaptive Lighting settings to lights.</summary>
+    /// <param name="entityId">entity_id of the Adaptive Lighting switch. eg: switch.adaptive_lighting_default</param>
+    /// <param name="lights">entity_id(s) of lights, default: lights of the switch eg: light.bedroom_ceiling</param>
+    /// <param name="transition">Transition of the lights. eg: 10</param>
+    /// <param name="adaptBrightness">Adapt the 'brightness', default: true eg: True</param>
+    /// <param name="adaptColor">Adapt the color_temp/color_rgb, default: true eg: True</param>
+    /// <param name="preferRgbColor">Prefer to use color_rgb over color_temp if possible, default: false eg: False</param>
+    /// <param name="turnOnLights">Turn on the lights that are off, default: false eg: False</param>
+    public void Apply(string? entityId = null, string? lights = null, string? transition = null, string? adaptBrightness = null, string? adaptColor = null, string? preferRgbColor = null, string? turnOnLights = null)
     {
-        _haContext.CallService("adaptive_lighting", "apply", null, new AdaptiveLightingApplyParameters { EntityId = @entityId, Lights = @lights, Transition = @transition, AdaptBrightness = @adaptBrightness, AdaptColor = @adaptColor, PreferRgbColor = @preferRgbColor, TurnOnLights = @turnOnLights });
+        _haContext.CallService("adaptive_lighting", "apply", null, new AdaptiveLightingApplyParameters { EntityId = entityId, Lights = lights, Transition = transition, AdaptBrightness = adaptBrightness, AdaptColor = adaptColor, PreferRgbColor = preferRgbColor, TurnOnLights = turnOnLights });
     }
 
     ///<summary>Mark whether a light is 'manually controlled'.</summary>
@@ -6852,30 +6966,24 @@ public class AdaptiveLightingServices
         _haContext.CallService("adaptive_lighting", "set_manual_control", null, data);
     }
 
-    ///<summary>Mark whether a light is 'manually controlled'.</summary>
-    ///<param name="entityId">entity_id of the Adaptive Lighting switch. eg: switch.adaptive_lighting_default</param>
-    ///<param name="manualControl">Whether to add ('true') or remove ('false') the light from the 'manual_control' list, default: true eg: True</param>
-    ///<param name="lights">entity_id(s) of lights, if not specified, all lights in the switch are selected. eg: light.bedroom_ceiling</param>
-    public void SetManualControl(string? @entityId = null, string? @manualControl = null, string? @lights = null)
+    /// <summary>Mark whether a light is 'manually controlled'.</summary>
+    /// <param name="entityId">entity_id of the Adaptive Lighting switch. eg: switch.adaptive_lighting_default</param>
+    /// <param name="manualControl">
+    ///     Whether to add ('true') or remove ('false') the light from the 'manual_control' list,
+    ///     default: true eg: True
+    /// </param>
+    /// <param name="lights">
+    ///     entity_id(s) of lights, if not specified, all lights in the switch are selected. eg:
+    ///     light.bedroom_ceiling
+    /// </param>
+    public void SetManualControl(string? entityId = null, string? manualControl = null, string? lights = null)
     {
-        _haContext.CallService("adaptive_lighting", "set_manual_control", null, new AdaptiveLightingSetManualControlParameters { EntityId = @entityId, ManualControl = @manualControl, Lights = @lights });
+        _haContext.CallService("adaptive_lighting", "set_manual_control", null, new AdaptiveLightingSetManualControlParameters { EntityId = entityId, ManualControl = manualControl, Lights = lights });
     }
 }
 
 public record AdaptiveLightingApplyParameters
 {
-    ///<summary>entity_id of the Adaptive Lighting switch. eg: switch.adaptive_lighting_default</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
-    ///<summary>entity_id(s) of lights, default: lights of the switch eg: light.bedroom_ceiling</summary>
-    [JsonPropertyName("lights")]
-    public string? Lights { get; init; }
-
-    ///<summary>Transition of the lights. eg: 10</summary>
-    [JsonPropertyName("transition")]
-    public string? Transition { get; init; }
-
     ///<summary>Adapt the 'brightness', default: true eg: True</summary>
     [JsonPropertyName("adapt_brightness")]
     public string? AdaptBrightness { get; init; }
@@ -6884,9 +6992,21 @@ public record AdaptiveLightingApplyParameters
     [JsonPropertyName("adapt_color")]
     public string? AdaptColor { get; init; }
 
+    ///<summary>entity_id of the Adaptive Lighting switch. eg: switch.adaptive_lighting_default</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
+
+    ///<summary>entity_id(s) of lights, default: lights of the switch eg: light.bedroom_ceiling</summary>
+    [JsonPropertyName("lights")]
+    public string? Lights { get; init; }
+
     ///<summary>Prefer to use color_rgb over color_temp if possible, default: false eg: False</summary>
     [JsonPropertyName("prefer_rgb_color")]
     public string? PreferRgbColor { get; init; }
+
+    ///<summary>Transition of the lights. eg: 10</summary>
+    [JsonPropertyName("transition")]
+    public string? Transition { get; init; }
 
     ///<summary>Turn on the lights that are off, default: false eg: False</summary>
     [JsonPropertyName("turn_on_lights")]
@@ -6899,13 +7019,13 @@ public record AdaptiveLightingSetManualControlParameters
     [JsonPropertyName("entity_id")]
     public string? EntityId { get; init; }
 
-    ///<summary>Whether to add ('true') or remove ('false') the light from the 'manual_control' list, default: true eg: True</summary>
-    [JsonPropertyName("manual_control")]
-    public string? ManualControl { get; init; }
-
     ///<summary>entity_id(s) of lights, if not specified, all lights in the switch are selected. eg: light.bedroom_ceiling</summary>
     [JsonPropertyName("lights")]
     public string? Lights { get; init; }
+
+    ///<summary>Whether to add ('true') or remove ('false') the light from the 'manual_control' list, default: true eg: True</summary>
+    [JsonPropertyName("manual_control")]
+    public string? ManualControl { get; init; }
 }
 
 public class AlarmControlPanelServices
@@ -6917,109 +7037,109 @@ public class AlarmControlPanelServices
         _haContext = haContext;
     }
 
-    ///<summary>Send the alarm the command for arm away.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the alarm the command for arm away.</summary>
+    /// <param name="target">The target for this service call</param>
     public void AlarmArmAway(ServiceTarget target, AlarmControlPanelAlarmArmAwayParameters data)
     {
         _haContext.CallService("alarm_control_panel", "alarm_arm_away", target, data);
     }
 
-    ///<summary>Send the alarm the command for arm away.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to arm away the alarm control panel with. eg: 1234</param>
-    public void AlarmArmAway(ServiceTarget target, string? @code = null)
+    /// <summary>Send the alarm the command for arm away.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to arm away the alarm control panel with. eg: 1234</param>
+    public void AlarmArmAway(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("alarm_control_panel", "alarm_arm_away", target, new AlarmControlPanelAlarmArmAwayParameters { Code = @code });
+        _haContext.CallService("alarm_control_panel", "alarm_arm_away", target, new AlarmControlPanelAlarmArmAwayParameters { Code = code });
     }
 
-    ///<summary>Send arm custom bypass command.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send arm custom bypass command.</summary>
+    /// <param name="target">The target for this service call</param>
     public void AlarmArmCustomBypass(ServiceTarget target, AlarmControlPanelAlarmArmCustomBypassParameters data)
     {
         _haContext.CallService("alarm_control_panel", "alarm_arm_custom_bypass", target, data);
     }
 
-    ///<summary>Send arm custom bypass command.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to arm custom bypass the alarm control panel with. eg: 1234</param>
-    public void AlarmArmCustomBypass(ServiceTarget target, string? @code = null)
+    /// <summary>Send arm custom bypass command.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to arm custom bypass the alarm control panel with. eg: 1234</param>
+    public void AlarmArmCustomBypass(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("alarm_control_panel", "alarm_arm_custom_bypass", target, new AlarmControlPanelAlarmArmCustomBypassParameters { Code = @code });
+        _haContext.CallService("alarm_control_panel", "alarm_arm_custom_bypass", target, new AlarmControlPanelAlarmArmCustomBypassParameters { Code = code });
     }
 
-    ///<summary>Send the alarm the command for arm home.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the alarm the command for arm home.</summary>
+    /// <param name="target">The target for this service call</param>
     public void AlarmArmHome(ServiceTarget target, AlarmControlPanelAlarmArmHomeParameters data)
     {
         _haContext.CallService("alarm_control_panel", "alarm_arm_home", target, data);
     }
 
-    ///<summary>Send the alarm the command for arm home.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to arm home the alarm control panel with. eg: 1234</param>
-    public void AlarmArmHome(ServiceTarget target, string? @code = null)
+    /// <summary>Send the alarm the command for arm home.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to arm home the alarm control panel with. eg: 1234</param>
+    public void AlarmArmHome(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("alarm_control_panel", "alarm_arm_home", target, new AlarmControlPanelAlarmArmHomeParameters { Code = @code });
+        _haContext.CallService("alarm_control_panel", "alarm_arm_home", target, new AlarmControlPanelAlarmArmHomeParameters { Code = code });
     }
 
-    ///<summary>Send the alarm the command for arm night.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the alarm the command for arm night.</summary>
+    /// <param name="target">The target for this service call</param>
     public void AlarmArmNight(ServiceTarget target, AlarmControlPanelAlarmArmNightParameters data)
     {
         _haContext.CallService("alarm_control_panel", "alarm_arm_night", target, data);
     }
 
-    ///<summary>Send the alarm the command for arm night.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to arm night the alarm control panel with. eg: 1234</param>
-    public void AlarmArmNight(ServiceTarget target, string? @code = null)
+    /// <summary>Send the alarm the command for arm night.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to arm night the alarm control panel with. eg: 1234</param>
+    public void AlarmArmNight(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("alarm_control_panel", "alarm_arm_night", target, new AlarmControlPanelAlarmArmNightParameters { Code = @code });
+        _haContext.CallService("alarm_control_panel", "alarm_arm_night", target, new AlarmControlPanelAlarmArmNightParameters { Code = code });
     }
 
-    ///<summary>Send the alarm the command for arm vacation.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the alarm the command for arm vacation.</summary>
+    /// <param name="target">The target for this service call</param>
     public void AlarmArmVacation(ServiceTarget target, AlarmControlPanelAlarmArmVacationParameters data)
     {
         _haContext.CallService("alarm_control_panel", "alarm_arm_vacation", target, data);
     }
 
-    ///<summary>Send the alarm the command for arm vacation.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to arm vacation the alarm control panel with. eg: 1234</param>
-    public void AlarmArmVacation(ServiceTarget target, string? @code = null)
+    /// <summary>Send the alarm the command for arm vacation.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to arm vacation the alarm control panel with. eg: 1234</param>
+    public void AlarmArmVacation(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("alarm_control_panel", "alarm_arm_vacation", target, new AlarmControlPanelAlarmArmVacationParameters { Code = @code });
+        _haContext.CallService("alarm_control_panel", "alarm_arm_vacation", target, new AlarmControlPanelAlarmArmVacationParameters { Code = code });
     }
 
-    ///<summary>Send the alarm the command for disarm.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the alarm the command for disarm.</summary>
+    /// <param name="target">The target for this service call</param>
     public void AlarmDisarm(ServiceTarget target, AlarmControlPanelAlarmDisarmParameters data)
     {
         _haContext.CallService("alarm_control_panel", "alarm_disarm", target, data);
     }
 
-    ///<summary>Send the alarm the command for disarm.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to disarm the alarm control panel with. eg: 1234</param>
-    public void AlarmDisarm(ServiceTarget target, string? @code = null)
+    /// <summary>Send the alarm the command for disarm.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to disarm the alarm control panel with. eg: 1234</param>
+    public void AlarmDisarm(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("alarm_control_panel", "alarm_disarm", target, new AlarmControlPanelAlarmDisarmParameters { Code = @code });
+        _haContext.CallService("alarm_control_panel", "alarm_disarm", target, new AlarmControlPanelAlarmDisarmParameters { Code = code });
     }
 
-    ///<summary>Send the alarm the command for trigger.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the alarm the command for trigger.</summary>
+    /// <param name="target">The target for this service call</param>
     public void AlarmTrigger(ServiceTarget target, AlarmControlPanelAlarmTriggerParameters data)
     {
         _haContext.CallService("alarm_control_panel", "alarm_trigger", target, data);
     }
 
-    ///<summary>Send the alarm the command for trigger.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to trigger the alarm control panel with. eg: 1234</param>
-    public void AlarmTrigger(ServiceTarget target, string? @code = null)
+    /// <summary>Send the alarm the command for trigger.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to trigger the alarm control panel with. eg: 1234</param>
+    public void AlarmTrigger(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("alarm_control_panel", "alarm_trigger", target, new AlarmControlPanelAlarmTriggerParameters { Code = @code });
+        _haContext.CallService("alarm_control_panel", "alarm_trigger", target, new AlarmControlPanelAlarmTriggerParameters { Code = code });
     }
 }
 
@@ -7087,15 +7207,15 @@ public class AlarmoServices
         _haContext.CallService("alarmo", "arm", null, data);
     }
 
-    ///<summary>Arm an Alarmo entity with custom settings.</summary>
-    ///<param name="entityId">Name of entity that should be armed. eg: alarm_control_panel.alarm</param>
-    ///<param name="code">Code to arm the alarm with. eg: 1234</param>
-    ///<param name="mode">Mode to arm the alarm in. eg: away</param>
-    ///<param name="skipDelay">Skip the exit delay. eg: True</param>
-    ///<param name="force">Automatically bypass all sensors that prevent the arming operation. eg: True</param>
-    public void Arm(string @entityId, string? @code = null, string? @mode = null, bool? @skipDelay = null, bool? @force = null)
+    /// <summary>Arm an Alarmo entity with custom settings.</summary>
+    /// <param name="entityId">Name of entity that should be armed. eg: alarm_control_panel.alarm</param>
+    /// <param name="code">Code to arm the alarm with. eg: 1234</param>
+    /// <param name="mode">Mode to arm the alarm in. eg: away</param>
+    /// <param name="skipDelay">Skip the exit delay. eg: True</param>
+    /// <param name="force">Automatically bypass all sensors that prevent the arming operation. eg: True</param>
+    public void Arm(string entityId, string? code = null, string? mode = null, bool? skipDelay = null, bool? force = null)
     {
-        _haContext.CallService("alarmo", "arm", null, new AlarmoArmParameters { EntityId = @entityId, Code = @code, Mode = @mode, SkipDelay = @skipDelay, Force = @force });
+        _haContext.CallService("alarmo", "arm", null, new AlarmoArmParameters { EntityId = entityId, Code = code, Mode = mode, SkipDelay = skipDelay, Force = force });
     }
 
     ///<summary>Disarm an Alarmo entity.</summary>
@@ -7104,47 +7224,47 @@ public class AlarmoServices
         _haContext.CallService("alarmo", "disarm", null, data);
     }
 
-    ///<summary>Disarm an Alarmo entity.</summary>
-    ///<param name="entityId">Name of entity that should be disarmed. eg: alarm_control_panel.alarm</param>
-    ///<param name="code">Code to disarm the alarm with. eg: 1234</param>
-    public void Disarm(string @entityId, string? @code = null)
+    /// <summary>Disarm an Alarmo entity.</summary>
+    /// <param name="entityId">Name of entity that should be disarmed. eg: alarm_control_panel.alarm</param>
+    /// <param name="code">Code to disarm the alarm with. eg: 1234</param>
+    public void Disarm(string entityId, string? code = null)
     {
-        _haContext.CallService("alarmo", "disarm", null, new AlarmoDisarmParameters { EntityId = @entityId, Code = @code });
+        _haContext.CallService("alarmo", "disarm", null, new AlarmoDisarmParameters { EntityId = entityId, Code = code });
     }
 }
 
 public record AlarmoArmParameters
 {
-    ///<summary>Name of entity that should be armed. eg: alarm_control_panel.alarm</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
-    ///<summary>Code to arm the alarm with. eg: 1234</summary>
-    [JsonPropertyName("code")]
-    public string? Code { get; init; }
-
-    ///<summary>Mode to arm the alarm in. eg: away</summary>
-    [JsonPropertyName("mode")]
-    public string? Mode { get; init; }
+    ///<summary>Automatically bypass all sensors that prevent the arming operation. eg: True</summary>
+    [JsonPropertyName("force")]
+    public bool? Force { get; init; }
 
     ///<summary>Skip the exit delay. eg: True</summary>
     [JsonPropertyName("skip_delay")]
     public bool? SkipDelay { get; init; }
 
-    ///<summary>Automatically bypass all sensors that prevent the arming operation. eg: True</summary>
-    [JsonPropertyName("force")]
-    public bool? Force { get; init; }
+    ///<summary>Code to arm the alarm with. eg: 1234</summary>
+    [JsonPropertyName("code")]
+    public string? Code { get; init; }
+
+    ///<summary>Name of entity that should be armed. eg: alarm_control_panel.alarm</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
+
+    ///<summary>Mode to arm the alarm in. eg: away</summary>
+    [JsonPropertyName("mode")]
+    public string? Mode { get; init; }
 }
 
 public record AlarmoDisarmParameters
 {
-    ///<summary>Name of entity that should be disarmed. eg: alarm_control_panel.alarm</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
     ///<summary>Code to disarm the alarm with. eg: 1234</summary>
     [JsonPropertyName("code")]
     public string? Code { get; init; }
+
+    ///<summary>Name of entity that should be disarmed. eg: alarm_control_panel.alarm</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
 }
 
 public class AlexaMediaServices
@@ -7162,12 +7282,15 @@ public class AlexaMediaServices
         _haContext.CallService("alexa_media", "clear_history", null, data);
     }
 
-    ///<summary>Clear last entries from Alexa history for each Alexa account.</summary>
-    ///<param name="email">List of Alexa accounts to update. If empty, will delete from all known accounts. eg: my_email@alexa.com</param>
-    ///<param name="entries">Number of entries to clear from 1 to 50. If empty, clear 50. eg: 50</param>
-    public void ClearHistory(string? @email = null, string? @entries = null)
+    /// <summary>Clear last entries from Alexa history for each Alexa account.</summary>
+    /// <param name="email">
+    ///     List of Alexa accounts to update. If empty, will delete from all known accounts. eg:
+    ///     my_email@alexa.com
+    /// </param>
+    /// <param name="entries">Number of entries to clear from 1 to 50. If empty, clear 50. eg: 50</param>
+    public void ClearHistory(string? email = null, string? entries = null)
     {
-        _haContext.CallService("alexa_media", "clear_history", null, new AlexaMediaClearHistoryParameters { Email = @email, Entries = @entries });
+        _haContext.CallService("alexa_media", "clear_history", null, new AlexaMediaClearHistoryParameters { Email = email, Entries = entries });
     }
 
     ///<summary>Force logout of Alexa Login account and deletion of .pickle. Intended for debugging use.</summary>
@@ -7176,11 +7299,14 @@ public class AlexaMediaServices
         _haContext.CallService("alexa_media", "force_logout", null, data);
     }
 
-    ///<summary>Force logout of Alexa Login account and deletion of .pickle. Intended for debugging use.</summary>
-    ///<param name="email">List of Alexa accounts to log out. If empty, will log out from all known accounts. eg: my_email@alexa.com</param>
-    public void ForceLogout(string? @email = null)
+    /// <summary>Force logout of Alexa Login account and deletion of .pickle. Intended for debugging use.</summary>
+    /// <param name="email">
+    ///     List of Alexa accounts to log out. If empty, will log out from all known accounts. eg:
+    ///     my_email@alexa.com
+    /// </param>
+    public void ForceLogout(string? email = null)
     {
-        _haContext.CallService("alexa_media", "force_logout", null, new AlexaMediaForceLogoutParameters { Email = @email });
+        _haContext.CallService("alexa_media", "force_logout", null, new AlexaMediaForceLogoutParameters { Email = email });
     }
 
     ///<summary>Forces update of last_called echo device for each Alexa account.</summary>
@@ -7189,11 +7315,11 @@ public class AlexaMediaServices
         _haContext.CallService("alexa_media", "update_last_called", null, data);
     }
 
-    ///<summary>Forces update of last_called echo device for each Alexa account.</summary>
-    ///<param name="email">List of Alexa accounts to update. If empty, will update all known accounts. eg: my_email@alexa.com</param>
-    public void UpdateLastCalled(string? @email = null)
+    /// <summary>Forces update of last_called echo device for each Alexa account.</summary>
+    /// <param name="email">List of Alexa accounts to update. If empty, will update all known accounts. eg: my_email@alexa.com</param>
+    public void UpdateLastCalled(string? email = null)
     {
-        _haContext.CallService("alexa_media", "update_last_called", null, new AlexaMediaUpdateLastCalledParameters { Email = @email });
+        _haContext.CallService("alexa_media", "update_last_called", null, new AlexaMediaUpdateLastCalledParameters { Email = email });
     }
 }
 
@@ -7231,35 +7357,49 @@ public class AudiconnectServices
         _haContext = haContext;
     }
 
-    ///<summary>Request an update of the state from the vehicle, as opposed to the normal update  mechanism, which only retrieves data from the servers. </summary>
+    /// <summary>
+    ///     Request an update of the state from the vehicle, as opposed to the normal update  mechanism, which only
+    ///     retrieves data from the servers.
+    /// </summary>
     public void ExecuteVehicleAction(AudiconnectExecuteVehicleActionParameters data)
     {
         _haContext.CallService("audiconnect", "execute_vehicle_action", null, data);
     }
 
-    ///<summary>Request an update of the state from the vehicle, as opposed to the normal update  mechanism, which only retrieves data from the servers. </summary>
-    ///<param name="vin">The vehicle identification number (VIN) of the vehicle, 17 characters  eg: WBANXXXXXX1234567</param>
-    ///<param name="action">The action to be executed. Possible choices, depending on subscription options, include 'lock', 'unlock',  'start_climatisation', 'stop_climatisation, 'start_preheater', 'stop_preheater, 'start_window_heating', 'stop_window_heating'  eg: lock</param>
-    public void ExecuteVehicleAction(string? @vin = null, string? @action = null)
+    /// <summary>
+    ///     Request an update of the state from the vehicle, as opposed to the normal update  mechanism, which only
+    ///     retrieves data from the servers.
+    /// </summary>
+    /// <param name="vin">The vehicle identification number (VIN) of the vehicle, 17 characters  eg: WBANXXXXXX1234567</param>
+    /// <param name="action">
+    ///     The action to be executed. Possible choices, depending on subscription options, include 'lock',
+    ///     'unlock',  'start_climatisation', 'stop_climatisation, 'start_preheater', 'stop_preheater, 'start_window_heating',
+    ///     'stop_window_heating'  eg: lock
+    /// </param>
+    public void ExecuteVehicleAction(string? vin = null, string? action = null)
     {
-        _haContext.CallService("audiconnect", "execute_vehicle_action", null, new AudiconnectExecuteVehicleActionParameters { Vin = @vin, Action = @action });
+        _haContext.CallService("audiconnect", "execute_vehicle_action", null, new AudiconnectExecuteVehicleActionParameters { Vin = vin, Action = action });
     }
 
     public void RefreshData()
     {
-        _haContext.CallService("audiconnect", "refresh_data", null);
+        _haContext.CallService("audiconnect", "refresh_data");
     }
 }
 
 public record AudiconnectExecuteVehicleActionParameters
 {
+    /// <summary>
+    ///     The action to be executed. Possible choices, depending on subscription options, include 'lock', 'unlock',
+    ///     'start_climatisation', 'stop_climatisation, 'start_preheater', 'stop_preheater, 'start_window_heating',
+    ///     'stop_window_heating'  eg: lock
+    /// </summary>
+    [JsonPropertyName("action")]
+    public string? Action { get; init; }
+
     ///<summary>The vehicle identification number (VIN) of the vehicle, 17 characters  eg: WBANXXXXXX1234567</summary>
     [JsonPropertyName("vin")]
     public string? Vin { get; init; }
-
-    ///<summary>The action to be executed. Possible choices, depending on subscription options, include 'lock', 'unlock',  'start_climatisation', 'stop_climatisation, 'start_preheater', 'stop_preheater, 'start_window_heating', 'stop_window_heating'  eg: lock</summary>
-    [JsonPropertyName("action")]
-    public string? Action { get; init; }
 }
 
 public class AutomationServices
@@ -7274,48 +7414,48 @@ public class AutomationServices
     ///<summary>Reload the automation configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("automation", "reload", null);
+        _haContext.CallService("automation", "reload");
     }
 
-    ///<summary>Toggle (enable / disable) an automation.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggle (enable / disable) an automation.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("automation", "toggle", target);
     }
 
-    ///<summary>Trigger the actions of an automation.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Trigger the actions of an automation.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Trigger(ServiceTarget target, AutomationTriggerParameters data)
     {
         _haContext.CallService("automation", "trigger", target, data);
     }
 
-    ///<summary>Trigger the actions of an automation.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="skipCondition">Whether or not the conditions will be skipped.</param>
-    public void Trigger(ServiceTarget target, bool? @skipCondition = null)
+    /// <summary>Trigger the actions of an automation.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="skipCondition">Whether or not the conditions will be skipped.</param>
+    public void Trigger(ServiceTarget target, bool? skipCondition = null)
     {
-        _haContext.CallService("automation", "trigger", target, new AutomationTriggerParameters { SkipCondition = @skipCondition });
+        _haContext.CallService("automation", "trigger", target, new AutomationTriggerParameters { SkipCondition = skipCondition });
     }
 
-    ///<summary>Disable an automation.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Disable an automation.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target, AutomationTurnOffParameters data)
     {
         _haContext.CallService("automation", "turn_off", target, data);
     }
 
-    ///<summary>Disable an automation.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="stopActions">Stop currently running actions.</param>
-    public void TurnOff(ServiceTarget target, bool? @stopActions = null)
+    /// <summary>Disable an automation.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="stopActions">Stop currently running actions.</param>
+    public void TurnOff(ServiceTarget target, bool? stopActions = null)
     {
-        _haContext.CallService("automation", "turn_off", target, new AutomationTurnOffParameters { StopActions = @stopActions });
+        _haContext.CallService("automation", "turn_off", target, new AutomationTurnOffParameters { StopActions = stopActions });
     }
 
-    ///<summary>Enable an automation.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Enable an automation.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("automation", "turn_on", target);
@@ -7345,8 +7485,8 @@ public class ButtonServices
         _haContext = haContext;
     }
 
-    ///<summary>Press the button entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Press the button entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Press(ServiceTarget target)
     {
         _haContext.CallService("button", "press", target);
@@ -7362,77 +7502,83 @@ public class CameraServices
         _haContext = haContext;
     }
 
-    ///<summary>Disable the motion detection in a camera.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Disable the motion detection in a camera.</summary>
+    /// <param name="target">The target for this service call</param>
     public void DisableMotionDetection(ServiceTarget target)
     {
         _haContext.CallService("camera", "disable_motion_detection", target);
     }
 
-    ///<summary>Enable the motion detection in a camera.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Enable the motion detection in a camera.</summary>
+    /// <param name="target">The target for this service call</param>
     public void EnableMotionDetection(ServiceTarget target)
     {
         _haContext.CallService("camera", "enable_motion_detection", target);
     }
 
-    ///<summary>Play camera stream on supported media player.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Play camera stream on supported media player.</summary>
+    /// <param name="target">The target for this service call</param>
     public void PlayStream(ServiceTarget target, CameraPlayStreamParameters data)
     {
         _haContext.CallService("camera", "play_stream", target, data);
     }
 
-    ///<summary>Play camera stream on supported media player.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="mediaPlayer">Name(s) of media player to stream to.</param>
-    ///<param name="format">Stream format supported by media player.</param>
-    public void PlayStream(ServiceTarget target, string @mediaPlayer, string? @format = null)
+    /// <summary>Play camera stream on supported media player.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="mediaPlayer">Name(s) of media player to stream to.</param>
+    /// <param name="format">Stream format supported by media player.</param>
+    public void PlayStream(ServiceTarget target, string mediaPlayer, string? format = null)
     {
-        _haContext.CallService("camera", "play_stream", target, new CameraPlayStreamParameters { MediaPlayer = @mediaPlayer, Format = @format });
+        _haContext.CallService("camera", "play_stream", target, new CameraPlayStreamParameters { MediaPlayer = mediaPlayer, Format = format });
     }
 
-    ///<summary>Record live camera feed.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Record live camera feed.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Record(ServiceTarget target, CameraRecordParameters data)
     {
         _haContext.CallService("camera", "record", target, data);
     }
 
-    ///<summary>Record live camera feed.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="filename">Template of a Filename. Variable is entity_id. Must be mp4. eg: /tmp/snapshot_{{ entity_id.name }}.mp4</param>
-    ///<param name="duration">Target recording length.</param>
-    ///<param name="lookback">Target lookback period to include in addition to duration. Only available if there is currently an active HLS stream.</param>
-    public void Record(ServiceTarget target, string @filename, long? @duration = null, long? @lookback = null)
+    /// <summary>Record live camera feed.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="filename">
+    ///     Template of a Filename. Variable is entity_id. Must be mp4. eg: /tmp/snapshot_{{ entity_id.name
+    ///     }}.mp4
+    /// </param>
+    /// <param name="duration">Target recording length.</param>
+    /// <param name="lookback">
+    ///     Target lookback period to include in addition to duration. Only available if there is currently
+    ///     an active HLS stream.
+    /// </param>
+    public void Record(ServiceTarget target, string filename, long? duration = null, long? lookback = null)
     {
-        _haContext.CallService("camera", "record", target, new CameraRecordParameters { Filename = @filename, Duration = @duration, Lookback = @lookback });
+        _haContext.CallService("camera", "record", target, new CameraRecordParameters { Filename = filename, Duration = duration, Lookback = lookback });
     }
 
-    ///<summary>Take a snapshot from a camera.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Take a snapshot from a camera.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Snapshot(ServiceTarget target, CameraSnapshotParameters data)
     {
         _haContext.CallService("camera", "snapshot", target, data);
     }
 
-    ///<summary>Take a snapshot from a camera.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="filename">Template of a Filename. Variable is entity_id. eg: /tmp/snapshot_{{ entity_id.name }}.jpg</param>
-    public void Snapshot(ServiceTarget target, string @filename)
+    /// <summary>Take a snapshot from a camera.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="filename">Template of a Filename. Variable is entity_id. eg: /tmp/snapshot_{{ entity_id.name }}.jpg</param>
+    public void Snapshot(ServiceTarget target, string filename)
     {
-        _haContext.CallService("camera", "snapshot", target, new CameraSnapshotParameters { Filename = @filename });
+        _haContext.CallService("camera", "snapshot", target, new CameraSnapshotParameters { Filename = filename });
     }
 
-    ///<summary>Turn off camera.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn off camera.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("camera", "turn_off", target);
     }
 
-    ///<summary>Turn on camera.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn on camera.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("camera", "turn_on", target);
@@ -7441,28 +7587,31 @@ public class CameraServices
 
 public record CameraPlayStreamParameters
 {
-    ///<summary>Name(s) of media player to stream to.</summary>
-    [JsonPropertyName("media_player")]
-    public string? MediaPlayer { get; init; }
-
     ///<summary>Stream format supported by media player.</summary>
     [JsonPropertyName("format")]
     public string? Format { get; init; }
+
+    ///<summary>Name(s) of media player to stream to.</summary>
+    [JsonPropertyName("media_player")]
+    public string? MediaPlayer { get; init; }
 }
 
 public record CameraRecordParameters
 {
-    ///<summary>Template of a Filename. Variable is entity_id. Must be mp4. eg: /tmp/snapshot_{{ entity_id.name }}.mp4</summary>
-    [JsonPropertyName("filename")]
-    public string? Filename { get; init; }
-
     ///<summary>Target recording length.</summary>
     [JsonPropertyName("duration")]
     public long? Duration { get; init; }
 
-    ///<summary>Target lookback period to include in addition to duration. Only available if there is currently an active HLS stream.</summary>
+    /// <summary>
+    ///     Target lookback period to include in addition to duration. Only available if there is currently an active HLS
+    ///     stream.
+    /// </summary>
     [JsonPropertyName("lookback")]
     public long? Lookback { get; init; }
+
+    ///<summary>Template of a Filename. Variable is entity_id. Must be mp4. eg: /tmp/snapshot_{{ entity_id.name }}.mp4</summary>
+    [JsonPropertyName("filename")]
+    public string? Filename { get; init; }
 }
 
 public record CameraSnapshotParameters
@@ -7484,7 +7633,7 @@ public class CircadianLightingServices
     ///<summary>Updates values for Circadian Lighting.</summary>
     public void ValuesUpdate()
     {
-        _haContext.CallService("circadian_lighting", "values_update", null);
+        _haContext.CallService("circadian_lighting", "values_update");
     }
 }
 
@@ -7497,123 +7646,123 @@ public class ClimateServices
         _haContext = haContext;
     }
 
-    ///<summary>Turn auxiliary heater on/off for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn auxiliary heater on/off for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetAuxHeat(ServiceTarget target, ClimateSetAuxHeatParameters data)
     {
         _haContext.CallService("climate", "set_aux_heat", target, data);
     }
 
-    ///<summary>Turn auxiliary heater on/off for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="auxHeat">New value of auxiliary heater.</param>
-    public void SetAuxHeat(ServiceTarget target, bool @auxHeat)
+    /// <summary>Turn auxiliary heater on/off for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="auxHeat">New value of auxiliary heater.</param>
+    public void SetAuxHeat(ServiceTarget target, bool auxHeat)
     {
-        _haContext.CallService("climate", "set_aux_heat", target, new ClimateSetAuxHeatParameters { AuxHeat = @auxHeat });
+        _haContext.CallService("climate", "set_aux_heat", target, new ClimateSetAuxHeatParameters { AuxHeat = auxHeat });
     }
 
-    ///<summary>Set fan operation for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set fan operation for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetFanMode(ServiceTarget target, ClimateSetFanModeParameters data)
     {
         _haContext.CallService("climate", "set_fan_mode", target, data);
     }
 
-    ///<summary>Set fan operation for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="fanMode">New value of fan mode. eg: low</param>
-    public void SetFanMode(ServiceTarget target, string @fanMode)
+    /// <summary>Set fan operation for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="fanMode">New value of fan mode. eg: low</param>
+    public void SetFanMode(ServiceTarget target, string fanMode)
     {
-        _haContext.CallService("climate", "set_fan_mode", target, new ClimateSetFanModeParameters { FanMode = @fanMode });
+        _haContext.CallService("climate", "set_fan_mode", target, new ClimateSetFanModeParameters { FanMode = fanMode });
     }
 
-    ///<summary>Set target humidity of climate device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set target humidity of climate device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetHumidity(ServiceTarget target, ClimateSetHumidityParameters data)
     {
         _haContext.CallService("climate", "set_humidity", target, data);
     }
 
-    ///<summary>Set target humidity of climate device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="humidity">New target humidity for climate device.</param>
-    public void SetHumidity(ServiceTarget target, long @humidity)
+    /// <summary>Set target humidity of climate device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="humidity">New target humidity for climate device.</param>
+    public void SetHumidity(ServiceTarget target, long humidity)
     {
-        _haContext.CallService("climate", "set_humidity", target, new ClimateSetHumidityParameters { Humidity = @humidity });
+        _haContext.CallService("climate", "set_humidity", target, new ClimateSetHumidityParameters { Humidity = humidity });
     }
 
-    ///<summary>Set HVAC operation mode for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set HVAC operation mode for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetHvacMode(ServiceTarget target, ClimateSetHvacModeParameters data)
     {
         _haContext.CallService("climate", "set_hvac_mode", target, data);
     }
 
-    ///<summary>Set HVAC operation mode for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="hvacMode">New value of operation mode.</param>
-    public void SetHvacMode(ServiceTarget target, string? @hvacMode = null)
+    /// <summary>Set HVAC operation mode for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="hvacMode">New value of operation mode.</param>
+    public void SetHvacMode(ServiceTarget target, string? hvacMode = null)
     {
-        _haContext.CallService("climate", "set_hvac_mode", target, new ClimateSetHvacModeParameters { HvacMode = @hvacMode });
+        _haContext.CallService("climate", "set_hvac_mode", target, new ClimateSetHvacModeParameters { HvacMode = hvacMode });
     }
 
-    ///<summary>Set preset mode for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set preset mode for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetPresetMode(ServiceTarget target, ClimateSetPresetModeParameters data)
     {
         _haContext.CallService("climate", "set_preset_mode", target, data);
     }
 
-    ///<summary>Set preset mode for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="presetMode">New value of preset mode. eg: away</param>
-    public void SetPresetMode(ServiceTarget target, string @presetMode)
+    /// <summary>Set preset mode for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="presetMode">New value of preset mode. eg: away</param>
+    public void SetPresetMode(ServiceTarget target, string presetMode)
     {
-        _haContext.CallService("climate", "set_preset_mode", target, new ClimateSetPresetModeParameters { PresetMode = @presetMode });
+        _haContext.CallService("climate", "set_preset_mode", target, new ClimateSetPresetModeParameters { PresetMode = presetMode });
     }
 
-    ///<summary>Set swing operation for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set swing operation for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetSwingMode(ServiceTarget target, ClimateSetSwingModeParameters data)
     {
         _haContext.CallService("climate", "set_swing_mode", target, data);
     }
 
-    ///<summary>Set swing operation for climate device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="swingMode">New value of swing mode. eg: horizontal</param>
-    public void SetSwingMode(ServiceTarget target, string @swingMode)
+    /// <summary>Set swing operation for climate device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="swingMode">New value of swing mode. eg: horizontal</param>
+    public void SetSwingMode(ServiceTarget target, string swingMode)
     {
-        _haContext.CallService("climate", "set_swing_mode", target, new ClimateSetSwingModeParameters { SwingMode = @swingMode });
+        _haContext.CallService("climate", "set_swing_mode", target, new ClimateSetSwingModeParameters { SwingMode = swingMode });
     }
 
-    ///<summary>Set target temperature of climate device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set target temperature of climate device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetTemperature(ServiceTarget target, ClimateSetTemperatureParameters data)
     {
         _haContext.CallService("climate", "set_temperature", target, data);
     }
 
-    ///<summary>Set target temperature of climate device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="temperature">New target temperature for HVAC.</param>
-    ///<param name="targetTempHigh">New target high temperature for HVAC.</param>
-    ///<param name="targetTempLow">New target low temperature for HVAC.</param>
-    ///<param name="hvacMode">HVAC operation mode to set temperature to.</param>
-    public void SetTemperature(ServiceTarget target, double? @temperature = null, double? @targetTempHigh = null, double? @targetTempLow = null, string? @hvacMode = null)
+    /// <summary>Set target temperature of climate device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="temperature">New target temperature for HVAC.</param>
+    /// <param name="targetTempHigh">New target high temperature for HVAC.</param>
+    /// <param name="targetTempLow">New target low temperature for HVAC.</param>
+    /// <param name="hvacMode">HVAC operation mode to set temperature to.</param>
+    public void SetTemperature(ServiceTarget target, double? temperature = null, double? targetTempHigh = null, double? targetTempLow = null, string? hvacMode = null)
     {
-        _haContext.CallService("climate", "set_temperature", target, new ClimateSetTemperatureParameters { Temperature = @temperature, TargetTempHigh = @targetTempHigh, TargetTempLow = @targetTempLow, HvacMode = @hvacMode });
+        _haContext.CallService("climate", "set_temperature", target, new ClimateSetTemperatureParameters { Temperature = temperature, TargetTempHigh = targetTempHigh, TargetTempLow = targetTempLow, HvacMode = hvacMode });
     }
 
-    ///<summary>Turn climate device off.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn climate device off.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("climate", "turn_off", target);
     }
 
-    ///<summary>Turn climate device on.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn climate device on.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("climate", "turn_on", target);
@@ -7664,10 +7813,6 @@ public record ClimateSetSwingModeParameters
 
 public record ClimateSetTemperatureParameters
 {
-    ///<summary>New target temperature for HVAC.</summary>
-    [JsonPropertyName("temperature")]
-    public double? Temperature { get; init; }
-
     ///<summary>New target high temperature for HVAC.</summary>
     [JsonPropertyName("target_temp_high")]
     public double? TargetTempHigh { get; init; }
@@ -7675,6 +7820,10 @@ public record ClimateSetTemperatureParameters
     ///<summary>New target low temperature for HVAC.</summary>
     [JsonPropertyName("target_temp_low")]
     public double? TargetTempLow { get; init; }
+
+    ///<summary>New target temperature for HVAC.</summary>
+    [JsonPropertyName("temperature")]
+    public double? Temperature { get; init; }
 
     ///<summary>HVAC operation mode to set temperature to.</summary>
     [JsonPropertyName("hvac_mode")]
@@ -7693,13 +7842,13 @@ public class CloudServices
     ///<summary>Make instance UI available outside over NabuCasa cloud</summary>
     public void RemoteConnect()
     {
-        _haContext.CallService("cloud", "remote_connect", null);
+        _haContext.CallService("cloud", "remote_connect");
     }
 
     ///<summary>Disconnect UI from NabuCasa cloud</summary>
     public void RemoteDisconnect()
     {
-        _haContext.CallService("cloud", "remote_disconnect", null);
+        _haContext.CallService("cloud", "remote_disconnect");
     }
 }
 
@@ -7712,41 +7861,41 @@ public class CounterServices
         _haContext = haContext;
     }
 
-    ///<summary>Change counter parameters.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Change counter parameters.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Configure(ServiceTarget target, CounterConfigureParameters data)
     {
         _haContext.CallService("counter", "configure", target, data);
     }
 
-    ///<summary>Change counter parameters.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="minimum">New minimum value for the counter or None to remove minimum.</param>
-    ///<param name="maximum">New maximum value for the counter or None to remove maximum.</param>
-    ///<param name="step">New value for step.</param>
-    ///<param name="initial">New value for initial.</param>
-    ///<param name="value">New state value.</param>
-    public void Configure(ServiceTarget target, long? @minimum = null, long? @maximum = null, long? @step = null, long? @initial = null, long? @value = null)
+    /// <summary>Change counter parameters.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="minimum">New minimum value for the counter or None to remove minimum.</param>
+    /// <param name="maximum">New maximum value for the counter or None to remove maximum.</param>
+    /// <param name="step">New value for step.</param>
+    /// <param name="initial">New value for initial.</param>
+    /// <param name="value">New state value.</param>
+    public void Configure(ServiceTarget target, long? minimum = null, long? maximum = null, long? step = null, long? initial = null, long? value = null)
     {
-        _haContext.CallService("counter", "configure", target, new CounterConfigureParameters { Minimum = @minimum, Maximum = @maximum, Step = @step, Initial = @initial, Value = @value });
+        _haContext.CallService("counter", "configure", target, new CounterConfigureParameters { Minimum = minimum, Maximum = maximum, Step = step, Initial = initial, Value = value });
     }
 
-    ///<summary>Decrement a counter.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Decrement a counter.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Decrement(ServiceTarget target)
     {
         _haContext.CallService("counter", "decrement", target);
     }
 
-    ///<summary>Increment a counter.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Increment a counter.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Increment(ServiceTarget target)
     {
         _haContext.CallService("counter", "increment", target);
     }
 
-    ///<summary>Reset a counter.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Reset a counter.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Reset(ServiceTarget target)
     {
         _haContext.CallService("counter", "reset", target);
@@ -7755,21 +7904,21 @@ public class CounterServices
 
 public record CounterConfigureParameters
 {
-    ///<summary>New minimum value for the counter or None to remove minimum.</summary>
-    [JsonPropertyName("minimum")]
-    public long? Minimum { get; init; }
+    ///<summary>New value for initial.</summary>
+    [JsonPropertyName("initial")]
+    public long? Initial { get; init; }
 
     ///<summary>New maximum value for the counter or None to remove maximum.</summary>
     [JsonPropertyName("maximum")]
     public long? Maximum { get; init; }
 
+    ///<summary>New minimum value for the counter or None to remove minimum.</summary>
+    [JsonPropertyName("minimum")]
+    public long? Minimum { get; init; }
+
     ///<summary>New value for step.</summary>
     [JsonPropertyName("step")]
     public long? Step { get; init; }
-
-    ///<summary>New value for initial.</summary>
-    [JsonPropertyName("initial")]
-    public long? Initial { get; init; }
 
     ///<summary>New state value.</summary>
     [JsonPropertyName("value")]
@@ -7785,87 +7934,87 @@ public class CoverServices
         _haContext = haContext;
     }
 
-    ///<summary>Close all or specified cover.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Close all or specified cover.</summary>
+    /// <param name="target">The target for this service call</param>
     public void CloseCover(ServiceTarget target)
     {
         _haContext.CallService("cover", "close_cover", target);
     }
 
-    ///<summary>Close all or specified cover tilt.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Close all or specified cover tilt.</summary>
+    /// <param name="target">The target for this service call</param>
     public void CloseCoverTilt(ServiceTarget target)
     {
         _haContext.CallService("cover", "close_cover_tilt", target);
     }
 
-    ///<summary>Open all or specified cover.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Open all or specified cover.</summary>
+    /// <param name="target">The target for this service call</param>
     public void OpenCover(ServiceTarget target)
     {
         _haContext.CallService("cover", "open_cover", target);
     }
 
-    ///<summary>Open all or specified cover tilt.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Open all or specified cover tilt.</summary>
+    /// <param name="target">The target for this service call</param>
     public void OpenCoverTilt(ServiceTarget target)
     {
         _haContext.CallService("cover", "open_cover_tilt", target);
     }
 
-    ///<summary>Move to specific position all or specified cover.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Move to specific position all or specified cover.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetCoverPosition(ServiceTarget target, CoverSetCoverPositionParameters data)
     {
         _haContext.CallService("cover", "set_cover_position", target, data);
     }
 
-    ///<summary>Move to specific position all or specified cover.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="position">Position of the cover</param>
-    public void SetCoverPosition(ServiceTarget target, long @position)
+    /// <summary>Move to specific position all or specified cover.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="position">Position of the cover</param>
+    public void SetCoverPosition(ServiceTarget target, long position)
     {
-        _haContext.CallService("cover", "set_cover_position", target, new CoverSetCoverPositionParameters { Position = @position });
+        _haContext.CallService("cover", "set_cover_position", target, new CoverSetCoverPositionParameters { Position = position });
     }
 
-    ///<summary>Move to specific position all or specified cover tilt.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Move to specific position all or specified cover tilt.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetCoverTiltPosition(ServiceTarget target, CoverSetCoverTiltPositionParameters data)
     {
         _haContext.CallService("cover", "set_cover_tilt_position", target, data);
     }
 
-    ///<summary>Move to specific position all or specified cover tilt.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="tiltPosition">Tilt position of the cover.</param>
-    public void SetCoverTiltPosition(ServiceTarget target, long @tiltPosition)
+    /// <summary>Move to specific position all or specified cover tilt.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="tiltPosition">Tilt position of the cover.</param>
+    public void SetCoverTiltPosition(ServiceTarget target, long tiltPosition)
     {
-        _haContext.CallService("cover", "set_cover_tilt_position", target, new CoverSetCoverTiltPositionParameters { TiltPosition = @tiltPosition });
+        _haContext.CallService("cover", "set_cover_tilt_position", target, new CoverSetCoverTiltPositionParameters { TiltPosition = tiltPosition });
     }
 
-    ///<summary>Stop all or specified cover.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Stop all or specified cover.</summary>
+    /// <param name="target">The target for this service call</param>
     public void StopCover(ServiceTarget target)
     {
         _haContext.CallService("cover", "stop_cover", target);
     }
 
-    ///<summary>Stop all or specified cover.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Stop all or specified cover.</summary>
+    /// <param name="target">The target for this service call</param>
     public void StopCoverTilt(ServiceTarget target)
     {
         _haContext.CallService("cover", "stop_cover_tilt", target);
     }
 
-    ///<summary>Toggle a cover open/closed.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggle a cover open/closed.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("cover", "toggle", target);
     }
 
-    ///<summary>Toggle a cover tilt open/closed.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggle a cover tilt open/closed.</summary>
+    /// <param name="target">The target for this service call</param>
     public void ToggleCoverTilt(ServiceTarget target)
     {
         _haContext.CallService("cover", "toggle_cover_tilt", target);
@@ -7901,25 +8050,33 @@ public class DeviceTrackerServices
         _haContext.CallService("device_tracker", "see", null, data);
     }
 
-    ///<summary>Control tracked device.</summary>
-    ///<param name="mac">MAC address of device eg: FF:FF:FF:FF:FF:FF</param>
-    ///<param name="devId">Id of device (find id in known_devices.yaml). eg: phonedave</param>
-    ///<param name="hostName">Hostname of device eg: Dave</param>
-    ///<param name="locationName">Name of location where device is located (not_home is away). eg: home</param>
-    ///<param name="gps">GPS coordinates where device is located (latitude, longitude). eg: [51.509802, -0.086692]</param>
-    ///<param name="gpsAccuracy">Accuracy of GPS coordinates.</param>
-    ///<param name="battery">Battery level of device.</param>
-    public void See(string? @mac = null, string? @devId = null, string? @hostName = null, string? @locationName = null, object? @gps = null, long? @gpsAccuracy = null, long? @battery = null)
+    /// <summary>Control tracked device.</summary>
+    /// <param name="mac">MAC address of device eg: FF:FF:FF:FF:FF:FF</param>
+    /// <param name="devId">Id of device (find id in known_devices.yaml). eg: phonedave</param>
+    /// <param name="hostName">Hostname of device eg: Dave</param>
+    /// <param name="locationName">Name of location where device is located (not_home is away). eg: home</param>
+    /// <param name="gps">GPS coordinates where device is located (latitude, longitude). eg: [51.509802, -0.086692]</param>
+    /// <param name="gpsAccuracy">Accuracy of GPS coordinates.</param>
+    /// <param name="battery">Battery level of device.</param>
+    public void See(string? mac = null, string? devId = null, string? hostName = null, string? locationName = null, object? gps = null, long? gpsAccuracy = null, long? battery = null)
     {
-        _haContext.CallService("device_tracker", "see", null, new DeviceTrackerSeeParameters { Mac = @mac, DevId = @devId, HostName = @hostName, LocationName = @locationName, Gps = @gps, GpsAccuracy = @gpsAccuracy, Battery = @battery });
+        _haContext.CallService("device_tracker", "see", null, new DeviceTrackerSeeParameters { Mac = mac, DevId = devId, HostName = hostName, LocationName = locationName, Gps = gps, GpsAccuracy = gpsAccuracy, Battery = battery });
     }
 }
 
 public record DeviceTrackerSeeParameters
 {
-    ///<summary>MAC address of device eg: FF:FF:FF:FF:FF:FF</summary>
-    [JsonPropertyName("mac")]
-    public string? Mac { get; init; }
+    ///<summary>Battery level of device.</summary>
+    [JsonPropertyName("battery")]
+    public long? Battery { get; init; }
+
+    ///<summary>Accuracy of GPS coordinates.</summary>
+    [JsonPropertyName("gps_accuracy")]
+    public long? GpsAccuracy { get; init; }
+
+    ///<summary>GPS coordinates where device is located (latitude, longitude). eg: [51.509802, -0.086692]</summary>
+    [JsonPropertyName("gps")]
+    public object? Gps { get; init; }
 
     ///<summary>Id of device (find id in known_devices.yaml). eg: phonedave</summary>
     [JsonPropertyName("dev_id")]
@@ -7933,17 +8090,9 @@ public record DeviceTrackerSeeParameters
     [JsonPropertyName("location_name")]
     public string? LocationName { get; init; }
 
-    ///<summary>GPS coordinates where device is located (latitude, longitude). eg: [51.509802, -0.086692]</summary>
-    [JsonPropertyName("gps")]
-    public object? Gps { get; init; }
-
-    ///<summary>Accuracy of GPS coordinates.</summary>
-    [JsonPropertyName("gps_accuracy")]
-    public long? GpsAccuracy { get; init; }
-
-    ///<summary>Battery level of device.</summary>
-    [JsonPropertyName("battery")]
-    public long? Battery { get; init; }
+    ///<summary>MAC address of device eg: FF:FF:FF:FF:FF:FF</summary>
+    [JsonPropertyName("mac")]
+    public string? Mac { get; init; }
 }
 
 public class FanServices
@@ -7955,140 +8104,140 @@ public class FanServices
         _haContext = haContext;
     }
 
-    ///<summary>Decrease the speed of the fan by one speed or a percentage_step.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Decrease the speed of the fan by one speed or a percentage_step.</summary>
+    /// <param name="target">The target for this service call</param>
     public void DecreaseSpeed(ServiceTarget target, FanDecreaseSpeedParameters data)
     {
         _haContext.CallService("fan", "decrease_speed", target, data);
     }
 
-    ///<summary>Decrease the speed of the fan by one speed or a percentage_step.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="percentageStep">Decrease speed by a percentage.</param>
-    public void DecreaseSpeed(ServiceTarget target, long? @percentageStep = null)
+    /// <summary>Decrease the speed of the fan by one speed or a percentage_step.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="percentageStep">Decrease speed by a percentage.</param>
+    public void DecreaseSpeed(ServiceTarget target, long? percentageStep = null)
     {
-        _haContext.CallService("fan", "decrease_speed", target, new FanDecreaseSpeedParameters { PercentageStep = @percentageStep });
+        _haContext.CallService("fan", "decrease_speed", target, new FanDecreaseSpeedParameters { PercentageStep = percentageStep });
     }
 
-    ///<summary>Increase the speed of the fan by one speed or a percentage_step.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Increase the speed of the fan by one speed or a percentage_step.</summary>
+    /// <param name="target">The target for this service call</param>
     public void IncreaseSpeed(ServiceTarget target, FanIncreaseSpeedParameters data)
     {
         _haContext.CallService("fan", "increase_speed", target, data);
     }
 
-    ///<summary>Increase the speed of the fan by one speed or a percentage_step.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="percentageStep">Increase speed by a percentage.</param>
-    public void IncreaseSpeed(ServiceTarget target, long? @percentageStep = null)
+    /// <summary>Increase the speed of the fan by one speed or a percentage_step.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="percentageStep">Increase speed by a percentage.</param>
+    public void IncreaseSpeed(ServiceTarget target, long? percentageStep = null)
     {
-        _haContext.CallService("fan", "increase_speed", target, new FanIncreaseSpeedParameters { PercentageStep = @percentageStep });
+        _haContext.CallService("fan", "increase_speed", target, new FanIncreaseSpeedParameters { PercentageStep = percentageStep });
     }
 
-    ///<summary>Oscillate the fan.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Oscillate the fan.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Oscillate(ServiceTarget target, FanOscillateParameters data)
     {
         _haContext.CallService("fan", "oscillate", target, data);
     }
 
-    ///<summary>Oscillate the fan.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="oscillating">Flag to turn on/off oscillation.</param>
-    public void Oscillate(ServiceTarget target, bool @oscillating)
+    /// <summary>Oscillate the fan.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="oscillating">Flag to turn on/off oscillation.</param>
+    public void Oscillate(ServiceTarget target, bool oscillating)
     {
-        _haContext.CallService("fan", "oscillate", target, new FanOscillateParameters { Oscillating = @oscillating });
+        _haContext.CallService("fan", "oscillate", target, new FanOscillateParameters { Oscillating = oscillating });
     }
 
-    ///<summary>Set the fan rotation.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set the fan rotation.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetDirection(ServiceTarget target, FanSetDirectionParameters data)
     {
         _haContext.CallService("fan", "set_direction", target, data);
     }
 
-    ///<summary>Set the fan rotation.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="direction">The direction to rotate.</param>
-    public void SetDirection(ServiceTarget target, string @direction)
+    /// <summary>Set the fan rotation.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="direction">The direction to rotate.</param>
+    public void SetDirection(ServiceTarget target, string direction)
     {
-        _haContext.CallService("fan", "set_direction", target, new FanSetDirectionParameters { Direction = @direction });
+        _haContext.CallService("fan", "set_direction", target, new FanSetDirectionParameters { Direction = direction });
     }
 
-    ///<summary>Set fan speed percentage.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set fan speed percentage.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetPercentage(ServiceTarget target, FanSetPercentageParameters data)
     {
         _haContext.CallService("fan", "set_percentage", target, data);
     }
 
-    ///<summary>Set fan speed percentage.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="percentage">Percentage speed setting.</param>
-    public void SetPercentage(ServiceTarget target, long @percentage)
+    /// <summary>Set fan speed percentage.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="percentage">Percentage speed setting.</param>
+    public void SetPercentage(ServiceTarget target, long percentage)
     {
-        _haContext.CallService("fan", "set_percentage", target, new FanSetPercentageParameters { Percentage = @percentage });
+        _haContext.CallService("fan", "set_percentage", target, new FanSetPercentageParameters { Percentage = percentage });
     }
 
-    ///<summary>Set preset mode for a fan device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set preset mode for a fan device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetPresetMode(ServiceTarget target, FanSetPresetModeParameters data)
     {
         _haContext.CallService("fan", "set_preset_mode", target, data);
     }
 
-    ///<summary>Set preset mode for a fan device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="presetMode">New value of preset mode. eg: auto</param>
-    public void SetPresetMode(ServiceTarget target, string @presetMode)
+    /// <summary>Set preset mode for a fan device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="presetMode">New value of preset mode. eg: auto</param>
+    public void SetPresetMode(ServiceTarget target, string presetMode)
     {
-        _haContext.CallService("fan", "set_preset_mode", target, new FanSetPresetModeParameters { PresetMode = @presetMode });
+        _haContext.CallService("fan", "set_preset_mode", target, new FanSetPresetModeParameters { PresetMode = presetMode });
     }
 
-    ///<summary>Set fan speed.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set fan speed.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetSpeed(ServiceTarget target, FanSetSpeedParameters data)
     {
         _haContext.CallService("fan", "set_speed", target, data);
     }
 
-    ///<summary>Set fan speed.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="speed">Speed setting. eg: low</param>
-    public void SetSpeed(ServiceTarget target, string @speed)
+    /// <summary>Set fan speed.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="speed">Speed setting. eg: low</param>
+    public void SetSpeed(ServiceTarget target, string speed)
     {
-        _haContext.CallService("fan", "set_speed", target, new FanSetSpeedParameters { Speed = @speed });
+        _haContext.CallService("fan", "set_speed", target, new FanSetSpeedParameters { Speed = speed });
     }
 
-    ///<summary>Toggle the fan on/off.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggle the fan on/off.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("fan", "toggle", target);
     }
 
-    ///<summary>Turn fan off.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn fan off.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("fan", "turn_off", target);
     }
 
-    ///<summary>Turn fan on.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn fan on.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target, FanTurnOnParameters data)
     {
         _haContext.CallService("fan", "turn_on", target, data);
     }
 
-    ///<summary>Turn fan on.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="speed">Speed setting. eg: high</param>
-    ///<param name="percentage">Percentage speed setting.</param>
-    ///<param name="presetMode">Preset mode setting. eg: auto</param>
-    public void TurnOn(ServiceTarget target, string? @speed = null, long? @percentage = null, string? @presetMode = null)
+    /// <summary>Turn fan on.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="speed">Speed setting. eg: high</param>
+    /// <param name="percentage">Percentage speed setting.</param>
+    /// <param name="presetMode">Preset mode setting. eg: auto</param>
+    public void TurnOn(ServiceTarget target, string? speed = null, long? percentage = null, string? presetMode = null)
     {
-        _haContext.CallService("fan", "turn_on", target, new FanTurnOnParameters { Speed = @speed, Percentage = @percentage, PresetMode = @presetMode });
+        _haContext.CallService("fan", "turn_on", target, new FanTurnOnParameters { Speed = speed, Percentage = percentage, PresetMode = presetMode });
     }
 }
 
@@ -8143,10 +8292,6 @@ public record FanSetSpeedParameters
 
 public record FanTurnOnParameters
 {
-    ///<summary>Speed setting. eg: high</summary>
-    [JsonPropertyName("speed")]
-    public string? Speed { get; init; }
-
     ///<summary>Percentage speed setting.</summary>
     [JsonPropertyName("percentage")]
     public long? Percentage { get; init; }
@@ -8154,6 +8299,10 @@ public record FanTurnOnParameters
     ///<summary>Preset mode setting. eg: auto</summary>
     [JsonPropertyName("preset_mode")]
     public string? PresetMode { get; init; }
+
+    ///<summary>Speed setting. eg: high</summary>
+    [JsonPropertyName("speed")]
+    public string? Speed { get; init; }
 }
 
 public class FfmpegServices
@@ -8171,11 +8320,11 @@ public class FfmpegServices
         _haContext.CallService("ffmpeg", "restart", null, data);
     }
 
-    ///<summary>Send a restart command to a ffmpeg based sensor.</summary>
-    ///<param name="entityId">Name of entity that will restart. Platform dependent.</param>
-    public void Restart(string? @entityId = null)
+    /// <summary>Send a restart command to a ffmpeg based sensor.</summary>
+    /// <param name="entityId">Name of entity that will restart. Platform dependent.</param>
+    public void Restart(string? entityId = null)
     {
-        _haContext.CallService("ffmpeg", "restart", null, new FfmpegRestartParameters { EntityId = @entityId });
+        _haContext.CallService("ffmpeg", "restart", null, new FfmpegRestartParameters { EntityId = entityId });
     }
 
     ///<summary>Send a start command to a ffmpeg based sensor.</summary>
@@ -8184,11 +8333,11 @@ public class FfmpegServices
         _haContext.CallService("ffmpeg", "start", null, data);
     }
 
-    ///<summary>Send a start command to a ffmpeg based sensor.</summary>
-    ///<param name="entityId">Name of entity that will start. Platform dependent.</param>
-    public void Start(string? @entityId = null)
+    /// <summary>Send a start command to a ffmpeg based sensor.</summary>
+    /// <param name="entityId">Name of entity that will start. Platform dependent.</param>
+    public void Start(string? entityId = null)
     {
-        _haContext.CallService("ffmpeg", "start", null, new FfmpegStartParameters { EntityId = @entityId });
+        _haContext.CallService("ffmpeg", "start", null, new FfmpegStartParameters { EntityId = entityId });
     }
 
     ///<summary>Send a stop command to a ffmpeg based sensor.</summary>
@@ -8197,11 +8346,11 @@ public class FfmpegServices
         _haContext.CallService("ffmpeg", "stop", null, data);
     }
 
-    ///<summary>Send a stop command to a ffmpeg based sensor.</summary>
-    ///<param name="entityId">Name of entity that will stop. Platform dependent.</param>
-    public void Stop(string? @entityId = null)
+    /// <summary>Send a stop command to a ffmpeg based sensor.</summary>
+    /// <param name="entityId">Name of entity that will stop. Platform dependent.</param>
+    public void Stop(string? entityId = null)
     {
-        _haContext.CallService("ffmpeg", "stop", null, new FfmpegStopParameters { EntityId = @entityId });
+        _haContext.CallService("ffmpeg", "stop", null, new FfmpegStopParameters { EntityId = entityId });
     }
 }
 
@@ -8238,7 +8387,7 @@ public class FrontendServices
     ///<summary>Reload themes from YAML configuration.</summary>
     public void ReloadThemes()
     {
-        _haContext.CallService("frontend", "reload_themes", null);
+        _haContext.CallService("frontend", "reload_themes");
     }
 
     ///<summary>Set a theme unless the client selected per-device theme.</summary>
@@ -8247,24 +8396,24 @@ public class FrontendServices
         _haContext.CallService("frontend", "set_theme", null, data);
     }
 
-    ///<summary>Set a theme unless the client selected per-device theme.</summary>
-    ///<param name="name">Name of a predefined theme, 'default' or 'none'. eg: default</param>
-    ///<param name="mode">The mode the theme is for.</param>
-    public void SetTheme(string @name, string? @mode = null)
+    /// <summary>Set a theme unless the client selected per-device theme.</summary>
+    /// <param name="name">Name of a predefined theme, 'default' or 'none'. eg: default</param>
+    /// <param name="mode">The mode the theme is for.</param>
+    public void SetTheme(string name, string? mode = null)
     {
-        _haContext.CallService("frontend", "set_theme", null, new FrontendSetThemeParameters { Name = @name, Mode = @mode });
+        _haContext.CallService("frontend", "set_theme", null, new FrontendSetThemeParameters { Name = name, Mode = mode });
     }
 }
 
 public record FrontendSetThemeParameters
 {
-    ///<summary>Name of a predefined theme, 'default' or 'none'. eg: default</summary>
-    [JsonPropertyName("name")]
-    public string? Name { get; init; }
-
     ///<summary>The mode the theme is for.</summary>
     [JsonPropertyName("mode")]
     public string? Mode { get; init; }
+
+    ///<summary>Name of a predefined theme, 'default' or 'none'. eg: default</summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; init; }
 }
 
 public class GenericServices
@@ -8279,7 +8428,7 @@ public class GenericServices
     ///<summary>Reload all generic entities.</summary>
     public void Reload()
     {
-        _haContext.CallService("generic", "reload", null);
+        _haContext.CallService("generic", "reload");
     }
 }
 
@@ -8295,7 +8444,7 @@ public class GroupServices
     ///<summary>Reload group configuration, entities, and notify services.</summary>
     public void Reload()
     {
-        _haContext.CallService("group", "reload", null);
+        _haContext.CallService("group", "reload");
     }
 
     ///<summary>Remove a user group.</summary>
@@ -8304,11 +8453,11 @@ public class GroupServices
         _haContext.CallService("group", "remove", null, data);
     }
 
-    ///<summary>Remove a user group.</summary>
-    ///<param name="objectId">Group id and part of entity id. eg: test_group</param>
-    public void Remove(object @objectId)
+    /// <summary>Remove a user group.</summary>
+    /// <param name="objectId">Group id and part of entity id. eg: test_group</param>
+    public void Remove(object objectId)
     {
-        _haContext.CallService("group", "remove", null, new GroupRemoveParameters { ObjectId = @objectId });
+        _haContext.CallService("group", "remove", null, new GroupRemoveParameters { ObjectId = objectId });
     }
 
     ///<summary>Create/Update a user group.</summary>
@@ -8317,16 +8466,19 @@ public class GroupServices
         _haContext.CallService("group", "set", null, data);
     }
 
-    ///<summary>Create/Update a user group.</summary>
-    ///<param name="objectId">Group id and part of entity id. eg: test_group</param>
-    ///<param name="name">Name of group eg: My test group</param>
-    ///<param name="icon">Name of icon for the group. eg: mdi:camera</param>
-    ///<param name="entities">List of all members in the group. Not compatible with 'delta'. eg: domain.entity_id1, domain.entity_id2</param>
-    ///<param name="addEntities">List of members that will change on group listening. eg: domain.entity_id1, domain.entity_id2</param>
-    ///<param name="all">Enable this option if the group should only turn on when all entities are on.</param>
-    public void Set(string @objectId, string? @name = null, string? @icon = null, object? @entities = null, object? @addEntities = null, bool? @all = null)
+    /// <summary>Create/Update a user group.</summary>
+    /// <param name="objectId">Group id and part of entity id. eg: test_group</param>
+    /// <param name="name">Name of group eg: My test group</param>
+    /// <param name="icon">Name of icon for the group. eg: mdi:camera</param>
+    /// <param name="entities">
+    ///     List of all members in the group. Not compatible with 'delta'. eg: domain.entity_id1,
+    ///     domain.entity_id2
+    /// </param>
+    /// <param name="addEntities">List of members that will change on group listening. eg: domain.entity_id1, domain.entity_id2</param>
+    /// <param name="all">Enable this option if the group should only turn on when all entities are on.</param>
+    public void Set(string objectId, string? name = null, string? icon = null, object? entities = null, object? addEntities = null, bool? all = null)
     {
-        _haContext.CallService("group", "set", null, new GroupSetParameters { ObjectId = @objectId, Name = @name, Icon = @icon, Entities = @entities, AddEntities = @addEntities, All = @all });
+        _haContext.CallService("group", "set", null, new GroupSetParameters { ObjectId = objectId, Name = name, Icon = icon, Entities = entities, AddEntities = addEntities, All = all });
     }
 }
 
@@ -8339,29 +8491,29 @@ public record GroupRemoveParameters
 
 public record GroupSetParameters
 {
-    ///<summary>Group id and part of entity id. eg: test_group</summary>
-    [JsonPropertyName("object_id")]
-    public string? ObjectId { get; init; }
-
-    ///<summary>Name of group eg: My test group</summary>
-    [JsonPropertyName("name")]
-    public string? Name { get; init; }
-
-    ///<summary>Name of icon for the group. eg: mdi:camera</summary>
-    [JsonPropertyName("icon")]
-    public string? Icon { get; init; }
-
-    ///<summary>List of all members in the group. Not compatible with 'delta'. eg: domain.entity_id1, domain.entity_id2</summary>
-    [JsonPropertyName("entities")]
-    public object? Entities { get; init; }
+    ///<summary>Enable this option if the group should only turn on when all entities are on.</summary>
+    [JsonPropertyName("all")]
+    public bool? All { get; init; }
 
     ///<summary>List of members that will change on group listening. eg: domain.entity_id1, domain.entity_id2</summary>
     [JsonPropertyName("add_entities")]
     public object? AddEntities { get; init; }
 
-    ///<summary>Enable this option if the group should only turn on when all entities are on.</summary>
-    [JsonPropertyName("all")]
-    public bool? All { get; init; }
+    ///<summary>List of all members in the group. Not compatible with 'delta'. eg: domain.entity_id1, domain.entity_id2</summary>
+    [JsonPropertyName("entities")]
+    public object? Entities { get; init; }
+
+    ///<summary>Name of icon for the group. eg: mdi:camera</summary>
+    [JsonPropertyName("icon")]
+    public string? Icon { get; init; }
+
+    ///<summary>Name of group eg: My test group</summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; init; }
+
+    ///<summary>Group id and part of entity id. eg: test_group</summary>
+    [JsonPropertyName("object_id")]
+    public string? ObjectId { get; init; }
 }
 
 public class HistoryStatsServices
@@ -8376,7 +8528,7 @@ public class HistoryStatsServices
     ///<summary>Reload all history_stats entities.</summary>
     public void Reload()
     {
-        _haContext.CallService("history_stats", "reload", null);
+        _haContext.CallService("history_stats", "reload");
     }
 }
 
@@ -8392,40 +8544,43 @@ public class HomeassistantServices
     ///<summary>Check the Home Assistant configuration files for errors. Errors will be displayed in the Home Assistant log.</summary>
     public void CheckConfig()
     {
-        _haContext.CallService("homeassistant", "check_config", null);
+        _haContext.CallService("homeassistant", "check_config");
     }
 
-    ///<summary>Reload a config entry that matches a target.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Reload a config entry that matches a target.</summary>
+    /// <param name="target">The target for this service call</param>
     public void ReloadConfigEntry(ServiceTarget target, HomeassistantReloadConfigEntryParameters data)
     {
         _haContext.CallService("homeassistant", "reload_config_entry", target, data);
     }
 
-    ///<summary>Reload a config entry that matches a target.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="entryId">A configuration entry id eg: 8955375327824e14ba89e4b29cc3ec9a</param>
-    public void ReloadConfigEntry(ServiceTarget target, string? @entryId = null)
+    /// <summary>Reload a config entry that matches a target.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="entryId">A configuration entry id eg: 8955375327824e14ba89e4b29cc3ec9a</param>
+    public void ReloadConfigEntry(ServiceTarget target, string? entryId = null)
     {
-        _haContext.CallService("homeassistant", "reload_config_entry", target, new HomeassistantReloadConfigEntryParameters { EntryId = @entryId });
+        _haContext.CallService("homeassistant", "reload_config_entry", target, new HomeassistantReloadConfigEntryParameters { EntryId = entryId });
     }
 
     ///<summary>Reload the core configuration.</summary>
     public void ReloadCoreConfig()
     {
-        _haContext.CallService("homeassistant", "reload_core_config", null);
+        _haContext.CallService("homeassistant", "reload_core_config");
     }
 
     ///<summary>Restart the Home Assistant service.</summary>
     public void Restart()
     {
-        _haContext.CallService("homeassistant", "restart", null);
+        _haContext.CallService("homeassistant", "restart");
     }
 
-    ///<summary>Save the persistent states (for entities derived from RestoreEntity) immediately. Maintain the normal periodic saving interval.</summary>
+    /// <summary>
+    ///     Save the persistent states (for entities derived from RestoreEntity) immediately. Maintain the normal periodic
+    ///     saving interval.
+    /// </summary>
     public void SavePersistentStates()
     {
-        _haContext.CallService("homeassistant", "save_persistent_states", null);
+        _haContext.CallService("homeassistant", "save_persistent_states");
     }
 
     ///<summary>Update the Home Assistant location.</summary>
@@ -8434,43 +8589,43 @@ public class HomeassistantServices
         _haContext.CallService("homeassistant", "set_location", null, data);
     }
 
-    ///<summary>Update the Home Assistant location.</summary>
-    ///<param name="latitude">Latitude of your location. eg: 32.87336</param>
-    ///<param name="longitude">Longitude of your location. eg: 117.22743</param>
-    public void SetLocation(string @latitude, string @longitude)
+    /// <summary>Update the Home Assistant location.</summary>
+    /// <param name="latitude">Latitude of your location. eg: 32.87336</param>
+    /// <param name="longitude">Longitude of your location. eg: 117.22743</param>
+    public void SetLocation(string latitude, string longitude)
     {
-        _haContext.CallService("homeassistant", "set_location", null, new HomeassistantSetLocationParameters { Latitude = @latitude, Longitude = @longitude });
+        _haContext.CallService("homeassistant", "set_location", null, new HomeassistantSetLocationParameters { Latitude = latitude, Longitude = longitude });
     }
 
     ///<summary>Stop the Home Assistant service.</summary>
     public void Stop()
     {
-        _haContext.CallService("homeassistant", "stop", null);
+        _haContext.CallService("homeassistant", "stop");
     }
 
-    ///<summary>Generic service to toggle devices on/off under any domain</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Generic service to toggle devices on/off under any domain</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("homeassistant", "toggle", target);
     }
 
-    ///<summary>Generic service to turn devices off under any domain.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Generic service to turn devices off under any domain.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("homeassistant", "turn_off", target);
     }
 
-    ///<summary>Generic service to turn devices on under any domain.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Generic service to turn devices on under any domain.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("homeassistant", "turn_on", target);
     }
 
-    ///<summary>Force one or more entities to update its data</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Force one or more entities to update its data</summary>
+    /// <param name="target">The target for this service call</param>
     public void UpdateEntity(ServiceTarget target)
     {
         _haContext.CallService("homeassistant", "update_entity", target);
@@ -8504,52 +8659,52 @@ public class HumidifierServices
         _haContext = haContext;
     }
 
-    ///<summary>Set target humidity of humidifier device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set target humidity of humidifier device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetHumidity(ServiceTarget target, HumidifierSetHumidityParameters data)
     {
         _haContext.CallService("humidifier", "set_humidity", target, data);
     }
 
-    ///<summary>Set target humidity of humidifier device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="humidity">New target humidity for humidifier device.</param>
-    public void SetHumidity(ServiceTarget target, long @humidity)
+    /// <summary>Set target humidity of humidifier device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="humidity">New target humidity for humidifier device.</param>
+    public void SetHumidity(ServiceTarget target, long humidity)
     {
-        _haContext.CallService("humidifier", "set_humidity", target, new HumidifierSetHumidityParameters { Humidity = @humidity });
+        _haContext.CallService("humidifier", "set_humidity", target, new HumidifierSetHumidityParameters { Humidity = humidity });
     }
 
-    ///<summary>Set mode for humidifier device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set mode for humidifier device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetMode(ServiceTarget target, HumidifierSetModeParameters data)
     {
         _haContext.CallService("humidifier", "set_mode", target, data);
     }
 
-    ///<summary>Set mode for humidifier device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="mode">New mode eg: away</param>
-    public void SetMode(ServiceTarget target, string @mode)
+    /// <summary>Set mode for humidifier device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="mode">New mode eg: away</param>
+    public void SetMode(ServiceTarget target, string mode)
     {
-        _haContext.CallService("humidifier", "set_mode", target, new HumidifierSetModeParameters { Mode = @mode });
+        _haContext.CallService("humidifier", "set_mode", target, new HumidifierSetModeParameters { Mode = mode });
     }
 
-    ///<summary>Toggles a humidifier device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggles a humidifier device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("humidifier", "toggle", target);
     }
 
-    ///<summary>Turn humidifier device off.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn humidifier device off.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("humidifier", "turn_off", target);
     }
 
-    ///<summary>Turn humidifier device on.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn humidifier device on.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("humidifier", "turn_on", target);
@@ -8582,25 +8737,25 @@ public class InputBooleanServices
     ///<summary>Reload the input_boolean configuration</summary>
     public void Reload()
     {
-        _haContext.CallService("input_boolean", "reload", null);
+        _haContext.CallService("input_boolean", "reload");
     }
 
-    ///<summary>Toggle an input boolean</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggle an input boolean</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("input_boolean", "toggle", target);
     }
 
-    ///<summary>Turn off an input boolean</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn off an input boolean</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("input_boolean", "turn_off", target);
     }
 
-    ///<summary>Turn on an input boolean</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn on an input boolean</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("input_boolean", "turn_on", target);
@@ -8619,45 +8774,45 @@ public class InputDatetimeServices
     ///<summary>Reload the input_datetime configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("input_datetime", "reload", null);
+        _haContext.CallService("input_datetime", "reload");
     }
 
-    ///<summary>This can be used to dynamically set the date and/or time.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>This can be used to dynamically set the date and/or time.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetDatetime(ServiceTarget target, InputDatetimeSetDatetimeParameters data)
     {
         _haContext.CallService("input_datetime", "set_datetime", target, data);
     }
 
-    ///<summary>This can be used to dynamically set the date and/or time.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="date">The target date the entity should be set to. eg: "2019-04-20"</param>
-    ///<param name="time">The target time the entity should be set to. eg: "05:04:20"</param>
-    ///<param name="datetime">The target date & time the entity should be set to. eg: "2019-04-20 05:04:20"</param>
-    ///<param name="timestamp">The target date & time the entity should be set to as expressed by a UNIX timestamp.</param>
-    public void SetDatetime(ServiceTarget target, string? @date = null, DateTime? @time = null, string? @datetime = null, long? @timestamp = null)
+    /// <summary>This can be used to dynamically set the date and/or time.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="date">The target date the entity should be set to. eg: "2019-04-20"</param>
+    /// <param name="time">The target time the entity should be set to. eg: "05:04:20"</param>
+    /// <param name="datetime">The target date & time the entity should be set to. eg: "2019-04-20 05:04:20"</param>
+    /// <param name="timestamp">The target date & time the entity should be set to as expressed by a UNIX timestamp.</param>
+    public void SetDatetime(ServiceTarget target, string? date = null, DateTime? time = null, string? datetime = null, long? timestamp = null)
     {
-        _haContext.CallService("input_datetime", "set_datetime", target, new InputDatetimeSetDatetimeParameters { Date = @date, Time = @time, Datetime = @datetime, Timestamp = @timestamp });
+        _haContext.CallService("input_datetime", "set_datetime", target, new InputDatetimeSetDatetimeParameters { Date = date, Time = time, Datetime = datetime, Timestamp = timestamp });
     }
 }
 
 public record InputDatetimeSetDatetimeParameters
 {
-    ///<summary>The target date the entity should be set to. eg: "2019-04-20"</summary>
-    [JsonPropertyName("date")]
-    public string? Date { get; init; }
-
     ///<summary>The target time the entity should be set to. eg: "05:04:20"</summary>
     [JsonPropertyName("time")]
     public DateTime? Time { get; init; }
 
-    ///<summary>The target date & time the entity should be set to. eg: "2019-04-20 05:04:20"</summary>
-    [JsonPropertyName("datetime")]
-    public string? Datetime { get; init; }
-
     ///<summary>The target date & time the entity should be set to as expressed by a UNIX timestamp.</summary>
     [JsonPropertyName("timestamp")]
     public long? Timestamp { get; init; }
+
+    ///<summary>The target date the entity should be set to. eg: "2019-04-20"</summary>
+    [JsonPropertyName("date")]
+    public string? Date { get; init; }
+
+    ///<summary>The target date & time the entity should be set to. eg: "2019-04-20 05:04:20"</summary>
+    [JsonPropertyName("datetime")]
+    public string? Datetime { get; init; }
 }
 
 public class InputNumberServices
@@ -8669,15 +8824,15 @@ public class InputNumberServices
         _haContext = haContext;
     }
 
-    ///<summary>Decrement the value of an input number entity by its stepping.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Decrement the value of an input number entity by its stepping.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Decrement(ServiceTarget target)
     {
         _haContext.CallService("input_number", "decrement", target);
     }
 
-    ///<summary>Increment the value of an input number entity by its stepping.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Increment the value of an input number entity by its stepping.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Increment(ServiceTarget target)
     {
         _haContext.CallService("input_number", "increment", target);
@@ -8686,22 +8841,22 @@ public class InputNumberServices
     ///<summary>Reload the input_number configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("input_number", "reload", null);
+        _haContext.CallService("input_number", "reload");
     }
 
-    ///<summary>Set the value of an input number entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set the value of an input number entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetValue(ServiceTarget target, InputNumberSetValueParameters data)
     {
         _haContext.CallService("input_number", "set_value", target, data);
     }
 
-    ///<summary>Set the value of an input number entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="value">The target value the entity should be set to.</param>
-    public void SetValue(ServiceTarget target, double @value)
+    /// <summary>Set the value of an input number entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="value">The target value the entity should be set to.</param>
+    public void SetValue(ServiceTarget target, double value)
     {
-        _haContext.CallService("input_number", "set_value", target, new InputNumberSetValueParameters { Value = @value });
+        _haContext.CallService("input_number", "set_value", target, new InputNumberSetValueParameters { Value = value });
     }
 }
 
@@ -8724,81 +8879,81 @@ public class InputSelectServices
     ///<summary>Reload the input_select configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("input_select", "reload", null);
+        _haContext.CallService("input_select", "reload");
     }
 
-    ///<summary>Select the first option of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Select the first option of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectFirst(ServiceTarget target)
     {
         _haContext.CallService("input_select", "select_first", target);
     }
 
-    ///<summary>Select the last option of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Select the last option of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectLast(ServiceTarget target)
     {
         _haContext.CallService("input_select", "select_last", target);
     }
 
-    ///<summary>Select the next options of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Select the next options of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectNext(ServiceTarget target, InputSelectSelectNextParameters data)
     {
         _haContext.CallService("input_select", "select_next", target, data);
     }
 
-    ///<summary>Select the next options of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="cycle">If the option should cycle from the last to the first.</param>
-    public void SelectNext(ServiceTarget target, bool? @cycle = null)
+    /// <summary>Select the next options of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="cycle">If the option should cycle from the last to the first.</param>
+    public void SelectNext(ServiceTarget target, bool? cycle = null)
     {
-        _haContext.CallService("input_select", "select_next", target, new InputSelectSelectNextParameters { Cycle = @cycle });
+        _haContext.CallService("input_select", "select_next", target, new InputSelectSelectNextParameters { Cycle = cycle });
     }
 
-    ///<summary>Select an option of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Select an option of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectOption(ServiceTarget target, InputSelectSelectOptionParameters data)
     {
         _haContext.CallService("input_select", "select_option", target, data);
     }
 
-    ///<summary>Select an option of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="option">Option to be selected. eg: "Item A"</param>
-    public void SelectOption(ServiceTarget target, string @option)
+    /// <summary>Select an option of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="option">Option to be selected. eg: "Item A"</param>
+    public void SelectOption(ServiceTarget target, string option)
     {
-        _haContext.CallService("input_select", "select_option", target, new InputSelectSelectOptionParameters { Option = @option });
+        _haContext.CallService("input_select", "select_option", target, new InputSelectSelectOptionParameters { Option = option });
     }
 
-    ///<summary>Select the previous options of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Select the previous options of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectPrevious(ServiceTarget target, InputSelectSelectPreviousParameters data)
     {
         _haContext.CallService("input_select", "select_previous", target, data);
     }
 
-    ///<summary>Select the previous options of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="cycle">If the option should cycle from the first to the last.</param>
-    public void SelectPrevious(ServiceTarget target, bool? @cycle = null)
+    /// <summary>Select the previous options of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="cycle">If the option should cycle from the first to the last.</param>
+    public void SelectPrevious(ServiceTarget target, bool? cycle = null)
     {
-        _haContext.CallService("input_select", "select_previous", target, new InputSelectSelectPreviousParameters { Cycle = @cycle });
+        _haContext.CallService("input_select", "select_previous", target, new InputSelectSelectPreviousParameters { Cycle = cycle });
     }
 
-    ///<summary>Set the options of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set the options of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetOptions(ServiceTarget target, InputSelectSetOptionsParameters data)
     {
         _haContext.CallService("input_select", "set_options", target, data);
     }
 
-    ///<summary>Set the options of an input select entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="options">Options for the input select entity. eg: ["Item A", "Item B", "Item C"]</param>
-    public void SetOptions(ServiceTarget target, object @options)
+    /// <summary>Set the options of an input select entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="options">Options for the input select entity. eg: ["Item A", "Item B", "Item C"]</param>
+    public void SetOptions(ServiceTarget target, object options)
     {
-        _haContext.CallService("input_select", "set_options", target, new InputSelectSetOptionsParameters { Options = @options });
+        _haContext.CallService("input_select", "set_options", target, new InputSelectSetOptionsParameters { Options = options });
     }
 }
 
@@ -8842,22 +8997,22 @@ public class InputTextServices
     ///<summary>Reload the input_text configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("input_text", "reload", null);
+        _haContext.CallService("input_text", "reload");
     }
 
-    ///<summary>Set the value of an input text entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set the value of an input text entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetValue(ServiceTarget target, InputTextSetValueParameters data)
     {
         _haContext.CallService("input_text", "set_value", target, data);
     }
 
-    ///<summary>Set the value of an input text entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="value">The target value the entity should be set to. eg: This is an example text</param>
-    public void SetValue(ServiceTarget target, string @value)
+    /// <summary>Set the value of an input text entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="value">The target value the entity should be set to. eg: This is an example text</param>
+    public void SetValue(ServiceTarget target, string value)
     {
-        _haContext.CallService("input_text", "set_value", target, new InputTextSetValueParameters { Value = @value });
+        _haContext.CallService("input_text", "set_value", target, new InputTextSetValueParameters { Value = value });
     }
 }
 
@@ -8877,102 +9032,120 @@ public class LightServices
         _haContext = haContext;
     }
 
-    ///<summary>Toggles one or more lights, from on to off, or, off to on, based on their current state. </summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggles one or more lights, from on to off, or, off to on, based on their current state. </summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target, LightToggleParameters data)
     {
         _haContext.CallService("light", "toggle", target, data);
     }
 
-    ///<summary>Toggles one or more lights, from on to off, or, off to on, based on their current state. </summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="transition">Duration it takes to get to next state.</param>
-    ///<param name="rgbColor">Color for the light in RGB-format. eg: [255, 100, 100]</param>
-    ///<param name="colorName">A human readable color name.</param>
-    ///<param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
-    ///<param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
-    ///<param name="colorTemp">Color temperature for the light in mireds.</param>
-    ///<param name="kelvin">Color temperature for the light in Kelvin.</param>
-    ///<param name="whiteValue">Number indicating level of white.</param>
-    ///<param name="brightness">Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</param>
-    ///<param name="brightnessPct">Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and 100 is the maximum brightness supported by the light.</param>
-    ///<param name="profile">Name of a light profile to use. eg: relax</param>
-    ///<param name="flash">If the light should flash.</param>
-    ///<param name="effect">Light effect.</param>
-    public void Toggle(ServiceTarget target, long? @transition = null, object? @rgbColor = null, string? @colorName = null, object? @hsColor = null, object? @xyColor = null, long? @colorTemp = null, long? @kelvin = null, long? @whiteValue = null, long? @brightness = null, long? @brightnessPct = null, string? @profile = null, string? @flash = null, string? @effect = null)
+    /// <summary>Toggles one or more lights, from on to off, or, off to on, based on their current state. </summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="transition">Duration it takes to get to next state.</param>
+    /// <param name="rgbColor">Color for the light in RGB-format. eg: [255, 100, 100]</param>
+    /// <param name="colorName">A human readable color name.</param>
+    /// <param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
+    /// <param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
+    /// <param name="colorTemp">Color temperature for the light in mireds.</param>
+    /// <param name="kelvin">Color temperature for the light in Kelvin.</param>
+    /// <param name="whiteValue">Number indicating level of white.</param>
+    /// <param name="brightness">
+    ///     Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255
+    ///     is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="brightnessPct">
+    ///     Number indicating percentage of full brightness, where 0 turns the light off, 1 is the
+    ///     minimum brightness and 100 is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="profile">Name of a light profile to use. eg: relax</param>
+    /// <param name="flash">If the light should flash.</param>
+    /// <param name="effect">Light effect.</param>
+    public void Toggle(ServiceTarget target, long? transition = null, object? rgbColor = null, string? colorName = null, object? hsColor = null, object? xyColor = null, long? colorTemp = null, long? kelvin = null, long? whiteValue = null, long? brightness = null, long? brightnessPct = null, string? profile = null, string? flash = null, string? effect = null)
     {
-        _haContext.CallService("light", "toggle", target, new LightToggleParameters { Transition = @transition, RgbColor = @rgbColor, ColorName = @colorName, HsColor = @hsColor, XyColor = @xyColor, ColorTemp = @colorTemp, Kelvin = @kelvin, WhiteValue = @whiteValue, Brightness = @brightness, BrightnessPct = @brightnessPct, Profile = @profile, Flash = @flash, Effect = @effect });
+        _haContext.CallService("light", "toggle", target, new LightToggleParameters { Transition = transition, RgbColor = rgbColor, ColorName = colorName, HsColor = hsColor, XyColor = xyColor, ColorTemp = colorTemp, Kelvin = kelvin, WhiteValue = whiteValue, Brightness = brightness, BrightnessPct = brightnessPct, Profile = profile, Flash = flash, Effect = effect });
     }
 
-    ///<summary>Turns off one or more lights.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turns off one or more lights.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target, LightTurnOffParameters data)
     {
         _haContext.CallService("light", "turn_off", target, data);
     }
 
-    ///<summary>Turns off one or more lights.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="transition">Duration it takes to get to next state.</param>
-    ///<param name="flash">If the light should flash.</param>
-    public void TurnOff(ServiceTarget target, long? @transition = null, string? @flash = null)
+    /// <summary>Turns off one or more lights.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="transition">Duration it takes to get to next state.</param>
+    /// <param name="flash">If the light should flash.</param>
+    public void TurnOff(ServiceTarget target, long? transition = null, string? flash = null)
     {
-        _haContext.CallService("light", "turn_off", target, new LightTurnOffParameters { Transition = @transition, Flash = @flash });
+        _haContext.CallService("light", "turn_off", target, new LightTurnOffParameters { Transition = transition, Flash = flash });
     }
 
-    ///<summary>Turn on one or more lights and adjust properties of the light, even when they are turned on already. </summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn on one or more lights and adjust properties of the light, even when they are turned on already. </summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target, LightTurnOnParameters data)
     {
         _haContext.CallService("light", "turn_on", target, data);
     }
 
-    ///<summary>Turn on one or more lights and adjust properties of the light, even when they are turned on already. </summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="transition">Duration it takes to get to next state.</param>
-    ///<param name="rgbColor">A list containing three integers between 0 and 255 representing the RGB (red, green, blue) color for the light. eg: [255, 100, 100]</param>
-    ///<param name="rgbwColor">A list containing four integers between 0 and 255 representing the RGBW (red, green, blue, white) color for the light. eg: [255, 100, 100, 50]</param>
-    ///<param name="rgbwwColor">A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue, cold white, warm white) color for the light. eg: [255, 100, 100, 50, 70]</param>
-    ///<param name="colorName">A human readable color name.</param>
-    ///<param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
-    ///<param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
-    ///<param name="colorTemp">Color temperature for the light in mireds.</param>
-    ///<param name="kelvin">Color temperature for the light in Kelvin.</param>
-    ///<param name="brightness">Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</param>
-    ///<param name="brightnessPct">Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and 100 is the maximum brightness supported by the light.</param>
-    ///<param name="brightnessStep">Change brightness by an amount.</param>
-    ///<param name="brightnessStepPct">Change brightness by a percentage.</param>
-    ///<param name="white">Set the light to white mode and change its brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</param>
-    ///<param name="profile">Name of a light profile to use. eg: relax</param>
-    ///<param name="flash">If the light should flash.</param>
-    ///<param name="effect">Light effect.</param>
-    public void TurnOn(ServiceTarget target, long? @transition = null, object? @rgbColor = null, object? @rgbwColor = null, object? @rgbwwColor = null, string? @colorName = null, object? @hsColor = null, object? @xyColor = null, long? @colorTemp = null, long? @kelvin = null, long? @brightness = null, long? @brightnessPct = null, long? @brightnessStep = null, long? @brightnessStepPct = null, long? @white = null, string? @profile = null, string? @flash = null, string? @effect = null)
+    /// <summary>Turn on one or more lights and adjust properties of the light, even when they are turned on already. </summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="transition">Duration it takes to get to next state.</param>
+    /// <param name="rgbColor">
+    ///     A list containing three integers between 0 and 255 representing the RGB (red, green, blue) color
+    ///     for the light. eg: [255, 100, 100]
+    /// </param>
+    /// <param name="rgbwColor">
+    ///     A list containing four integers between 0 and 255 representing the RGBW (red, green, blue,
+    ///     white) color for the light. eg: [255, 100, 100, 50]
+    /// </param>
+    /// <param name="rgbwwColor">
+    ///     A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue,
+    ///     cold white, warm white) color for the light. eg: [255, 100, 100, 50, 70]
+    /// </param>
+    /// <param name="colorName">A human readable color name.</param>
+    /// <param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
+    /// <param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
+    /// <param name="colorTemp">Color temperature for the light in mireds.</param>
+    /// <param name="kelvin">Color temperature for the light in Kelvin.</param>
+    /// <param name="brightness">
+    ///     Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255
+    ///     is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="brightnessPct">
+    ///     Number indicating percentage of full brightness, where 0 turns the light off, 1 is the
+    ///     minimum brightness and 100 is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="brightnessStep">Change brightness by an amount.</param>
+    /// <param name="brightnessStepPct">Change brightness by a percentage.</param>
+    /// <param name="white">
+    ///     Set the light to white mode and change its brightness, where 0 turns the light off, 1 is the
+    ///     minimum brightness and 255 is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="profile">Name of a light profile to use. eg: relax</param>
+    /// <param name="flash">If the light should flash.</param>
+    /// <param name="effect">Light effect.</param>
+    public void TurnOn(ServiceTarget target, long? transition = null, object? rgbColor = null, object? rgbwColor = null, object? rgbwwColor = null, string? colorName = null, object? hsColor = null, object? xyColor = null, long? colorTemp = null, long? kelvin = null, long? brightness = null, long? brightnessPct = null, long? brightnessStep = null, long? brightnessStepPct = null, long? white = null, string? profile = null, string? flash = null, string? effect = null)
     {
-        _haContext.CallService("light", "turn_on", target, new LightTurnOnParameters { Transition = @transition, RgbColor = @rgbColor, RgbwColor = @rgbwColor, RgbwwColor = @rgbwwColor, ColorName = @colorName, HsColor = @hsColor, XyColor = @xyColor, ColorTemp = @colorTemp, Kelvin = @kelvin, Brightness = @brightness, BrightnessPct = @brightnessPct, BrightnessStep = @brightnessStep, BrightnessStepPct = @brightnessStepPct, White = @white, Profile = @profile, Flash = @flash, Effect = @effect });
+        _haContext.CallService("light", "turn_on", target, new LightTurnOnParameters { Transition = transition, RgbColor = rgbColor, RgbwColor = rgbwColor, RgbwwColor = rgbwwColor, ColorName = colorName, HsColor = hsColor, XyColor = xyColor, ColorTemp = colorTemp, Kelvin = kelvin, Brightness = brightness, BrightnessPct = brightnessPct, BrightnessStep = brightnessStep, BrightnessStepPct = brightnessStepPct, White = white, Profile = profile, Flash = flash, Effect = effect });
     }
 }
 
 public record LightToggleParameters
 {
-    ///<summary>Duration it takes to get to next state.</summary>
-    [JsonPropertyName("transition")]
-    public long? Transition { get; init; }
+    /// <summary>
+    ///     Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum
+    ///     brightness supported by the light.
+    /// </summary>
+    [JsonPropertyName("brightness")]
+    public long? Brightness { get; init; }
 
-    ///<summary>Color for the light in RGB-format. eg: [255, 100, 100]</summary>
-    [JsonPropertyName("rgb_color")]
-    public object? RgbColor { get; init; }
-
-    ///<summary>A human readable color name.</summary>
-    [JsonPropertyName("color_name")]
-    public string? ColorName { get; init; }
-
-    ///<summary>Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</summary>
-    [JsonPropertyName("hs_color")]
-    public object? HsColor { get; init; }
-
-    ///<summary>Color for the light in XY-format. eg: [0.52, 0.43]</summary>
-    [JsonPropertyName("xy_color")]
-    public object? XyColor { get; init; }
+    /// <summary>
+    ///     Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and
+    ///     100 is the maximum brightness supported by the light.
+    /// </summary>
+    [JsonPropertyName("brightness_pct")]
+    public long? BrightnessPct { get; init; }
 
     ///<summary>Color temperature for the light in mireds.</summary>
     [JsonPropertyName("color_temp")]
@@ -8982,29 +9155,41 @@ public record LightToggleParameters
     [JsonPropertyName("kelvin")]
     public long? Kelvin { get; init; }
 
+    ///<summary>Duration it takes to get to next state.</summary>
+    [JsonPropertyName("transition")]
+    public long? Transition { get; init; }
+
     ///<summary>Number indicating level of white.</summary>
     [JsonPropertyName("white_value")]
     public long? WhiteValue { get; init; }
 
-    ///<summary>Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</summary>
-    [JsonPropertyName("brightness")]
-    public long? Brightness { get; init; }
+    ///<summary>Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</summary>
+    [JsonPropertyName("hs_color")]
+    public object? HsColor { get; init; }
 
-    ///<summary>Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and 100 is the maximum brightness supported by the light.</summary>
-    [JsonPropertyName("brightness_pct")]
-    public long? BrightnessPct { get; init; }
+    ///<summary>Color for the light in RGB-format. eg: [255, 100, 100]</summary>
+    [JsonPropertyName("rgb_color")]
+    public object? RgbColor { get; init; }
 
-    ///<summary>Name of a light profile to use. eg: relax</summary>
-    [JsonPropertyName("profile")]
-    public string? Profile { get; init; }
+    ///<summary>Color for the light in XY-format. eg: [0.52, 0.43]</summary>
+    [JsonPropertyName("xy_color")]
+    public object? XyColor { get; init; }
+
+    ///<summary>A human readable color name.</summary>
+    [JsonPropertyName("color_name")]
+    public string? ColorName { get; init; }
+
+    ///<summary>Light effect.</summary>
+    [JsonPropertyName("effect")]
+    public string? Effect { get; init; }
 
     ///<summary>If the light should flash.</summary>
     [JsonPropertyName("flash")]
     public string? Flash { get; init; }
 
-    ///<summary>Light effect.</summary>
-    [JsonPropertyName("effect")]
-    public string? Effect { get; init; }
+    ///<summary>Name of a light profile to use. eg: relax</summary>
+    [JsonPropertyName("profile")]
+    public string? Profile { get; init; }
 }
 
 public record LightTurnOffParameters
@@ -9020,47 +9205,17 @@ public record LightTurnOffParameters
 
 public record LightTurnOnParameters
 {
-    ///<summary>Duration it takes to get to next state.</summary>
-    [JsonPropertyName("transition")]
-    public long? Transition { get; init; }
-
-    ///<summary>A list containing three integers between 0 and 255 representing the RGB (red, green, blue) color for the light. eg: [255, 100, 100]</summary>
-    [JsonPropertyName("rgb_color")]
-    public object? RgbColor { get; init; }
-
-    ///<summary>A list containing four integers between 0 and 255 representing the RGBW (red, green, blue, white) color for the light. eg: [255, 100, 100, 50]</summary>
-    [JsonPropertyName("rgbw_color")]
-    public object? RgbwColor { get; init; }
-
-    ///<summary>A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue, cold white, warm white) color for the light. eg: [255, 100, 100, 50, 70]</summary>
-    [JsonPropertyName("rgbww_color")]
-    public object? RgbwwColor { get; init; }
-
-    ///<summary>A human readable color name.</summary>
-    [JsonPropertyName("color_name")]
-    public string? ColorName { get; init; }
-
-    ///<summary>Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</summary>
-    [JsonPropertyName("hs_color")]
-    public object? HsColor { get; init; }
-
-    ///<summary>Color for the light in XY-format. eg: [0.52, 0.43]</summary>
-    [JsonPropertyName("xy_color")]
-    public object? XyColor { get; init; }
-
-    ///<summary>Color temperature for the light in mireds.</summary>
-    [JsonPropertyName("color_temp")]
-    public long? ColorTemp { get; init; }
-
-    ///<summary>Color temperature for the light in Kelvin.</summary>
-    [JsonPropertyName("kelvin")]
-    public long? Kelvin { get; init; }
-
-    ///<summary>Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</summary>
+    /// <summary>
+    ///     Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum
+    ///     brightness supported by the light.
+    /// </summary>
     [JsonPropertyName("brightness")]
     public long? Brightness { get; init; }
 
-    ///<summary>Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and 100 is the maximum brightness supported by the light.</summary>
+    /// <summary>
+    ///     Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and
+    ///     100 is the maximum brightness supported by the light.
+    /// </summary>
     [JsonPropertyName("brightness_pct")]
     public long? BrightnessPct { get; init; }
 
@@ -9072,21 +9227,69 @@ public record LightTurnOnParameters
     [JsonPropertyName("brightness_step_pct")]
     public long? BrightnessStepPct { get; init; }
 
-    ///<summary>Set the light to white mode and change its brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</summary>
+    ///<summary>Color temperature for the light in mireds.</summary>
+    [JsonPropertyName("color_temp")]
+    public long? ColorTemp { get; init; }
+
+    ///<summary>Color temperature for the light in Kelvin.</summary>
+    [JsonPropertyName("kelvin")]
+    public long? Kelvin { get; init; }
+
+    ///<summary>Duration it takes to get to next state.</summary>
+    [JsonPropertyName("transition")]
+    public long? Transition { get; init; }
+
+    /// <summary>
+    ///     Set the light to white mode and change its brightness, where 0 turns the light off, 1 is the minimum
+    ///     brightness and 255 is the maximum brightness supported by the light.
+    /// </summary>
     [JsonPropertyName("white")]
     public long? White { get; init; }
 
-    ///<summary>Name of a light profile to use. eg: relax</summary>
-    [JsonPropertyName("profile")]
-    public string? Profile { get; init; }
+    ///<summary>Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</summary>
+    [JsonPropertyName("hs_color")]
+    public object? HsColor { get; init; }
+
+    /// <summary>
+    ///     A list containing three integers between 0 and 255 representing the RGB (red, green, blue) color for the
+    ///     light. eg: [255, 100, 100]
+    /// </summary>
+    [JsonPropertyName("rgb_color")]
+    public object? RgbColor { get; init; }
+
+    /// <summary>
+    ///     A list containing four integers between 0 and 255 representing the RGBW (red, green, blue, white) color for
+    ///     the light. eg: [255, 100, 100, 50]
+    /// </summary>
+    [JsonPropertyName("rgbw_color")]
+    public object? RgbwColor { get; init; }
+
+    /// <summary>
+    ///     A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue, cold white, warm
+    ///     white) color for the light. eg: [255, 100, 100, 50, 70]
+    /// </summary>
+    [JsonPropertyName("rgbww_color")]
+    public object? RgbwwColor { get; init; }
+
+    ///<summary>Color for the light in XY-format. eg: [0.52, 0.43]</summary>
+    [JsonPropertyName("xy_color")]
+    public object? XyColor { get; init; }
+
+    ///<summary>A human readable color name.</summary>
+    [JsonPropertyName("color_name")]
+    public string? ColorName { get; init; }
+
+    ///<summary>Light effect.</summary>
+    [JsonPropertyName("effect")]
+    public string? Effect { get; init; }
 
     ///<summary>If the light should flash.</summary>
     [JsonPropertyName("flash")]
     public string? Flash { get; init; }
 
-    ///<summary>Light effect.</summary>
-    [JsonPropertyName("effect")]
-    public string? Effect { get; init; }
+    ///<summary>Name of a light profile to use. eg: relax</summary>
+    [JsonPropertyName("profile")]
+    public string? Profile { get; init; }
 }
 
 public class LockServices
@@ -9098,49 +9301,49 @@ public class LockServices
         _haContext = haContext;
     }
 
-    ///<summary>Lock all or specified locks.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Lock all or specified locks.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Lock(ServiceTarget target, LockLockParameters data)
     {
         _haContext.CallService("lock", "lock", target, data);
     }
 
-    ///<summary>Lock all or specified locks.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to lock the lock with. eg: 1234</param>
-    public void Lock(ServiceTarget target, string? @code = null)
+    /// <summary>Lock all or specified locks.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to lock the lock with. eg: 1234</param>
+    public void Lock(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("lock", "lock", target, new LockLockParameters { Code = @code });
+        _haContext.CallService("lock", "lock", target, new LockLockParameters { Code = code });
     }
 
-    ///<summary>Open all or specified locks.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Open all or specified locks.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Open(ServiceTarget target, LockOpenParameters data)
     {
         _haContext.CallService("lock", "open", target, data);
     }
 
-    ///<summary>Open all or specified locks.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to open the lock with. eg: 1234</param>
-    public void Open(ServiceTarget target, string? @code = null)
+    /// <summary>Open all or specified locks.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to open the lock with. eg: 1234</param>
+    public void Open(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("lock", "open", target, new LockOpenParameters { Code = @code });
+        _haContext.CallService("lock", "open", target, new LockOpenParameters { Code = code });
     }
 
-    ///<summary>Unlock all or specified locks.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Unlock all or specified locks.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Unlock(ServiceTarget target, LockUnlockParameters data)
     {
         _haContext.CallService("lock", "unlock", target, data);
     }
 
-    ///<summary>Unlock all or specified locks.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="code">An optional code to unlock the lock with. eg: 1234</param>
-    public void Unlock(ServiceTarget target, string? @code = null)
+    /// <summary>Unlock all or specified locks.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="code">An optional code to unlock the lock with. eg: 1234</param>
+    public void Unlock(ServiceTarget target, string? code = null)
     {
-        _haContext.CallService("lock", "unlock", target, new LockUnlockParameters { Code = @code });
+        _haContext.CallService("lock", "unlock", target, new LockUnlockParameters { Code = code });
     }
 }
 
@@ -9180,34 +9383,34 @@ public class LogbookServices
         _haContext.CallService("logbook", "log", null, data);
     }
 
-    ///<summary>Create a custom entry in your logbook.</summary>
-    ///<param name="name">Custom name for an entity, can be referenced with entity_id. eg: Kitchen</param>
-    ///<param name="message">Message of the custom logbook entry. eg: is being used</param>
-    ///<param name="entityId">Entity to reference in custom logbook entry.</param>
-    ///<param name="domain">Icon of domain to display in custom logbook entry. eg: light</param>
-    public void Log(string @name, string @message, string? @entityId = null, string? @domain = null)
+    /// <summary>Create a custom entry in your logbook.</summary>
+    /// <param name="name">Custom name for an entity, can be referenced with entity_id. eg: Kitchen</param>
+    /// <param name="message">Message of the custom logbook entry. eg: is being used</param>
+    /// <param name="entityId">Entity to reference in custom logbook entry.</param>
+    /// <param name="domain">Icon of domain to display in custom logbook entry. eg: light</param>
+    public void Log(string name, string message, string? entityId = null, string? domain = null)
     {
-        _haContext.CallService("logbook", "log", null, new LogbookLogParameters { Name = @name, Message = @message, EntityId = @entityId, Domain = @domain });
+        _haContext.CallService("logbook", "log", null, new LogbookLogParameters { Name = name, Message = message, EntityId = entityId, Domain = domain });
     }
 }
 
 public record LogbookLogParameters
 {
-    ///<summary>Custom name for an entity, can be referenced with entity_id. eg: Kitchen</summary>
-    [JsonPropertyName("name")]
-    public string? Name { get; init; }
-
-    ///<summary>Message of the custom logbook entry. eg: is being used</summary>
-    [JsonPropertyName("message")]
-    public string? Message { get; init; }
+    ///<summary>Icon of domain to display in custom logbook entry. eg: light</summary>
+    [JsonPropertyName("domain")]
+    public string? Domain { get; init; }
 
     ///<summary>Entity to reference in custom logbook entry.</summary>
     [JsonPropertyName("entity_id")]
     public string? EntityId { get; init; }
 
-    ///<summary>Icon of domain to display in custom logbook entry. eg: light</summary>
-    [JsonPropertyName("domain")]
-    public string? Domain { get; init; }
+    ///<summary>Message of the custom logbook entry. eg: is being used</summary>
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
+
+    ///<summary>Custom name for an entity, can be referenced with entity_id. eg: Kitchen</summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; init; }
 }
 
 public class LoggerServices
@@ -9225,17 +9428,17 @@ public class LoggerServices
         _haContext.CallService("logger", "set_default_level", null, data);
     }
 
-    ///<summary>Set the default log level for integrations.</summary>
-    ///<param name="level">Default severity level for all integrations.</param>
-    public void SetDefaultLevel(string? @level = null)
+    /// <summary>Set the default log level for integrations.</summary>
+    /// <param name="level">Default severity level for all integrations.</param>
+    public void SetDefaultLevel(string? level = null)
     {
-        _haContext.CallService("logger", "set_default_level", null, new LoggerSetDefaultLevelParameters { Level = @level });
+        _haContext.CallService("logger", "set_default_level", null, new LoggerSetDefaultLevelParameters { Level = level });
     }
 
     ///<summary>Set log level for integrations.</summary>
     public void SetLevel()
     {
-        _haContext.CallService("logger", "set_level", null);
+        _haContext.CallService("logger", "set_level");
     }
 }
 
@@ -9255,228 +9458,237 @@ public class MediaPlayerServices
         _haContext = haContext;
     }
 
-    ///<summary>Send the media player the command to clear players playlist.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command to clear players playlist.</summary>
+    /// <param name="target">The target for this service call</param>
     public void ClearPlaylist(ServiceTarget target)
     {
         _haContext.CallService("media_player", "clear_playlist", target);
     }
 
-    ///<summary>Group players together. Only works on platforms with support for player groups.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Group players together. Only works on platforms with support for player groups.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Join(ServiceTarget target, MediaPlayerJoinParameters data)
     {
         _haContext.CallService("media_player", "join", target, data);
     }
 
-    ///<summary>Group players together. Only works on platforms with support for player groups.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="groupMembers">The players which will be synced with the target player. eg: ["media_player.multiroom_player2", "media_player.multiroom_player3"]</param>
-    public void Join(ServiceTarget target, object? @groupMembers = null)
+    /// <summary>Group players together. Only works on platforms with support for player groups.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="groupMembers">
+    ///     The players which will be synced with the target player. eg:
+    ///     ["media_player.multiroom_player2", "media_player.multiroom_player3"]
+    /// </param>
+    public void Join(ServiceTarget target, object? groupMembers = null)
     {
-        _haContext.CallService("media_player", "join", target, new MediaPlayerJoinParameters { GroupMembers = @groupMembers });
+        _haContext.CallService("media_player", "join", target, new MediaPlayerJoinParameters { GroupMembers = groupMembers });
     }
 
-    ///<summary>Send the media player the command for next track.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command for next track.</summary>
+    /// <param name="target">The target for this service call</param>
     public void MediaNextTrack(ServiceTarget target)
     {
         _haContext.CallService("media_player", "media_next_track", target);
     }
 
-    ///<summary>Send the media player the command for pause.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command for pause.</summary>
+    /// <param name="target">The target for this service call</param>
     public void MediaPause(ServiceTarget target)
     {
         _haContext.CallService("media_player", "media_pause", target);
     }
 
-    ///<summary>Send the media player the command for play.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command for play.</summary>
+    /// <param name="target">The target for this service call</param>
     public void MediaPlay(ServiceTarget target)
     {
         _haContext.CallService("media_player", "media_play", target);
     }
 
-    ///<summary>Toggle media player play/pause state.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggle media player play/pause state.</summary>
+    /// <param name="target">The target for this service call</param>
     public void MediaPlayPause(ServiceTarget target)
     {
         _haContext.CallService("media_player", "media_play_pause", target);
     }
 
-    ///<summary>Send the media player the command for previous track.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command for previous track.</summary>
+    /// <param name="target">The target for this service call</param>
     public void MediaPreviousTrack(ServiceTarget target)
     {
         _haContext.CallService("media_player", "media_previous_track", target);
     }
 
-    ///<summary>Send the media player the command to seek in current playing media.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command to seek in current playing media.</summary>
+    /// <param name="target">The target for this service call</param>
     public void MediaSeek(ServiceTarget target, MediaPlayerMediaSeekParameters data)
     {
         _haContext.CallService("media_player", "media_seek", target, data);
     }
 
-    ///<summary>Send the media player the command to seek in current playing media.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="seekPosition">Position to seek to. The format is platform dependent.</param>
-    public void MediaSeek(ServiceTarget target, double @seekPosition)
+    /// <summary>Send the media player the command to seek in current playing media.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="seekPosition">Position to seek to. The format is platform dependent.</param>
+    public void MediaSeek(ServiceTarget target, double seekPosition)
     {
-        _haContext.CallService("media_player", "media_seek", target, new MediaPlayerMediaSeekParameters { SeekPosition = @seekPosition });
+        _haContext.CallService("media_player", "media_seek", target, new MediaPlayerMediaSeekParameters { SeekPosition = seekPosition });
     }
 
-    ///<summary>Send the media player the stop command.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the stop command.</summary>
+    /// <param name="target">The target for this service call</param>
     public void MediaStop(ServiceTarget target)
     {
         _haContext.CallService("media_player", "media_stop", target);
     }
 
-    ///<summary>Send the media player the command for playing media.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command for playing media.</summary>
+    /// <param name="target">The target for this service call</param>
     public void PlayMedia(ServiceTarget target, MediaPlayerPlayMediaParameters data)
     {
         _haContext.CallService("media_player", "play_media", target, data);
     }
 
-    ///<summary>Send the media player the command for playing media.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="mediaContentId">The ID of the content to play. Platform dependent. eg: https://home-assistant.io/images/cast/splash.png</param>
-    ///<param name="mediaContentType">The type of the content to play. Like image, music, tvshow, video, episode, channel or playlist. eg: music</param>
-    public void PlayMedia(ServiceTarget target, string @mediaContentId, string @mediaContentType)
+    /// <summary>Send the media player the command for playing media.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="mediaContentId">
+    ///     The ID of the content to play. Platform dependent. eg:
+    ///     https://home-assistant.io/images/cast/splash.png
+    /// </param>
+    /// <param name="mediaContentType">
+    ///     The type of the content to play. Like image, music, tvshow, video, episode, channel or
+    ///     playlist. eg: music
+    /// </param>
+    public void PlayMedia(ServiceTarget target, string mediaContentId, string mediaContentType)
     {
-        _haContext.CallService("media_player", "play_media", target, new MediaPlayerPlayMediaParameters { MediaContentId = @mediaContentId, MediaContentType = @mediaContentType });
+        _haContext.CallService("media_player", "play_media", target, new MediaPlayerPlayMediaParameters { MediaContentId = mediaContentId, MediaContentType = mediaContentType });
     }
 
-    ///<summary>Set repeat mode</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set repeat mode</summary>
+    /// <param name="target">The target for this service call</param>
     public void RepeatSet(ServiceTarget target, MediaPlayerRepeatSetParameters data)
     {
         _haContext.CallService("media_player", "repeat_set", target, data);
     }
 
-    ///<summary>Set repeat mode</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="repeat">Repeat mode to set.</param>
-    public void RepeatSet(ServiceTarget target, string @repeat)
+    /// <summary>Set repeat mode</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="repeat">Repeat mode to set.</param>
+    public void RepeatSet(ServiceTarget target, string repeat)
     {
-        _haContext.CallService("media_player", "repeat_set", target, new MediaPlayerRepeatSetParameters { Repeat = @repeat });
+        _haContext.CallService("media_player", "repeat_set", target, new MediaPlayerRepeatSetParameters { Repeat = repeat });
     }
 
-    ///<summary>Send the media player the command to change sound mode.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command to change sound mode.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectSoundMode(ServiceTarget target, MediaPlayerSelectSoundModeParameters data)
     {
         _haContext.CallService("media_player", "select_sound_mode", target, data);
     }
 
-    ///<summary>Send the media player the command to change sound mode.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="soundMode">Name of the sound mode to switch to. eg: Music</param>
-    public void SelectSoundMode(ServiceTarget target, string? @soundMode = null)
+    /// <summary>Send the media player the command to change sound mode.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="soundMode">Name of the sound mode to switch to. eg: Music</param>
+    public void SelectSoundMode(ServiceTarget target, string? soundMode = null)
     {
-        _haContext.CallService("media_player", "select_sound_mode", target, new MediaPlayerSelectSoundModeParameters { SoundMode = @soundMode });
+        _haContext.CallService("media_player", "select_sound_mode", target, new MediaPlayerSelectSoundModeParameters { SoundMode = soundMode });
     }
 
-    ///<summary>Send the media player the command to change input source.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send the media player the command to change input source.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectSource(ServiceTarget target, MediaPlayerSelectSourceParameters data)
     {
         _haContext.CallService("media_player", "select_source", target, data);
     }
 
-    ///<summary>Send the media player the command to change input source.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="source">Name of the source to switch to. Platform dependent. eg: video1</param>
-    public void SelectSource(ServiceTarget target, string @source)
+    /// <summary>Send the media player the command to change input source.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="source">Name of the source to switch to. Platform dependent. eg: video1</param>
+    public void SelectSource(ServiceTarget target, string source)
     {
-        _haContext.CallService("media_player", "select_source", target, new MediaPlayerSelectSourceParameters { Source = @source });
+        _haContext.CallService("media_player", "select_source", target, new MediaPlayerSelectSourceParameters { Source = source });
     }
 
-    ///<summary>Set shuffling state.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set shuffling state.</summary>
+    /// <param name="target">The target for this service call</param>
     public void ShuffleSet(ServiceTarget target, MediaPlayerShuffleSetParameters data)
     {
         _haContext.CallService("media_player", "shuffle_set", target, data);
     }
 
-    ///<summary>Set shuffling state.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="shuffle">True/false for enabling/disabling shuffle.</param>
-    public void ShuffleSet(ServiceTarget target, bool @shuffle)
+    /// <summary>Set shuffling state.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="shuffle">True/false for enabling/disabling shuffle.</param>
+    public void ShuffleSet(ServiceTarget target, bool shuffle)
     {
-        _haContext.CallService("media_player", "shuffle_set", target, new MediaPlayerShuffleSetParameters { Shuffle = @shuffle });
+        _haContext.CallService("media_player", "shuffle_set", target, new MediaPlayerShuffleSetParameters { Shuffle = shuffle });
     }
 
-    ///<summary>Toggles a media player power state.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggles a media player power state.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("media_player", "toggle", target);
     }
 
-    ///<summary>Turn a media player power off.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn a media player power off.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("media_player", "turn_off", target);
     }
 
-    ///<summary>Turn a media player power on.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn a media player power on.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("media_player", "turn_on", target);
     }
 
-    ///<summary>Unjoin the player from a group. Only works on platforms with support for player groups.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Unjoin the player from a group. Only works on platforms with support for player groups.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Unjoin(ServiceTarget target)
     {
         _haContext.CallService("media_player", "unjoin", target);
     }
 
-    ///<summary>Turn a media player volume down.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn a media player volume down.</summary>
+    /// <param name="target">The target for this service call</param>
     public void VolumeDown(ServiceTarget target)
     {
         _haContext.CallService("media_player", "volume_down", target);
     }
 
-    ///<summary>Mute a media player's volume.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Mute a media player's volume.</summary>
+    /// <param name="target">The target for this service call</param>
     public void VolumeMute(ServiceTarget target, MediaPlayerVolumeMuteParameters data)
     {
         _haContext.CallService("media_player", "volume_mute", target, data);
     }
 
-    ///<summary>Mute a media player's volume.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="isVolumeMuted">True/false for mute/unmute.</param>
-    public void VolumeMute(ServiceTarget target, bool @isVolumeMuted)
+    /// <summary>Mute a media player's volume.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="isVolumeMuted">True/false for mute/unmute.</param>
+    public void VolumeMute(ServiceTarget target, bool isVolumeMuted)
     {
-        _haContext.CallService("media_player", "volume_mute", target, new MediaPlayerVolumeMuteParameters { IsVolumeMuted = @isVolumeMuted });
+        _haContext.CallService("media_player", "volume_mute", target, new MediaPlayerVolumeMuteParameters { IsVolumeMuted = isVolumeMuted });
     }
 
-    ///<summary>Set a media player's volume level.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set a media player's volume level.</summary>
+    /// <param name="target">The target for this service call</param>
     public void VolumeSet(ServiceTarget target, MediaPlayerVolumeSetParameters data)
     {
         _haContext.CallService("media_player", "volume_set", target, data);
     }
 
-    ///<summary>Set a media player's volume level.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="volumeLevel">Volume level to set as float.</param>
-    public void VolumeSet(ServiceTarget target, double @volumeLevel)
+    /// <summary>Set a media player's volume level.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="volumeLevel">Volume level to set as float.</param>
+    public void VolumeSet(ServiceTarget target, double volumeLevel)
     {
-        _haContext.CallService("media_player", "volume_set", target, new MediaPlayerVolumeSetParameters { VolumeLevel = @volumeLevel });
+        _haContext.CallService("media_player", "volume_set", target, new MediaPlayerVolumeSetParameters { VolumeLevel = volumeLevel });
     }
 
-    ///<summary>Turn a media player volume up.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn a media player volume up.</summary>
+    /// <param name="target">The target for this service call</param>
     public void VolumeUp(ServiceTarget target)
     {
         _haContext.CallService("media_player", "volume_up", target);
@@ -9485,7 +9697,10 @@ public class MediaPlayerServices
 
 public record MediaPlayerJoinParameters
 {
-    ///<summary>The players which will be synced with the target player. eg: ["media_player.multiroom_player2", "media_player.multiroom_player3"]</summary>
+    /// <summary>
+    ///     The players which will be synced with the target player. eg: ["media_player.multiroom_player2",
+    ///     "media_player.multiroom_player3"]
+    /// </summary>
     [JsonPropertyName("group_members")]
     public object? GroupMembers { get; init; }
 }
@@ -9559,47 +9774,59 @@ public class MelcloudServices
         _haContext = haContext;
     }
 
-    ///<summary>Sets horizontal vane position.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Sets horizontal vane position.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetVaneHorizontal(ServiceTarget target, MelcloudSetVaneHorizontalParameters data)
     {
         _haContext.CallService("melcloud", "set_vane_horizontal", target, data);
     }
 
-    ///<summary>Sets horizontal vane position.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="position">Horizontal vane position. Possible options can be found in the vane_horizontal_positions state attribute.  eg: auto</param>
-    public void SetVaneHorizontal(ServiceTarget target, string @position)
+    /// <summary>Sets horizontal vane position.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="position">
+    ///     Horizontal vane position. Possible options can be found in the vane_horizontal_positions state
+    ///     attribute.  eg: auto
+    /// </param>
+    public void SetVaneHorizontal(ServiceTarget target, string position)
     {
-        _haContext.CallService("melcloud", "set_vane_horizontal", target, new MelcloudSetVaneHorizontalParameters { Position = @position });
+        _haContext.CallService("melcloud", "set_vane_horizontal", target, new MelcloudSetVaneHorizontalParameters { Position = position });
     }
 
-    ///<summary>Sets vertical vane position.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Sets vertical vane position.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetVaneVertical(ServiceTarget target, MelcloudSetVaneVerticalParameters data)
     {
         _haContext.CallService("melcloud", "set_vane_vertical", target, data);
     }
 
-    ///<summary>Sets vertical vane position.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="position">Vertical vane position. Possible options can be found in the vane_vertical_positions state attribute.  eg: auto</param>
-    public void SetVaneVertical(ServiceTarget target, string @position)
+    /// <summary>Sets vertical vane position.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="position">
+    ///     Vertical vane position. Possible options can be found in the vane_vertical_positions state
+    ///     attribute.  eg: auto
+    /// </param>
+    public void SetVaneVertical(ServiceTarget target, string position)
     {
-        _haContext.CallService("melcloud", "set_vane_vertical", target, new MelcloudSetVaneVerticalParameters { Position = @position });
+        _haContext.CallService("melcloud", "set_vane_vertical", target, new MelcloudSetVaneVerticalParameters { Position = position });
     }
 }
 
 public record MelcloudSetVaneHorizontalParameters
 {
-    ///<summary>Horizontal vane position. Possible options can be found in the vane_horizontal_positions state attribute.  eg: auto</summary>
+    /// <summary>
+    ///     Horizontal vane position. Possible options can be found in the vane_horizontal_positions state attribute.  eg:
+    ///     auto
+    /// </summary>
     [JsonPropertyName("position")]
     public string? Position { get; init; }
 }
 
 public record MelcloudSetVaneVerticalParameters
 {
-    ///<summary>Vertical vane position. Possible options can be found in the vane_vertical_positions state attribute.  eg: auto</summary>
+    /// <summary>
+    ///     Vertical vane position. Possible options can be found in the vane_vertical_positions state attribute.  eg:
+    ///     auto
+    /// </summary>
     [JsonPropertyName("position")]
     public string? Position { get; init; }
 }
@@ -9616,7 +9843,7 @@ public class MinMaxServices
     ///<summary>Reload all min_max entities.</summary>
     public void Reload()
     {
-        _haContext.CallService("min_max", "reload", null);
+        _haContext.CallService("min_max", "reload");
     }
 }
 
@@ -9635,12 +9862,12 @@ public class MqttServices
         _haContext.CallService("mqtt", "dump", null, data);
     }
 
-    ///<summary>Dump messages on a topic selector to the 'mqtt_dump.txt' file in your configuration folder.</summary>
-    ///<param name="topic">topic to listen to eg: OpenZWave/#</param>
-    ///<param name="duration">how long we should listen for messages in seconds</param>
-    public void Dump(string? @topic = null, long? @duration = null)
+    /// <summary>Dump messages on a topic selector to the 'mqtt_dump.txt' file in your configuration folder.</summary>
+    /// <param name="topic">topic to listen to eg: OpenZWave/#</param>
+    /// <param name="duration">how long we should listen for messages in seconds</param>
+    public void Dump(string? topic = null, long? duration = null)
     {
-        _haContext.CallService("mqtt", "dump", null, new MqttDumpParameters { Topic = @topic, Duration = @duration });
+        _haContext.CallService("mqtt", "dump", null, new MqttDumpParameters { Topic = topic, Duration = duration });
     }
 
     ///<summary>Publish a message to an MQTT topic.</summary>
@@ -9649,56 +9876,59 @@ public class MqttServices
         _haContext.CallService("mqtt", "publish", null, data);
     }
 
-    ///<summary>Publish a message to an MQTT topic.</summary>
-    ///<param name="topic">Topic to publish payload. eg: /homeassistant/hello</param>
-    ///<param name="payload">Payload to publish. eg: This is great</param>
-    ///<param name="payloadTemplate">Template to render as payload value. Ignored if payload given. eg: {{ states('sensor.temperature') }}</param>
-    ///<param name="qos">Quality of Service to use.</param>
-    ///<param name="retain">If message should have the retain flag set.</param>
-    public void Publish(string @topic, string? @payload = null, object? @payloadTemplate = null, string? @qos = null, bool? @retain = null)
+    /// <summary>Publish a message to an MQTT topic.</summary>
+    /// <param name="topic">Topic to publish payload. eg: /homeassistant/hello</param>
+    /// <param name="payload">Payload to publish. eg: This is great</param>
+    /// <param name="payloadTemplate">
+    ///     Template to render as payload value. Ignored if payload given. eg: {{
+    ///     states('sensor.temperature') }}
+    /// </param>
+    /// <param name="qos">Quality of Service to use.</param>
+    /// <param name="retain">If message should have the retain flag set.</param>
+    public void Publish(string topic, string? payload = null, object? payloadTemplate = null, string? qos = null, bool? retain = null)
     {
-        _haContext.CallService("mqtt", "publish", null, new MqttPublishParameters { Topic = @topic, Payload = @payload, PayloadTemplate = @payloadTemplate, Qos = @qos, Retain = @retain });
+        _haContext.CallService("mqtt", "publish", null, new MqttPublishParameters { Topic = topic, Payload = payload, PayloadTemplate = payloadTemplate, Qos = qos, Retain = retain });
     }
 
     ///<summary>Reload all MQTT entities from YAML.</summary>
     public void Reload()
     {
-        _haContext.CallService("mqtt", "reload", null);
+        _haContext.CallService("mqtt", "reload");
     }
 }
 
 public record MqttDumpParameters
 {
-    ///<summary>topic to listen to eg: OpenZWave/#</summary>
-    [JsonPropertyName("topic")]
-    public string? Topic { get; init; }
-
     ///<summary>how long we should listen for messages in seconds</summary>
     [JsonPropertyName("duration")]
     public long? Duration { get; init; }
+
+    ///<summary>topic to listen to eg: OpenZWave/#</summary>
+    [JsonPropertyName("topic")]
+    public string? Topic { get; init; }
 }
 
 public record MqttPublishParameters
 {
-    ///<summary>Topic to publish payload. eg: /homeassistant/hello</summary>
-    [JsonPropertyName("topic")]
-    public string? Topic { get; init; }
-
-    ///<summary>Payload to publish. eg: This is great</summary>
-    [JsonPropertyName("payload")]
-    public string? Payload { get; init; }
+    ///<summary>If message should have the retain flag set.</summary>
+    [JsonPropertyName("retain")]
+    public bool? Retain { get; init; }
 
     ///<summary>Template to render as payload value. Ignored if payload given. eg: {{ states('sensor.temperature') }}</summary>
     [JsonPropertyName("payload_template")]
     public object? PayloadTemplate { get; init; }
 
+    ///<summary>Payload to publish. eg: This is great</summary>
+    [JsonPropertyName("payload")]
+    public string? Payload { get; init; }
+
     ///<summary>Quality of Service to use.</summary>
     [JsonPropertyName("qos")]
     public string? Qos { get; init; }
 
-    ///<summary>If message should have the retain flag set.</summary>
-    [JsonPropertyName("retain")]
-    public bool? Retain { get; init; }
+    ///<summary>Topic to publish payload. eg: /homeassistant/hello</summary>
+    [JsonPropertyName("topic")]
+    public string? Topic { get; init; }
 }
 
 public class NetdaemonServices
@@ -9716,15 +9946,15 @@ public class NetdaemonServices
         _haContext.CallService("netdaemon", "entity_create", null, data);
     }
 
-    ///<summary>Create an entity</summary>
-    ///<param name="entityId">The entity ID of the entity eg: sensor.awesome</param>
-    ///<param name="state">The state of the entity eg: Lorem ipsum</param>
-    ///<param name="icon">The icon for the entity eg: mdi:rocket-launch-outline</param>
-    ///<param name="unit">The unit of measurement for the entity</param>
-    ///<param name="attributes">The attributes of the entity</param>
-    public void EntityCreate(string? @entityId = null, string? @state = null, string? @icon = null, string? @unit = null, string? @attributes = null)
+    /// <summary>Create an entity</summary>
+    /// <param name="entityId">The entity ID of the entity eg: sensor.awesome</param>
+    /// <param name="state">The state of the entity eg: Lorem ipsum</param>
+    /// <param name="icon">The icon for the entity eg: mdi:rocket-launch-outline</param>
+    /// <param name="unit">The unit of measurement for the entity</param>
+    /// <param name="attributes">The attributes of the entity</param>
+    public void EntityCreate(string? entityId = null, string? state = null, string? icon = null, string? unit = null, string? attributes = null)
     {
-        _haContext.CallService("netdaemon", "entity_create", null, new NetdaemonEntityCreateParameters { EntityId = @entityId, State = @state, Icon = @icon, Unit = @unit, Attributes = @attributes });
+        _haContext.CallService("netdaemon", "entity_create", null, new NetdaemonEntityCreateParameters { EntityId = entityId, State = state, Icon = icon, Unit = unit, Attributes = attributes });
     }
 
     ///<summary>Remove an entity</summary>
@@ -9733,11 +9963,11 @@ public class NetdaemonServices
         _haContext.CallService("netdaemon", "entity_remove", null, data);
     }
 
-    ///<summary>Remove an entity</summary>
-    ///<param name="entityId">The entity ID of the entity eg: sensor.awesome</param>
-    public void EntityRemove(string? @entityId = null)
+    /// <summary>Remove an entity</summary>
+    /// <param name="entityId">The entity ID of the entity eg: sensor.awesome</param>
+    public void EntityRemove(string? entityId = null)
     {
-        _haContext.CallService("netdaemon", "entity_remove", null, new NetdaemonEntityRemoveParameters { EntityId = @entityId });
+        _haContext.CallService("netdaemon", "entity_remove", null, new NetdaemonEntityRemoveParameters { EntityId = entityId });
     }
 
     ///<summary>Update an entity</summary>
@@ -9746,20 +9976,15 @@ public class NetdaemonServices
         _haContext.CallService("netdaemon", "entity_update", null, data);
     }
 
-    ///<summary>Update an entity</summary>
-    ///<param name="entityId">The entity ID of the entity eg: sensor.awesome</param>
-    ///<param name="state">The state of the entity eg: Lorem ipsum</param>
-    ///<param name="icon">The icon for the entity eg: mdi:rocket-launch-outline</param>
-    ///<param name="unit">The unit of measurement for the entity</param>
-    ///<param name="attributes">The attributes of the entity</param>
-    public void EntityUpdate(string? @entityId = null, string? @state = null, string? @icon = null, string? @unit = null, object? @attributes = null)
+    /// <summary>Update an entity</summary>
+    /// <param name="entityId">The entity ID of the entity eg: sensor.awesome</param>
+    /// <param name="state">The state of the entity eg: Lorem ipsum</param>
+    /// <param name="icon">The icon for the entity eg: mdi:rocket-launch-outline</param>
+    /// <param name="unit">The unit of measurement for the entity</param>
+    /// <param name="attributes">The attributes of the entity</param>
+    public void EntityUpdate(string? entityId = null, string? state = null, string? icon = null, string? unit = null, string? attributes = null)
     {
-        _haContext.CallService("netdaemon", "entity_update", null, new NetdaemonEntityUpdateParameters { EntityId = @entityId, State = @state, Icon = @icon, Unit = @unit, Attributes = @attributes });
-    }
-
-    public void NotificationengineNotify()
-    {
-        _haContext.CallService("netdaemon", "notificationengine_notify", null);
+        _haContext.CallService("netdaemon", "entity_update", null, new NetdaemonEntityUpdateParameters { EntityId = entityId, State = state, Icon = icon, Unit = unit, Attributes = attributes });
     }
 
     ///<summary>Register a new service for netdaemon, used by the daemon and not to be used by users</summary>
@@ -9768,42 +9993,42 @@ public class NetdaemonServices
         _haContext.CallService("netdaemon", "register_service", null, data);
     }
 
-    ///<summary>Register a new service for netdaemon, used by the daemon and not to be used by users</summary>
-    ///<param name="service">The name of the service to register</param>
-    ///<param name="class">The class that implements the service call</param>
-    ///<param name="method">The method to call</param>
-    public void RegisterService(string? @service = null, string? @class = null, string? @method = null)
+    /// <summary>Register a new service for netdaemon, used by the daemon and not to be used by users</summary>
+    /// <param name="service">The name of the service to register</param>
+    /// <param name="class">The class that implements the service call</param>
+    /// <param name="method">The method to call</param>
+    public void RegisterService(string? service = null, string? @class = null, string? method = null)
     {
-        _haContext.CallService("netdaemon", "register_service", null, new NetdaemonRegisterServiceParameters { Service = @service, Class = @class, Method = @method });
+        _haContext.CallService("netdaemon", "register_service", null, new NetdaemonRegisterServiceParameters { Service = service, Class = @class, Method = method });
     }
 
     public void ReloadApps()
     {
-        _haContext.CallService("netdaemon", "reload_apps", null);
+        _haContext.CallService("netdaemon", "reload_apps");
     }
 }
 
 public record NetdaemonEntityCreateParameters
 {
+    ///<summary>The attributes of the entity</summary>
+    [JsonPropertyName("attributes")]
+    public string? Attributes { get; init; }
+
     ///<summary>The entity ID of the entity eg: sensor.awesome</summary>
     [JsonPropertyName("entity_id")]
     public string? EntityId { get; init; }
-
-    ///<summary>The state of the entity eg: Lorem ipsum</summary>
-    [JsonPropertyName("state")]
-    public string? State { get; init; }
 
     ///<summary>The icon for the entity eg: mdi:rocket-launch-outline</summary>
     [JsonPropertyName("icon")]
     public string? Icon { get; init; }
 
+    ///<summary>The state of the entity eg: Lorem ipsum</summary>
+    [JsonPropertyName("state")]
+    public string? State { get; init; }
+
     ///<summary>The unit of measurement for the entity</summary>
     [JsonPropertyName("unit")]
     public string? Unit { get; init; }
-
-    ///<summary>The attributes of the entity</summary>
-    [JsonPropertyName("attributes")]
-    public string? Attributes { get; init; }
 }
 
 public record NetdaemonEntityRemoveParameters
@@ -9815,33 +10040,29 @@ public record NetdaemonEntityRemoveParameters
 
 public record NetdaemonEntityUpdateParameters
 {
+    ///<summary>The attributes of the entity</summary>
+    [JsonPropertyName("attributes")]
+    public string? Attributes { get; init; }
+
     ///<summary>The entity ID of the entity eg: sensor.awesome</summary>
     [JsonPropertyName("entity_id")]
     public string? EntityId { get; init; }
-
-    ///<summary>The state of the entity eg: Lorem ipsum</summary>
-    [JsonPropertyName("state")]
-    public string? State { get; init; }
 
     ///<summary>The icon for the entity eg: mdi:rocket-launch-outline</summary>
     [JsonPropertyName("icon")]
     public string? Icon { get; init; }
 
+    ///<summary>The state of the entity eg: Lorem ipsum</summary>
+    [JsonPropertyName("state")]
+    public string? State { get; init; }
+
     ///<summary>The unit of measurement for the entity</summary>
     [JsonPropertyName("unit")]
     public string? Unit { get; init; }
-
-    ///<summary>The attributes of the entity</summary>
-    [JsonPropertyName("attributes")]
-    public object? Attributes { get; init; }
 }
 
 public record NetdaemonRegisterServiceParameters
 {
-    ///<summary>The name of the service to register</summary>
-    [JsonPropertyName("service")]
-    public string? Service { get; init; }
-
     ///<summary>The class that implements the service call</summary>
     [JsonPropertyName("class")]
     public string? Class { get; init; }
@@ -9849,6 +10070,10 @@ public record NetdaemonRegisterServiceParameters
     ///<summary>The method to call</summary>
     [JsonPropertyName("method")]
     public string? Method { get; init; }
+
+    ///<summary>The name of the service to register</summary>
+    [JsonPropertyName("service")]
+    public string? Service { get; init; }
 }
 
 public class NotifyServices
@@ -9866,14 +10091,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media service.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMedia(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media service.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMedia(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media", null, new NotifyAlexaMediaParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media", null, new NotifyAlexaMediaParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_aaron integration.</summary>
@@ -9882,14 +10110,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_aaron", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_aaron integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaAaron(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_aaron integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaAaron(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_aaron", null, new NotifyAlexaMediaAaronParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_aaron", null, new NotifyAlexaMediaAaronParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_bose_qc35_ii integration.</summary>
@@ -9898,14 +10129,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_bose_qc35_ii", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_bose_qc35_ii integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaBoseQc35Ii(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_bose_qc35_ii integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaBoseQc35Ii(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_bose_qc35_ii", null, new NotifyAlexaMediaBoseQc35IiParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_bose_qc35_ii", null, new NotifyAlexaMediaBoseQc35IiParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_dining integration.</summary>
@@ -9914,14 +10148,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_dining", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_dining integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaDining(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_dining integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaDining(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_dining", null, new NotifyAlexaMediaDiningParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_dining", null, new NotifyAlexaMediaDiningParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_downstairs integration.</summary>
@@ -9930,14 +10167,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_downstairs", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_downstairs integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaDownstairs(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_downstairs integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaDownstairs(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_downstairs", null, new NotifyAlexaMediaDownstairsParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_downstairs", null, new NotifyAlexaMediaDownstairsParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_eugene_s_2nd_echo_dot integration.</summary>
@@ -9946,14 +10186,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_eugene_s_2nd_echo_dot", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_eugene_s_2nd_echo_dot integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaEugeneS2ndEchoDot(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_eugene_s_2nd_echo_dot integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaEugeneS2ndEchoDot(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_eugene_s_2nd_echo_dot", null, new NotifyAlexaMediaEugeneS2ndEchoDotParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_eugene_s_2nd_echo_dot", null, new NotifyAlexaMediaEugeneS2ndEchoDotParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_eugene_s_5th_echo_dot integration.</summary>
@@ -9962,14 +10205,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_eugene_s_5th_echo_dot", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_eugene_s_5th_echo_dot integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaEugeneS5thEchoDot(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_eugene_s_5th_echo_dot integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaEugeneS5thEchoDot(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_eugene_s_5th_echo_dot", null, new NotifyAlexaMediaEugeneS5thEchoDotParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_eugene_s_5th_echo_dot", null, new NotifyAlexaMediaEugeneS5thEchoDotParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_eugene_s_fire integration.</summary>
@@ -9978,14 +10224,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_eugene_s_fire", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_eugene_s_fire integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaEugeneSFire(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_eugene_s_fire integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaEugeneSFire(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_eugene_s_fire", null, new NotifyAlexaMediaEugeneSFireParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_eugene_s_fire", null, new NotifyAlexaMediaEugeneSFireParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_eugene_s_lg_oled_webos_2021_tv integration.</summary>
@@ -9994,14 +10243,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_eugene_s_lg_oled_webos_2021_tv", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_eugene_s_lg_oled_webos_2021_tv integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaEugeneSLgOledWebos2021Tv(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_eugene_s_lg_oled_webos_2021_tv integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaEugeneSLgOledWebos2021Tv(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_eugene_s_lg_oled_webos_2021_tv", null, new NotifyAlexaMediaEugeneSLgOledWebos2021TvParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_eugene_s_lg_oled_webos_2021_tv", null, new NotifyAlexaMediaEugeneSLgOledWebos2021TvParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_eugene_s_sonos_arc integration.</summary>
@@ -10010,14 +10262,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_eugene_s_sonos_arc", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_eugene_s_sonos_arc integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaEugeneSSonosArc(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_eugene_s_sonos_arc integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaEugeneSSonosArc(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_eugene_s_sonos_arc", null, new NotifyAlexaMediaEugeneSSonosArcParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_eugene_s_sonos_arc", null, new NotifyAlexaMediaEugeneSSonosArcParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_everywhere_2 integration.</summary>
@@ -10026,14 +10281,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_everywhere_2", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_everywhere_2 integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaEverywhere2(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_everywhere_2 integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaEverywhere2(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_everywhere_2", null, new NotifyAlexaMediaEverywhere2Parameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_everywhere_2", null, new NotifyAlexaMediaEverywhere2Parameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_jayden integration.</summary>
@@ -10042,14 +10300,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_jayden", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_jayden integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaJayden(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_jayden integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaJayden(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_jayden", null, new NotifyAlexaMediaJaydenParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_jayden", null, new NotifyAlexaMediaJaydenParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_kitchen integration.</summary>
@@ -10058,14 +10319,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_kitchen", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_kitchen integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaKitchen(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_kitchen integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaKitchen(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_kitchen", null, new NotifyAlexaMediaKitchenParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_kitchen", null, new NotifyAlexaMediaKitchenParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_last_called integration.</summary>
@@ -10074,14 +10338,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_last_called", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_last_called integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaLastCalled(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_last_called integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaLastCalled(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_last_called", null, new NotifyAlexaMediaLastCalledParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_last_called", null, new NotifyAlexaMediaLastCalledParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_lounge_sonos integration.</summary>
@@ -10090,14 +10357,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_lounge_sonos", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_lounge_sonos integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaLoungeSonos(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_lounge_sonos integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaLoungeSonos(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_lounge_sonos", null, new NotifyAlexaMediaLoungeSonosParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_lounge_sonos", null, new NotifyAlexaMediaLoungeSonosParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_master integration.</summary>
@@ -10106,14 +10376,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_master", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_master integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaMaster(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_master integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaMaster(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_master", null, new NotifyAlexaMediaMasterParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_master", null, new NotifyAlexaMediaMasterParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_master_tv_alexa integration.</summary>
@@ -10122,14 +10395,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_master_tv_alexa", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_master_tv_alexa integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaMasterTvAlexa(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_master_tv_alexa integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaMasterTvAlexa(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_master_tv_alexa", null, new NotifyAlexaMediaMasterTvAlexaParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_master_tv_alexa", null, new NotifyAlexaMediaMasterTvAlexaParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_office integration.</summary>
@@ -10138,14 +10414,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_office", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_office integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaOffice(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_office integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaOffice(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_office", null, new NotifyAlexaMediaOfficeParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_office", null, new NotifyAlexaMediaOfficeParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_playroom integration.</summary>
@@ -10154,14 +10433,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_playroom", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_playroom integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaPlayroom(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_playroom integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaPlayroom(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_playroom", null, new NotifyAlexaMediaPlayroomParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_playroom", null, new NotifyAlexaMediaPlayroomParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_spare_echo integration.</summary>
@@ -10170,14 +10452,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_spare_echo", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_spare_echo integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaSpareEcho(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_spare_echo integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaSpareEcho(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_spare_echo", null, new NotifyAlexaMediaSpareEchoParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_spare_echo", null, new NotifyAlexaMediaSpareEchoParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_this_device integration.</summary>
@@ -10186,14 +10471,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_this_device", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_this_device integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaThisDevice(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_this_device integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaThisDevice(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_this_device", null, new NotifyAlexaMediaThisDeviceParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_this_device", null, new NotifyAlexaMediaThisDeviceParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_this_device_2 integration.</summary>
@@ -10202,14 +10490,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_this_device_2", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_this_device_2 integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaThisDevice2(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_this_device_2 integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaThisDevice2(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_this_device_2", null, new NotifyAlexaMediaThisDevice2Parameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_this_device_2", null, new NotifyAlexaMediaThisDevice2Parameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the alexa_media_upstairs integration.</summary>
@@ -10218,14 +10509,17 @@ public class NotifyServices
         _haContext.CallService("notify", "alexa_media_upstairs", null, data);
     }
 
-    ///<summary>Sends a notification message using the alexa_media_upstairs integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void AlexaMediaUpstairs(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the alexa_media_upstairs integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void AlexaMediaUpstairs(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "alexa_media_upstairs", null, new NotifyAlexaMediaUpstairsParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "alexa_media_upstairs", null, new NotifyAlexaMediaUpstairsParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the eugene service.</summary>
@@ -10234,14 +10528,17 @@ public class NotifyServices
         _haContext.CallService("notify", "eugene", null, data);
     }
 
-    ///<summary>Sends a notification message using the eugene service.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void Eugene(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the eugene service.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void Eugene(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "eugene", null, new NotifyEugeneParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "eugene", null, new NotifyEugeneParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the hailey service.</summary>
@@ -10250,14 +10547,17 @@ public class NotifyServices
         _haContext.CallService("notify", "hailey", null, data);
     }
 
-    ///<summary>Sends a notification message using the hailey service.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void Hailey(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the hailey service.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void Hailey(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "hailey", null, new NotifyHaileyParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "hailey", null, new NotifyHaileyParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the lounge_tv service.</summary>
@@ -10266,14 +10566,17 @@ public class NotifyServices
         _haContext.CallService("notify", "lounge_tv", null, data);
     }
 
-    ///<summary>Sends a notification message using the lounge_tv service.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void LoungeTv(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the lounge_tv service.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void LoungeTv(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "lounge_tv", null, new NotifyLoungeTvParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "lounge_tv", null, new NotifyLoungeTvParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the master_tv service.</summary>
@@ -10282,14 +10585,17 @@ public class NotifyServices
         _haContext.CallService("notify", "master_tv", null, data);
     }
 
-    ///<summary>Sends a notification message using the master_tv service.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void MasterTv(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the master_tv service.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void MasterTv(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "master_tv", null, new NotifyMasterTvParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "master_tv", null, new NotifyMasterTvParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the mobile_app_eugenes_iphone integration.</summary>
@@ -10298,14 +10604,17 @@ public class NotifyServices
         _haContext.CallService("notify", "mobile_app_eugenes_iphone", null, data);
     }
 
-    ///<summary>Sends a notification message using the mobile_app_eugenes_iphone integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void MobileAppEugenesIphone(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the mobile_app_eugenes_iphone integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void MobileAppEugenesIphone(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "mobile_app_eugenes_iphone", null, new NotifyMobileAppEugenesIphoneParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "mobile_app_eugenes_iphone", null, new NotifyMobileAppEugenesIphoneParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the mobile_app_hailey_s_iphone integration.</summary>
@@ -10314,14 +10623,17 @@ public class NotifyServices
         _haContext.CallService("notify", "mobile_app_hailey_s_iphone", null, data);
     }
 
-    ///<summary>Sends a notification message using the mobile_app_hailey_s_iphone integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void MobileAppHaileySIphone(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the mobile_app_hailey_s_iphone integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void MobileAppHaileySIphone(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "mobile_app_hailey_s_iphone", null, new NotifyMobileAppHaileySIphoneParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "mobile_app_hailey_s_iphone", null, new NotifyMobileAppHaileySIphoneParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the mobile_app_haileys_macbook_air integration.</summary>
@@ -10330,14 +10642,17 @@ public class NotifyServices
         _haContext.CallService("notify", "mobile_app_haileys_macbook_air", null, data);
     }
 
-    ///<summary>Sends a notification message using the mobile_app_haileys_macbook_air integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void MobileAppHaileysMacbookAir(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the mobile_app_haileys_macbook_air integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void MobileAppHaileysMacbookAir(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "mobile_app_haileys_macbook_air", null, new NotifyMobileAppHaileysMacbookAirParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "mobile_app_haileys_macbook_air", null, new NotifyMobileAppHaileysMacbookAirParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the mobile_app_iphone integration.</summary>
@@ -10346,14 +10661,17 @@ public class NotifyServices
         _haContext.CallService("notify", "mobile_app_iphone", null, data);
     }
 
-    ///<summary>Sends a notification message using the mobile_app_iphone integration.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void MobileAppIphone(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the mobile_app_iphone integration.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void MobileAppIphone(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "mobile_app_iphone", null, new NotifyMobileAppIphoneParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "mobile_app_iphone", null, new NotifyMobileAppIphoneParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification message using the notify service.</summary>
@@ -10362,14 +10680,17 @@ public class NotifyServices
         _haContext.CallService("notify", "notify", null, data);
     }
 
-    ///<summary>Sends a notification message using the notify service.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void Notify(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the notify service.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void Notify(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "notify", null, new NotifyNotifyParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "notify", null, new NotifyNotifyParameters { Message = message, Title = title, Target = target, Data = data });
     }
 
     ///<summary>Sends a notification to the visible in the front-end.</summary>
@@ -10378,12 +10699,12 @@ public class NotifyServices
         _haContext.CallService("notify", "persistent_notification", null, data);
     }
 
-    ///<summary>Sends a notification to the visible in the front-end.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    public void PersistentNotification(string @message, string? @title = null)
+    /// <summary>Sends a notification to the visible in the front-end.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    public void PersistentNotification(string message, string? title = null)
     {
-        _haContext.CallService("notify", "persistent_notification", null, new NotifyPersistentNotificationParameters { Message = @message, Title = @title });
+        _haContext.CallService("notify", "persistent_notification", null, new NotifyPersistentNotificationParameters { Message = message, Title = title });
     }
 
     ///<summary>Sends a notification message using the twinstead service.</summary>
@@ -10392,19 +10713,30 @@ public class NotifyServices
         _haContext.CallService("notify", "twinstead", null, data);
     }
 
-    ///<summary>Sends a notification message using the twinstead service.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Title for your notification. eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</param>
-    ///<param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
-    public void Twinstead(string @message, string? @title = null, object? @target = null, object? @data = null)
+    /// <summary>Sends a notification message using the twinstead service.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">Title for your notification. eg: Your Garage Door Friend</param>
+    /// <param name="target">
+    ///     An array of targets to send the notification to. Optional depending on the platform. eg: platform
+    ///     specific
+    /// </param>
+    /// <param name="data">Extended information for notification. Optional depending on the platform. eg: platform specific</param>
+    public void Twinstead(string message, string? title = null, object? target = null, object? data = null)
     {
-        _haContext.CallService("notify", "twinstead", null, new NotifyTwinsteadParameters { Message = @message, Title = @title, Target = @target, Data = @data });
+        _haContext.CallService("notify", "twinstead", null, new NotifyTwinsteadParameters { Message = message, Title = title, Target = target, Data = data });
     }
 }
 
 public record NotifyAlexaMediaParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10412,18 +10744,18 @@ public record NotifyAlexaMediaParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaAaronParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10431,18 +10763,18 @@ public record NotifyAlexaMediaAaronParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaBoseQc35IiParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10450,18 +10782,18 @@ public record NotifyAlexaMediaBoseQc35IiParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaDiningParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10469,18 +10801,18 @@ public record NotifyAlexaMediaDiningParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaDownstairsParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10488,18 +10820,18 @@ public record NotifyAlexaMediaDownstairsParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaEugeneS2ndEchoDotParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10507,18 +10839,18 @@ public record NotifyAlexaMediaEugeneS2ndEchoDotParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaEugeneS5thEchoDotParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10526,18 +10858,18 @@ public record NotifyAlexaMediaEugeneS5thEchoDotParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaEugeneSFireParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10545,18 +10877,18 @@ public record NotifyAlexaMediaEugeneSFireParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaEugeneSLgOledWebos2021TvParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10564,18 +10896,18 @@ public record NotifyAlexaMediaEugeneSLgOledWebos2021TvParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaEugeneSSonosArcParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10583,18 +10915,18 @@ public record NotifyAlexaMediaEugeneSSonosArcParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaEverywhere2Parameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10602,18 +10934,18 @@ public record NotifyAlexaMediaEverywhere2Parameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaJaydenParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10621,18 +10953,18 @@ public record NotifyAlexaMediaJaydenParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaKitchenParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10640,18 +10972,18 @@ public record NotifyAlexaMediaKitchenParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaLastCalledParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10659,18 +10991,18 @@ public record NotifyAlexaMediaLastCalledParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaLoungeSonosParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10678,18 +11010,18 @@ public record NotifyAlexaMediaLoungeSonosParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaMasterParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10697,18 +11029,18 @@ public record NotifyAlexaMediaMasterParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaMasterTvAlexaParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10716,18 +11048,18 @@ public record NotifyAlexaMediaMasterTvAlexaParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaOfficeParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10735,18 +11067,18 @@ public record NotifyAlexaMediaOfficeParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaPlayroomParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10754,18 +11086,18 @@ public record NotifyAlexaMediaPlayroomParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaSpareEchoParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10773,18 +11105,18 @@ public record NotifyAlexaMediaSpareEchoParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaThisDeviceParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10792,18 +11124,18 @@ public record NotifyAlexaMediaThisDeviceParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaThisDevice2Parameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10811,18 +11143,18 @@ public record NotifyAlexaMediaThisDevice2Parameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyAlexaMediaUpstairsParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10830,18 +11162,18 @@ public record NotifyAlexaMediaUpstairsParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyEugeneParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10849,18 +11181,18 @@ public record NotifyEugeneParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyHaileyParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10868,18 +11200,18 @@ public record NotifyHaileyParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyLoungeTvParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10887,18 +11219,18 @@ public record NotifyLoungeTvParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyMasterTvParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10906,18 +11238,18 @@ public record NotifyMasterTvParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyMobileAppEugenesIphoneParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10925,18 +11257,18 @@ public record NotifyMobileAppEugenesIphoneParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyMobileAppHaileySIphoneParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10944,18 +11276,18 @@ public record NotifyMobileAppHaileySIphoneParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyMobileAppHaileysMacbookAirParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10963,18 +11295,18 @@ public record NotifyMobileAppHaileysMacbookAirParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyMobileAppIphoneParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -10982,18 +11314,18 @@ public record NotifyMobileAppIphoneParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyNotifyParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -11001,14 +11333,6 @@ public record NotifyNotifyParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public record NotifyPersistentNotificationParameters
@@ -11024,6 +11348,14 @@ public record NotifyPersistentNotificationParameters
 
 public record NotifyTwinsteadParameters
 {
+    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("data")]
+    public object? Data { get; init; }
+
+    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("message")]
     public string? Message { get; init; }
@@ -11031,14 +11363,6 @@ public record NotifyTwinsteadParameters
     ///<summary>Title for your notification. eg: Your Garage Door Friend</summary>
     [JsonPropertyName("title")]
     public string? Title { get; init; }
-
-    ///<summary>An array of targets to send the notification to. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Extended information for notification. Optional depending on the platform. eg: platform specific</summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
 }
 
 public class NumberServices
@@ -11050,19 +11374,19 @@ public class NumberServices
         _haContext = haContext;
     }
 
-    ///<summary>Set the value of a Number entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set the value of a Number entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetValue(ServiceTarget target, NumberSetValueParameters data)
     {
         _haContext.CallService("number", "set_value", target, data);
     }
 
-    ///<summary>Set the value of a Number entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="value">The target value the entity should be set to. eg: 42</param>
-    public void SetValue(ServiceTarget target, string? @value = null)
+    /// <summary>Set the value of a Number entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="value">The target value the entity should be set to. eg: 42</param>
+    public void SetValue(ServiceTarget target, string? value = null)
     {
-        _haContext.CallService("number", "set_value", target, new NumberSetValueParameters { Value = @value });
+        _haContext.CallService("number", "set_value", target, new NumberSetValueParameters { Value = value });
     }
 }
 
@@ -11085,19 +11409,19 @@ public class OctopusagileServices
     ///<summary>Update rates entity, switch entities on/off based on the timers entity.</summary>
     public void HalfHour()
     {
-        _haContext.CallService("octopusagile", "half_hour", null);
+        _haContext.CallService("octopusagile", "half_hour");
     }
 
     ///<summary>Get the most recent consumption data from the Octopus API</summary>
     public void UpdateConsumption()
     {
-        _haContext.CallService("octopusagile", "update_consumption", null);
+        _haContext.CallService("octopusagile", "update_consumption");
     }
 
     ///<summary>Manually populate timers and moneymakers.</summary>
     public void UpdateTimers()
     {
-        _haContext.CallService("octopusagile", "update_timers", null);
+        _haContext.CallService("octopusagile", "update_timers");
     }
 }
 
@@ -11116,13 +11440,13 @@ public class PersistentNotificationServices
         _haContext.CallService("persistent_notification", "create", null, data);
     }
 
-    ///<summary>Show a notification in the frontend.</summary>
-    ///<param name="message">Message body of the notification. [Templates accepted] eg: Please check your configuration.yaml.</param>
-    ///<param name="title">Optional title for your notification. [Templates accepted] eg: Test notification</param>
-    ///<param name="notificationId">Target ID of the notification, will replace a notification with the same ID. eg: 1234</param>
-    public void Create(string @message, string? @title = null, string? @notificationId = null)
+    /// <summary>Show a notification in the frontend.</summary>
+    /// <param name="message">Message body of the notification. [Templates accepted] eg: Please check your configuration.yaml.</param>
+    /// <param name="title">Optional title for your notification. [Templates accepted] eg: Test notification</param>
+    /// <param name="notificationId">Target ID of the notification, will replace a notification with the same ID. eg: 1234</param>
+    public void Create(string message, string? title = null, string? notificationId = null)
     {
-        _haContext.CallService("persistent_notification", "create", null, new PersistentNotificationCreateParameters { Message = @message, Title = @title, NotificationId = @notificationId });
+        _haContext.CallService("persistent_notification", "create", null, new PersistentNotificationCreateParameters { Message = message, Title = title, NotificationId = notificationId });
     }
 
     ///<summary>Remove a notification from the frontend.</summary>
@@ -11131,11 +11455,11 @@ public class PersistentNotificationServices
         _haContext.CallService("persistent_notification", "dismiss", null, data);
     }
 
-    ///<summary>Remove a notification from the frontend.</summary>
-    ///<param name="notificationId">Target ID of the notification, which should be removed. eg: 1234</param>
-    public void Dismiss(string @notificationId)
+    /// <summary>Remove a notification from the frontend.</summary>
+    /// <param name="notificationId">Target ID of the notification, which should be removed. eg: 1234</param>
+    public void Dismiss(string notificationId)
     {
-        _haContext.CallService("persistent_notification", "dismiss", null, new PersistentNotificationDismissParameters { NotificationId = @notificationId });
+        _haContext.CallService("persistent_notification", "dismiss", null, new PersistentNotificationDismissParameters { NotificationId = notificationId });
     }
 
     ///<summary>Mark a notification read.</summary>
@@ -11144,11 +11468,11 @@ public class PersistentNotificationServices
         _haContext.CallService("persistent_notification", "mark_read", null, data);
     }
 
-    ///<summary>Mark a notification read.</summary>
-    ///<param name="notificationId">Target ID of the notification, which should be mark read. eg: 1234</param>
-    public void MarkRead(string @notificationId)
+    /// <summary>Mark a notification read.</summary>
+    /// <param name="notificationId">Target ID of the notification, which should be mark read. eg: 1234</param>
+    public void MarkRead(string notificationId)
     {
-        _haContext.CallService("persistent_notification", "mark_read", null, new PersistentNotificationMarkReadParameters { NotificationId = @notificationId });
+        _haContext.CallService("persistent_notification", "mark_read", null, new PersistentNotificationMarkReadParameters { NotificationId = notificationId });
     }
 }
 
@@ -11158,13 +11482,13 @@ public record PersistentNotificationCreateParameters
     [JsonPropertyName("message")]
     public string? Message { get; init; }
 
-    ///<summary>Optional title for your notification. [Templates accepted] eg: Test notification</summary>
-    [JsonPropertyName("title")]
-    public string? Title { get; init; }
-
     ///<summary>Target ID of the notification, will replace a notification with the same ID. eg: 1234</summary>
     [JsonPropertyName("notification_id")]
     public string? NotificationId { get; init; }
+
+    ///<summary>Optional title for your notification. [Templates accepted] eg: Test notification</summary>
+    [JsonPropertyName("title")]
+    public string? Title { get; init; }
 }
 
 public record PersistentNotificationDismissParameters
@@ -11193,7 +11517,7 @@ public class PersonServices
     ///<summary>Reload the person configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("person", "reload", null);
+        _haContext.CallService("person", "reload");
     }
 }
 
@@ -11206,19 +11530,19 @@ public class PiHoleServices
         _haContext = haContext;
     }
 
-    ///<summary>Disable configured Pi-hole(s) for an amount of time</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Disable configured Pi-hole(s) for an amount of time</summary>
+    /// <param name="target">The target for this service call</param>
     public void Disable(ServiceTarget target, PiHoleDisableParameters data)
     {
         _haContext.CallService("pi_hole", "disable", target, data);
     }
 
-    ///<summary>Disable configured Pi-hole(s) for an amount of time</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="duration">Time that the Pi-hole should be disabled for eg: 00:00:15</param>
-    public void Disable(ServiceTarget target, string @duration)
+    /// <summary>Disable configured Pi-hole(s) for an amount of time</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="duration">Time that the Pi-hole should be disabled for eg: 00:00:15</param>
+    public void Disable(ServiceTarget target, string duration)
     {
-        _haContext.CallService("pi_hole", "disable", target, new PiHoleDisableParameters { Duration = @duration });
+        _haContext.CallService("pi_hole", "disable", target, new PiHoleDisableParameters { Duration = duration });
     }
 }
 
@@ -11241,7 +11565,7 @@ public class PingServices
     ///<summary>Reload all ping entities.</summary>
     public void Reload()
     {
-        _haContext.CallService("ping", "reload", null);
+        _haContext.CallService("ping", "reload");
     }
 }
 
@@ -11257,13 +11581,13 @@ public class RecorderServices
     ///<summary>Stop the recording of events and state changes</summary>
     public void Disable()
     {
-        _haContext.CallService("recorder", "disable", null);
+        _haContext.CallService("recorder", "disable");
     }
 
     ///<summary>Start the recording of events and state changes</summary>
     public void Enable()
     {
-        _haContext.CallService("recorder", "enable", null);
+        _haContext.CallService("recorder", "enable");
     }
 
     ///<summary>Start purge task - to clean up old data from your database.</summary>
@@ -11272,45 +11596,48 @@ public class RecorderServices
         _haContext.CallService("recorder", "purge", null, data);
     }
 
-    ///<summary>Start purge task - to clean up old data from your database.</summary>
-    ///<param name="keepDays">Number of history days to keep in database after purge.</param>
-    ///<param name="repack">Attempt to save disk space by rewriting the entire database file.</param>
-    ///<param name="applyFilter">Apply entity_id and event_type filter in addition to time based purge.</param>
-    public void Purge(long? @keepDays = null, bool? @repack = null, bool? @applyFilter = null)
+    /// <summary>Start purge task - to clean up old data from your database.</summary>
+    /// <param name="keepDays">Number of history days to keep in database after purge.</param>
+    /// <param name="repack">Attempt to save disk space by rewriting the entire database file.</param>
+    /// <param name="applyFilter">Apply entity_id and event_type filter in addition to time based purge.</param>
+    public void Purge(long? keepDays = null, bool? repack = null, bool? applyFilter = null)
     {
-        _haContext.CallService("recorder", "purge", null, new RecorderPurgeParameters { KeepDays = @keepDays, Repack = @repack, ApplyFilter = @applyFilter });
+        _haContext.CallService("recorder", "purge", null, new RecorderPurgeParameters { KeepDays = keepDays, Repack = repack, ApplyFilter = applyFilter });
     }
 
-    ///<summary>Start purge task to remove specific entities from your database.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Start purge task to remove specific entities from your database.</summary>
+    /// <param name="target">The target for this service call</param>
     public void PurgeEntities(ServiceTarget target, RecorderPurgeEntitiesParameters data)
     {
         _haContext.CallService("recorder", "purge_entities", target, data);
     }
 
-    ///<summary>Start purge task to remove specific entities from your database.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="domains">List the domains that need to be removed from the recorder database. eg: sun</param>
-    ///<param name="entityGlobs">List the regular expressions to select entities for removal from the recorder database. eg: domain*.object_id*</param>
-    public void PurgeEntities(ServiceTarget target, object? @domains = null, object? @entityGlobs = null)
+    /// <summary>Start purge task to remove specific entities from your database.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="domains">List the domains that need to be removed from the recorder database. eg: sun</param>
+    /// <param name="entityGlobs">
+    ///     List the regular expressions to select entities for removal from the recorder database. eg:
+    ///     domain*.object_id*
+    /// </param>
+    public void PurgeEntities(ServiceTarget target, object? domains = null, object? entityGlobs = null)
     {
-        _haContext.CallService("recorder", "purge_entities", target, new RecorderPurgeEntitiesParameters { Domains = @domains, EntityGlobs = @entityGlobs });
+        _haContext.CallService("recorder", "purge_entities", target, new RecorderPurgeEntitiesParameters { Domains = domains, EntityGlobs = entityGlobs });
     }
 }
 
 public record RecorderPurgeParameters
 {
-    ///<summary>Number of history days to keep in database after purge.</summary>
-    [JsonPropertyName("keep_days")]
-    public long? KeepDays { get; init; }
+    ///<summary>Apply entity_id and event_type filter in addition to time based purge.</summary>
+    [JsonPropertyName("apply_filter")]
+    public bool? ApplyFilter { get; init; }
 
     ///<summary>Attempt to save disk space by rewriting the entire database file.</summary>
     [JsonPropertyName("repack")]
     public bool? Repack { get; init; }
 
-    ///<summary>Apply entity_id and event_type filter in addition to time based purge.</summary>
-    [JsonPropertyName("apply_filter")]
-    public bool? ApplyFilter { get; init; }
+    ///<summary>Number of history days to keep in database after purge.</summary>
+    [JsonPropertyName("keep_days")]
+    public long? KeepDays { get; init; }
 }
 
 public record RecorderPurgeEntitiesParameters
@@ -11333,106 +11660,110 @@ public class RemoteServices
         _haContext = haContext;
     }
 
-    ///<summary>Deletes a command or a list of commands from the database.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Deletes a command or a list of commands from the database.</summary>
+    /// <param name="target">The target for this service call</param>
     public void DeleteCommand(ServiceTarget target, RemoteDeleteCommandParameters data)
     {
         _haContext.CallService("remote", "delete_command", target, data);
     }
 
-    ///<summary>Deletes a command or a list of commands from the database.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="device">Name of the device from which commands will be deleted. eg: television</param>
-    ///<param name="command">A single command or a list of commands to delete. eg: Mute</param>
-    public void DeleteCommand(ServiceTarget target, object @command, string? @device = null)
+    /// <summary>Deletes a command or a list of commands from the database.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="device">Name of the device from which commands will be deleted. eg: television</param>
+    /// <param name="command">A single command or a list of commands to delete. eg: Mute</param>
+    public void DeleteCommand(ServiceTarget target, object command, string? device = null)
     {
-        _haContext.CallService("remote", "delete_command", target, new RemoteDeleteCommandParameters { Device = @device, Command = @command });
+        _haContext.CallService("remote", "delete_command", target, new RemoteDeleteCommandParameters { Device = device, Command = command });
     }
 
-    ///<summary>Learns a command or a list of commands from a device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Learns a command or a list of commands from a device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void LearnCommand(ServiceTarget target, RemoteLearnCommandParameters data)
     {
         _haContext.CallService("remote", "learn_command", target, data);
     }
 
-    ///<summary>Learns a command or a list of commands from a device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="device">Device ID to learn command from. eg: television</param>
-    ///<param name="command">A single command or a list of commands to learn. eg: Turn on</param>
-    ///<param name="commandType">The type of command to be learned.</param>
-    ///<param name="alternative">If code must be stored as alternative (useful for discrete remotes).</param>
-    ///<param name="timeout">Timeout for the command to be learned.</param>
-    public void LearnCommand(ServiceTarget target, string? @device = null, object? @command = null, string? @commandType = null, bool? @alternative = null, long? @timeout = null)
+    /// <summary>Learns a command or a list of commands from a device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="device">Device ID to learn command from. eg: television</param>
+    /// <param name="command">A single command or a list of commands to learn. eg: Turn on</param>
+    /// <param name="commandType">The type of command to be learned.</param>
+    /// <param name="alternative">If code must be stored as alternative (useful for discrete remotes).</param>
+    /// <param name="timeout">Timeout for the command to be learned.</param>
+    public void LearnCommand(ServiceTarget target, string? device = null, object? command = null, string? commandType = null, bool? alternative = null, long? timeout = null)
     {
-        _haContext.CallService("remote", "learn_command", target, new RemoteLearnCommandParameters { Device = @device, Command = @command, CommandType = @commandType, Alternative = @alternative, Timeout = @timeout });
+        _haContext.CallService("remote", "learn_command", target, new RemoteLearnCommandParameters { Device = device, Command = command, CommandType = commandType, Alternative = alternative, Timeout = timeout });
     }
 
-    ///<summary>Sends a command or a list of commands to a device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Sends a command or a list of commands to a device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SendCommand(ServiceTarget target, RemoteSendCommandParameters data)
     {
         _haContext.CallService("remote", "send_command", target, data);
     }
 
-    ///<summary>Sends a command or a list of commands to a device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="device">Device ID to send command to. eg: 32756745</param>
-    ///<param name="command">A single command or a list of commands to send. eg: Play</param>
-    ///<param name="numRepeats">The number of times you want to repeat the command(s).</param>
-    ///<param name="delaySecs">The time you want to wait in between repeated commands.</param>
-    ///<param name="holdSecs">The time you want to have it held before the release is send.</param>
-    public void SendCommand(ServiceTarget target, string @command, string? @device = null, long? @numRepeats = null, double? @delaySecs = null, double? @holdSecs = null)
+    /// <summary>Sends a command or a list of commands to a device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="device">Device ID to send command to. eg: 32756745</param>
+    /// <param name="command">A single command or a list of commands to send. eg: Play</param>
+    /// <param name="numRepeats">The number of times you want to repeat the command(s).</param>
+    /// <param name="delaySecs">The time you want to wait in between repeated commands.</param>
+    /// <param name="holdSecs">The time you want to have it held before the release is send.</param>
+    public void SendCommand(ServiceTarget target, string command, string? device = null, long? numRepeats = null, double? delaySecs = null, double? holdSecs = null)
     {
-        _haContext.CallService("remote", "send_command", target, new RemoteSendCommandParameters { Device = @device, Command = @command, NumRepeats = @numRepeats, DelaySecs = @delaySecs, HoldSecs = @holdSecs });
+        _haContext.CallService("remote", "send_command", target, new RemoteSendCommandParameters { Device = device, Command = command, NumRepeats = numRepeats, DelaySecs = delaySecs, HoldSecs = holdSecs });
     }
 
-    ///<summary>Toggles a device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggles a device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("remote", "toggle", target);
     }
 
-    ///<summary>Sends the Power Off Command.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Sends the Power Off Command.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("remote", "turn_off", target);
     }
 
-    ///<summary>Sends the Power On Command.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Sends the Power On Command.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target, RemoteTurnOnParameters data)
     {
         _haContext.CallService("remote", "turn_on", target, data);
     }
 
-    ///<summary>Sends the Power On Command.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="activity">Activity ID or Activity Name to start. eg: BedroomTV</param>
-    public void TurnOn(ServiceTarget target, string? @activity = null)
+    /// <summary>Sends the Power On Command.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="activity">Activity ID or Activity Name to start. eg: BedroomTV</param>
+    public void TurnOn(ServiceTarget target, string? activity = null)
     {
-        _haContext.CallService("remote", "turn_on", target, new RemoteTurnOnParameters { Activity = @activity });
+        _haContext.CallService("remote", "turn_on", target, new RemoteTurnOnParameters { Activity = activity });
     }
 }
 
 public record RemoteDeleteCommandParameters
 {
-    ///<summary>Name of the device from which commands will be deleted. eg: television</summary>
-    [JsonPropertyName("device")]
-    public string? Device { get; init; }
-
     ///<summary>A single command or a list of commands to delete. eg: Mute</summary>
     [JsonPropertyName("command")]
     public object? Command { get; init; }
+
+    ///<summary>Name of the device from which commands will be deleted. eg: television</summary>
+    [JsonPropertyName("device")]
+    public string? Device { get; init; }
 }
 
 public record RemoteLearnCommandParameters
 {
-    ///<summary>Device ID to learn command from. eg: television</summary>
-    [JsonPropertyName("device")]
-    public string? Device { get; init; }
+    ///<summary>If code must be stored as alternative (useful for discrete remotes).</summary>
+    [JsonPropertyName("alternative")]
+    public bool? Alternative { get; init; }
+
+    ///<summary>Timeout for the command to be learned.</summary>
+    [JsonPropertyName("timeout")]
+    public long? Timeout { get; init; }
 
     ///<summary>A single command or a list of commands to learn. eg: Turn on</summary>
     [JsonPropertyName("command")]
@@ -11442,29 +11773,13 @@ public record RemoteLearnCommandParameters
     [JsonPropertyName("command_type")]
     public string? CommandType { get; init; }
 
-    ///<summary>If code must be stored as alternative (useful for discrete remotes).</summary>
-    [JsonPropertyName("alternative")]
-    public bool? Alternative { get; init; }
-
-    ///<summary>Timeout for the command to be learned.</summary>
-    [JsonPropertyName("timeout")]
-    public long? Timeout { get; init; }
+    ///<summary>Device ID to learn command from. eg: television</summary>
+    [JsonPropertyName("device")]
+    public string? Device { get; init; }
 }
 
 public record RemoteSendCommandParameters
 {
-    ///<summary>Device ID to send command to. eg: 32756745</summary>
-    [JsonPropertyName("device")]
-    public string? Device { get; init; }
-
-    ///<summary>A single command or a list of commands to send. eg: Play</summary>
-    [JsonPropertyName("command")]
-    public string? Command { get; init; }
-
-    ///<summary>The number of times you want to repeat the command(s).</summary>
-    [JsonPropertyName("num_repeats")]
-    public long? NumRepeats { get; init; }
-
     ///<summary>The time you want to wait in between repeated commands.</summary>
     [JsonPropertyName("delay_secs")]
     public double? DelaySecs { get; init; }
@@ -11472,6 +11787,18 @@ public record RemoteSendCommandParameters
     ///<summary>The time you want to have it held before the release is send.</summary>
     [JsonPropertyName("hold_secs")]
     public double? HoldSecs { get; init; }
+
+    ///<summary>The number of times you want to repeat the command(s).</summary>
+    [JsonPropertyName("num_repeats")]
+    public long? NumRepeats { get; init; }
+
+    ///<summary>A single command or a list of commands to send. eg: Play</summary>
+    [JsonPropertyName("command")]
+    public string? Command { get; init; }
+
+    ///<summary>Device ID to send command to. eg: 32756745</summary>
+    [JsonPropertyName("device")]
+    public string? Device { get; init; }
 }
 
 public record RemoteTurnOnParameters
@@ -11493,7 +11820,7 @@ public class RingServices
     ///<summary>Updates the data we have for all your ring devices</summary>
     public void Update()
     {
-        _haContext.CallService("ring", "update", null);
+        _haContext.CallService("ring", "update");
     }
 }
 
@@ -11512,12 +11839,15 @@ public class SceneServices
         _haContext.CallService("scene", "apply", null, data);
     }
 
-    ///<summary>Activate a scene with configuration.</summary>
-    ///<param name="entities">The entities and the state that they need to be. eg: {"light.kitchen": "on", "light.ceiling": {"state": "on", "brightness": 80}}</param>
-    ///<param name="transition">Transition duration it takes to bring devices to the state defined in the scene.</param>
-    public void Apply(object @entities, long? @transition = null)
+    /// <summary>Activate a scene with configuration.</summary>
+    /// <param name="entities">
+    ///     The entities and the state that they need to be. eg: {"light.kitchen": "on", "light.ceiling":
+    ///     {"state": "on", "brightness": 80}}
+    /// </param>
+    /// <param name="transition">Transition duration it takes to bring devices to the state defined in the scene.</param>
+    public void Apply(object entities, long? transition = null)
     {
-        _haContext.CallService("scene", "apply", null, new SceneApplyParameters { Entities = @entities, Transition = @transition });
+        _haContext.CallService("scene", "apply", null, new SceneApplyParameters { Entities = entities, Transition = transition });
     }
 
     ///<summary>Creates a new scene.</summary>
@@ -11526,61 +11856,70 @@ public class SceneServices
         _haContext.CallService("scene", "create", null, data);
     }
 
-    ///<summary>Creates a new scene.</summary>
-    ///<param name="sceneId">The entity_id of the new scene. eg: all_lights</param>
-    ///<param name="entities">The entities to control with the scene. eg: {"light.tv_back_light": "on", "light.ceiling": {"state": "on", "brightness": 200}}</param>
-    ///<param name="snapshotEntities">The entities of which a snapshot is to be taken eg: ["light.ceiling", "light.kitchen"]</param>
-    public void Create(string @sceneId, object? @entities = null, object? @snapshotEntities = null)
+    /// <summary>Creates a new scene.</summary>
+    /// <param name="sceneId">The entity_id of the new scene. eg: all_lights</param>
+    /// <param name="entities">
+    ///     The entities to control with the scene. eg: {"light.tv_back_light": "on", "light.ceiling":
+    ///     {"state": "on", "brightness": 200}}
+    /// </param>
+    /// <param name="snapshotEntities">The entities of which a snapshot is to be taken eg: ["light.ceiling", "light.kitchen"]</param>
+    public void Create(string sceneId, object? entities = null, object? snapshotEntities = null)
     {
-        _haContext.CallService("scene", "create", null, new SceneCreateParameters { SceneId = @sceneId, Entities = @entities, SnapshotEntities = @snapshotEntities });
+        _haContext.CallService("scene", "create", null, new SceneCreateParameters { SceneId = sceneId, Entities = entities, SnapshotEntities = snapshotEntities });
     }
 
     ///<summary>Reload the scene configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("scene", "reload", null);
+        _haContext.CallService("scene", "reload");
     }
 
-    ///<summary>Activate a scene.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Activate a scene.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target, SceneTurnOnParameters data)
     {
         _haContext.CallService("scene", "turn_on", target, data);
     }
 
-    ///<summary>Activate a scene.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="transition">Transition duration it takes to bring devices to the state defined in the scene.</param>
-    public void TurnOn(ServiceTarget target, long? @transition = null)
+    /// <summary>Activate a scene.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="transition">Transition duration it takes to bring devices to the state defined in the scene.</param>
+    public void TurnOn(ServiceTarget target, long? transition = null)
     {
-        _haContext.CallService("scene", "turn_on", target, new SceneTurnOnParameters { Transition = @transition });
+        _haContext.CallService("scene", "turn_on", target, new SceneTurnOnParameters { Transition = transition });
     }
 }
 
 public record SceneApplyParameters
 {
-    ///<summary>The entities and the state that they need to be. eg: {"light.kitchen": "on", "light.ceiling": {"state": "on", "brightness": 80}}</summary>
-    [JsonPropertyName("entities")]
-    public object? Entities { get; init; }
-
     ///<summary>Transition duration it takes to bring devices to the state defined in the scene.</summary>
     [JsonPropertyName("transition")]
     public long? Transition { get; init; }
+
+    /// <summary>
+    ///     The entities and the state that they need to be. eg: {"light.kitchen": "on", "light.ceiling": {"state": "on",
+    ///     "brightness": 80}}
+    /// </summary>
+    [JsonPropertyName("entities")]
+    public object? Entities { get; init; }
 }
 
 public record SceneCreateParameters
 {
-    ///<summary>The entity_id of the new scene. eg: all_lights</summary>
-    [JsonPropertyName("scene_id")]
-    public string? SceneId { get; init; }
-
-    ///<summary>The entities to control with the scene. eg: {"light.tv_back_light": "on", "light.ceiling": {"state": "on", "brightness": 200}}</summary>
+    /// <summary>
+    ///     The entities to control with the scene. eg: {"light.tv_back_light": "on", "light.ceiling": {"state": "on",
+    ///     "brightness": 200}}
+    /// </summary>
     [JsonPropertyName("entities")]
     public object? Entities { get; init; }
 
     ///<summary>The entities of which a snapshot is to be taken eg: ["light.ceiling", "light.kitchen"]</summary>
     [JsonPropertyName("snapshot_entities")]
     public object? SnapshotEntities { get; init; }
+
+    ///<summary>The entity_id of the new scene. eg: all_lights</summary>
+    [JsonPropertyName("scene_id")]
+    public string? SceneId { get; init; }
 }
 
 public record SceneTurnOnParameters
@@ -11605,16 +11944,20 @@ public class SchedulerServices
         _haContext.CallService("scheduler", "add", null, data);
     }
 
-    ///<summary>Create a new schedule entity</summary>
-    ///<param name="weekdays">Days of the week for which the schedule should be repeated eg: ["daily"]</param>
-    ///<param name="startDate">Date from which schedule should be executed eg: ["2021-01-01"]</param>
-    ///<param name="endDate">Date until which schedule should be executed eg: ["2021-12-31"]</param>
-    ///<param name="timeslots">list of timeslots with their actions and optionally conditions (should be kept the same for all timeslots) eg: [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp", service_data: {brightness: 200}}]}]</param>
-    ///<param name="repeatType">Control what happens after the schedule is triggered eg: "repeat"</param>
-    ///<param name="name">Friendly name for the schedule eg: My schedule</param>
-    public void Add(object @timeslots, string @repeatType, object? @weekdays = null, object? @startDate = null, object? @endDate = null, string? @name = null)
+    /// <summary>Create a new schedule entity</summary>
+    /// <param name="weekdays">Days of the week for which the schedule should be repeated eg: ["daily"]</param>
+    /// <param name="startDate">Date from which schedule should be executed eg: ["2021-01-01"]</param>
+    /// <param name="endDate">Date until which schedule should be executed eg: ["2021-12-31"]</param>
+    /// <param name="timeslots">
+    ///     list of timeslots with their actions and optionally conditions (should be kept the same for all
+    ///     timeslots) eg: [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp",
+    ///     service_data: {brightness: 200}}]}]
+    /// </param>
+    /// <param name="repeatType">Control what happens after the schedule is triggered eg: "repeat"</param>
+    /// <param name="name">Friendly name for the schedule eg: My schedule</param>
+    public void Add(object timeslots, string repeatType, object? weekdays = null, object? startDate = null, object? endDate = null, string? name = null)
     {
-        _haContext.CallService("scheduler", "add", null, new SchedulerAddParameters { Weekdays = @weekdays, StartDate = @startDate, EndDate = @endDate, Timeslots = @timeslots, RepeatType = @repeatType, Name = @name });
+        _haContext.CallService("scheduler", "add", null, new SchedulerAddParameters { Weekdays = weekdays, StartDate = startDate, EndDate = endDate, Timeslots = timeslots, RepeatType = repeatType, Name = name });
     }
 
     ///<summary>Duplicate a schedule entity</summary>
@@ -11623,12 +11966,12 @@ public class SchedulerServices
         _haContext.CallService("scheduler", "copy", null, data);
     }
 
-    ///<summary>Duplicate a schedule entity</summary>
-    ///<param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
-    ///<param name="name">Friendly name for the copied schedule eg: My schedule</param>
-    public void Copy(string @entityId, string? @name = null)
+    /// <summary>Duplicate a schedule entity</summary>
+    /// <param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
+    /// <param name="name">Friendly name for the copied schedule eg: My schedule</param>
+    public void Copy(string entityId, string? name = null)
     {
-        _haContext.CallService("scheduler", "copy", null, new SchedulerCopyParameters { EntityId = @entityId, Name = @name });
+        _haContext.CallService("scheduler", "copy", null, new SchedulerCopyParameters { EntityId = entityId, Name = name });
     }
 
     ///<summary>Edit a schedule entity</summary>
@@ -11637,17 +11980,21 @@ public class SchedulerServices
         _haContext.CallService("scheduler", "edit", null, data);
     }
 
-    ///<summary>Edit a schedule entity</summary>
-    ///<param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
-    ///<param name="weekdays">Days of the week for which the schedule should be repeated eg: ["daily"]</param>
-    ///<param name="startDate">Date from which schedule should be executed eg: ["2021-01-01"]</param>
-    ///<param name="endDate">Date until which schedule should be executed eg: ["2021-12-31"]</param>
-    ///<param name="timeslots">list of timeslots with their actions and optionally conditions (should be kept the same for all timeslots) eg: [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp", service_data: {brightness: 200}}]}]</param>
-    ///<param name="repeatType">Control what happens after the schedule is triggered eg: "repeat"</param>
-    ///<param name="name">Friendly name for the schedule eg: My schedule</param>
-    public void Edit(string @entityId, object? @weekdays = null, object? @startDate = null, object? @endDate = null, object? @timeslots = null, string? @repeatType = null, string? @name = null)
+    /// <summary>Edit a schedule entity</summary>
+    /// <param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
+    /// <param name="weekdays">Days of the week for which the schedule should be repeated eg: ["daily"]</param>
+    /// <param name="startDate">Date from which schedule should be executed eg: ["2021-01-01"]</param>
+    /// <param name="endDate">Date until which schedule should be executed eg: ["2021-12-31"]</param>
+    /// <param name="timeslots">
+    ///     list of timeslots with their actions and optionally conditions (should be kept the same for all
+    ///     timeslots) eg: [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp",
+    ///     service_data: {brightness: 200}}]}]
+    /// </param>
+    /// <param name="repeatType">Control what happens after the schedule is triggered eg: "repeat"</param>
+    /// <param name="name">Friendly name for the schedule eg: My schedule</param>
+    public void Edit(string entityId, object? weekdays = null, object? startDate = null, object? endDate = null, object? timeslots = null, string? repeatType = null, string? name = null)
     {
-        _haContext.CallService("scheduler", "edit", null, new SchedulerEditParameters { EntityId = @entityId, Weekdays = @weekdays, StartDate = @startDate, EndDate = @endDate, Timeslots = @timeslots, RepeatType = @repeatType, Name = @name });
+        _haContext.CallService("scheduler", "edit", null, new SchedulerEditParameters { EntityId = entityId, Weekdays = weekdays, StartDate = startDate, EndDate = endDate, Timeslots = timeslots, RepeatType = repeatType, Name = name });
     }
 
     ///<summary>Remove a schedule entity</summary>
@@ -11656,11 +12003,11 @@ public class SchedulerServices
         _haContext.CallService("scheduler", "remove", null, data);
     }
 
-    ///<summary>Remove a schedule entity</summary>
-    ///<param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
-    public void Remove(string @entityId)
+    /// <summary>Remove a schedule entity</summary>
+    /// <param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
+    public void Remove(string entityId)
     {
-        _haContext.CallService("scheduler", "remove", null, new SchedulerRemoveParameters { EntityId = @entityId });
+        _haContext.CallService("scheduler", "remove", null, new SchedulerRemoveParameters { EntityId = entityId });
     }
 
     ///<summary>Execute the action of a schedule, optionally at a given time.</summary>
@@ -11669,40 +12016,44 @@ public class SchedulerServices
         _haContext.CallService("scheduler", "run_action", null, data);
     }
 
-    ///<summary>Execute the action of a schedule, optionally at a given time.</summary>
-    ///<param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
-    ///<param name="time">Time for which to evaluate the action (only useful for schedules with multiple timeslot) eg: "12:00"</param>
-    public void RunAction(string @entityId, DateTime? @time = null)
+    /// <summary>Execute the action of a schedule, optionally at a given time.</summary>
+    /// <param name="entityId">Identifier of the scheduler entity. eg: switch.schedule_abcdef</param>
+    /// <param name="time">Time for which to evaluate the action (only useful for schedules with multiple timeslot) eg: "12:00"</param>
+    public void RunAction(string entityId, DateTime? time = null)
     {
-        _haContext.CallService("scheduler", "run_action", null, new SchedulerRunActionParameters { EntityId = @entityId, Time = @time });
+        _haContext.CallService("scheduler", "run_action", null, new SchedulerRunActionParameters { EntityId = entityId, Time = time });
     }
 }
 
 public record SchedulerAddParameters
 {
-    ///<summary>Days of the week for which the schedule should be repeated eg: ["daily"]</summary>
-    [JsonPropertyName("weekdays")]
-    public object? Weekdays { get; init; }
+    ///<summary>Date until which schedule should be executed eg: ["2021-12-31"]</summary>
+    [JsonPropertyName("end_date")]
+    public object? EndDate { get; init; }
 
     ///<summary>Date from which schedule should be executed eg: ["2021-01-01"]</summary>
     [JsonPropertyName("start_date")]
     public object? StartDate { get; init; }
 
-    ///<summary>Date until which schedule should be executed eg: ["2021-12-31"]</summary>
-    [JsonPropertyName("end_date")]
-    public object? EndDate { get; init; }
-
-    ///<summary>list of timeslots with their actions and optionally conditions (should be kept the same for all timeslots) eg: [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp", service_data: {brightness: 200}}]}]</summary>
+    /// <summary>
+    ///     list of timeslots with their actions and optionally conditions (should be kept the same for all timeslots) eg:
+    ///     [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp", service_data:
+    ///     {brightness: 200}}]}]
+    /// </summary>
     [JsonPropertyName("timeslots")]
     public object? Timeslots { get; init; }
 
-    ///<summary>Control what happens after the schedule is triggered eg: "repeat"</summary>
-    [JsonPropertyName("repeat_type")]
-    public string? RepeatType { get; init; }
+    ///<summary>Days of the week for which the schedule should be repeated eg: ["daily"]</summary>
+    [JsonPropertyName("weekdays")]
+    public object? Weekdays { get; init; }
 
     ///<summary>Friendly name for the schedule eg: My schedule</summary>
     [JsonPropertyName("name")]
     public string? Name { get; init; }
+
+    ///<summary>Control what happens after the schedule is triggered eg: "repeat"</summary>
+    [JsonPropertyName("repeat_type")]
+    public string? RepeatType { get; init; }
 }
 
 public record SchedulerCopyParameters
@@ -11718,33 +12069,37 @@ public record SchedulerCopyParameters
 
 public record SchedulerEditParameters
 {
-    ///<summary>Identifier of the scheduler entity. eg: switch.schedule_abcdef</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
-    ///<summary>Days of the week for which the schedule should be repeated eg: ["daily"]</summary>
-    [JsonPropertyName("weekdays")]
-    public object? Weekdays { get; init; }
+    ///<summary>Date until which schedule should be executed eg: ["2021-12-31"]</summary>
+    [JsonPropertyName("end_date")]
+    public object? EndDate { get; init; }
 
     ///<summary>Date from which schedule should be executed eg: ["2021-01-01"]</summary>
     [JsonPropertyName("start_date")]
     public object? StartDate { get; init; }
 
-    ///<summary>Date until which schedule should be executed eg: ["2021-12-31"]</summary>
-    [JsonPropertyName("end_date")]
-    public object? EndDate { get; init; }
-
-    ///<summary>list of timeslots with their actions and optionally conditions (should be kept the same for all timeslots) eg: [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp", service_data: {brightness: 200}}]}]</summary>
+    /// <summary>
+    ///     list of timeslots with their actions and optionally conditions (should be kept the same for all timeslots) eg:
+    ///     [{start: "12:00", stop: "13:00", actions: [{service: "light.turn_on", entity_id: "light.my_lamp", service_data:
+    ///     {brightness: 200}}]}]
+    /// </summary>
     [JsonPropertyName("timeslots")]
     public object? Timeslots { get; init; }
 
-    ///<summary>Control what happens after the schedule is triggered eg: "repeat"</summary>
-    [JsonPropertyName("repeat_type")]
-    public string? RepeatType { get; init; }
+    ///<summary>Days of the week for which the schedule should be repeated eg: ["daily"]</summary>
+    [JsonPropertyName("weekdays")]
+    public object? Weekdays { get; init; }
+
+    ///<summary>Identifier of the scheduler entity. eg: switch.schedule_abcdef</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
 
     ///<summary>Friendly name for the schedule eg: My schedule</summary>
     [JsonPropertyName("name")]
     public string? Name { get; init; }
+
+    ///<summary>Control what happens after the schedule is triggered eg: "repeat"</summary>
+    [JsonPropertyName("repeat_type")]
+    public string? RepeatType { get; init; }
 }
 
 public record SchedulerRemoveParameters
@@ -11756,13 +12111,13 @@ public record SchedulerRemoveParameters
 
 public record SchedulerRunActionParameters
 {
-    ///<summary>Identifier of the scheduler entity. eg: switch.schedule_abcdef</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
     ///<summary>Time for which to evaluate the action (only useful for schedules with multiple timeslot) eg: "12:00"</summary>
     [JsonPropertyName("time")]
     public DateTime? Time { get; init; }
+
+    ///<summary>Identifier of the scheduler entity. eg: switch.schedule_abcdef</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
 }
 
 public class ScriptServices
@@ -11780,38 +12135,38 @@ public class ScriptServices
         _haContext.CallService("script", "activate_alexa_actionable_notification", null, data);
     }
 
-    ///<summary>Activates an actionable notification on a specific echo device</summary>
-    ///<param name="text">The text you would like alexa to speak. eg: What would you like the thermostat set to?</param>
-    ///<param name="eventId">Correlation ID for event responses eg: ask_for_temperature</param>
-    ///<param name="alexaDevice">Alexa device you want to trigger eg: media_player.bedroom_echo</param>
-    public void ActivateAlexaActionableNotification(string? @text = null, string? @eventId = null, string? @alexaDevice = null)
+    /// <summary>Activates an actionable notification on a specific echo device</summary>
+    /// <param name="text">The text you would like alexa to speak. eg: What would you like the thermostat set to?</param>
+    /// <param name="eventId">Correlation ID for event responses eg: ask_for_temperature</param>
+    /// <param name="alexaDevice">Alexa device you want to trigger eg: media_player.bedroom_echo</param>
+    public void ActivateAlexaActionableNotification(string? text = null, string? eventId = null, string? alexaDevice = null)
     {
-        _haContext.CallService("script", "activate_alexa_actionable_notification", null, new ScriptActivateAlexaActionableNotificationParameters { Text = @text, EventId = @eventId, AlexaDevice = @alexaDevice });
+        _haContext.CallService("script", "activate_alexa_actionable_notification", null, new ScriptActivateAlexaActionableNotificationParameters { Text = text, EventId = eventId, AlexaDevice = alexaDevice });
     }
 
     public void ArriveHome()
     {
-        _haContext.CallService("script", "arrive_home", null);
+        _haContext.CallService("script", "arrive_home");
     }
 
     public void ImText()
     {
-        _haContext.CallService("script", "im_text", null);
+        _haContext.CallService("script", "im_text");
     }
 
     ///<summary>Reload all the available scripts</summary>
     public void Reload()
     {
-        _haContext.CallService("script", "reload", null);
+        _haContext.CallService("script", "reload");
     }
 
     public void RingMqttInterval()
     {
-        _haContext.CallService("script", "ring_mqtt_interval", null);
+        _haContext.CallService("script", "ring_mqtt_interval");
     }
 
-    ///<summary>Toggle script</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggle script</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("script", "toggle", target);
@@ -11819,23 +12174,23 @@ public class ScriptServices
 
     public void Tts()
     {
-        _haContext.CallService("script", "tts", null);
+        _haContext.CallService("script", "tts");
     }
 
     public void TtsText()
     {
-        _haContext.CallService("script", "tts_text", null);
+        _haContext.CallService("script", "tts_text");
     }
 
-    ///<summary>Turn off script</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn off script</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("script", "turn_off", target);
     }
 
-    ///<summary>Turn on script</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn on script</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("script", "turn_on", target);
@@ -11843,23 +12198,23 @@ public class ScriptServices
 
     public void Weather()
     {
-        _haContext.CallService("script", "weather", null);
+        _haContext.CallService("script", "weather");
     }
 }
 
 public record ScriptActivateAlexaActionableNotificationParameters
 {
-    ///<summary>The text you would like alexa to speak. eg: What would you like the thermostat set to?</summary>
-    [JsonPropertyName("text")]
-    public string? Text { get; init; }
+    ///<summary>Alexa device you want to trigger eg: media_player.bedroom_echo</summary>
+    [JsonPropertyName("alexa_device")]
+    public string? AlexaDevice { get; init; }
 
     ///<summary>Correlation ID for event responses eg: ask_for_temperature</summary>
     [JsonPropertyName("event_id")]
     public string? EventId { get; init; }
 
-    ///<summary>Alexa device you want to trigger eg: media_player.bedroom_echo</summary>
-    [JsonPropertyName("alexa_device")]
-    public string? AlexaDevice { get; init; }
+    ///<summary>The text you would like alexa to speak. eg: What would you like the thermostat set to?</summary>
+    [JsonPropertyName("text")]
+    public string? Text { get; init; }
 }
 
 public class SelectServices
@@ -11871,19 +12226,19 @@ public class SelectServices
         _haContext = haContext;
     }
 
-    ///<summary>Select an option of an select entity.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Select an option of an select entity.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SelectOption(ServiceTarget target, SelectSelectOptionParameters data)
     {
         _haContext.CallService("select", "select_option", target, data);
     }
 
-    ///<summary>Select an option of an select entity.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="option">Option to be selected. eg: "Item A"</param>
-    public void SelectOption(ServiceTarget target, string @option)
+    /// <summary>Select an option of an select entity.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="option">Option to be selected. eg: "Item A"</param>
+    public void SelectOption(ServiceTarget target, string option)
     {
-        _haContext.CallService("select", "select_option", target, new SelectSelectOptionParameters { Option = @option });
+        _haContext.CallService("select", "select_option", target, new SelectSelectOptionParameters { Option = option });
     }
 }
 
@@ -11903,51 +12258,66 @@ public class SirenServices
         _haContext = haContext;
     }
 
-    ///<summary>Toggles a siren.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggles a siren.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("siren", "toggle", target);
     }
 
-    ///<summary>Turn siren off.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn siren off.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("siren", "turn_off", target);
     }
 
-    ///<summary>Turn siren on.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn siren on.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target, SirenTurnOnParameters data)
     {
         _haContext.CallService("siren", "turn_on", target, data);
     }
 
-    ///<summary>Turn siren on.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="tone">The tone to emit when turning the siren on. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. eg: fire</param>
-    ///<param name="volumeLevel">The volume level of the noise to emit when turning the siren on. Must be supported by the integration. eg: 0.5</param>
-    ///<param name="duration">The duration in seconds of the noise to emit when turning the siren on. Must be supported by the integration. eg: 15</param>
-    public void TurnOn(ServiceTarget target, string? @tone = null, double? @volumeLevel = null, string? @duration = null)
+    /// <summary>Turn siren on.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="tone">
+    ///     The tone to emit when turning the siren on. When `available_tones` property is a map, either the key
+    ///     or the value can be used. Must be supported by the integration. eg: fire
+    /// </param>
+    /// <param name="volumeLevel">
+    ///     The volume level of the noise to emit when turning the siren on. Must be supported by the
+    ///     integration. eg: 0.5
+    /// </param>
+    /// <param name="duration">
+    ///     The duration in seconds of the noise to emit when turning the siren on. Must be supported by the
+    ///     integration. eg: 15
+    /// </param>
+    public void TurnOn(ServiceTarget target, string? tone = null, double? volumeLevel = null, string? duration = null)
     {
-        _haContext.CallService("siren", "turn_on", target, new SirenTurnOnParameters { Tone = @tone, VolumeLevel = @volumeLevel, Duration = @duration });
+        _haContext.CallService("siren", "turn_on", target, new SirenTurnOnParameters { Tone = tone, VolumeLevel = volumeLevel, Duration = duration });
     }
 }
 
 public record SirenTurnOnParameters
 {
-    ///<summary>The tone to emit when turning the siren on. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. eg: fire</summary>
-    [JsonPropertyName("tone")]
-    public string? Tone { get; init; }
-
     ///<summary>The volume level of the noise to emit when turning the siren on. Must be supported by the integration. eg: 0.5</summary>
     [JsonPropertyName("volume_level")]
     public double? VolumeLevel { get; init; }
 
-    ///<summary>The duration in seconds of the noise to emit when turning the siren on. Must be supported by the integration. eg: 15</summary>
+    /// <summary>
+    ///     The duration in seconds of the noise to emit when turning the siren on. Must be supported by the integration.
+    ///     eg: 15
+    /// </summary>
     [JsonPropertyName("duration")]
     public string? Duration { get; init; }
+
+    /// <summary>
+    ///     The tone to emit when turning the siren on. When `available_tones` property is a map, either the key or the
+    ///     value can be used. Must be supported by the integration. eg: fire
+    /// </summary>
+    [JsonPropertyName("tone")]
+    public string? Tone { get; init; }
 }
 
 public class SonosServices
@@ -11959,8 +12329,8 @@ public class SonosServices
         _haContext = haContext;
     }
 
-    ///<summary>Clear a Sonos timer.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Clear a Sonos timer.</summary>
+    /// <param name="target">The target for this service call</param>
     public void ClearSleepTimer(ServiceTarget target)
     {
         _haContext.CallService("sonos", "clear_sleep_timer", target);
@@ -11972,42 +12342,42 @@ public class SonosServices
         _haContext.CallService("sonos", "join", null, data);
     }
 
-    ///<summary>Group player together.</summary>
-    ///<param name="master">Entity ID of the player that should become the coordinator of the group.</param>
-    ///<param name="entityId">Name of entity that will join the master.</param>
-    public void Join(string @master, string @entityId)
+    /// <summary>Group player together.</summary>
+    /// <param name="master">Entity ID of the player that should become the coordinator of the group.</param>
+    /// <param name="entityId">Name of entity that will join the master.</param>
+    public void Join(string master, string entityId)
     {
-        _haContext.CallService("sonos", "join", null, new SonosJoinParameters { Master = @master, EntityId = @entityId });
+        _haContext.CallService("sonos", "join", null, new SonosJoinParameters { Master = master, EntityId = entityId });
     }
 
-    ///<summary>Start playing the queue from the first item.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Start playing the queue from the first item.</summary>
+    /// <param name="target">The target for this service call</param>
     public void PlayQueue(ServiceTarget target, SonosPlayQueueParameters data)
     {
         _haContext.CallService("sonos", "play_queue", target, data);
     }
 
-    ///<summary>Start playing the queue from the first item.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="queuePosition">Position of the song in the queue to start playing from.</param>
-    public void PlayQueue(ServiceTarget target, long? @queuePosition = null)
+    /// <summary>Start playing the queue from the first item.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="queuePosition">Position of the song in the queue to start playing from.</param>
+    public void PlayQueue(ServiceTarget target, long? queuePosition = null)
     {
-        _haContext.CallService("sonos", "play_queue", target, new SonosPlayQueueParameters { QueuePosition = @queuePosition });
+        _haContext.CallService("sonos", "play_queue", target, new SonosPlayQueueParameters { QueuePosition = queuePosition });
     }
 
-    ///<summary>Removes an item from the queue.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Removes an item from the queue.</summary>
+    /// <param name="target">The target for this service call</param>
     public void RemoveFromQueue(ServiceTarget target, SonosRemoveFromQueueParameters data)
     {
         _haContext.CallService("sonos", "remove_from_queue", target, data);
     }
 
-    ///<summary>Removes an item from the queue.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="queuePosition">Position in the queue to remove.</param>
-    public void RemoveFromQueue(ServiceTarget target, long? @queuePosition = null)
+    /// <summary>Removes an item from the queue.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="queuePosition">Position in the queue to remove.</param>
+    public void RemoveFromQueue(ServiceTarget target, long? queuePosition = null)
     {
-        _haContext.CallService("sonos", "remove_from_queue", target, new SonosRemoveFromQueueParameters { QueuePosition = @queuePosition });
+        _haContext.CallService("sonos", "remove_from_queue", target, new SonosRemoveFromQueueParameters { QueuePosition = queuePosition });
     }
 
     ///<summary>Restore a snapshot of the media player.</summary>
@@ -12016,27 +12386,27 @@ public class SonosServices
         _haContext.CallService("sonos", "restore", null, data);
     }
 
-    ///<summary>Restore a snapshot of the media player.</summary>
-    ///<param name="entityId">Name of entity that will be restored.</param>
-    ///<param name="withGroup">True or False. Also restore the group layout.</param>
-    public void Restore(string? @entityId = null, bool? @withGroup = null)
+    /// <summary>Restore a snapshot of the media player.</summary>
+    /// <param name="entityId">Name of entity that will be restored.</param>
+    /// <param name="withGroup">True or False. Also restore the group layout.</param>
+    public void Restore(string? entityId = null, bool? withGroup = null)
     {
-        _haContext.CallService("sonos", "restore", null, new SonosRestoreParameters { EntityId = @entityId, WithGroup = @withGroup });
+        _haContext.CallService("sonos", "restore", null, new SonosRestoreParameters { EntityId = entityId, WithGroup = withGroup });
     }
 
-    ///<summary>Set a Sonos timer.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set a Sonos timer.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetSleepTimer(ServiceTarget target, SonosSetSleepTimerParameters data)
     {
         _haContext.CallService("sonos", "set_sleep_timer", target, data);
     }
 
-    ///<summary>Set a Sonos timer.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="sleepTime">Number of seconds to set the timer.</param>
-    public void SetSleepTimer(ServiceTarget target, long? @sleepTime = null)
+    /// <summary>Set a Sonos timer.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="sleepTime">Number of seconds to set the timer.</param>
+    public void SetSleepTimer(ServiceTarget target, long? sleepTime = null)
     {
-        _haContext.CallService("sonos", "set_sleep_timer", target, new SonosSetSleepTimerParameters { SleepTime = @sleepTime });
+        _haContext.CallService("sonos", "set_sleep_timer", target, new SonosSetSleepTimerParameters { SleepTime = sleepTime });
     }
 
     ///<summary>Take a snapshot of the media player.</summary>
@@ -12045,50 +12415,50 @@ public class SonosServices
         _haContext.CallService("sonos", "snapshot", null, data);
     }
 
-    ///<summary>Take a snapshot of the media player.</summary>
-    ///<param name="entityId">Name of entity that will be snapshot.</param>
-    ///<param name="withGroup">True or False. Also snapshot the group layout.</param>
-    public void Snapshot(string? @entityId = null, bool? @withGroup = null)
+    /// <summary>Take a snapshot of the media player.</summary>
+    /// <param name="entityId">Name of entity that will be snapshot.</param>
+    /// <param name="withGroup">True or False. Also snapshot the group layout.</param>
+    public void Snapshot(string? entityId = null, bool? withGroup = null)
     {
-        _haContext.CallService("sonos", "snapshot", null, new SonosSnapshotParameters { EntityId = @entityId, WithGroup = @withGroup });
+        _haContext.CallService("sonos", "snapshot", null, new SonosSnapshotParameters { EntityId = entityId, WithGroup = withGroup });
     }
 
-    ///<summary>Unjoin the player from a group.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Unjoin the player from a group.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Unjoin(ServiceTarget target)
     {
         _haContext.CallService("sonos", "unjoin", target);
     }
 
-    ///<summary>Updates an alarm with new time and volume settings.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Updates an alarm with new time and volume settings.</summary>
+    /// <param name="target">The target for this service call</param>
     public void UpdateAlarm(ServiceTarget target, SonosUpdateAlarmParameters data)
     {
         _haContext.CallService("sonos", "update_alarm", target, data);
     }
 
-    ///<summary>Updates an alarm with new time and volume settings.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="alarmId">ID for the alarm to be updated.</param>
-    ///<param name="time">Set time for the alarm. eg: 07:00</param>
-    ///<param name="volume">Set alarm volume level.</param>
-    ///<param name="enabled">Enable or disable the alarm.</param>
-    ///<param name="includeLinkedZones">Enable or disable including grouped rooms.</param>
-    public void UpdateAlarm(ServiceTarget target, long @alarmId, DateTime? @time = null, double? @volume = null, bool? @enabled = null, bool? @includeLinkedZones = null)
+    /// <summary>Updates an alarm with new time and volume settings.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="alarmId">ID for the alarm to be updated.</param>
+    /// <param name="time">Set time for the alarm. eg: 07:00</param>
+    /// <param name="volume">Set alarm volume level.</param>
+    /// <param name="enabled">Enable or disable the alarm.</param>
+    /// <param name="includeLinkedZones">Enable or disable including grouped rooms.</param>
+    public void UpdateAlarm(ServiceTarget target, long alarmId, DateTime? time = null, double? volume = null, bool? enabled = null, bool? includeLinkedZones = null)
     {
-        _haContext.CallService("sonos", "update_alarm", target, new SonosUpdateAlarmParameters { AlarmId = @alarmId, Time = @time, Volume = @volume, Enabled = @enabled, IncludeLinkedZones = @includeLinkedZones });
+        _haContext.CallService("sonos", "update_alarm", target, new SonosUpdateAlarmParameters { AlarmId = alarmId, Time = time, Volume = volume, Enabled = enabled, IncludeLinkedZones = includeLinkedZones });
     }
 }
 
 public record SonosJoinParameters
 {
-    ///<summary>Entity ID of the player that should become the coordinator of the group.</summary>
-    [JsonPropertyName("master")]
-    public string? Master { get; init; }
-
     ///<summary>Name of entity that will join the master.</summary>
     [JsonPropertyName("entity_id")]
     public string? EntityId { get; init; }
+
+    ///<summary>Entity ID of the player that should become the coordinator of the group.</summary>
+    [JsonPropertyName("master")]
+    public string? Master { get; init; }
 }
 
 public record SonosPlayQueueParameters
@@ -12107,13 +12477,13 @@ public record SonosRemoveFromQueueParameters
 
 public record SonosRestoreParameters
 {
-    ///<summary>Name of entity that will be restored.</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
     ///<summary>True or False. Also restore the group layout.</summary>
     [JsonPropertyName("with_group")]
     public bool? WithGroup { get; init; }
+
+    ///<summary>Name of entity that will be restored.</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
 }
 
 public record SonosSetSleepTimerParameters
@@ -12125,20 +12495,24 @@ public record SonosSetSleepTimerParameters
 
 public record SonosSnapshotParameters
 {
-    ///<summary>Name of entity that will be snapshot.</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
     ///<summary>True or False. Also snapshot the group layout.</summary>
     [JsonPropertyName("with_group")]
     public bool? WithGroup { get; init; }
+
+    ///<summary>Name of entity that will be snapshot.</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
 }
 
 public record SonosUpdateAlarmParameters
 {
-    ///<summary>ID for the alarm to be updated.</summary>
-    [JsonPropertyName("alarm_id")]
-    public long? AlarmId { get; init; }
+    ///<summary>Enable or disable the alarm.</summary>
+    [JsonPropertyName("enabled")]
+    public bool? Enabled { get; init; }
+
+    ///<summary>Enable or disable including grouped rooms.</summary>
+    [JsonPropertyName("include_linked_zones")]
+    public bool? IncludeLinkedZones { get; init; }
 
     ///<summary>Set time for the alarm. eg: 07:00</summary>
     [JsonPropertyName("time")]
@@ -12148,13 +12522,9 @@ public record SonosUpdateAlarmParameters
     [JsonPropertyName("volume")]
     public double? Volume { get; init; }
 
-    ///<summary>Enable or disable the alarm.</summary>
-    [JsonPropertyName("enabled")]
-    public bool? Enabled { get; init; }
-
-    ///<summary>Enable or disable including grouped rooms.</summary>
-    [JsonPropertyName("include_linked_zones")]
-    public bool? IncludeLinkedZones { get; init; }
+    ///<summary>ID for the alarm to be updated.</summary>
+    [JsonPropertyName("alarm_id")]
+    public long? AlarmId { get; init; }
 }
 
 public class SpeedtestdotnetServices
@@ -12169,7 +12539,7 @@ public class SpeedtestdotnetServices
     ///<summary>Immediately execute a speed test with Speedtest.net</summary>
     public void Speedtest()
     {
-        _haContext.CallService("speedtestdotnet", "speedtest", null);
+        _haContext.CallService("speedtestdotnet", "speedtest");
     }
 }
 
@@ -12185,7 +12555,7 @@ public class StatisticsServices
     ///<summary>Reload all statistics entities.</summary>
     public void Reload()
     {
-        _haContext.CallService("statistics", "reload", null);
+        _haContext.CallService("statistics", "reload");
     }
 }
 
@@ -12198,22 +12568,22 @@ public class SwitchServices
         _haContext = haContext;
     }
 
-    ///<summary>Toggles a switch state</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Toggles a switch state</summary>
+    /// <param name="target">The target for this service call</param>
     public void Toggle(ServiceTarget target)
     {
         _haContext.CallService("switch", "toggle", target);
     }
 
-    ///<summary>Turn a switch off</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn a switch off</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("switch", "turn_off", target);
     }
 
-    ///<summary>Turn a switch on</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn a switch on</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("switch", "turn_on", target);
@@ -12232,7 +12602,7 @@ public class SystemLogServices
     ///<summary>Clear all log entries.</summary>
     public void Clear()
     {
-        _haContext.CallService("system_log", "clear", null);
+        _haContext.CallService("system_log", "clear");
     }
 
     ///<summary>Write log entry.</summary>
@@ -12241,22 +12611,21 @@ public class SystemLogServices
         _haContext.CallService("system_log", "write", null, data);
     }
 
-    ///<summary>Write log entry.</summary>
-    ///<param name="message">Message to log. eg: Something went wrong</param>
-    ///<param name="level">Log level.</param>
-    ///<param name="logger">Logger name under which to log the message. Defaults to 'system_log.external'. eg: mycomponent.myplatform</param>
-    public void Write(string @message, string? @level = null, string? @logger = null)
+    /// <summary>Write log entry.</summary>
+    /// <param name="message">Message to log. eg: Something went wrong</param>
+    /// <param name="level">Log level.</param>
+    /// <param name="logger">
+    ///     Logger name under which to log the message. Defaults to 'system_log.external'. eg:
+    ///     mycomponent.myplatform
+    /// </param>
+    public void Write(string message, string? level = null, string? logger = null)
     {
-        _haContext.CallService("system_log", "write", null, new SystemLogWriteParameters { Message = @message, Level = @level, Logger = @logger });
+        _haContext.CallService("system_log", "write", null, new SystemLogWriteParameters { Message = message, Level = level, Logger = logger });
     }
 }
 
 public record SystemLogWriteParameters
 {
-    ///<summary>Message to log. eg: Something went wrong</summary>
-    [JsonPropertyName("message")]
-    public string? Message { get; init; }
-
     ///<summary>Log level.</summary>
     [JsonPropertyName("level")]
     public string? Level { get; init; }
@@ -12264,6 +12633,10 @@ public record SystemLogWriteParameters
     ///<summary>Logger name under which to log the message. Defaults to 'system_log.external'. eg: mycomponent.myplatform</summary>
     [JsonPropertyName("logger")]
     public string? Logger { get; init; }
+
+    ///<summary>Message to log. eg: Something went wrong</summary>
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
 }
 
 public class TelegramServices
@@ -12278,7 +12651,7 @@ public class TelegramServices
     ///<summary>Reload telegram notify services.</summary>
     public void Reload()
     {
-        _haContext.CallService("telegram", "reload", null);
+        _haContext.CallService("telegram", "reload");
     }
 }
 
@@ -12291,20 +12664,26 @@ public class TelegramBotServices
         _haContext = haContext;
     }
 
-    ///<summary>Respond to a callback query originated by clicking on an online keyboard button. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.</summary>
+    /// <summary>
+    ///     Respond to a callback query originated by clicking on an online keyboard button. The answer will be displayed
+    ///     to the user as a notification at the top of the chat screen or as an alert.
+    /// </summary>
     public void AnswerCallbackQuery(TelegramBotAnswerCallbackQueryParameters data)
     {
         _haContext.CallService("telegram_bot", "answer_callback_query", null, data);
     }
 
-    ///<summary>Respond to a callback query originated by clicking on an online keyboard button. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.</summary>
-    ///<param name="message">Unformatted text message body of the notification. eg: OK, I'm listening</param>
-    ///<param name="callbackQueryId">Unique id of the callback response. eg: {{ trigger.event.data.id }}</param>
-    ///<param name="showAlert">Show a permanent notification.</param>
-    ///<param name="timeout">Timeout for sending the answer. Will help with timeout errors (poor internet connection, etc)</param>
-    public void AnswerCallbackQuery(string @message, string @callbackQueryId, bool @showAlert, long? @timeout = null)
+    /// <summary>
+    ///     Respond to a callback query originated by clicking on an online keyboard button. The answer will be displayed
+    ///     to the user as a notification at the top of the chat screen or as an alert.
+    /// </summary>
+    /// <param name="message">Unformatted text message body of the notification. eg: OK, I'm listening</param>
+    /// <param name="callbackQueryId">Unique id of the callback response. eg: {{ trigger.event.data.id }}</param>
+    /// <param name="showAlert">Show a permanent notification.</param>
+    /// <param name="timeout">Timeout for sending the answer. Will help with timeout errors (poor internet connection, etc)</param>
+    public void AnswerCallbackQuery(string message, string callbackQueryId, bool showAlert, long? timeout = null)
     {
-        _haContext.CallService("telegram_bot", "answer_callback_query", null, new TelegramBotAnswerCallbackQueryParameters { Message = @message, CallbackQueryId = @callbackQueryId, ShowAlert = @showAlert, Timeout = @timeout });
+        _haContext.CallService("telegram_bot", "answer_callback_query", null, new TelegramBotAnswerCallbackQueryParameters { Message = message, CallbackQueryId = callbackQueryId, ShowAlert = showAlert, Timeout = timeout });
     }
 
     ///<summary>Delete a previously sent message.</summary>
@@ -12313,12 +12692,12 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "delete_message", null, data);
     }
 
-    ///<summary>Delete a previously sent message.</summary>
-    ///<param name="messageId">id of the message to delete. eg: {{ trigger.event.data.message.message_id }}</param>
-    ///<param name="chatId">The chat_id where to delete the message. eg: 12345</param>
-    public void DeleteMessage(string @messageId, string @chatId)
+    /// <summary>Delete a previously sent message.</summary>
+    /// <param name="messageId">id of the message to delete. eg: {{ trigger.event.data.message.message_id }}</param>
+    /// <param name="chatId">The chat_id where to delete the message. eg: 12345</param>
+    public void DeleteMessage(string messageId, string chatId)
     {
-        _haContext.CallService("telegram_bot", "delete_message", null, new TelegramBotDeleteMessageParameters { MessageId = @messageId, ChatId = @chatId });
+        _haContext.CallService("telegram_bot", "delete_message", null, new TelegramBotDeleteMessageParameters { MessageId = messageId, ChatId = chatId });
     }
 
     ///<summary>Edit the caption of a previously sent message.</summary>
@@ -12327,14 +12706,18 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "edit_caption", null, data);
     }
 
-    ///<summary>Edit the caption of a previously sent message.</summary>
-    ///<param name="messageId">id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</param>
-    ///<param name="chatId">The chat_id where to edit the caption. eg: 12345</param>
-    ///<param name="caption">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    public void EditCaption(string @messageId, string @chatId, string @caption, object? @inlineKeyboard = null)
+    /// <summary>Edit the caption of a previously sent message.</summary>
+    /// <param name="messageId">id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</param>
+    /// <param name="chatId">The chat_id where to edit the caption. eg: 12345</param>
+    /// <param name="caption">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    public void EditCaption(string messageId, string chatId, string caption, object? inlineKeyboard = null)
     {
-        _haContext.CallService("telegram_bot", "edit_caption", null, new TelegramBotEditCaptionParameters { MessageId = @messageId, ChatId = @chatId, Caption = @caption, InlineKeyboard = @inlineKeyboard });
+        _haContext.CallService("telegram_bot", "edit_caption", null, new TelegramBotEditCaptionParameters { MessageId = messageId, ChatId = chatId, Caption = caption, InlineKeyboard = inlineKeyboard });
     }
 
     ///<summary>Edit a previously sent message.</summary>
@@ -12343,17 +12726,24 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "edit_message", null, data);
     }
 
-    ///<summary>Edit a previously sent message.</summary>
-    ///<param name="messageId">id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</param>
-    ///<param name="chatId">The chat_id where to edit the message. eg: 12345</param>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door Friend</param>
-    ///<param name="parseMode">Parser for the message text.</param>
-    ///<param name="disableWebPagePreview">Disables link previews for links in the message.</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    public void EditMessage(string @messageId, string @chatId, string? @message = null, string? @title = null, string? @parseMode = null, bool? @disableWebPagePreview = null, object? @inlineKeyboard = null)
+    /// <summary>Edit a previously sent message.</summary>
+    /// <param name="messageId">id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</param>
+    /// <param name="chatId">The chat_id where to edit the message. eg: 12345</param>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">
+    ///     Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door
+    ///     Friend
+    /// </param>
+    /// <param name="parseMode">Parser for the message text.</param>
+    /// <param name="disableWebPagePreview">Disables link previews for links in the message.</param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    public void EditMessage(string messageId, string chatId, string? message = null, string? title = null, string? parseMode = null, bool? disableWebPagePreview = null, object? inlineKeyboard = null)
     {
-        _haContext.CallService("telegram_bot", "edit_message", null, new TelegramBotEditMessageParameters { MessageId = @messageId, ChatId = @chatId, Message = @message, Title = @title, ParseMode = @parseMode, DisableWebPagePreview = @disableWebPagePreview, InlineKeyboard = @inlineKeyboard });
+        _haContext.CallService("telegram_bot", "edit_message", null, new TelegramBotEditMessageParameters { MessageId = messageId, ChatId = chatId, Message = message, Title = title, ParseMode = parseMode, DisableWebPagePreview = disableWebPagePreview, InlineKeyboard = inlineKeyboard });
     }
 
     ///<summary>Edit the inline keyboard of a previously sent message.</summary>
@@ -12362,18 +12752,22 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "edit_replymarkup", null, data);
     }
 
-    ///<summary>Edit the inline keyboard of a previously sent message.</summary>
-    ///<param name="messageId">id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</param>
-    ///<param name="chatId">The chat_id where to edit the reply_markup. eg: 12345</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    public void EditReplymarkup(string @messageId, string @chatId, object @inlineKeyboard)
+    /// <summary>Edit the inline keyboard of a previously sent message.</summary>
+    /// <param name="messageId">id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</param>
+    /// <param name="chatId">The chat_id where to edit the reply_markup. eg: 12345</param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    public void EditReplymarkup(string messageId, string chatId, object inlineKeyboard)
     {
-        _haContext.CallService("telegram_bot", "edit_replymarkup", null, new TelegramBotEditReplymarkupParameters { MessageId = @messageId, ChatId = @chatId, InlineKeyboard = @inlineKeyboard });
+        _haContext.CallService("telegram_bot", "edit_replymarkup", null, new TelegramBotEditReplymarkupParameters { MessageId = messageId, ChatId = chatId, InlineKeyboard = inlineKeyboard });
     }
 
     public void LeaveChat()
     {
-        _haContext.CallService("telegram_bot", "leave_chat", null);
+        _haContext.CallService("telegram_bot", "leave_chat");
     }
 
     ///<summary>Send an anmiation.</summary>
@@ -12382,23 +12776,45 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_animation", null, data);
     }
 
-    ///<summary>Send an anmiation.</summary>
-    ///<param name="url">Remote path to a GIF or H.264/MPEG-4 AVC video without sound. eg: http://example.org/path/to/the/animation.gif</param>
-    ///<param name="file">Local path to a GIF or H.264/MPEG-4 AVC video without sound. eg: /path/to/the/animation.gif</param>
-    ///<param name="caption">The title of the animation. eg: My animation</param>
-    ///<param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
-    ///<param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
-    ///<param name="authentication">Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="parseMode">Parser for the message text.</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="verifySsl">Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</param>
-    ///<param name="timeout">Timeout for send sticker. Will help with timeout errors (poor internet connection, etc)</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    public void SendAnimation(string? @url = null, string? @file = null, string? @caption = null, string? @username = null, string? @password = null, string? @authentication = null, object? @target = null, string? @parseMode = null, bool? @disableNotification = null, bool? @verifySsl = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null)
+    /// <summary>Send an anmiation.</summary>
+    /// <param name="url">
+    ///     Remote path to a GIF or H.264/MPEG-4 AVC video without sound. eg:
+    ///     http://example.org/path/to/the/animation.gif
+    /// </param>
+    /// <param name="file">Local path to a GIF or H.264/MPEG-4 AVC video without sound. eg: /path/to/the/animation.gif</param>
+    /// <param name="caption">The title of the animation. eg: My animation</param>
+    /// <param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
+    /// <param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
+    /// <param name="authentication">
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest
+    ///     authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id
+    ///     is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="parseMode">Parser for the message text.</param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="verifySsl">
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file
+    ///     from a URL and you don't want to validate the SSL certificate of the server.
+    /// </param>
+    /// <param name="timeout">Timeout for send sticker. Will help with timeout errors (poor internet connection, etc)</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1,
+    ///     /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    public void SendAnimation(string? url = null, string? file = null, string? caption = null, string? username = null, string? password = null, string? authentication = null, object? target = null, string? parseMode = null, bool? disableNotification = null, bool? verifySsl = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null)
     {
-        _haContext.CallService("telegram_bot", "send_animation", null, new TelegramBotSendAnimationParameters { Url = @url, File = @file, Caption = @caption, Username = @username, Password = @password, Authentication = @authentication, Target = @target, ParseMode = @parseMode, DisableNotification = @disableNotification, VerifySsl = @verifySsl, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard });
+        _haContext.CallService("telegram_bot", "send_animation", null, new TelegramBotSendAnimationParameters { Url = url, File = file, Caption = caption, Username = username, Password = password, Authentication = authentication, Target = target, ParseMode = parseMode, DisableNotification = disableNotification, VerifySsl = verifySsl, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard });
     }
 
     ///<summary>Send a document.</summary>
@@ -12407,24 +12823,46 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_document", null, data);
     }
 
-    ///<summary>Send a document.</summary>
-    ///<param name="url">Remote path to a document. eg: http://example.org/path/to/the/document.odf</param>
-    ///<param name="file">Local path to a document. eg: /tmp/whatever.odf</param>
-    ///<param name="caption">The title of the document. eg: Document Title xy</param>
-    ///<param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
-    ///<param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
-    ///<param name="authentication">Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="parseMode">Parser for the message text.</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="verifySsl">Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</param>
-    ///<param name="timeout">Timeout for send document. Will help with timeout errors (poor internet connection, etc)</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    ///<param name="messageTag">Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</param>
-    public void SendDocument(string? @url = null, string? @file = null, string? @caption = null, string? @username = null, string? @password = null, string? @authentication = null, object? @target = null, string? @parseMode = null, bool? @disableNotification = null, bool? @verifySsl = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null, string? @messageTag = null)
+    /// <summary>Send a document.</summary>
+    /// <param name="url">Remote path to a document. eg: http://example.org/path/to/the/document.odf</param>
+    /// <param name="file">Local path to a document. eg: /tmp/whatever.odf</param>
+    /// <param name="caption">The title of the document. eg: Document Title xy</param>
+    /// <param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
+    /// <param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
+    /// <param name="authentication">
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest
+    ///     authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id
+    ///     is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="parseMode">Parser for the message text.</param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="verifySsl">
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file
+    ///     from a URL and you don't want to validate the SSL certificate of the server.
+    /// </param>
+    /// <param name="timeout">Timeout for send document. Will help with timeout errors (poor internet connection, etc)</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1,
+    ///     /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    /// <param name="messageTag">
+    ///     Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg:
+    ///     msg_to_edit
+    /// </param>
+    public void SendDocument(string? url = null, string? file = null, string? caption = null, string? username = null, string? password = null, string? authentication = null, object? target = null, string? parseMode = null, bool? disableNotification = null, bool? verifySsl = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null, string? messageTag = null)
     {
-        _haContext.CallService("telegram_bot", "send_document", null, new TelegramBotSendDocumentParameters { Url = @url, File = @file, Caption = @caption, Username = @username, Password = @password, Authentication = @authentication, Target = @target, ParseMode = @parseMode, DisableNotification = @disableNotification, VerifySsl = @verifySsl, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard, MessageTag = @messageTag });
+        _haContext.CallService("telegram_bot", "send_document", null, new TelegramBotSendDocumentParameters { Url = url, File = file, Caption = caption, Username = username, Password = password, Authentication = authentication, Target = target, ParseMode = parseMode, DisableNotification = disableNotification, VerifySsl = verifySsl, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard, MessageTag = messageTag });
     }
 
     ///<summary>Send a location.</summary>
@@ -12433,18 +12871,34 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_location", null, data);
     }
 
-    ///<summary>Send a location.</summary>
-    ///<param name="latitude">The latitude to send.</param>
-    ///<param name="longitude">The longitude to send.</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the location to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="timeout">Timeout for send photo. Will help with timeout errors (poor internet connection, etc)</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    ///<param name="messageTag">Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</param>
-    public void SendLocation(double @latitude, double @longitude, object? @target = null, bool? @disableNotification = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null, string? @messageTag = null)
+    /// <summary>Send a location.</summary>
+    /// <param name="latitude">The latitude to send.</param>
+    /// <param name="longitude">The longitude to send.</param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the location to. If not present, first allowed chat_id
+    ///     is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="timeout">Timeout for send photo. Will help with timeout errors (poor internet connection, etc)</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1,
+    ///     /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    /// <param name="messageTag">
+    ///     Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg:
+    ///     msg_to_edit
+    /// </param>
+    public void SendLocation(double latitude, double longitude, object? target = null, bool? disableNotification = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null, string? messageTag = null)
     {
-        _haContext.CallService("telegram_bot", "send_location", null, new TelegramBotSendLocationParameters { Latitude = @latitude, Longitude = @longitude, Target = @target, DisableNotification = @disableNotification, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard, MessageTag = @messageTag });
+        _haContext.CallService("telegram_bot", "send_location", null, new TelegramBotSendLocationParameters { Latitude = latitude, Longitude = longitude, Target = target, DisableNotification = disableNotification, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard, MessageTag = messageTag });
     }
 
     ///<summary>Send a notification.</summary>
@@ -12453,20 +12907,40 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_message", null, data);
     }
 
-    ///<summary>Send a notification.</summary>
-    ///<param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
-    ///<param name="title">Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door Friend</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the notification to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="parseMode">Parser for the message text.</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="disableWebPagePreview">Disables link previews for links in the message.</param>
-    ///<param name="timeout">Timeout for send message. Will help with timeout errors (poor internet connection, etc)s</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. Empty list clears a previously set keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or ["Text button1:/button1, Text button2:/button2", "Text button3:/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    ///<param name="messageTag">Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</param>
-    public void SendMessage(string @message, string? @title = null, object? @target = null, string? @parseMode = null, bool? @disableNotification = null, bool? @disableWebPagePreview = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null, string? @messageTag = null)
+    /// <summary>Send a notification.</summary>
+    /// <param name="message">Message body of the notification. eg: The garage door has been open for 10 minutes.</param>
+    /// <param name="title">
+    ///     Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door
+    ///     Friend
+    /// </param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the notification to. If not present, first allowed
+    ///     chat_id is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="parseMode">Parser for the message text.</param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="disableWebPagePreview">Disables link previews for links in the message.</param>
+    /// <param name="timeout">Timeout for send message. Will help with timeout errors (poor internet connection, etc)s</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. Empty list clears a
+    ///     previously set keyboard. eg: ["/command1, /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or ["Text button1:/button1, Text
+    ///     button2:/button2", "Text button3:/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]],
+    ///     [["Text button3", "/button3"]]]
+    /// </param>
+    /// <param name="messageTag">
+    ///     Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg:
+    ///     msg_to_edit
+    /// </param>
+    public void SendMessage(string message, string? title = null, object? target = null, string? parseMode = null, bool? disableNotification = null, bool? disableWebPagePreview = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null, string? messageTag = null)
     {
-        _haContext.CallService("telegram_bot", "send_message", null, new TelegramBotSendMessageParameters { Message = @message, Title = @title, Target = @target, ParseMode = @parseMode, DisableNotification = @disableNotification, DisableWebPagePreview = @disableWebPagePreview, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard, MessageTag = @messageTag });
+        _haContext.CallService("telegram_bot", "send_message", null, new TelegramBotSendMessageParameters { Message = message, Title = title, Target = target, ParseMode = parseMode, DisableNotification = disableNotification, DisableWebPagePreview = disableWebPagePreview, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard, MessageTag = messageTag });
     }
 
     ///<summary>Send a photo.</summary>
@@ -12475,24 +12949,46 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_photo", null, data);
     }
 
-    ///<summary>Send a photo.</summary>
-    ///<param name="url">Remote path to an image. eg: http://example.org/path/to/the/image.png</param>
-    ///<param name="file">Local path to an image. eg: /path/to/the/image.png</param>
-    ///<param name="caption">The title of the image. eg: My image</param>
-    ///<param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
-    ///<param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
-    ///<param name="authentication">Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="parseMode">Parser for the message text.</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="verifySsl">Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</param>
-    ///<param name="timeout">Timeout for send photo. Will help with timeout errors (poor internet connection, etc)</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    ///<param name="messageTag">Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</param>
-    public void SendPhoto(string? @url = null, string? @file = null, string? @caption = null, string? @username = null, string? @password = null, string? @authentication = null, object? @target = null, string? @parseMode = null, bool? @disableNotification = null, bool? @verifySsl = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null, string? @messageTag = null)
+    /// <summary>Send a photo.</summary>
+    /// <param name="url">Remote path to an image. eg: http://example.org/path/to/the/image.png</param>
+    /// <param name="file">Local path to an image. eg: /path/to/the/image.png</param>
+    /// <param name="caption">The title of the image. eg: My image</param>
+    /// <param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
+    /// <param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
+    /// <param name="authentication">
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest
+    ///     authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id
+    ///     is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="parseMode">Parser for the message text.</param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="verifySsl">
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file
+    ///     from a URL and you don't want to validate the SSL certificate of the server.
+    /// </param>
+    /// <param name="timeout">Timeout for send photo. Will help with timeout errors (poor internet connection, etc)</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1,
+    ///     /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    /// <param name="messageTag">
+    ///     Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg:
+    ///     msg_to_edit
+    /// </param>
+    public void SendPhoto(string? url = null, string? file = null, string? caption = null, string? username = null, string? password = null, string? authentication = null, object? target = null, string? parseMode = null, bool? disableNotification = null, bool? verifySsl = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null, string? messageTag = null)
     {
-        _haContext.CallService("telegram_bot", "send_photo", null, new TelegramBotSendPhotoParameters { Url = @url, File = @file, Caption = @caption, Username = @username, Password = @password, Authentication = @authentication, Target = @target, ParseMode = @parseMode, DisableNotification = @disableNotification, VerifySsl = @verifySsl, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard, MessageTag = @messageTag });
+        _haContext.CallService("telegram_bot", "send_photo", null, new TelegramBotSendPhotoParameters { Url = url, File = file, Caption = caption, Username = username, Password = password, Authentication = authentication, Target = target, ParseMode = parseMode, DisableNotification = disableNotification, VerifySsl = verifySsl, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard, MessageTag = messageTag });
     }
 
     ///<summary>Send a sticker.</summary>
@@ -12501,22 +12997,47 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_sticker", null, data);
     }
 
-    ///<summary>Send a sticker.</summary>
-    ///<param name="url">Remote path to a static .webp or animated .tgs sticker. eg: http://example.org/path/to/the/sticker.webp</param>
-    ///<param name="file">Local path to a static .webp or animated .tgs sticker. eg: /path/to/the/sticker.webp</param>
-    ///<param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
-    ///<param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
-    ///<param name="authentication">Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="verifySsl">Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</param>
-    ///<param name="timeout">Timeout for send sticker. Will help with timeout errors (poor internet connection, etc)</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    ///<param name="messageTag">Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</param>
-    public void SendSticker(string? @url = null, string? @file = null, string? @username = null, string? @password = null, string? @authentication = null, object? @target = null, bool? @disableNotification = null, bool? @verifySsl = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null, string? @messageTag = null)
+    /// <summary>Send a sticker.</summary>
+    /// <param name="url">
+    ///     Remote path to a static .webp or animated .tgs sticker. eg:
+    ///     http://example.org/path/to/the/sticker.webp
+    /// </param>
+    /// <param name="file">Local path to a static .webp or animated .tgs sticker. eg: /path/to/the/sticker.webp</param>
+    /// <param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
+    /// <param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
+    /// <param name="authentication">
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest
+    ///     authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id
+    ///     is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="verifySsl">
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file
+    ///     from a URL and you don't want to validate the SSL certificate of the server.
+    /// </param>
+    /// <param name="timeout">Timeout for send sticker. Will help with timeout errors (poor internet connection, etc)</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1,
+    ///     /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    /// <param name="messageTag">
+    ///     Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg:
+    ///     msg_to_edit
+    /// </param>
+    public void SendSticker(string? url = null, string? file = null, string? username = null, string? password = null, string? authentication = null, object? target = null, bool? disableNotification = null, bool? verifySsl = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null, string? messageTag = null)
     {
-        _haContext.CallService("telegram_bot", "send_sticker", null, new TelegramBotSendStickerParameters { Url = @url, File = @file, Username = @username, Password = @password, Authentication = @authentication, Target = @target, DisableNotification = @disableNotification, VerifySsl = @verifySsl, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard, MessageTag = @messageTag });
+        _haContext.CallService("telegram_bot", "send_sticker", null, new TelegramBotSendStickerParameters { Url = url, File = file, Username = username, Password = password, Authentication = authentication, Target = target, DisableNotification = disableNotification, VerifySsl = verifySsl, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard, MessageTag = messageTag });
     }
 
     ///<summary>Send a video.</summary>
@@ -12525,24 +13046,46 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_video", null, data);
     }
 
-    ///<summary>Send a video.</summary>
-    ///<param name="url">Remote path to a video. eg: http://example.org/path/to/the/video.mp4</param>
-    ///<param name="file">Local path to a video. eg: /path/to/the/video.mp4</param>
-    ///<param name="caption">The title of the video. eg: My video</param>
-    ///<param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
-    ///<param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
-    ///<param name="authentication">Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="parseMode">Parser for the message text.</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="verifySsl">Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</param>
-    ///<param name="timeout">Timeout for send video. Will help with timeout errors (poor internet connection, etc)</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    ///<param name="messageTag">Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</param>
-    public void SendVideo(string? @url = null, string? @file = null, string? @caption = null, string? @username = null, string? @password = null, string? @authentication = null, object? @target = null, string? @parseMode = null, bool? @disableNotification = null, bool? @verifySsl = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null, string? @messageTag = null)
+    /// <summary>Send a video.</summary>
+    /// <param name="url">Remote path to a video. eg: http://example.org/path/to/the/video.mp4</param>
+    /// <param name="file">Local path to a video. eg: /path/to/the/video.mp4</param>
+    /// <param name="caption">The title of the video. eg: My video</param>
+    /// <param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
+    /// <param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
+    /// <param name="authentication">
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest
+    ///     authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id
+    ///     is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="parseMode">Parser for the message text.</param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="verifySsl">
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file
+    ///     from a URL and you don't want to validate the SSL certificate of the server.
+    /// </param>
+    /// <param name="timeout">Timeout for send video. Will help with timeout errors (poor internet connection, etc)</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1,
+    ///     /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    /// <param name="messageTag">
+    ///     Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg:
+    ///     msg_to_edit
+    /// </param>
+    public void SendVideo(string? url = null, string? file = null, string? caption = null, string? username = null, string? password = null, string? authentication = null, object? target = null, string? parseMode = null, bool? disableNotification = null, bool? verifySsl = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null, string? messageTag = null)
     {
-        _haContext.CallService("telegram_bot", "send_video", null, new TelegramBotSendVideoParameters { Url = @url, File = @file, Caption = @caption, Username = @username, Password = @password, Authentication = @authentication, Target = @target, ParseMode = @parseMode, DisableNotification = @disableNotification, VerifySsl = @verifySsl, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard, MessageTag = @messageTag });
+        _haContext.CallService("telegram_bot", "send_video", null, new TelegramBotSendVideoParameters { Url = url, File = file, Caption = caption, Username = username, Password = password, Authentication = authentication, Target = target, ParseMode = parseMode, DisableNotification = disableNotification, VerifySsl = verifySsl, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard, MessageTag = messageTag });
     }
 
     ///<summary>Send a voice message.</summary>
@@ -12551,36 +13094,50 @@ public class TelegramBotServices
         _haContext.CallService("telegram_bot", "send_voice", null, data);
     }
 
-    ///<summary>Send a voice message.</summary>
-    ///<param name="url">Remote path to a voice message. eg: http://example.org/path/to/the/voice.opus</param>
-    ///<param name="file">Local path to a voice message. eg: /path/to/the/voice.opus</param>
-    ///<param name="caption">The title of the voice message. eg: My microphone recording</param>
-    ///<param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
-    ///<param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
-    ///<param name="authentication">Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</param>
-    ///<param name="target">An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</param>
-    ///<param name="disableNotification">Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</param>
-    ///<param name="verifySsl">Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</param>
-    ///<param name="timeout">Timeout for send voice. Will help with timeout errors (poor internet connection, etc)</param>
-    ///<param name="keyboard">List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</param>
-    ///<param name="inlineKeyboard">List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</param>
-    ///<param name="messageTag">Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</param>
-    public void SendVoice(string? @url = null, string? @file = null, string? @caption = null, string? @username = null, string? @password = null, string? @authentication = null, object? @target = null, bool? @disableNotification = null, bool? @verifySsl = null, long? @timeout = null, object? @keyboard = null, object? @inlineKeyboard = null, string? @messageTag = null)
+    /// <summary>Send a voice message.</summary>
+    /// <param name="url">Remote path to a voice message. eg: http://example.org/path/to/the/voice.opus</param>
+    /// <param name="file">Local path to a voice message. eg: /path/to/the/voice.opus</param>
+    /// <param name="caption">The title of the voice message. eg: My microphone recording</param>
+    /// <param name="username">Username for a URL which require HTTP authentication. eg: myuser</param>
+    /// <param name="password">Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</param>
+    /// <param name="authentication">
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest
+    ///     authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </param>
+    /// <param name="target">
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id
+    ///     is the default. eg: [12345, 67890] or 12345
+    /// </param>
+    /// <param name="disableNotification">
+    ///     Sends the message silently. iOS users and Web users will not receive a notification,
+    ///     Android users will receive a notification with no sound.
+    /// </param>
+    /// <param name="verifySsl">
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file
+    ///     from a URL and you don't want to validate the SSL certificate of the server.
+    /// </param>
+    /// <param name="timeout">Timeout for send voice. Will help with timeout errors (poor internet connection, etc)</param>
+    /// <param name="keyboard">
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1,
+    ///     /command2", "/command3"]
+    /// </param>
+    /// <param name="inlineKeyboard">
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons
+    ///     with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text
+    ///     button2", "/button2"]], [["Text button3", "/button3"]]]
+    /// </param>
+    /// <param name="messageTag">
+    ///     Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg:
+    ///     msg_to_edit
+    /// </param>
+    public void SendVoice(string? url = null, string? file = null, string? caption = null, string? username = null, string? password = null, string? authentication = null, object? target = null, bool? disableNotification = null, bool? verifySsl = null, long? timeout = null, object? keyboard = null, object? inlineKeyboard = null, string? messageTag = null)
     {
-        _haContext.CallService("telegram_bot", "send_voice", null, new TelegramBotSendVoiceParameters { Url = @url, File = @file, Caption = @caption, Username = @username, Password = @password, Authentication = @authentication, Target = @target, DisableNotification = @disableNotification, VerifySsl = @verifySsl, Timeout = @timeout, Keyboard = @keyboard, InlineKeyboard = @inlineKeyboard, MessageTag = @messageTag });
+        _haContext.CallService("telegram_bot", "send_voice", null, new TelegramBotSendVoiceParameters { Url = url, File = file, Caption = caption, Username = username, Password = password, Authentication = authentication, Target = target, DisableNotification = disableNotification, VerifySsl = verifySsl, Timeout = timeout, Keyboard = keyboard, InlineKeyboard = inlineKeyboard, MessageTag = messageTag });
     }
 }
 
 public record TelegramBotAnswerCallbackQueryParameters
 {
-    ///<summary>Unformatted text message body of the notification. eg: OK, I'm listening</summary>
-    [JsonPropertyName("message")]
-    public string? Message { get; init; }
-
-    ///<summary>Unique id of the callback response. eg: {{ trigger.event.data.id }}</summary>
-    [JsonPropertyName("callback_query_id")]
-    public string? CallbackQueryId { get; init; }
-
     ///<summary>Show a permanent notification.</summary>
     [JsonPropertyName("show_alert")]
     public bool? ShowAlert { get; init; }
@@ -12588,43 +13145,63 @@ public record TelegramBotAnswerCallbackQueryParameters
     ///<summary>Timeout for sending the answer. Will help with timeout errors (poor internet connection, etc)</summary>
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
+
+    ///<summary>Unique id of the callback response. eg: {{ trigger.event.data.id }}</summary>
+    [JsonPropertyName("callback_query_id")]
+    public string? CallbackQueryId { get; init; }
+
+    ///<summary>Unformatted text message body of the notification. eg: OK, I'm listening</summary>
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
 }
 
 public record TelegramBotDeleteMessageParameters
 {
-    ///<summary>id of the message to delete. eg: {{ trigger.event.data.message.message_id }}</summary>
-    [JsonPropertyName("message_id")]
-    public string? MessageId { get; init; }
-
     ///<summary>The chat_id where to delete the message. eg: 12345</summary>
     [JsonPropertyName("chat_id")]
     public string? ChatId { get; init; }
+
+    ///<summary>id of the message to delete. eg: {{ trigger.event.data.message.message_id }}</summary>
+    [JsonPropertyName("message_id")]
+    public string? MessageId { get; init; }
 }
 
 public record TelegramBotEditCaptionParameters
 {
-    ///<summary>id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</summary>
-    [JsonPropertyName("message_id")]
-    public string? MessageId { get; init; }
-
-    ///<summary>The chat_id where to edit the caption. eg: 12345</summary>
-    [JsonPropertyName("chat_id")]
-    public string? ChatId { get; init; }
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
 
     ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
     [JsonPropertyName("caption")]
     public string? Caption { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    ///<summary>The chat_id where to edit the caption. eg: 12345</summary>
+    [JsonPropertyName("chat_id")]
+    public string? ChatId { get; init; }
+
+    ///<summary>id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</summary>
+    [JsonPropertyName("message_id")]
+    public string? MessageId { get; init; }
 }
 
 public record TelegramBotEditMessageParameters
 {
-    ///<summary>id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</summary>
-    [JsonPropertyName("message_id")]
-    public string? MessageId { get; init; }
+    ///<summary>Disables link previews for links in the message.</summary>
+    [JsonPropertyName("disable_web_page_preview")]
+    public bool? DisableWebPagePreview { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
 
     ///<summary>The chat_id where to edit the message. eg: 12345</summary>
     [JsonPropertyName("chat_id")]
@@ -12634,77 +13211,51 @@ public record TelegramBotEditMessageParameters
     [JsonPropertyName("message")]
     public string? Message { get; init; }
 
-    ///<summary>Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door Friend</summary>
-    [JsonPropertyName("title")]
-    public string? Title { get; init; }
+    ///<summary>id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</summary>
+    [JsonPropertyName("message_id")]
+    public string? MessageId { get; init; }
 
     ///<summary>Parser for the message text.</summary>
     [JsonPropertyName("parse_mode")]
     public string? ParseMode { get; init; }
 
-    ///<summary>Disables link previews for links in the message.</summary>
-    [JsonPropertyName("disable_web_page_preview")]
-    public bool? DisableWebPagePreview { get; init; }
-
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    ///<summary>Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door Friend</summary>
+    [JsonPropertyName("title")]
+    public string? Title { get; init; }
 }
 
 public record TelegramBotEditReplymarkupParameters
 {
-    ///<summary>id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</summary>
-    [JsonPropertyName("message_id")]
-    public string? MessageId { get; init; }
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
 
     ///<summary>The chat_id where to edit the reply_markup. eg: 12345</summary>
     [JsonPropertyName("chat_id")]
     public string? ChatId { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    ///<summary>id of the message to edit. eg: {{ trigger.event.data.message.message_id }}</summary>
+    [JsonPropertyName("message_id")]
+    public string? MessageId { get; init; }
 }
 
 public record TelegramBotSendAnimationParameters
 {
-    ///<summary>Remote path to a GIF or H.264/MPEG-4 AVC video without sound. eg: http://example.org/path/to/the/animation.gif</summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
-
-    ///<summary>Local path to a GIF or H.264/MPEG-4 AVC video without sound. eg: /path/to/the/animation.gif</summary>
-    [JsonPropertyName("file")]
-    public string? File { get; init; }
-
-    ///<summary>The title of the animation. eg: My animation</summary>
-    [JsonPropertyName("caption")]
-    public string? Caption { get; init; }
-
-    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
-    [JsonPropertyName("username")]
-    public string? Username { get; init; }
-
-    ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
-    [JsonPropertyName("password")]
-    public string? Password { get; init; }
-
-    ///<summary>Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</summary>
-    [JsonPropertyName("authentication")]
-    public string? Authentication { get; init; }
-
-    ///<summary>An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Parser for the message text.</summary>
-    [JsonPropertyName("parse_mode")]
-    public string? ParseMode { get; init; }
-
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
     [JsonPropertyName("disable_notification")]
     public bool? DisableNotification { get; init; }
 
-    ///<summary>Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</summary>
+    /// <summary>
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you
+    ///     don't want to validate the SSL certificate of the server.
+    /// </summary>
     [JsonPropertyName("verify_ssl")]
     public bool? VerifySsl { get; init; }
 
@@ -12712,54 +13263,73 @@ public record TelegramBotSendAnimationParameters
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2",
+    ///     "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
-}
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
 
-public record TelegramBotSendDocumentParameters
-{
-    ///<summary>Remote path to a document. eg: http://example.org/path/to/the/document.odf</summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
-
-    ///<summary>Local path to a document. eg: /tmp/whatever.odf</summary>
-    [JsonPropertyName("file")]
-    public string? File { get; init; }
-
-    ///<summary>The title of the document. eg: Document Title xy</summary>
-    [JsonPropertyName("caption")]
-    public string? Caption { get; init; }
-
-    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
-    [JsonPropertyName("username")]
-    public string? Username { get; init; }
-
-    ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
-    [JsonPropertyName("password")]
-    public string? Password { get; init; }
-
-    ///<summary>Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</summary>
+    /// <summary>
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or
+    ///     `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </summary>
     [JsonPropertyName("authentication")]
     public string? Authentication { get; init; }
 
-    ///<summary>An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
+    ///<summary>The title of the animation. eg: My animation</summary>
+    [JsonPropertyName("caption")]
+    public string? Caption { get; init; }
+
+    ///<summary>Local path to a GIF or H.264/MPEG-4 AVC video without sound. eg: /path/to/the/animation.gif</summary>
+    [JsonPropertyName("file")]
+    public string? File { get; init; }
 
     ///<summary>Parser for the message text.</summary>
     [JsonPropertyName("parse_mode")]
     public string? ParseMode { get; init; }
 
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
+    ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
+    [JsonPropertyName("password")]
+    public string? Password { get; init; }
+
+    ///<summary>Remote path to a GIF or H.264/MPEG-4 AVC video without sound. eg: http://example.org/path/to/the/animation.gif</summary>
+    [JsonPropertyName("url")]
+    public string? Url { get; init; }
+
+    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
+    [JsonPropertyName("username")]
+    public string? Username { get; init; }
+}
+
+public record TelegramBotSendDocumentParameters
+{
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
     [JsonPropertyName("disable_notification")]
     public bool? DisableNotification { get; init; }
 
-    ///<summary>Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</summary>
+    /// <summary>
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you
+    ///     don't want to validate the SSL certificate of the server.
+    /// </summary>
     [JsonPropertyName("verify_ssl")]
     public bool? VerifySsl { get; init; }
 
@@ -12767,21 +13337,73 @@ public record TelegramBotSendDocumentParameters
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2",
+    ///     "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
+    /// <summary>
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or
+    ///     `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </summary>
+    [JsonPropertyName("authentication")]
+    public string? Authentication { get; init; }
+
+    ///<summary>The title of the document. eg: Document Title xy</summary>
+    [JsonPropertyName("caption")]
+    public string? Caption { get; init; }
+
+    ///<summary>Local path to a document. eg: /tmp/whatever.odf</summary>
+    [JsonPropertyName("file")]
+    public string? File { get; init; }
 
     ///<summary>Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</summary>
     [JsonPropertyName("message_tag")]
     public string? MessageTag { get; init; }
+
+    ///<summary>Parser for the message text.</summary>
+    [JsonPropertyName("parse_mode")]
+    public string? ParseMode { get; init; }
+
+    ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
+    [JsonPropertyName("password")]
+    public string? Password { get; init; }
+
+    ///<summary>Remote path to a document. eg: http://example.org/path/to/the/document.odf</summary>
+    [JsonPropertyName("url")]
+    public string? Url { get; init; }
+
+    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
+    [JsonPropertyName("username")]
+    public string? Username { get; init; }
 }
 
 public record TelegramBotSendLocationParameters
 {
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
+    [JsonPropertyName("disable_notification")]
+    public bool? DisableNotification { get; init; }
+
     ///<summary>The latitude to send.</summary>
     [JsonPropertyName("latitude")]
     public double? Latitude { get; init; }
@@ -12790,25 +13412,31 @@ public record TelegramBotSendLocationParameters
     [JsonPropertyName("longitude")]
     public double? Longitude { get; init; }
 
-    ///<summary>An array of pre-authorized chat_ids to send the location to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
-    [JsonPropertyName("disable_notification")]
-    public bool? DisableNotification { get; init; }
-
     ///<summary>Timeout for send photo. Will help with timeout errors (poor internet connection, etc)</summary>
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2",
+    ///     "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the location to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
 
     ///<summary>Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</summary>
     [JsonPropertyName("message_tag")]
@@ -12817,23 +13445,10 @@ public record TelegramBotSendLocationParameters
 
 public record TelegramBotSendMessageParameters
 {
-    ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
-    [JsonPropertyName("message")]
-    public string? Message { get; init; }
-
-    ///<summary>Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door Friend</summary>
-    [JsonPropertyName("title")]
-    public string? Title { get; init; }
-
-    ///<summary>An array of pre-authorized chat_ids to send the notification to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
-
-    ///<summary>Parser for the message text.</summary>
-    [JsonPropertyName("parse_mode")]
-    public string? ParseMode { get; init; }
-
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
     [JsonPropertyName("disable_notification")]
     public bool? DisableNotification { get; init; }
 
@@ -12845,58 +13460,59 @@ public record TelegramBotSendMessageParameters
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. Empty list clears a previously set keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or ["Text button1:/button1, Text button2:/button2", "Text
+    ///     button3:/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3",
+    ///     "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. Empty list clears a previously set
+    ///     keyboard. eg: ["/command1, /command2", "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or ["Text button1:/button1, Text button2:/button2", "Text button3:/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the notification to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
+    ///<summary>Message body of the notification. eg: The garage door has been open for 10 minutes.</summary>
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
 
     ///<summary>Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</summary>
     [JsonPropertyName("message_tag")]
     public string? MessageTag { get; init; }
-}
-
-public record TelegramBotSendPhotoParameters
-{
-    ///<summary>Remote path to an image. eg: http://example.org/path/to/the/image.png</summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
-
-    ///<summary>Local path to an image. eg: /path/to/the/image.png</summary>
-    [JsonPropertyName("file")]
-    public string? File { get; init; }
-
-    ///<summary>The title of the image. eg: My image</summary>
-    [JsonPropertyName("caption")]
-    public string? Caption { get; init; }
-
-    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
-    [JsonPropertyName("username")]
-    public string? Username { get; init; }
-
-    ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
-    [JsonPropertyName("password")]
-    public string? Password { get; init; }
-
-    ///<summary>Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</summary>
-    [JsonPropertyName("authentication")]
-    public string? Authentication { get; init; }
-
-    ///<summary>An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
 
     ///<summary>Parser for the message text.</summary>
     [JsonPropertyName("parse_mode")]
     public string? ParseMode { get; init; }
 
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
+    ///<summary>Optional title for your notification. Will be composed as '%title\n%message' eg: Your Garage Door Friend</summary>
+    [JsonPropertyName("title")]
+    public string? Title { get; init; }
+}
+
+public record TelegramBotSendPhotoParameters
+{
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
     [JsonPropertyName("disable_notification")]
     public bool? DisableNotification { get; init; }
 
-    ///<summary>Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</summary>
+    /// <summary>
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you
+    ///     don't want to validate the SSL certificate of the server.
+    /// </summary>
     [JsonPropertyName("verify_ssl")]
     public bool? VerifySsl { get; init; }
 
@@ -12904,50 +13520,77 @@ public record TelegramBotSendPhotoParameters
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2",
+    ///     "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
+    /// <summary>
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or
+    ///     `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </summary>
+    [JsonPropertyName("authentication")]
+    public string? Authentication { get; init; }
+
+    ///<summary>The title of the image. eg: My image</summary>
+    [JsonPropertyName("caption")]
+    public string? Caption { get; init; }
+
+    ///<summary>Local path to an image. eg: /path/to/the/image.png</summary>
+    [JsonPropertyName("file")]
+    public string? File { get; init; }
 
     ///<summary>Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</summary>
     [JsonPropertyName("message_tag")]
     public string? MessageTag { get; init; }
-}
 
-public record TelegramBotSendStickerParameters
-{
-    ///<summary>Remote path to a static .webp or animated .tgs sticker. eg: http://example.org/path/to/the/sticker.webp</summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
-
-    ///<summary>Local path to a static .webp or animated .tgs sticker. eg: /path/to/the/sticker.webp</summary>
-    [JsonPropertyName("file")]
-    public string? File { get; init; }
-
-    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
-    [JsonPropertyName("username")]
-    public string? Username { get; init; }
+    ///<summary>Parser for the message text.</summary>
+    [JsonPropertyName("parse_mode")]
+    public string? ParseMode { get; init; }
 
     ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
     [JsonPropertyName("password")]
     public string? Password { get; init; }
 
-    ///<summary>Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</summary>
-    [JsonPropertyName("authentication")]
-    public string? Authentication { get; init; }
+    ///<summary>Remote path to an image. eg: http://example.org/path/to/the/image.png</summary>
+    [JsonPropertyName("url")]
+    public string? Url { get; init; }
 
-    ///<summary>An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
+    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
+    [JsonPropertyName("username")]
+    public string? Username { get; init; }
+}
 
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
+public record TelegramBotSendStickerParameters
+{
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
     [JsonPropertyName("disable_notification")]
     public bool? DisableNotification { get; init; }
 
-    ///<summary>Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</summary>
+    /// <summary>
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you
+    ///     don't want to validate the SSL certificate of the server.
+    /// </summary>
     [JsonPropertyName("verify_ssl")]
     public bool? VerifySsl { get; init; }
 
@@ -12955,58 +13598,69 @@ public record TelegramBotSendStickerParameters
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2",
+    ///     "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
+    /// <summary>
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or
+    ///     `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </summary>
+    [JsonPropertyName("authentication")]
+    public string? Authentication { get; init; }
+
+    ///<summary>Local path to a static .webp or animated .tgs sticker. eg: /path/to/the/sticker.webp</summary>
+    [JsonPropertyName("file")]
+    public string? File { get; init; }
 
     ///<summary>Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</summary>
     [JsonPropertyName("message_tag")]
     public string? MessageTag { get; init; }
-}
-
-public record TelegramBotSendVideoParameters
-{
-    ///<summary>Remote path to a video. eg: http://example.org/path/to/the/video.mp4</summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
-
-    ///<summary>Local path to a video. eg: /path/to/the/video.mp4</summary>
-    [JsonPropertyName("file")]
-    public string? File { get; init; }
-
-    ///<summary>The title of the video. eg: My video</summary>
-    [JsonPropertyName("caption")]
-    public string? Caption { get; init; }
-
-    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
-    [JsonPropertyName("username")]
-    public string? Username { get; init; }
 
     ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
     [JsonPropertyName("password")]
     public string? Password { get; init; }
 
-    ///<summary>Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</summary>
-    [JsonPropertyName("authentication")]
-    public string? Authentication { get; init; }
+    ///<summary>Remote path to a static .webp or animated .tgs sticker. eg: http://example.org/path/to/the/sticker.webp</summary>
+    [JsonPropertyName("url")]
+    public string? Url { get; init; }
 
-    ///<summary>An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
+    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
+    [JsonPropertyName("username")]
+    public string? Username { get; init; }
+}
 
-    ///<summary>Parser for the message text.</summary>
-    [JsonPropertyName("parse_mode")]
-    public string? ParseMode { get; init; }
-
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
+public record TelegramBotSendVideoParameters
+{
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
     [JsonPropertyName("disable_notification")]
     public bool? DisableNotification { get; init; }
 
-    ///<summary>Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</summary>
+    /// <summary>
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you
+    ///     don't want to validate the SSL certificate of the server.
+    /// </summary>
     [JsonPropertyName("verify_ssl")]
     public bool? VerifySsl { get; init; }
 
@@ -13014,54 +13668,77 @@ public record TelegramBotSendVideoParameters
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2",
+    ///     "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
+    /// <summary>
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or
+    ///     `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </summary>
+    [JsonPropertyName("authentication")]
+    public string? Authentication { get; init; }
+
+    ///<summary>The title of the video. eg: My video</summary>
+    [JsonPropertyName("caption")]
+    public string? Caption { get; init; }
+
+    ///<summary>Local path to a video. eg: /path/to/the/video.mp4</summary>
+    [JsonPropertyName("file")]
+    public string? File { get; init; }
 
     ///<summary>Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</summary>
     [JsonPropertyName("message_tag")]
     public string? MessageTag { get; init; }
-}
 
-public record TelegramBotSendVoiceParameters
-{
-    ///<summary>Remote path to a voice message. eg: http://example.org/path/to/the/voice.opus</summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
-
-    ///<summary>Local path to a voice message. eg: /path/to/the/voice.opus</summary>
-    [JsonPropertyName("file")]
-    public string? File { get; init; }
-
-    ///<summary>The title of the voice message. eg: My microphone recording</summary>
-    [JsonPropertyName("caption")]
-    public string? Caption { get; init; }
-
-    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
-    [JsonPropertyName("username")]
-    public string? Username { get; init; }
+    ///<summary>Parser for the message text.</summary>
+    [JsonPropertyName("parse_mode")]
+    public string? ParseMode { get; init; }
 
     ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
     [JsonPropertyName("password")]
     public string? Password { get; init; }
 
-    ///<summary>Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.</summary>
-    [JsonPropertyName("authentication")]
-    public string? Authentication { get; init; }
+    ///<summary>Remote path to a video. eg: http://example.org/path/to/the/video.mp4</summary>
+    [JsonPropertyName("url")]
+    public string? Url { get; init; }
 
-    ///<summary>An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the default. eg: [12345, 67890] or 12345</summary>
-    [JsonPropertyName("target")]
-    public object? Target { get; init; }
+    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
+    [JsonPropertyName("username")]
+    public string? Username { get; init; }
+}
 
-    ///<summary>Sends the message silently. iOS users and Web users will not receive a notification, Android users will receive a notification with no sound.</summary>
+public record TelegramBotSendVoiceParameters
+{
+    /// <summary>
+    ///     Sends the message silently. iOS users and Web users will not receive a notification, Android users will
+    ///     receive a notification with no sound.
+    /// </summary>
     [JsonPropertyName("disable_notification")]
     public bool? DisableNotification { get; init; }
 
-    ///<summary>Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you don't want to validate the SSL certificate of the server.</summary>
+    /// <summary>
+    ///     Enable or disable SSL certificate verification. Set to false if you're downloading the file from a URL and you
+    ///     don't want to validate the SSL certificate of the server.
+    /// </summary>
     [JsonPropertyName("verify_ssl")]
     public bool? VerifySsl { get; init; }
 
@@ -13069,17 +13746,58 @@ public record TelegramBotSendVoiceParameters
     [JsonPropertyName("timeout")]
     public long? Timeout { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2", "/command3"]</summary>
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated
+    ///     callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2",
+    ///     "/button2"]], [["Text button3", "/button3"]]]
+    /// </summary>
+    [JsonPropertyName("inline_keyboard")]
+    public object? InlineKeyboard { get; init; }
+
+    /// <summary>
+    ///     List of rows of commands, comma-separated, to make a custom keyboard. eg: ["/command1, /command2",
+    ///     "/command3"]
+    /// </summary>
     [JsonPropertyName("keyboard")]
     public object? Keyboard { get; init; }
 
-    ///<summary>List of rows of commands, comma-separated, to make a custom inline keyboard with buttons with associated callback data. eg: ["/button1, /button2", "/button3"] or [[["Text button1", "/button1"], ["Text button2", "/button2"]], [["Text button3", "/button3"]]]</summary>
-    [JsonPropertyName("inline_keyboard")]
-    public object? InlineKeyboard { get; init; }
+    /// <summary>
+    ///     An array of pre-authorized chat_ids to send the document to. If not present, first allowed chat_id is the
+    ///     default. eg: [12345, 67890] or 12345
+    /// </summary>
+    [JsonPropertyName("target")]
+    public object? Target { get; init; }
+
+    /// <summary>
+    ///     Define which authentication method to use. Set to `digest` to use HTTP digest authentication, or
+    ///     `bearer_token` for OAuth 2.0 bearer token authentication. Defaults to `basic`.
+    /// </summary>
+    [JsonPropertyName("authentication")]
+    public string? Authentication { get; init; }
+
+    ///<summary>The title of the voice message. eg: My microphone recording</summary>
+    [JsonPropertyName("caption")]
+    public string? Caption { get; init; }
+
+    ///<summary>Local path to a voice message. eg: /path/to/the/voice.opus</summary>
+    [JsonPropertyName("file")]
+    public string? File { get; init; }
 
     ///<summary>Tag for sent message. In telegram_sent event data: {{trigger.event.data.message_tag}} eg: msg_to_edit</summary>
     [JsonPropertyName("message_tag")]
     public string? MessageTag { get; init; }
+
+    ///<summary>Password (or bearer token) for a URL which require HTTP authentication. eg: myuser_pwd</summary>
+    [JsonPropertyName("password")]
+    public string? Password { get; init; }
+
+    ///<summary>Remote path to a voice message. eg: http://example.org/path/to/the/voice.opus</summary>
+    [JsonPropertyName("url")]
+    public string? Url { get; init; }
+
+    ///<summary>Username for a URL which require HTTP authentication. eg: myuser</summary>
+    [JsonPropertyName("username")]
+    public string? Username { get; init; }
 }
 
 public class TemplateServices
@@ -13094,7 +13812,7 @@ public class TemplateServices
     ///<summary>Reload all template entities.</summary>
     public void Reload()
     {
-        _haContext.CallService("template", "reload", null);
+        _haContext.CallService("template", "reload");
     }
 }
 
@@ -13107,22 +13825,22 @@ public class TimerServices
         _haContext = haContext;
     }
 
-    ///<summary>Cancel a timer.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Cancel a timer.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Cancel(ServiceTarget target)
     {
         _haContext.CallService("timer", "cancel", target);
     }
 
-    ///<summary>Finish a timer.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Finish a timer.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Finish(ServiceTarget target)
     {
         _haContext.CallService("timer", "finish", target);
     }
 
-    ///<summary>Pause a timer.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Pause a timer.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Pause(ServiceTarget target)
     {
         _haContext.CallService("timer", "pause", target);
@@ -13130,22 +13848,22 @@ public class TimerServices
 
     public void Reload()
     {
-        _haContext.CallService("timer", "reload", null);
+        _haContext.CallService("timer", "reload");
     }
 
-    ///<summary>Start a timer</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Start a timer</summary>
+    /// <param name="target">The target for this service call</param>
     public void Start(ServiceTarget target, TimerStartParameters data)
     {
         _haContext.CallService("timer", "start", target, data);
     }
 
-    ///<summary>Start a timer</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="duration">Duration the timer requires to finish. [optional] eg: 00:01:00 or 60</param>
-    public void Start(ServiceTarget target, string? @duration = null)
+    /// <summary>Start a timer</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="duration">Duration the timer requires to finish. [optional] eg: 00:01:00 or 60</param>
+    public void Start(ServiceTarget target, string? duration = null)
     {
-        _haContext.CallService("timer", "start", target, new TimerStartParameters { Duration = @duration });
+        _haContext.CallService("timer", "start", target, new TimerStartParameters { Duration = duration });
     }
 }
 
@@ -13168,7 +13886,7 @@ public class TtsServices
     ///<summary>Remove all text-to-speech cache files and RAM cache.</summary>
     public void ClearCache()
     {
-        _haContext.CallService("tts", "clear_cache", null);
+        _haContext.CallService("tts", "clear_cache");
     }
 
     ///<summary>Say something using text-to-speech on a media player with cloud.</summary>
@@ -13177,39 +13895,85 @@ public class TtsServices
         _haContext.CallService("tts", "cloud_say", null, data);
     }
 
-    ///<summary>Say something using text-to-speech on a media player with cloud.</summary>
-    ///<param name="entityId">Name(s) of media player entities.</param>
-    ///<param name="message">Text to speak on devices. eg: My name is hanna</param>
-    ///<param name="cache">Control file cache of this message.</param>
-    ///<param name="language">Language to use for speech generation. eg: ru</param>
-    ///<param name="options">A dictionary containing platform-specific options. Optional depending on the platform. eg: platform specific</param>
-    public void CloudSay(string @entityId, string @message, bool? @cache = null, string? @language = null, object? @options = null)
+    /// <summary>Say something using text-to-speech on a media player with cloud.</summary>
+    /// <param name="entityId">Name(s) of media player entities.</param>
+    /// <param name="message">Text to speak on devices. eg: My name is hanna</param>
+    /// <param name="cache">Control file cache of this message.</param>
+    /// <param name="language">Language to use for speech generation. eg: ru</param>
+    /// <param name="options">
+    ///     A dictionary containing platform-specific options. Optional depending on the platform. eg:
+    ///     platform specific
+    /// </param>
+    public void CloudSay(string entityId, string message, bool? cache = null, string? language = null, object? options = null)
     {
-        _haContext.CallService("tts", "cloud_say", null, new TtsCloudSayParameters { EntityId = @entityId, Message = @message, Cache = @cache, Language = @language, Options = @options });
+        _haContext.CallService("tts", "cloud_say", null, new TtsCloudSayParameters { EntityId = entityId, Message = message, Cache = cache, Language = language, Options = options });
+    }
+
+    ///<summary>Say something using text-to-speech on a media player with google_translate.</summary>
+    public void GoogleTranslateSay(TtsGoogleTranslateSayParameters data)
+    {
+        _haContext.CallService("tts", "google_translate_say", null, data);
+    }
+
+    /// <summary>Say something using text-to-speech on a media player with google_translate.</summary>
+    /// <param name="entityId">Name(s) of media player entities.</param>
+    /// <param name="message">Text to speak on devices. eg: My name is hanna</param>
+    /// <param name="cache">Control file cache of this message.</param>
+    /// <param name="language">Language to use for speech generation. eg: ru</param>
+    /// <param name="options">
+    ///     A dictionary containing platform-specific options. Optional depending on the platform. eg:
+    ///     platform specific
+    /// </param>
+    public void GoogleTranslateSay(string entityId, string message, bool? cache = null, string? language = null, object? options = null)
+    {
+        _haContext.CallService("tts", "google_translate_say", null, new TtsGoogleTranslateSayParameters { EntityId = entityId, Message = message, Cache = cache, Language = language, Options = options });
     }
 }
 
 public record TtsCloudSayParameters
 {
-    ///<summary>Name(s) of media player entities.</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
-
-    ///<summary>Text to speak on devices. eg: My name is hanna</summary>
-    [JsonPropertyName("message")]
-    public string? Message { get; init; }
-
     ///<summary>Control file cache of this message.</summary>
     [JsonPropertyName("cache")]
     public bool? Cache { get; init; }
+
+    ///<summary>A dictionary containing platform-specific options. Optional depending on the platform. eg: platform specific</summary>
+    [JsonPropertyName("options")]
+    public object? Options { get; init; }
+
+    ///<summary>Name(s) of media player entities.</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
 
     ///<summary>Language to use for speech generation. eg: ru</summary>
     [JsonPropertyName("language")]
     public string? Language { get; init; }
 
+    ///<summary>Text to speak on devices. eg: My name is hanna</summary>
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
+}
+
+public record TtsGoogleTranslateSayParameters
+{
+    ///<summary>Control file cache of this message.</summary>
+    [JsonPropertyName("cache")]
+    public bool? Cache { get; init; }
+
     ///<summary>A dictionary containing platform-specific options. Optional depending on the platform. eg: platform specific</summary>
     [JsonPropertyName("options")]
     public object? Options { get; init; }
+
+    ///<summary>Name(s) of media player entities.</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
+
+    ///<summary>Language to use for speech generation. eg: ru</summary>
+    [JsonPropertyName("language")]
+    public string? Language { get; init; }
+
+    ///<summary>Text to speak on devices. eg: My name is hanna</summary>
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
 }
 
 public class UnifiServices
@@ -13227,17 +13991,17 @@ public class UnifiServices
         _haContext.CallService("unifi", "reconnect_client", null, data);
     }
 
-    ///<summary>Try to get wireless client to reconnect to UniFi Network</summary>
-    ///<param name="deviceId">Try reconnect client to wireless network</param>
-    public void ReconnectClient(string @deviceId)
+    /// <summary>Try to get wireless client to reconnect to UniFi Network</summary>
+    /// <param name="deviceId">Try reconnect client to wireless network</param>
+    public void ReconnectClient(string deviceId)
     {
-        _haContext.CallService("unifi", "reconnect_client", null, new UnifiReconnectClientParameters { DeviceId = @deviceId });
+        _haContext.CallService("unifi", "reconnect_client", null, new UnifiReconnectClientParameters { DeviceId = deviceId });
     }
 
     ///<summary>Clean up clients that has only been associated with the controller for a short period of time.</summary>
     public void RemoveClients()
     {
-        _haContext.CallService("unifi", "remove_clients", null);
+        _haContext.CallService("unifi", "remove_clients");
     }
 }
 
@@ -13257,19 +14021,19 @@ public class UtilityMeterServices
         _haContext = haContext;
     }
 
-    ///<summary>Calibrates a utility meter sensor.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Calibrates a utility meter sensor.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Calibrate(ServiceTarget target, UtilityMeterCalibrateParameters data)
     {
         _haContext.CallService("utility_meter", "calibrate", target, data);
     }
 
-    ///<summary>Calibrates a utility meter sensor.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="value">Value to which set the meter eg: 100</param>
-    public void Calibrate(ServiceTarget target, string @value)
+    /// <summary>Calibrates a utility meter sensor.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="value">Value to which set the meter eg: 100</param>
+    public void Calibrate(ServiceTarget target, string value)
     {
-        _haContext.CallService("utility_meter", "calibrate", target, new UtilityMeterCalibrateParameters { Value = @value });
+        _haContext.CallService("utility_meter", "calibrate", target, new UtilityMeterCalibrateParameters { Value = value });
     }
 }
 
@@ -13289,81 +14053,84 @@ public class VacuumServices
         _haContext = haContext;
     }
 
-    ///<summary>Tell the vacuum cleaner to do a spot clean-up.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Tell the vacuum cleaner to do a spot clean-up.</summary>
+    /// <param name="target">The target for this service call</param>
     public void CleanSpot(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "clean_spot", target);
     }
 
-    ///<summary>Locate the vacuum cleaner robot.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Locate the vacuum cleaner robot.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Locate(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "locate", target);
     }
 
-    ///<summary>Pause the cleaning task.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Pause the cleaning task.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Pause(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "pause", target);
     }
 
-    ///<summary>Tell the vacuum cleaner to return to its dock.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Tell the vacuum cleaner to return to its dock.</summary>
+    /// <param name="target">The target for this service call</param>
     public void ReturnToBase(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "return_to_base", target);
     }
 
-    ///<summary>Send a raw command to the vacuum cleaner.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Send a raw command to the vacuum cleaner.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SendCommand(ServiceTarget target, VacuumSendCommandParameters data)
     {
         _haContext.CallService("vacuum", "send_command", target, data);
     }
 
-    ///<summary>Send a raw command to the vacuum cleaner.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="command">Command to execute. eg: set_dnd_timer</param>
-    ///<param name="params">Parameters for the command. eg: { "key": "value" }</param>
-    public void SendCommand(ServiceTarget target, string @command, object? @params = null)
+    /// <summary>Send a raw command to the vacuum cleaner.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="command">Command to execute. eg: set_dnd_timer</param>
+    /// <param name="params">Parameters for the command. eg: { "key": "value" }</param>
+    public void SendCommand(ServiceTarget target, string command, object? @params = null)
     {
-        _haContext.CallService("vacuum", "send_command", target, new VacuumSendCommandParameters { Command = @command, Params = @params });
+        _haContext.CallService("vacuum", "send_command", target, new VacuumSendCommandParameters { Command = command, Params = @params });
     }
 
-    ///<summary>Set the fan speed of the vacuum cleaner.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set the fan speed of the vacuum cleaner.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetFanSpeed(ServiceTarget target, VacuumSetFanSpeedParameters data)
     {
         _haContext.CallService("vacuum", "set_fan_speed", target, data);
     }
 
-    ///<summary>Set the fan speed of the vacuum cleaner.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="fanSpeed">Platform dependent vacuum cleaner fan speed, with speed steps, like 'medium' or by percentage, between 0 and 100. eg: low</param>
-    public void SetFanSpeed(ServiceTarget target, string @fanSpeed)
+    /// <summary>Set the fan speed of the vacuum cleaner.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="fanSpeed">
+    ///     Platform dependent vacuum cleaner fan speed, with speed steps, like 'medium' or by percentage,
+    ///     between 0 and 100. eg: low
+    /// </param>
+    public void SetFanSpeed(ServiceTarget target, string fanSpeed)
     {
-        _haContext.CallService("vacuum", "set_fan_speed", target, new VacuumSetFanSpeedParameters { FanSpeed = @fanSpeed });
+        _haContext.CallService("vacuum", "set_fan_speed", target, new VacuumSetFanSpeedParameters { FanSpeed = fanSpeed });
     }
 
-    ///<summary>Start or resume the cleaning task.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Start or resume the cleaning task.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Start(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "start", target);
     }
 
-    ///<summary>Start, pause, or resume the cleaning task.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Start, pause, or resume the cleaning task.</summary>
+    /// <param name="target">The target for this service call</param>
     public void StartPause(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "start_pause", target);
     }
 
-    ///<summary>Stop the current cleaning task.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Stop the current cleaning task.</summary>
+    /// <param name="target">The target for this service call</param>
     public void Stop(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "stop", target);
@@ -13371,18 +14138,18 @@ public class VacuumServices
 
     public void Toggle()
     {
-        _haContext.CallService("vacuum", "toggle", null);
+        _haContext.CallService("vacuum", "toggle");
     }
 
-    ///<summary>Stop the current cleaning task and return to home.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Stop the current cleaning task and return to home.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOff(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "turn_off", target);
     }
 
-    ///<summary>Start a new cleaning task.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Start a new cleaning task.</summary>
+    /// <param name="target">The target for this service call</param>
     public void TurnOn(ServiceTarget target)
     {
         _haContext.CallService("vacuum", "turn_on", target);
@@ -13391,18 +14158,21 @@ public class VacuumServices
 
 public record VacuumSendCommandParameters
 {
-    ///<summary>Command to execute. eg: set_dnd_timer</summary>
-    [JsonPropertyName("command")]
-    public string? Command { get; init; }
-
     ///<summary>Parameters for the command. eg: { "key": "value" }</summary>
     [JsonPropertyName("params")]
     public object? Params { get; init; }
+
+    ///<summary>Command to execute. eg: set_dnd_timer</summary>
+    [JsonPropertyName("command")]
+    public string? Command { get; init; }
 }
 
 public record VacuumSetFanSpeedParameters
 {
-    ///<summary>Platform dependent vacuum cleaner fan speed, with speed steps, like 'medium' or by percentage, between 0 and 100. eg: low</summary>
+    /// <summary>
+    ///     Platform dependent vacuum cleaner fan speed, with speed steps, like 'medium' or by percentage, between 0 and
+    ///     100. eg: low
+    /// </summary>
     [JsonPropertyName("fan_speed")]
     public string? FanSpeed { get; init; }
 }
@@ -13422,29 +14192,29 @@ public class WakeOnLanServices
         _haContext.CallService("wake_on_lan", "send_magic_packet", null, data);
     }
 
-    ///<summary>Send a 'magic packet' to wake up a device with 'Wake-On-LAN' capabilities.</summary>
-    ///<param name="mac">MAC address of the device to wake up. eg: aa:bb:cc:dd:ee:ff</param>
-    ///<param name="broadcastAddress">Broadcast IP where to send the magic packet. eg: 192.168.255.255</param>
-    ///<param name="broadcastPort">Port where to send the magic packet.</param>
-    public void SendMagicPacket(string @mac, string? @broadcastAddress = null, long? @broadcastPort = null)
+    /// <summary>Send a 'magic packet' to wake up a device with 'Wake-On-LAN' capabilities.</summary>
+    /// <param name="mac">MAC address of the device to wake up. eg: aa:bb:cc:dd:ee:ff</param>
+    /// <param name="broadcastAddress">Broadcast IP where to send the magic packet. eg: 192.168.255.255</param>
+    /// <param name="broadcastPort">Port where to send the magic packet.</param>
+    public void SendMagicPacket(string mac, string? broadcastAddress = null, long? broadcastPort = null)
     {
-        _haContext.CallService("wake_on_lan", "send_magic_packet", null, new WakeOnLanSendMagicPacketParameters { Mac = @mac, BroadcastAddress = @broadcastAddress, BroadcastPort = @broadcastPort });
+        _haContext.CallService("wake_on_lan", "send_magic_packet", null, new WakeOnLanSendMagicPacketParameters { Mac = mac, BroadcastAddress = broadcastAddress, BroadcastPort = broadcastPort });
     }
 }
 
 public record WakeOnLanSendMagicPacketParameters
 {
-    ///<summary>MAC address of the device to wake up. eg: aa:bb:cc:dd:ee:ff</summary>
-    [JsonPropertyName("mac")]
-    public string? Mac { get; init; }
+    ///<summary>Port where to send the magic packet.</summary>
+    [JsonPropertyName("broadcast_port")]
+    public long? BroadcastPort { get; init; }
 
     ///<summary>Broadcast IP where to send the magic packet. eg: 192.168.255.255</summary>
     [JsonPropertyName("broadcast_address")]
     public string? BroadcastAddress { get; init; }
 
-    ///<summary>Port where to send the magic packet.</summary>
-    [JsonPropertyName("broadcast_port")]
-    public long? BroadcastPort { get; init; }
+    ///<summary>MAC address of the device to wake up. eg: aa:bb:cc:dd:ee:ff</summary>
+    [JsonPropertyName("mac")]
+    public string? Mac { get; init; }
 }
 
 public class WaterHeaterServices
@@ -13456,60 +14226,60 @@ public class WaterHeaterServices
         _haContext = haContext;
     }
 
-    ///<summary>Turn away mode on/off for water_heater device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Turn away mode on/off for water_heater device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetAwayMode(ServiceTarget target, WaterHeaterSetAwayModeParameters data)
     {
         _haContext.CallService("water_heater", "set_away_mode", target, data);
     }
 
-    ///<summary>Turn away mode on/off for water_heater device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="awayMode">New value of away mode.</param>
-    public void SetAwayMode(ServiceTarget target, bool @awayMode)
+    /// <summary>Turn away mode on/off for water_heater device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="awayMode">New value of away mode.</param>
+    public void SetAwayMode(ServiceTarget target, bool awayMode)
     {
-        _haContext.CallService("water_heater", "set_away_mode", target, new WaterHeaterSetAwayModeParameters { AwayMode = @awayMode });
+        _haContext.CallService("water_heater", "set_away_mode", target, new WaterHeaterSetAwayModeParameters { AwayMode = awayMode });
     }
 
-    ///<summary>Set operation mode for water_heater device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set operation mode for water_heater device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetOperationMode(ServiceTarget target, WaterHeaterSetOperationModeParameters data)
     {
         _haContext.CallService("water_heater", "set_operation_mode", target, data);
     }
 
-    ///<summary>Set operation mode for water_heater device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="operationMode">New value of operation mode. eg: eco</param>
-    public void SetOperationMode(ServiceTarget target, string @operationMode)
+    /// <summary>Set operation mode for water_heater device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="operationMode">New value of operation mode. eg: eco</param>
+    public void SetOperationMode(ServiceTarget target, string operationMode)
     {
-        _haContext.CallService("water_heater", "set_operation_mode", target, new WaterHeaterSetOperationModeParameters { OperationMode = @operationMode });
+        _haContext.CallService("water_heater", "set_operation_mode", target, new WaterHeaterSetOperationModeParameters { OperationMode = operationMode });
     }
 
-    ///<summary>Set target temperature of water_heater device.</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set target temperature of water_heater device.</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetTemperature(ServiceTarget target, WaterHeaterSetTemperatureParameters data)
     {
         _haContext.CallService("water_heater", "set_temperature", target, data);
     }
 
-    ///<summary>Set target temperature of water_heater device.</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="temperature">New target temperature for water heater.</param>
-    ///<param name="operationMode">New value of operation mode. eg: eco</param>
-    public void SetTemperature(ServiceTarget target, double @temperature, string? @operationMode = null)
+    /// <summary>Set target temperature of water_heater device.</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="temperature">New target temperature for water heater.</param>
+    /// <param name="operationMode">New value of operation mode. eg: eco</param>
+    public void SetTemperature(ServiceTarget target, double temperature, string? operationMode = null)
     {
-        _haContext.CallService("water_heater", "set_temperature", target, new WaterHeaterSetTemperatureParameters { Temperature = @temperature, OperationMode = @operationMode });
+        _haContext.CallService("water_heater", "set_temperature", target, new WaterHeaterSetTemperatureParameters { Temperature = temperature, OperationMode = operationMode });
     }
 
     public void TurnOff()
     {
-        _haContext.CallService("water_heater", "turn_off", null);
+        _haContext.CallService("water_heater", "turn_off");
     }
 
     public void TurnOn()
     {
-        _haContext.CallService("water_heater", "turn_on", null);
+        _haContext.CallService("water_heater", "turn_on");
     }
 }
 
@@ -13553,12 +14323,16 @@ public class WebostvServices
         _haContext.CallService("webostv", "button", null, data);
     }
 
-    ///<summary>Send a button press command.</summary>
-    ///<param name="entityId">Name(s) of the webostv entities where to run the API method.</param>
-    ///<param name="button">Name of the button to press.  Known possible values are LEFT, RIGHT, DOWN, UP, HOME, MENU, BACK, ENTER, DASH, INFO, ASTERISK, CC, EXIT, MUTE, RED, GREEN, BLUE, VOLUMEUP, VOLUMEDOWN, CHANNELUP, CHANNELDOWN, PLAY, PAUSE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 eg: LEFT</param>
-    public void Button(string @entityId, string @button)
+    /// <summary>Send a button press command.</summary>
+    /// <param name="entityId">Name(s) of the webostv entities where to run the API method.</param>
+    /// <param name="button">
+    ///     Name of the button to press.  Known possible values are LEFT, RIGHT, DOWN, UP, HOME, MENU, BACK,
+    ///     ENTER, DASH, INFO, ASTERISK, CC, EXIT, MUTE, RED, GREEN, BLUE, VOLUMEUP, VOLUMEDOWN, CHANNELUP, CHANNELDOWN, PLAY,
+    ///     PAUSE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 eg: LEFT
+    /// </param>
+    public void Button(string entityId, string button)
     {
-        _haContext.CallService("webostv", "button", null, new WebostvButtonParameters { EntityId = @entityId, Button = @button });
+        _haContext.CallService("webostv", "button", null, new WebostvButtonParameters { EntityId = entityId, Button = button });
     }
 
     ///<summary>Send a command.</summary>
@@ -13567,13 +14341,16 @@ public class WebostvServices
         _haContext.CallService("webostv", "command", null, data);
     }
 
-    ///<summary>Send a command.</summary>
-    ///<param name="entityId">Name(s) of the webostv entities where to run the API method.</param>
-    ///<param name="command">Endpoint of the command. eg: system.launcher/open</param>
-    ///<param name="payload">An optional payload to provide to the endpoint in the format of key value pair(s). eg: target: https://www.google.com</param>
-    public void Command(string @entityId, string @command, object? @payload = null)
+    /// <summary>Send a command.</summary>
+    /// <param name="entityId">Name(s) of the webostv entities where to run the API method.</param>
+    /// <param name="command">Endpoint of the command. eg: system.launcher/open</param>
+    /// <param name="payload">
+    ///     An optional payload to provide to the endpoint in the format of key value pair(s). eg: target:
+    ///     https://www.google.com
+    /// </param>
+    public void Command(string entityId, string command, object? payload = null)
     {
-        _haContext.CallService("webostv", "command", null, new WebostvCommandParameters { EntityId = @entityId, Command = @command, Payload = @payload });
+        _haContext.CallService("webostv", "command", null, new WebostvCommandParameters { EntityId = entityId, Command = command, Payload = payload });
     }
 
     ///<summary>Send the TV the command to change sound output.</summary>
@@ -13582,39 +14359,46 @@ public class WebostvServices
         _haContext.CallService("webostv", "select_sound_output", null, data);
     }
 
-    ///<summary>Send the TV the command to change sound output.</summary>
-    ///<param name="entityId">Name(s) of the webostv entities to change sound output on.</param>
-    ///<param name="soundOutput">Name of the sound output to switch to. eg: external_speaker</param>
-    public void SelectSoundOutput(string @entityId, string @soundOutput)
+    /// <summary>Send the TV the command to change sound output.</summary>
+    /// <param name="entityId">Name(s) of the webostv entities to change sound output on.</param>
+    /// <param name="soundOutput">Name of the sound output to switch to. eg: external_speaker</param>
+    public void SelectSoundOutput(string entityId, string soundOutput)
     {
-        _haContext.CallService("webostv", "select_sound_output", null, new WebostvSelectSoundOutputParameters { EntityId = @entityId, SoundOutput = @soundOutput });
+        _haContext.CallService("webostv", "select_sound_output", null, new WebostvSelectSoundOutputParameters { EntityId = entityId, SoundOutput = soundOutput });
     }
 }
 
 public record WebostvButtonParameters
 {
+    /// <summary>
+    ///     Name of the button to press.  Known possible values are LEFT, RIGHT, DOWN, UP, HOME, MENU, BACK, ENTER, DASH,
+    ///     INFO, ASTERISK, CC, EXIT, MUTE, RED, GREEN, BLUE, VOLUMEUP, VOLUMEDOWN, CHANNELUP, CHANNELDOWN, PLAY, PAUSE, 0, 1,
+    ///     2, 3, 4, 5, 6, 7, 8, 9 eg: LEFT
+    /// </summary>
+    [JsonPropertyName("button")]
+    public string? Button { get; init; }
+
     ///<summary>Name(s) of the webostv entities where to run the API method.</summary>
     [JsonPropertyName("entity_id")]
     public string? EntityId { get; init; }
-
-    ///<summary>Name of the button to press.  Known possible values are LEFT, RIGHT, DOWN, UP, HOME, MENU, BACK, ENTER, DASH, INFO, ASTERISK, CC, EXIT, MUTE, RED, GREEN, BLUE, VOLUMEUP, VOLUMEDOWN, CHANNELUP, CHANNELDOWN, PLAY, PAUSE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 eg: LEFT</summary>
-    [JsonPropertyName("button")]
-    public string? Button { get; init; }
 }
 
 public record WebostvCommandParameters
 {
-    ///<summary>Name(s) of the webostv entities where to run the API method.</summary>
-    [JsonPropertyName("entity_id")]
-    public string? EntityId { get; init; }
+    /// <summary>
+    ///     An optional payload to provide to the endpoint in the format of key value pair(s). eg: target:
+    ///     https://www.google.com
+    /// </summary>
+    [JsonPropertyName("payload")]
+    public object? Payload { get; init; }
 
     ///<summary>Endpoint of the command. eg: system.launcher/open</summary>
     [JsonPropertyName("command")]
     public string? Command { get; init; }
 
-    ///<summary>An optional payload to provide to the endpoint in the format of key value pair(s). eg: target: https://www.google.com</summary>
-    [JsonPropertyName("payload")]
-    public object? Payload { get; init; }
+    ///<summary>Name(s) of the webostv entities where to run the API method.</summary>
+    [JsonPropertyName("entity_id")]
+    public string? EntityId { get; init; }
 }
 
 public record WebostvSelectSoundOutputParameters
@@ -13637,20 +14421,26 @@ public class WiserServices
         _haContext = haContext;
     }
 
-    ///<summary>Set the boost mode ON defining the period of time and the desired target temperature or temperature increase delta for the boost.  Setting the temperature delta overrides any target temperature. </summary>
+    /// <summary>
+    ///     Set the boost mode ON defining the period of time and the desired target temperature or temperature increase
+    ///     delta for the boost.  Setting the temperature delta overrides any target temperature.
+    /// </summary>
     public void BoostHeating(WiserBoostHeatingParameters data)
     {
         _haContext.CallService("wiser", "boost_heating", null, data);
     }
 
-    ///<summary>Set the boost mode ON defining the period of time and the desired target temperature or temperature increase delta for the boost.  Setting the temperature delta overrides any target temperature. </summary>
-    ///<param name="entityId">Enter the entity_id for the room required to set the boost mode.  eg: climate.wiser_lounge</param>
-    ///<param name="timePeriod">Set the time period for the boost in minutes. eg: 60</param>
-    ///<param name="temperature">Set the target temperature for the boost period. eg: 20.5</param>
-    ///<param name="temperatureDelta">Set the temperature increase for the boost period. eg: 2</param>
-    public void BoostHeating(string? @entityId = null, string? @timePeriod = null, string? @temperature = null, string? @temperatureDelta = null)
+    /// <summary>
+    ///     Set the boost mode ON defining the period of time and the desired target temperature or temperature increase
+    ///     delta for the boost.  Setting the temperature delta overrides any target temperature.
+    /// </summary>
+    /// <param name="entityId">Enter the entity_id for the room required to set the boost mode.  eg: climate.wiser_lounge</param>
+    /// <param name="timePeriod">Set the time period for the boost in minutes. eg: 60</param>
+    /// <param name="temperature">Set the target temperature for the boost period. eg: 20.5</param>
+    /// <param name="temperatureDelta">Set the temperature increase for the boost period. eg: 2</param>
+    public void BoostHeating(string? entityId = null, string? timePeriod = null, string? temperature = null, string? temperatureDelta = null)
     {
-        _haContext.CallService("wiser", "boost_heating", null, new WiserBoostHeatingParameters { EntityId = @entityId, TimePeriod = @timePeriod, Temperature = @temperature, TemperatureDelta = @temperatureDelta });
+        _haContext.CallService("wiser", "boost_heating", null, new WiserBoostHeatingParameters { EntityId = entityId, TimePeriod = timePeriod, Temperature = temperature, TemperatureDelta = temperatureDelta });
     }
 
     ///<summary>Copy the schedule in a room to another room</summary>
@@ -13659,12 +14449,12 @@ public class WiserServices
         _haContext.CallService("wiser", "copy_schedule", null, data);
     }
 
-    ///<summary>Copy the schedule in a room to another room</summary>
-    ///<param name="entityId">Enter the entity_id for the room to copy the schedule from. eg: climate.wiser_lounge</param>
-    ///<param name="toEntityId">Enter the entity_id for the room to copy the schedule to. eg: climate.wiser_kitchen</param>
-    public void CopySchedule(string? @entityId = null, string? @toEntityId = null)
+    /// <summary>Copy the schedule in a room to another room</summary>
+    /// <param name="entityId">Enter the entity_id for the room to copy the schedule from. eg: climate.wiser_lounge</param>
+    /// <param name="toEntityId">Enter the entity_id for the room to copy the schedule to. eg: climate.wiser_kitchen</param>
+    public void CopySchedule(string? entityId = null, string? toEntityId = null)
     {
-        _haContext.CallService("wiser", "copy_schedule", null, new WiserCopyScheduleParameters { EntityId = @entityId, ToEntityId = @toEntityId });
+        _haContext.CallService("wiser", "copy_schedule", null, new WiserCopyScheduleParameters { EntityId = entityId, ToEntityId = toEntityId });
     }
 
     ///<summary>Read the schedule from a roomId and write to an output file in yaml </summary>
@@ -13673,12 +14463,15 @@ public class WiserServices
         _haContext.CallService("wiser", "get_schedule", null, data);
     }
 
-    ///<summary>Read the schedule from a roomId and write to an output file in yaml </summary>
-    ///<param name="entityId">Enter the entity_id for the room to read the schedule. eg: climate.wiser_lounge</param>
-    ///<param name="filename">The filename to write out the yaml. See README.MD if running within a docker container.  eg: schedule1.yaml</param>
-    public void GetSchedule(string? @entityId = null, string? @filename = null)
+    /// <summary>Read the schedule from a roomId and write to an output file in yaml </summary>
+    /// <param name="entityId">Enter the entity_id for the room to read the schedule. eg: climate.wiser_lounge</param>
+    /// <param name="filename">
+    ///     The filename to write out the yaml. See README.MD if running within a docker container.  eg:
+    ///     schedule1.yaml
+    /// </param>
+    public void GetSchedule(string? entityId = null, string? filename = null)
     {
-        _haContext.CallService("wiser", "get_schedule", null, new WiserGetScheduleParameters { EntityId = @entityId, Filename = @filename });
+        _haContext.CallService("wiser", "get_schedule", null, new WiserGetScheduleParameters { EntityId = entityId, Filename = filename });
     }
 
     ///<summary>Sets the hot water mode</summary>
@@ -13687,11 +14480,11 @@ public class WiserServices
         _haContext.CallService("wiser", "set_hotwater_mode", null, data);
     }
 
-    ///<summary>Sets the hot water mode</summary>
-    ///<param name="hotwaterMode">Enter the mode can be on, off or auto. eg: auto</param>
-    public void SetHotwaterMode(string? @hotwaterMode = null)
+    /// <summary>Sets the hot water mode</summary>
+    /// <param name="hotwaterMode">Enter the mode can be on, off or auto. eg: auto</param>
+    public void SetHotwaterMode(string? hotwaterMode = null)
     {
-        _haContext.CallService("wiser", "set_hotwater_mode", null, new WiserSetHotwaterModeParameters { HotwaterMode = @hotwaterMode });
+        _haContext.CallService("wiser", "set_hotwater_mode", null, new WiserSetHotwaterModeParameters { HotwaterMode = hotwaterMode });
     }
 
     ///<summary>Read in the yaml schedule file and set the schedule in a room</summary>
@@ -13700,12 +14493,12 @@ public class WiserServices
         _haContext.CallService("wiser", "set_schedule", null, data);
     }
 
-    ///<summary>Read in the yaml schedule file and set the schedule in a room</summary>
-    ///<param name="entityId">Enter the entity_id for the room to set the schedule. eg: climate.wiser_lounge</param>
-    ///<param name="filename">The filename to read the yaml schedule from. eg: schedules/schedule1.yaml</param>
-    public void SetSchedule(string? @entityId = null, string? @filename = null)
+    /// <summary>Read in the yaml schedule file and set the schedule in a room</summary>
+    /// <param name="entityId">Enter the entity_id for the room to set the schedule. eg: climate.wiser_lounge</param>
+    /// <param name="filename">The filename to read the yaml schedule from. eg: schedules/schedule1.yaml</param>
+    public void SetSchedule(string? entityId = null, string? filename = null)
     {
-        _haContext.CallService("wiser", "set_schedule", null, new WiserSetScheduleParameters { EntityId = @entityId, Filename = @filename });
+        _haContext.CallService("wiser", "set_schedule", null, new WiserSetScheduleParameters { EntityId = entityId, Filename = filename });
     }
 
     ///<summary>Sets the mode of a smart plug</summary>
@@ -13714,12 +14507,12 @@ public class WiserServices
         _haContext.CallService("wiser", "set_smartplug_mode", null, data);
     }
 
-    ///<summary>Sets the mode of a smart plug</summary>
-    ///<param name="entityId">Enter the entity_id for the smartplug. eg: switch.smartplug</param>
-    ///<param name="plugMode">Enter the switch mode. Can be auto or manual. eg: manual</param>
-    public void SetSmartplugMode(string? @entityId = null, string? @plugMode = null)
+    /// <summary>Sets the mode of a smart plug</summary>
+    /// <param name="entityId">Enter the entity_id for the smartplug. eg: switch.smartplug</param>
+    /// <param name="plugMode">Enter the switch mode. Can be auto or manual. eg: manual</param>
+    public void SetSmartplugMode(string? entityId = null, string? plugMode = null)
     {
-        _haContext.CallService("wiser", "set_smartplug_mode", null, new WiserSetSmartplugModeParameters { EntityId = @entityId, PlugMode = @plugMode });
+        _haContext.CallService("wiser", "set_smartplug_mode", null, new WiserSetSmartplugModeParameters { EntityId = entityId, PlugMode = plugMode });
     }
 }
 
@@ -13729,10 +14522,6 @@ public record WiserBoostHeatingParameters
     [JsonPropertyName("entity_id")]
     public string? EntityId { get; init; }
 
-    ///<summary>Set the time period for the boost in minutes. eg: 60</summary>
-    [JsonPropertyName("time_period")]
-    public string? TimePeriod { get; init; }
-
     ///<summary>Set the target temperature for the boost period. eg: 20.5</summary>
     [JsonPropertyName("temperature")]
     public string? Temperature { get; init; }
@@ -13740,6 +14529,10 @@ public record WiserBoostHeatingParameters
     ///<summary>Set the temperature increase for the boost period. eg: 2</summary>
     [JsonPropertyName("temperature_delta")]
     public string? TemperatureDelta { get; init; }
+
+    ///<summary>Set the time period for the boost in minutes. eg: 60</summary>
+    [JsonPropertyName("time_period")]
+    public string? TimePeriod { get; init; }
 }
 
 public record WiserCopyScheduleParameters
@@ -13802,49 +14595,49 @@ public class ZhaServices
         _haContext = haContext;
     }
 
-    ///<summary>Clear a user code from a lock</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Clear a user code from a lock</summary>
+    /// <param name="target">The target for this service call</param>
     public void ClearLockUserCode(ServiceTarget target, ZhaClearLockUserCodeParameters data)
     {
         _haContext.CallService("zha", "clear_lock_user_code", target, data);
     }
 
-    ///<summary>Clear a user code from a lock</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="codeSlot">Code slot to clear code from eg: 1</param>
-    public void ClearLockUserCode(ServiceTarget target, string @codeSlot)
+    /// <summary>Clear a user code from a lock</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="codeSlot">Code slot to clear code from eg: 1</param>
+    public void ClearLockUserCode(ServiceTarget target, string codeSlot)
     {
-        _haContext.CallService("zha", "clear_lock_user_code", target, new ZhaClearLockUserCodeParameters { CodeSlot = @codeSlot });
+        _haContext.CallService("zha", "clear_lock_user_code", target, new ZhaClearLockUserCodeParameters { CodeSlot = codeSlot });
     }
 
-    ///<summary>Disable a user code on a lock</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Disable a user code on a lock</summary>
+    /// <param name="target">The target for this service call</param>
     public void DisableLockUserCode(ServiceTarget target, ZhaDisableLockUserCodeParameters data)
     {
         _haContext.CallService("zha", "disable_lock_user_code", target, data);
     }
 
-    ///<summary>Disable a user code on a lock</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="codeSlot">Code slot to disable eg: 1</param>
-    public void DisableLockUserCode(ServiceTarget target, string @codeSlot)
+    /// <summary>Disable a user code on a lock</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="codeSlot">Code slot to disable eg: 1</param>
+    public void DisableLockUserCode(ServiceTarget target, string codeSlot)
     {
-        _haContext.CallService("zha", "disable_lock_user_code", target, new ZhaDisableLockUserCodeParameters { CodeSlot = @codeSlot });
+        _haContext.CallService("zha", "disable_lock_user_code", target, new ZhaDisableLockUserCodeParameters { CodeSlot = codeSlot });
     }
 
-    ///<summary>Enable a user code on a lock</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Enable a user code on a lock</summary>
+    /// <param name="target">The target for this service call</param>
     public void EnableLockUserCode(ServiceTarget target, ZhaEnableLockUserCodeParameters data)
     {
         _haContext.CallService("zha", "enable_lock_user_code", target, data);
     }
 
-    ///<summary>Enable a user code on a lock</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="codeSlot">Code slot to enable eg: 1</param>
-    public void EnableLockUserCode(ServiceTarget target, string @codeSlot)
+    /// <summary>Enable a user code on a lock</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="codeSlot">Code slot to enable eg: 1</param>
+    public void EnableLockUserCode(ServiceTarget target, string codeSlot)
     {
-        _haContext.CallService("zha", "enable_lock_user_code", target, new ZhaEnableLockUserCodeParameters { CodeSlot = @codeSlot });
+        _haContext.CallService("zha", "enable_lock_user_code", target, new ZhaEnableLockUserCodeParameters { CodeSlot = codeSlot });
     }
 
     ///<summary>Issue command on the specified cluster on the specified entity.</summary>
@@ -13853,18 +14646,18 @@ public class ZhaServices
         _haContext.CallService("zha", "issue_zigbee_cluster_command", null, data);
     }
 
-    ///<summary>Issue command on the specified cluster on the specified entity.</summary>
-    ///<param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
-    ///<param name="endpointId">Endpoint id for the cluster</param>
-    ///<param name="clusterId">ZCL cluster to retrieve attributes for</param>
-    ///<param name="clusterType">type of the cluster</param>
-    ///<param name="command">id of the command to execute</param>
-    ///<param name="commandType">type of the command to execute</param>
-    ///<param name="args">args to pass to the command eg: [arg1, arg2, argN]</param>
-    ///<param name="manufacturer">manufacturer code eg: 252</param>
-    public void IssueZigbeeClusterCommand(string @ieee, long @endpointId, long @clusterId, long @command, string @commandType, string? @clusterType = null, object? @args = null, string? @manufacturer = null)
+    /// <summary>Issue command on the specified cluster on the specified entity.</summary>
+    /// <param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
+    /// <param name="endpointId">Endpoint id for the cluster</param>
+    /// <param name="clusterId">ZCL cluster to retrieve attributes for</param>
+    /// <param name="clusterType">type of the cluster</param>
+    /// <param name="command">id of the command to execute</param>
+    /// <param name="commandType">type of the command to execute</param>
+    /// <param name="args">args to pass to the command eg: [arg1, arg2, argN]</param>
+    /// <param name="manufacturer">manufacturer code eg: 252</param>
+    public void IssueZigbeeClusterCommand(string ieee, long endpointId, long clusterId, long command, string commandType, string? clusterType = null, object? args = null, string? manufacturer = null)
     {
-        _haContext.CallService("zha", "issue_zigbee_cluster_command", null, new ZhaIssueZigbeeClusterCommandParameters { Ieee = @ieee, EndpointId = @endpointId, ClusterId = @clusterId, ClusterType = @clusterType, Command = @command, CommandType = @commandType, Args = @args, Manufacturer = @manufacturer });
+        _haContext.CallService("zha", "issue_zigbee_cluster_command", null, new ZhaIssueZigbeeClusterCommandParameters { Ieee = ieee, EndpointId = endpointId, ClusterId = clusterId, ClusterType = clusterType, Command = command, CommandType = commandType, Args = args, Manufacturer = manufacturer });
     }
 
     ///<summary>Issue command on the specified cluster on the specified group.</summary>
@@ -13873,16 +14666,16 @@ public class ZhaServices
         _haContext.CallService("zha", "issue_zigbee_group_command", null, data);
     }
 
-    ///<summary>Issue command on the specified cluster on the specified group.</summary>
-    ///<param name="group">Hexadecimal address of the group eg: 546</param>
-    ///<param name="clusterId">ZCL cluster to send command to</param>
-    ///<param name="clusterType">type of the cluster</param>
-    ///<param name="command">id of the command to execute</param>
-    ///<param name="args">args to pass to the command eg: [arg1, arg2, argN]</param>
-    ///<param name="manufacturer">manufacturer code eg: 252</param>
-    public void IssueZigbeeGroupCommand(string @group, long @clusterId, long @command, string? @clusterType = null, object? @args = null, string? @manufacturer = null)
+    /// <summary>Issue command on the specified cluster on the specified group.</summary>
+    /// <param name="group">Hexadecimal address of the group eg: 546</param>
+    /// <param name="clusterId">ZCL cluster to send command to</param>
+    /// <param name="clusterType">type of the cluster</param>
+    /// <param name="command">id of the command to execute</param>
+    /// <param name="args">args to pass to the command eg: [arg1, arg2, argN]</param>
+    /// <param name="manufacturer">manufacturer code eg: 252</param>
+    public void IssueZigbeeGroupCommand(string group, long clusterId, long command, string? clusterType = null, object? args = null, string? manufacturer = null)
     {
-        _haContext.CallService("zha", "issue_zigbee_group_command", null, new ZhaIssueZigbeeGroupCommandParameters { Group = @group, ClusterId = @clusterId, ClusterType = @clusterType, Command = @command, Args = @args, Manufacturer = @manufacturer });
+        _haContext.CallService("zha", "issue_zigbee_group_command", null, new ZhaIssueZigbeeGroupCommandParameters { Group = group, ClusterId = clusterId, ClusterType = clusterType, Command = command, Args = args, Manufacturer = manufacturer });
     }
 
     ///<summary>Allow nodes to join the Zigbee network.</summary>
@@ -13891,15 +14684,24 @@ public class ZhaServices
         _haContext.CallService("zha", "permit", null, data);
     }
 
-    ///<summary>Allow nodes to join the Zigbee network.</summary>
-    ///<param name="duration">Time to permit joins, in seconds</param>
-    ///<param name="ieee">IEEE address of the node permitting new joins eg: 00:0d:6f:00:05:7d:2d:34</param>
-    ///<param name="sourceIeee">IEEE address of the joining device (must be used with install code) eg: 00:0a:bf:00:01:10:23:35</param>
-    ///<param name="installCode">Install code of the joining device (must be used with source_ieee) eg: 1234-5678-1234-5678-AABB-CCDD-AABB-CCDD-EEFF</param>
-    ///<param name="qrCode">value of the QR install code (different between vendors) eg: Z:000D6FFFFED4163B$I:52797BF4A5084DAA8E1712B61741CA024051</param>
-    public void Permit(long? @duration = null, string? @ieee = null, string? @sourceIeee = null, string? @installCode = null, string? @qrCode = null)
+    /// <summary>Allow nodes to join the Zigbee network.</summary>
+    /// <param name="duration">Time to permit joins, in seconds</param>
+    /// <param name="ieee">IEEE address of the node permitting new joins eg: 00:0d:6f:00:05:7d:2d:34</param>
+    /// <param name="sourceIeee">
+    ///     IEEE address of the joining device (must be used with install code) eg:
+    ///     00:0a:bf:00:01:10:23:35
+    /// </param>
+    /// <param name="installCode">
+    ///     Install code of the joining device (must be used with source_ieee) eg:
+    ///     1234-5678-1234-5678-AABB-CCDD-AABB-CCDD-EEFF
+    /// </param>
+    /// <param name="qrCode">
+    ///     value of the QR install code (different between vendors) eg:
+    ///     Z:000D6FFFFED4163B$I:52797BF4A5084DAA8E1712B61741CA024051
+    /// </param>
+    public void Permit(long? duration = null, string? ieee = null, string? sourceIeee = null, string? installCode = null, string? qrCode = null)
     {
-        _haContext.CallService("zha", "permit", null, new ZhaPermitParameters { Duration = @duration, Ieee = @ieee, SourceIeee = @sourceIeee, InstallCode = @installCode, QrCode = @qrCode });
+        _haContext.CallService("zha", "permit", null, new ZhaPermitParameters { Duration = duration, Ieee = ieee, SourceIeee = sourceIeee, InstallCode = installCode, QrCode = qrCode });
     }
 
     ///<summary>Remove a node from the Zigbee network.</summary>
@@ -13908,27 +14710,27 @@ public class ZhaServices
         _haContext.CallService("zha", "remove", null, data);
     }
 
-    ///<summary>Remove a node from the Zigbee network.</summary>
-    ///<param name="ieee">IEEE address of the node to remove eg: 00:0d:6f:00:05:7d:2d:34</param>
-    public void Remove(string @ieee)
+    /// <summary>Remove a node from the Zigbee network.</summary>
+    /// <param name="ieee">IEEE address of the node to remove eg: 00:0d:6f:00:05:7d:2d:34</param>
+    public void Remove(string ieee)
     {
-        _haContext.CallService("zha", "remove", null, new ZhaRemoveParameters { Ieee = @ieee });
+        _haContext.CallService("zha", "remove", null, new ZhaRemoveParameters { Ieee = ieee });
     }
 
-    ///<summary>Set a user code on a lock</summary>
-    ///<param name="target">The target for this service call</param>
+    /// <summary>Set a user code on a lock</summary>
+    /// <param name="target">The target for this service call</param>
     public void SetLockUserCode(ServiceTarget target, ZhaSetLockUserCodeParameters data)
     {
         _haContext.CallService("zha", "set_lock_user_code", target, data);
     }
 
-    ///<summary>Set a user code on a lock</summary>
-    ///<param name="target">The target for this service call</param>
-    ///<param name="codeSlot">Code slot to set the code in eg: 1</param>
-    ///<param name="userCode">Code to set eg: 1234</param>
-    public void SetLockUserCode(ServiceTarget target, string @codeSlot, string @userCode)
+    /// <summary>Set a user code on a lock</summary>
+    /// <param name="target">The target for this service call</param>
+    /// <param name="codeSlot">Code slot to set the code in eg: 1</param>
+    /// <param name="userCode">Code to set eg: 1234</param>
+    public void SetLockUserCode(ServiceTarget target, string codeSlot, string userCode)
     {
-        _haContext.CallService("zha", "set_lock_user_code", target, new ZhaSetLockUserCodeParameters { CodeSlot = @codeSlot, UserCode = @userCode });
+        _haContext.CallService("zha", "set_lock_user_code", target, new ZhaSetLockUserCodeParameters { CodeSlot = codeSlot, UserCode = userCode });
     }
 
     ///<summary>Set attribute value for the specified cluster on the specified entity.</summary>
@@ -13937,52 +14739,98 @@ public class ZhaServices
         _haContext.CallService("zha", "set_zigbee_cluster_attribute", null, data);
     }
 
-    ///<summary>Set attribute value for the specified cluster on the specified entity.</summary>
-    ///<param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
-    ///<param name="endpointId">Endpoint id for the cluster</param>
-    ///<param name="clusterId">ZCL cluster to retrieve attributes for</param>
-    ///<param name="clusterType">type of the cluster</param>
-    ///<param name="attribute">id of the attribute to set eg: 0</param>
-    ///<param name="value">value to write to the attribute eg: 1</param>
-    ///<param name="manufacturer">manufacturer code eg: 252</param>
-    public void SetZigbeeClusterAttribute(string @ieee, long @endpointId, long @clusterId, long @attribute, string @value, string? @clusterType = null, string? @manufacturer = null)
+    /// <summary>Set attribute value for the specified cluster on the specified entity.</summary>
+    /// <param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
+    /// <param name="endpointId">Endpoint id for the cluster</param>
+    /// <param name="clusterId">ZCL cluster to retrieve attributes for</param>
+    /// <param name="clusterType">type of the cluster</param>
+    /// <param name="attribute">id of the attribute to set eg: 0</param>
+    /// <param name="value">value to write to the attribute eg: 1</param>
+    /// <param name="manufacturer">manufacturer code eg: 252</param>
+    public void SetZigbeeClusterAttribute(string ieee, long endpointId, long clusterId, long attribute, string value, string? clusterType = null, string? manufacturer = null)
     {
-        _haContext.CallService("zha", "set_zigbee_cluster_attribute", null, new ZhaSetZigbeeClusterAttributeParameters { Ieee = @ieee, EndpointId = @endpointId, ClusterId = @clusterId, ClusterType = @clusterType, Attribute = @attribute, Value = @value, Manufacturer = @manufacturer });
+        _haContext.CallService("zha", "set_zigbee_cluster_attribute", null, new ZhaSetZigbeeClusterAttributeParameters { Ieee = ieee, EndpointId = endpointId, ClusterId = clusterId, ClusterType = clusterType, Attribute = attribute, Value = value, Manufacturer = manufacturer });
     }
 
-    ///<summary>This service uses the WD capabilities to emit a quick audible/visible pulse called a "squawk". The squawk command has no effect if the WD is currently active (warning in progress).</summary>
+    /// <summary>
+    ///     This service uses the WD capabilities to emit a quick audible/visible pulse called a "squawk". The squawk
+    ///     command has no effect if the WD is currently active (warning in progress).
+    /// </summary>
     public void WarningDeviceSquawk(ZhaWarningDeviceSquawkParameters data)
     {
         _haContext.CallService("zha", "warning_device_squawk", null, data);
     }
 
-    ///<summary>This service uses the WD capabilities to emit a quick audible/visible pulse called a "squawk". The squawk command has no effect if the WD is currently active (warning in progress).</summary>
-    ///<param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
-    ///<param name="mode">The Squawk Mode field is used as a 4-bit enumeration, and can have one of the values shown in Table 8-24 of the ZCL spec - Squawk Mode Field. The exact operation of each mode (how the WD “squawks”) is implementation specific.</param>
-    ///<param name="strobe">The strobe field is used as a Boolean, and determines if the visual indication is also required in addition to the audible squawk, as shown in Table 8-25 of the ZCL spec - Strobe Bit.</param>
-    ///<param name="level">The squawk level field is used as a 2-bit enumeration, and determines the intensity of audible squawk sound as shown in Table 8-26 of the ZCL spec - Squawk Level Field Values.</param>
-    public void WarningDeviceSquawk(string @ieee, long? @mode = null, long? @strobe = null, long? @level = null)
+    /// <summary>
+    ///     This service uses the WD capabilities to emit a quick audible/visible pulse called a "squawk". The squawk
+    ///     command has no effect if the WD is currently active (warning in progress).
+    /// </summary>
+    /// <param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
+    /// <param name="mode">
+    ///     The Squawk Mode field is used as a 4-bit enumeration, and can have one of the values shown in Table
+    ///     8-24 of the ZCL spec - Squawk Mode Field. The exact operation of each mode (how the WD “squawks”) is implementation
+    ///     specific.
+    /// </param>
+    /// <param name="strobe">
+    ///     The strobe field is used as a Boolean, and determines if the visual indication is also required in
+    ///     addition to the audible squawk, as shown in Table 8-25 of the ZCL spec - Strobe Bit.
+    /// </param>
+    /// <param name="level">
+    ///     The squawk level field is used as a 2-bit enumeration, and determines the intensity of audible
+    ///     squawk sound as shown in Table 8-26 of the ZCL spec - Squawk Level Field Values.
+    /// </param>
+    public void WarningDeviceSquawk(string ieee, long? mode = null, long? strobe = null, long? level = null)
     {
-        _haContext.CallService("zha", "warning_device_squawk", null, new ZhaWarningDeviceSquawkParameters { Ieee = @ieee, Mode = @mode, Strobe = @strobe, Level = @level });
+        _haContext.CallService("zha", "warning_device_squawk", null, new ZhaWarningDeviceSquawkParameters { Ieee = ieee, Mode = mode, Strobe = strobe, Level = level });
     }
 
-    ///<summary>This service starts the WD operation. The WD alerts the surrounding area by audible (siren) and visual (strobe) signals.</summary>
+    /// <summary>
+    ///     This service starts the WD operation. The WD alerts the surrounding area by audible (siren) and visual
+    ///     (strobe) signals.
+    /// </summary>
     public void WarningDeviceWarn(ZhaWarningDeviceWarnParameters data)
     {
         _haContext.CallService("zha", "warning_device_warn", null, data);
     }
 
-    ///<summary>This service starts the WD operation. The WD alerts the surrounding area by audible (siren) and visual (strobe) signals.</summary>
-    ///<param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
-    ///<param name="mode">The Warning Mode field is used as an 4-bit enumeration, can have one of the values 0-6 defined below in table 8-20 of the ZCL spec. The exact behavior of the WD device in each mode is according to the relevant security standards.</param>
-    ///<param name="strobe">The Strobe field is used as a 2-bit enumeration, and determines if the visual indication is required in addition to the audible siren, as indicated in Table 8-21 of the ZCL spec. "0" means no strobe, "1" means strobe. If the strobe field is “1” and the Warning Mode is “0” (“Stop”) then only the strobe is activated.</param>
-    ///<param name="level">The Siren Level field is used as a 2-bit enumeration, and indicates the intensity of audible squawk sound as shown in Table 8-22 of the ZCL spec.</param>
-    ///<param name="duration">Requested duration of warning, in seconds (16 bit). If both Strobe and Warning Mode are "0" this field SHALL be ignored.</param>
-    ///<param name="dutyCycle">Indicates the length of the flash cycle. This provides a means of varying the flash duration for different alarm types (e.g., fire, police, burglar). Valid range is 0-100 in increments of 10. All other values SHALL be rounded to the nearest valid value. Strobe SHALL calculate duty cycle over a duration of one second. The ON state SHALL precede the OFF state. For example, if Strobe Duty Cycle Field specifies “40,” then the strobe SHALL flash ON for 4/10ths of a second and then turn OFF for 6/10ths of a second.</param>
-    ///<param name="intensity">Indicates the intensity of the strobe as shown in Table 8-23 of the ZCL spec. This attribute is designed to vary the output of the strobe (i.e., brightness) and not its frequency, which is detailed in section 8.4.2.3.1.6 of the ZCL spec.</param>
-    public void WarningDeviceWarn(string @ieee, long? @mode = null, long? @strobe = null, long? @level = null, long? @duration = null, long? @dutyCycle = null, long? @intensity = null)
+    /// <summary>
+    ///     This service starts the WD operation. The WD alerts the surrounding area by audible (siren) and visual
+    ///     (strobe) signals.
+    /// </summary>
+    /// <param name="ieee">IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</param>
+    /// <param name="mode">
+    ///     The Warning Mode field is used as an 4-bit enumeration, can have one of the values 0-6 defined below
+    ///     in table 8-20 of the ZCL spec. The exact behavior of the WD device in each mode is according to the relevant
+    ///     security standards.
+    /// </param>
+    /// <param name="strobe">
+    ///     The Strobe field is used as a 2-bit enumeration, and determines if the visual indication is
+    ///     required in addition to the audible siren, as indicated in Table 8-21 of the ZCL spec. "0" means no strobe, "1"
+    ///     means strobe. If the strobe field is “1” and the Warning Mode is “0” (“Stop”) then only the strobe is activated.
+    /// </param>
+    /// <param name="level">
+    ///     The Siren Level field is used as a 2-bit enumeration, and indicates the intensity of audible squawk
+    ///     sound as shown in Table 8-22 of the ZCL spec.
+    /// </param>
+    /// <param name="duration">
+    ///     Requested duration of warning, in seconds (16 bit). If both Strobe and Warning Mode are "0" this
+    ///     field SHALL be ignored.
+    /// </param>
+    /// <param name="dutyCycle">
+    ///     Indicates the length of the flash cycle. This provides a means of varying the flash duration
+    ///     for different alarm types (e.g., fire, police, burglar). Valid range is 0-100 in increments of 10. All other values
+    ///     SHALL be rounded to the nearest valid value. Strobe SHALL calculate duty cycle over a duration of one second. The
+    ///     ON state SHALL precede the OFF state. For example, if Strobe Duty Cycle Field specifies “40,” then the strobe SHALL
+    ///     flash ON for 4/10ths of a second and then turn OFF for 6/10ths of a second.
+    /// </param>
+    /// <param name="intensity">
+    ///     Indicates the intensity of the strobe as shown in Table 8-23 of the ZCL spec. This attribute is
+    ///     designed to vary the output of the strobe (i.e., brightness) and not its frequency, which is detailed in section
+    ///     8.4.2.3.1.6 of the ZCL spec.
+    /// </param>
+    public void WarningDeviceWarn(string ieee, long? mode = null, long? strobe = null, long? level = null, long? duration = null, long? dutyCycle = null, long? intensity = null)
     {
-        _haContext.CallService("zha", "warning_device_warn", null, new ZhaWarningDeviceWarnParameters { Ieee = @ieee, Mode = @mode, Strobe = @strobe, Level = @level, Duration = @duration, DutyCycle = @dutyCycle, Intensity = @intensity });
+        _haContext.CallService("zha", "warning_device_warn", null, new ZhaWarningDeviceWarnParameters { Ieee = ieee, Mode = mode, Strobe = strobe, Level = level, Duration = duration, DutyCycle = dutyCycle, Intensity = intensity });
     }
 }
 
@@ -14009,33 +14857,33 @@ public record ZhaEnableLockUserCodeParameters
 
 public record ZhaIssueZigbeeClusterCommandParameters
 {
-    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
-    [JsonPropertyName("ieee")]
-    public string? Ieee { get; init; }
-
-    ///<summary>Endpoint id for the cluster</summary>
-    [JsonPropertyName("endpoint_id")]
-    public long? EndpointId { get; init; }
-
     ///<summary>ZCL cluster to retrieve attributes for</summary>
     [JsonPropertyName("cluster_id")]
     public long? ClusterId { get; init; }
-
-    ///<summary>type of the cluster</summary>
-    [JsonPropertyName("cluster_type")]
-    public string? ClusterType { get; init; }
 
     ///<summary>id of the command to execute</summary>
     [JsonPropertyName("command")]
     public long? Command { get; init; }
 
-    ///<summary>type of the command to execute</summary>
-    [JsonPropertyName("command_type")]
-    public string? CommandType { get; init; }
+    ///<summary>Endpoint id for the cluster</summary>
+    [JsonPropertyName("endpoint_id")]
+    public long? EndpointId { get; init; }
 
     ///<summary>args to pass to the command eg: [arg1, arg2, argN]</summary>
     [JsonPropertyName("args")]
     public object? Args { get; init; }
+
+    ///<summary>type of the cluster</summary>
+    [JsonPropertyName("cluster_type")]
+    public string? ClusterType { get; init; }
+
+    ///<summary>type of the command to execute</summary>
+    [JsonPropertyName("command_type")]
+    public string? CommandType { get; init; }
+
+    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
+    [JsonPropertyName("ieee")]
+    public string? Ieee { get; init; }
 
     ///<summary>manufacturer code eg: 252</summary>
     [JsonPropertyName("manufacturer")]
@@ -14044,17 +14892,9 @@ public record ZhaIssueZigbeeClusterCommandParameters
 
 public record ZhaIssueZigbeeGroupCommandParameters
 {
-    ///<summary>Hexadecimal address of the group eg: 546</summary>
-    [JsonPropertyName("group")]
-    public string? Group { get; init; }
-
     ///<summary>ZCL cluster to send command to</summary>
     [JsonPropertyName("cluster_id")]
     public long? ClusterId { get; init; }
-
-    ///<summary>type of the cluster</summary>
-    [JsonPropertyName("cluster_type")]
-    public string? ClusterType { get; init; }
 
     ///<summary>id of the command to execute</summary>
     [JsonPropertyName("command")]
@@ -14063,6 +14903,14 @@ public record ZhaIssueZigbeeGroupCommandParameters
     ///<summary>args to pass to the command eg: [arg1, arg2, argN]</summary>
     [JsonPropertyName("args")]
     public object? Args { get; init; }
+
+    ///<summary>type of the cluster</summary>
+    [JsonPropertyName("cluster_type")]
+    public string? ClusterType { get; init; }
+
+    ///<summary>Hexadecimal address of the group eg: 546</summary>
+    [JsonPropertyName("group")]
+    public string? Group { get; init; }
 
     ///<summary>manufacturer code eg: 252</summary>
     [JsonPropertyName("manufacturer")]
@@ -14079,17 +14927,23 @@ public record ZhaPermitParameters
     [JsonPropertyName("ieee")]
     public string? Ieee { get; init; }
 
-    ///<summary>IEEE address of the joining device (must be used with install code) eg: 00:0a:bf:00:01:10:23:35</summary>
-    [JsonPropertyName("source_ieee")]
-    public string? SourceIeee { get; init; }
-
-    ///<summary>Install code of the joining device (must be used with source_ieee) eg: 1234-5678-1234-5678-AABB-CCDD-AABB-CCDD-EEFF</summary>
+    /// <summary>
+    ///     Install code of the joining device (must be used with source_ieee) eg:
+    ///     1234-5678-1234-5678-AABB-CCDD-AABB-CCDD-EEFF
+    /// </summary>
     [JsonPropertyName("install_code")]
     public string? InstallCode { get; init; }
 
-    ///<summary>value of the QR install code (different between vendors) eg: Z:000D6FFFFED4163B$I:52797BF4A5084DAA8E1712B61741CA024051</summary>
+    /// <summary>
+    ///     value of the QR install code (different between vendors) eg:
+    ///     Z:000D6FFFFED4163B$I:52797BF4A5084DAA8E1712B61741CA024051
+    /// </summary>
     [JsonPropertyName("qr_code")]
     public string? QrCode { get; init; }
+
+    ///<summary>IEEE address of the joining device (must be used with install code) eg: 00:0a:bf:00:01:10:23:35</summary>
+    [JsonPropertyName("source_ieee")]
+    public string? SourceIeee { get; init; }
 }
 
 public record ZhaRemoveParameters
@@ -14112,83 +14966,117 @@ public record ZhaSetLockUserCodeParameters
 
 public record ZhaSetZigbeeClusterAttributeParameters
 {
-    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
-    [JsonPropertyName("ieee")]
-    public string? Ieee { get; init; }
-
-    ///<summary>Endpoint id for the cluster</summary>
-    [JsonPropertyName("endpoint_id")]
-    public long? EndpointId { get; init; }
+    ///<summary>id of the attribute to set eg: 0</summary>
+    [JsonPropertyName("attribute")]
+    public long? Attribute { get; init; }
 
     ///<summary>ZCL cluster to retrieve attributes for</summary>
     [JsonPropertyName("cluster_id")]
     public long? ClusterId { get; init; }
 
+    ///<summary>Endpoint id for the cluster</summary>
+    [JsonPropertyName("endpoint_id")]
+    public long? EndpointId { get; init; }
+
     ///<summary>type of the cluster</summary>
     [JsonPropertyName("cluster_type")]
     public string? ClusterType { get; init; }
 
-    ///<summary>id of the attribute to set eg: 0</summary>
-    [JsonPropertyName("attribute")]
-    public long? Attribute { get; init; }
-
-    ///<summary>value to write to the attribute eg: 1</summary>
-    [JsonPropertyName("value")]
-    public string? Value { get; init; }
+    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
+    [JsonPropertyName("ieee")]
+    public string? Ieee { get; init; }
 
     ///<summary>manufacturer code eg: 252</summary>
     [JsonPropertyName("manufacturer")]
     public string? Manufacturer { get; init; }
+
+    ///<summary>value to write to the attribute eg: 1</summary>
+    [JsonPropertyName("value")]
+    public string? Value { get; init; }
 }
 
 public record ZhaWarningDeviceSquawkParameters
 {
-    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
-    [JsonPropertyName("ieee")]
-    public string? Ieee { get; init; }
+    /// <summary>
+    ///     The squawk level field is used as a 2-bit enumeration, and determines the intensity of audible squawk sound as
+    ///     shown in Table 8-26 of the ZCL spec - Squawk Level Field Values.
+    /// </summary>
+    [JsonPropertyName("level")]
+    public long? Level { get; init; }
 
-    ///<summary>The Squawk Mode field is used as a 4-bit enumeration, and can have one of the values shown in Table 8-24 of the ZCL spec - Squawk Mode Field. The exact operation of each mode (how the WD “squawks”) is implementation specific.</summary>
+    /// <summary>
+    ///     The Squawk Mode field is used as a 4-bit enumeration, and can have one of the values shown in Table 8-24 of
+    ///     the ZCL spec - Squawk Mode Field. The exact operation of each mode (how the WD “squawks”) is implementation
+    ///     specific.
+    /// </summary>
     [JsonPropertyName("mode")]
     public long? Mode { get; init; }
 
-    ///<summary>The strobe field is used as a Boolean, and determines if the visual indication is also required in addition to the audible squawk, as shown in Table 8-25 of the ZCL spec - Strobe Bit.</summary>
+    /// <summary>
+    ///     The strobe field is used as a Boolean, and determines if the visual indication is also required in addition to
+    ///     the audible squawk, as shown in Table 8-25 of the ZCL spec - Strobe Bit.
+    /// </summary>
     [JsonPropertyName("strobe")]
     public long? Strobe { get; init; }
 
-    ///<summary>The squawk level field is used as a 2-bit enumeration, and determines the intensity of audible squawk sound as shown in Table 8-26 of the ZCL spec - Squawk Level Field Values.</summary>
-    [JsonPropertyName("level")]
-    public long? Level { get; init; }
+    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
+    [JsonPropertyName("ieee")]
+    public string? Ieee { get; init; }
 }
 
 public record ZhaWarningDeviceWarnParameters
 {
-    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
-    [JsonPropertyName("ieee")]
-    public string? Ieee { get; init; }
-
-    ///<summary>The Warning Mode field is used as an 4-bit enumeration, can have one of the values 0-6 defined below in table 8-20 of the ZCL spec. The exact behavior of the WD device in each mode is according to the relevant security standards.</summary>
-    [JsonPropertyName("mode")]
-    public long? Mode { get; init; }
-
-    ///<summary>The Strobe field is used as a 2-bit enumeration, and determines if the visual indication is required in addition to the audible siren, as indicated in Table 8-21 of the ZCL spec. "0" means no strobe, "1" means strobe. If the strobe field is “1” and the Warning Mode is “0” (“Stop”) then only the strobe is activated.</summary>
-    [JsonPropertyName("strobe")]
-    public long? Strobe { get; init; }
-
-    ///<summary>The Siren Level field is used as a 2-bit enumeration, and indicates the intensity of audible squawk sound as shown in Table 8-22 of the ZCL spec.</summary>
-    [JsonPropertyName("level")]
-    public long? Level { get; init; }
-
-    ///<summary>Requested duration of warning, in seconds (16 bit). If both Strobe and Warning Mode are "0" this field SHALL be ignored.</summary>
+    /// <summary>
+    ///     Requested duration of warning, in seconds (16 bit). If both Strobe and Warning Mode are "0" this field SHALL
+    ///     be ignored.
+    /// </summary>
     [JsonPropertyName("duration")]
     public long? Duration { get; init; }
 
-    ///<summary>Indicates the length of the flash cycle. This provides a means of varying the flash duration for different alarm types (e.g., fire, police, burglar). Valid range is 0-100 in increments of 10. All other values SHALL be rounded to the nearest valid value. Strobe SHALL calculate duty cycle over a duration of one second. The ON state SHALL precede the OFF state. For example, if Strobe Duty Cycle Field specifies “40,” then the strobe SHALL flash ON for 4/10ths of a second and then turn OFF for 6/10ths of a second.</summary>
+    /// <summary>
+    ///     Indicates the length of the flash cycle. This provides a means of varying the flash duration for different
+    ///     alarm types (e.g., fire, police, burglar). Valid range is 0-100 in increments of 10. All other values SHALL be
+    ///     rounded to the nearest valid value. Strobe SHALL calculate duty cycle over a duration of one second. The ON state
+    ///     SHALL precede the OFF state. For example, if Strobe Duty Cycle Field specifies “40,” then the strobe SHALL flash ON
+    ///     for 4/10ths of a second and then turn OFF for 6/10ths of a second.
+    /// </summary>
     [JsonPropertyName("duty_cycle")]
     public long? DutyCycle { get; init; }
 
-    ///<summary>Indicates the intensity of the strobe as shown in Table 8-23 of the ZCL spec. This attribute is designed to vary the output of the strobe (i.e., brightness) and not its frequency, which is detailed in section 8.4.2.3.1.6 of the ZCL spec.</summary>
+    /// <summary>
+    ///     Indicates the intensity of the strobe as shown in Table 8-23 of the ZCL spec. This attribute is designed to
+    ///     vary the output of the strobe (i.e., brightness) and not its frequency, which is detailed in section 8.4.2.3.1.6 of
+    ///     the ZCL spec.
+    /// </summary>
     [JsonPropertyName("intensity")]
     public long? Intensity { get; init; }
+
+    /// <summary>
+    ///     The Siren Level field is used as a 2-bit enumeration, and indicates the intensity of audible squawk sound as
+    ///     shown in Table 8-22 of the ZCL spec.
+    /// </summary>
+    [JsonPropertyName("level")]
+    public long? Level { get; init; }
+
+    /// <summary>
+    ///     The Warning Mode field is used as an 4-bit enumeration, can have one of the values 0-6 defined below in table
+    ///     8-20 of the ZCL spec. The exact behavior of the WD device in each mode is according to the relevant security
+    ///     standards.
+    /// </summary>
+    [JsonPropertyName("mode")]
+    public long? Mode { get; init; }
+
+    /// <summary>
+    ///     The Strobe field is used as a 2-bit enumeration, and determines if the visual indication is required in
+    ///     addition to the audible siren, as indicated in Table 8-21 of the ZCL spec. "0" means no strobe, "1" means strobe.
+    ///     If the strobe field is “1” and the Warning Mode is “0” (“Stop”) then only the strobe is activated.
+    /// </summary>
+    [JsonPropertyName("strobe")]
+    public long? Strobe { get; init; }
+
+    ///<summary>IEEE address for the device eg: 00:0d:6f:00:05:7d:2d:34</summary>
+    [JsonPropertyName("ieee")]
+    public string? Ieee { get; init; }
 }
 
 public class ZoneServices
@@ -14203,7 +15091,7 @@ public class ZoneServices
     ///<summary>Reload the YAML-based zone configuration.</summary>
     public void Reload()
     {
-        _haContext.CallService("zone", "reload", null);
+        _haContext.CallService("zone", "reload");
     }
 }
 
@@ -14215,12 +15103,12 @@ public static class AlarmControlPanelEntityExtensionMethods
         entity.CallService("alarm_arm_away", data);
     }
 
-    ///<summary>Send the alarm the command for arm away.</summary>
-    ///<param name="entity">The AlarmControlPanelEntity to call this service for</param>
-    ///<param name="code">An optional code to arm away the alarm control panel with. eg: 1234</param>
-    public static void AlarmArmAway(this AlarmControlPanelEntity entity, string? @code = null)
+    /// <summary>Send the alarm the command for arm away.</summary>
+    /// <param name="entity">The AlarmControlPanelEntity to call this service for</param>
+    /// <param name="code">An optional code to arm away the alarm control panel with. eg: 1234</param>
+    public static void AlarmArmAway(this AlarmControlPanelEntity entity, string? code = null)
     {
-        entity.CallService("alarm_arm_away", new AlarmControlPanelAlarmArmAwayParameters { Code = @code });
+        entity.CallService("alarm_arm_away", new AlarmControlPanelAlarmArmAwayParameters { Code = code });
     }
 
     ///<summary>Send arm custom bypass command.</summary>
@@ -14229,12 +15117,12 @@ public static class AlarmControlPanelEntityExtensionMethods
         entity.CallService("alarm_arm_custom_bypass", data);
     }
 
-    ///<summary>Send arm custom bypass command.</summary>
-    ///<param name="entity">The AlarmControlPanelEntity to call this service for</param>
-    ///<param name="code">An optional code to arm custom bypass the alarm control panel with. eg: 1234</param>
-    public static void AlarmArmCustomBypass(this AlarmControlPanelEntity entity, string? @code = null)
+    /// <summary>Send arm custom bypass command.</summary>
+    /// <param name="entity">The AlarmControlPanelEntity to call this service for</param>
+    /// <param name="code">An optional code to arm custom bypass the alarm control panel with. eg: 1234</param>
+    public static void AlarmArmCustomBypass(this AlarmControlPanelEntity entity, string? code = null)
     {
-        entity.CallService("alarm_arm_custom_bypass", new AlarmControlPanelAlarmArmCustomBypassParameters { Code = @code });
+        entity.CallService("alarm_arm_custom_bypass", new AlarmControlPanelAlarmArmCustomBypassParameters { Code = code });
     }
 
     ///<summary>Send the alarm the command for arm home.</summary>
@@ -14243,12 +15131,12 @@ public static class AlarmControlPanelEntityExtensionMethods
         entity.CallService("alarm_arm_home", data);
     }
 
-    ///<summary>Send the alarm the command for arm home.</summary>
-    ///<param name="entity">The AlarmControlPanelEntity to call this service for</param>
-    ///<param name="code">An optional code to arm home the alarm control panel with. eg: 1234</param>
-    public static void AlarmArmHome(this AlarmControlPanelEntity entity, string? @code = null)
+    /// <summary>Send the alarm the command for arm home.</summary>
+    /// <param name="entity">The AlarmControlPanelEntity to call this service for</param>
+    /// <param name="code">An optional code to arm home the alarm control panel with. eg: 1234</param>
+    public static void AlarmArmHome(this AlarmControlPanelEntity entity, string? code = null)
     {
-        entity.CallService("alarm_arm_home", new AlarmControlPanelAlarmArmHomeParameters { Code = @code });
+        entity.CallService("alarm_arm_home", new AlarmControlPanelAlarmArmHomeParameters { Code = code });
     }
 
     ///<summary>Send the alarm the command for arm night.</summary>
@@ -14257,12 +15145,12 @@ public static class AlarmControlPanelEntityExtensionMethods
         entity.CallService("alarm_arm_night", data);
     }
 
-    ///<summary>Send the alarm the command for arm night.</summary>
-    ///<param name="entity">The AlarmControlPanelEntity to call this service for</param>
-    ///<param name="code">An optional code to arm night the alarm control panel with. eg: 1234</param>
-    public static void AlarmArmNight(this AlarmControlPanelEntity entity, string? @code = null)
+    /// <summary>Send the alarm the command for arm night.</summary>
+    /// <param name="entity">The AlarmControlPanelEntity to call this service for</param>
+    /// <param name="code">An optional code to arm night the alarm control panel with. eg: 1234</param>
+    public static void AlarmArmNight(this AlarmControlPanelEntity entity, string? code = null)
     {
-        entity.CallService("alarm_arm_night", new AlarmControlPanelAlarmArmNightParameters { Code = @code });
+        entity.CallService("alarm_arm_night", new AlarmControlPanelAlarmArmNightParameters { Code = code });
     }
 
     ///<summary>Send the alarm the command for arm vacation.</summary>
@@ -14271,12 +15159,12 @@ public static class AlarmControlPanelEntityExtensionMethods
         entity.CallService("alarm_arm_vacation", data);
     }
 
-    ///<summary>Send the alarm the command for arm vacation.</summary>
-    ///<param name="entity">The AlarmControlPanelEntity to call this service for</param>
-    ///<param name="code">An optional code to arm vacation the alarm control panel with. eg: 1234</param>
-    public static void AlarmArmVacation(this AlarmControlPanelEntity entity, string? @code = null)
+    /// <summary>Send the alarm the command for arm vacation.</summary>
+    /// <param name="entity">The AlarmControlPanelEntity to call this service for</param>
+    /// <param name="code">An optional code to arm vacation the alarm control panel with. eg: 1234</param>
+    public static void AlarmArmVacation(this AlarmControlPanelEntity entity, string? code = null)
     {
-        entity.CallService("alarm_arm_vacation", new AlarmControlPanelAlarmArmVacationParameters { Code = @code });
+        entity.CallService("alarm_arm_vacation", new AlarmControlPanelAlarmArmVacationParameters { Code = code });
     }
 
     ///<summary>Send the alarm the command for disarm.</summary>
@@ -14285,12 +15173,12 @@ public static class AlarmControlPanelEntityExtensionMethods
         entity.CallService("alarm_disarm", data);
     }
 
-    ///<summary>Send the alarm the command for disarm.</summary>
-    ///<param name="entity">The AlarmControlPanelEntity to call this service for</param>
-    ///<param name="code">An optional code to disarm the alarm control panel with. eg: 1234</param>
-    public static void AlarmDisarm(this AlarmControlPanelEntity entity, string? @code = null)
+    /// <summary>Send the alarm the command for disarm.</summary>
+    /// <param name="entity">The AlarmControlPanelEntity to call this service for</param>
+    /// <param name="code">An optional code to disarm the alarm control panel with. eg: 1234</param>
+    public static void AlarmDisarm(this AlarmControlPanelEntity entity, string? code = null)
     {
-        entity.CallService("alarm_disarm", new AlarmControlPanelAlarmDisarmParameters { Code = @code });
+        entity.CallService("alarm_disarm", new AlarmControlPanelAlarmDisarmParameters { Code = code });
     }
 
     ///<summary>Send the alarm the command for trigger.</summary>
@@ -14299,12 +15187,12 @@ public static class AlarmControlPanelEntityExtensionMethods
         entity.CallService("alarm_trigger", data);
     }
 
-    ///<summary>Send the alarm the command for trigger.</summary>
-    ///<param name="entity">The AlarmControlPanelEntity to call this service for</param>
-    ///<param name="code">An optional code to trigger the alarm control panel with. eg: 1234</param>
-    public static void AlarmTrigger(this AlarmControlPanelEntity entity, string? @code = null)
+    /// <summary>Send the alarm the command for trigger.</summary>
+    /// <param name="entity">The AlarmControlPanelEntity to call this service for</param>
+    /// <param name="code">An optional code to trigger the alarm control panel with. eg: 1234</param>
+    public static void AlarmTrigger(this AlarmControlPanelEntity entity, string? code = null)
     {
-        entity.CallService("alarm_trigger", new AlarmControlPanelAlarmTriggerParameters { Code = @code });
+        entity.CallService("alarm_trigger", new AlarmControlPanelAlarmTriggerParameters { Code = code });
     }
 }
 
@@ -14322,12 +15210,12 @@ public static class AutomationEntityExtensionMethods
         entity.CallService("trigger", data);
     }
 
-    ///<summary>Trigger the actions of an automation.</summary>
-    ///<param name="entity">The AutomationEntity to call this service for</param>
-    ///<param name="skipCondition">Whether or not the conditions will be skipped.</param>
-    public static void Trigger(this AutomationEntity entity, bool? @skipCondition = null)
+    /// <summary>Trigger the actions of an automation.</summary>
+    /// <param name="entity">The AutomationEntity to call this service for</param>
+    /// <param name="skipCondition">Whether or not the conditions will be skipped.</param>
+    public static void Trigger(this AutomationEntity entity, bool? skipCondition = null)
     {
-        entity.CallService("trigger", new AutomationTriggerParameters { SkipCondition = @skipCondition });
+        entity.CallService("trigger", new AutomationTriggerParameters { SkipCondition = skipCondition });
     }
 
     ///<summary>Disable an automation.</summary>
@@ -14336,12 +15224,12 @@ public static class AutomationEntityExtensionMethods
         entity.CallService("turn_off", data);
     }
 
-    ///<summary>Disable an automation.</summary>
-    ///<param name="entity">The AutomationEntity to call this service for</param>
-    ///<param name="stopActions">Stop currently running actions.</param>
-    public static void TurnOff(this AutomationEntity entity, bool? @stopActions = null)
+    /// <summary>Disable an automation.</summary>
+    /// <param name="entity">The AutomationEntity to call this service for</param>
+    /// <param name="stopActions">Stop currently running actions.</param>
+    public static void TurnOff(this AutomationEntity entity, bool? stopActions = null)
     {
-        entity.CallService("turn_off", new AutomationTurnOffParameters { StopActions = @stopActions });
+        entity.CallService("turn_off", new AutomationTurnOffParameters { StopActions = stopActions });
     }
 
     ///<summary>Enable an automation.</summary>
@@ -14380,13 +15268,13 @@ public static class CameraEntityExtensionMethods
         entity.CallService("play_stream", data);
     }
 
-    ///<summary>Play camera stream on supported media player.</summary>
-    ///<param name="entity">The CameraEntity to call this service for</param>
-    ///<param name="mediaPlayer">Name(s) of media player to stream to.</param>
-    ///<param name="format">Stream format supported by media player.</param>
-    public static void PlayStream(this CameraEntity entity, string @mediaPlayer, string? @format = null)
+    /// <summary>Play camera stream on supported media player.</summary>
+    /// <param name="entity">The CameraEntity to call this service for</param>
+    /// <param name="mediaPlayer">Name(s) of media player to stream to.</param>
+    /// <param name="format">Stream format supported by media player.</param>
+    public static void PlayStream(this CameraEntity entity, string mediaPlayer, string? format = null)
     {
-        entity.CallService("play_stream", new CameraPlayStreamParameters { MediaPlayer = @mediaPlayer, Format = @format });
+        entity.CallService("play_stream", new CameraPlayStreamParameters { MediaPlayer = mediaPlayer, Format = format });
     }
 
     ///<summary>Record live camera feed.</summary>
@@ -14395,14 +15283,20 @@ public static class CameraEntityExtensionMethods
         entity.CallService("record", data);
     }
 
-    ///<summary>Record live camera feed.</summary>
-    ///<param name="entity">The CameraEntity to call this service for</param>
-    ///<param name="filename">Template of a Filename. Variable is entity_id. Must be mp4. eg: /tmp/snapshot_{{ entity_id.name }}.mp4</param>
-    ///<param name="duration">Target recording length.</param>
-    ///<param name="lookback">Target lookback period to include in addition to duration. Only available if there is currently an active HLS stream.</param>
-    public static void Record(this CameraEntity entity, string @filename, long? @duration = null, long? @lookback = null)
+    /// <summary>Record live camera feed.</summary>
+    /// <param name="entity">The CameraEntity to call this service for</param>
+    /// <param name="filename">
+    ///     Template of a Filename. Variable is entity_id. Must be mp4. eg: /tmp/snapshot_{{ entity_id.name
+    ///     }}.mp4
+    /// </param>
+    /// <param name="duration">Target recording length.</param>
+    /// <param name="lookback">
+    ///     Target lookback period to include in addition to duration. Only available if there is currently
+    ///     an active HLS stream.
+    /// </param>
+    public static void Record(this CameraEntity entity, string filename, long? duration = null, long? lookback = null)
     {
-        entity.CallService("record", new CameraRecordParameters { Filename = @filename, Duration = @duration, Lookback = @lookback });
+        entity.CallService("record", new CameraRecordParameters { Filename = filename, Duration = duration, Lookback = lookback });
     }
 
     ///<summary>Take a snapshot from a camera.</summary>
@@ -14411,12 +15305,12 @@ public static class CameraEntityExtensionMethods
         entity.CallService("snapshot", data);
     }
 
-    ///<summary>Take a snapshot from a camera.</summary>
-    ///<param name="entity">The CameraEntity to call this service for</param>
-    ///<param name="filename">Template of a Filename. Variable is entity_id. eg: /tmp/snapshot_{{ entity_id.name }}.jpg</param>
-    public static void Snapshot(this CameraEntity entity, string @filename)
+    /// <summary>Take a snapshot from a camera.</summary>
+    /// <param name="entity">The CameraEntity to call this service for</param>
+    /// <param name="filename">Template of a Filename. Variable is entity_id. eg: /tmp/snapshot_{{ entity_id.name }}.jpg</param>
+    public static void Snapshot(this CameraEntity entity, string filename)
     {
-        entity.CallService("snapshot", new CameraSnapshotParameters { Filename = @filename });
+        entity.CallService("snapshot", new CameraSnapshotParameters { Filename = filename });
     }
 
     ///<summary>Turn off camera.</summary>
@@ -14440,12 +15334,12 @@ public static class ClimateEntityExtensionMethods
         entity.CallService("set_aux_heat", data);
     }
 
-    ///<summary>Turn auxiliary heater on/off for climate device.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="auxHeat">New value of auxiliary heater.</param>
-    public static void SetAuxHeat(this ClimateEntity entity, bool @auxHeat)
+    /// <summary>Turn auxiliary heater on/off for climate device.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="auxHeat">New value of auxiliary heater.</param>
+    public static void SetAuxHeat(this ClimateEntity entity, bool auxHeat)
     {
-        entity.CallService("set_aux_heat", new ClimateSetAuxHeatParameters { AuxHeat = @auxHeat });
+        entity.CallService("set_aux_heat", new ClimateSetAuxHeatParameters { AuxHeat = auxHeat });
     }
 
     ///<summary>Set fan operation for climate device.</summary>
@@ -14454,12 +15348,12 @@ public static class ClimateEntityExtensionMethods
         entity.CallService("set_fan_mode", data);
     }
 
-    ///<summary>Set fan operation for climate device.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="fanMode">New value of fan mode. eg: low</param>
-    public static void SetFanMode(this ClimateEntity entity, string @fanMode)
+    /// <summary>Set fan operation for climate device.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="fanMode">New value of fan mode. eg: low</param>
+    public static void SetFanMode(this ClimateEntity entity, string fanMode)
     {
-        entity.CallService("set_fan_mode", new ClimateSetFanModeParameters { FanMode = @fanMode });
+        entity.CallService("set_fan_mode", new ClimateSetFanModeParameters { FanMode = fanMode });
     }
 
     ///<summary>Set target humidity of climate device.</summary>
@@ -14468,12 +15362,12 @@ public static class ClimateEntityExtensionMethods
         entity.CallService("set_humidity", data);
     }
 
-    ///<summary>Set target humidity of climate device.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="humidity">New target humidity for climate device.</param>
-    public static void SetHumidity(this ClimateEntity entity, long @humidity)
+    /// <summary>Set target humidity of climate device.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="humidity">New target humidity for climate device.</param>
+    public static void SetHumidity(this ClimateEntity entity, long humidity)
     {
-        entity.CallService("set_humidity", new ClimateSetHumidityParameters { Humidity = @humidity });
+        entity.CallService("set_humidity", new ClimateSetHumidityParameters { Humidity = humidity });
     }
 
     ///<summary>Set HVAC operation mode for climate device.</summary>
@@ -14482,12 +15376,12 @@ public static class ClimateEntityExtensionMethods
         entity.CallService("set_hvac_mode", data);
     }
 
-    ///<summary>Set HVAC operation mode for climate device.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="hvacMode">New value of operation mode.</param>
-    public static void SetHvacMode(this ClimateEntity entity, string? @hvacMode = null)
+    /// <summary>Set HVAC operation mode for climate device.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="hvacMode">New value of operation mode.</param>
+    public static void SetHvacMode(this ClimateEntity entity, string? hvacMode = null)
     {
-        entity.CallService("set_hvac_mode", new ClimateSetHvacModeParameters { HvacMode = @hvacMode });
+        entity.CallService("set_hvac_mode", new ClimateSetHvacModeParameters { HvacMode = hvacMode });
     }
 
     ///<summary>Set preset mode for climate device.</summary>
@@ -14496,12 +15390,12 @@ public static class ClimateEntityExtensionMethods
         entity.CallService("set_preset_mode", data);
     }
 
-    ///<summary>Set preset mode for climate device.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="presetMode">New value of preset mode. eg: away</param>
-    public static void SetPresetMode(this ClimateEntity entity, string @presetMode)
+    /// <summary>Set preset mode for climate device.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="presetMode">New value of preset mode. eg: away</param>
+    public static void SetPresetMode(this ClimateEntity entity, string presetMode)
     {
-        entity.CallService("set_preset_mode", new ClimateSetPresetModeParameters { PresetMode = @presetMode });
+        entity.CallService("set_preset_mode", new ClimateSetPresetModeParameters { PresetMode = presetMode });
     }
 
     ///<summary>Set swing operation for climate device.</summary>
@@ -14510,12 +15404,12 @@ public static class ClimateEntityExtensionMethods
         entity.CallService("set_swing_mode", data);
     }
 
-    ///<summary>Set swing operation for climate device.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="swingMode">New value of swing mode. eg: horizontal</param>
-    public static void SetSwingMode(this ClimateEntity entity, string @swingMode)
+    /// <summary>Set swing operation for climate device.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="swingMode">New value of swing mode. eg: horizontal</param>
+    public static void SetSwingMode(this ClimateEntity entity, string swingMode)
     {
-        entity.CallService("set_swing_mode", new ClimateSetSwingModeParameters { SwingMode = @swingMode });
+        entity.CallService("set_swing_mode", new ClimateSetSwingModeParameters { SwingMode = swingMode });
     }
 
     ///<summary>Set target temperature of climate device.</summary>
@@ -14524,15 +15418,15 @@ public static class ClimateEntityExtensionMethods
         entity.CallService("set_temperature", data);
     }
 
-    ///<summary>Set target temperature of climate device.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="temperature">New target temperature for HVAC.</param>
-    ///<param name="targetTempHigh">New target high temperature for HVAC.</param>
-    ///<param name="targetTempLow">New target low temperature for HVAC.</param>
-    ///<param name="hvacMode">HVAC operation mode to set temperature to.</param>
-    public static void SetTemperature(this ClimateEntity entity, double? @temperature = null, double? @targetTempHigh = null, double? @targetTempLow = null, string? @hvacMode = null)
+    /// <summary>Set target temperature of climate device.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="temperature">New target temperature for HVAC.</param>
+    /// <param name="targetTempHigh">New target high temperature for HVAC.</param>
+    /// <param name="targetTempLow">New target low temperature for HVAC.</param>
+    /// <param name="hvacMode">HVAC operation mode to set temperature to.</param>
+    public static void SetTemperature(this ClimateEntity entity, double? temperature = null, double? targetTempHigh = null, double? targetTempLow = null, string? hvacMode = null)
     {
-        entity.CallService("set_temperature", new ClimateSetTemperatureParameters { Temperature = @temperature, TargetTempHigh = @targetTempHigh, TargetTempLow = @targetTempLow, HvacMode = @hvacMode });
+        entity.CallService("set_temperature", new ClimateSetTemperatureParameters { Temperature = temperature, TargetTempHigh = targetTempHigh, TargetTempLow = targetTempLow, HvacMode = hvacMode });
     }
 
     ///<summary>Turn climate device off.</summary>
@@ -14580,12 +15474,12 @@ public static class CoverEntityExtensionMethods
         entity.CallService("set_cover_position", data);
     }
 
-    ///<summary>Move to specific position all or specified cover.</summary>
-    ///<param name="entity">The CoverEntity to call this service for</param>
-    ///<param name="position">Position of the cover</param>
-    public static void SetCoverPosition(this CoverEntity entity, long @position)
+    /// <summary>Move to specific position all or specified cover.</summary>
+    /// <param name="entity">The CoverEntity to call this service for</param>
+    /// <param name="position">Position of the cover</param>
+    public static void SetCoverPosition(this CoverEntity entity, long position)
     {
-        entity.CallService("set_cover_position", new CoverSetCoverPositionParameters { Position = @position });
+        entity.CallService("set_cover_position", new CoverSetCoverPositionParameters { Position = position });
     }
 
     ///<summary>Move to specific position all or specified cover tilt.</summary>
@@ -14594,12 +15488,12 @@ public static class CoverEntityExtensionMethods
         entity.CallService("set_cover_tilt_position", data);
     }
 
-    ///<summary>Move to specific position all or specified cover tilt.</summary>
-    ///<param name="entity">The CoverEntity to call this service for</param>
-    ///<param name="tiltPosition">Tilt position of the cover.</param>
-    public static void SetCoverTiltPosition(this CoverEntity entity, long @tiltPosition)
+    /// <summary>Move to specific position all or specified cover tilt.</summary>
+    /// <param name="entity">The CoverEntity to call this service for</param>
+    /// <param name="tiltPosition">Tilt position of the cover.</param>
+    public static void SetCoverTiltPosition(this CoverEntity entity, long tiltPosition)
     {
-        entity.CallService("set_cover_tilt_position", new CoverSetCoverTiltPositionParameters { TiltPosition = @tiltPosition });
+        entity.CallService("set_cover_tilt_position", new CoverSetCoverTiltPositionParameters { TiltPosition = tiltPosition });
     }
 
     ///<summary>Stop all or specified cover.</summary>
@@ -14668,12 +15562,12 @@ public static class InputNumberEntityExtensionMethods
         entity.CallService("set_value", data);
     }
 
-    ///<summary>Set the value of an input number entity.</summary>
-    ///<param name="entity">The InputNumberEntity to call this service for</param>
-    ///<param name="value">The target value the entity should be set to.</param>
-    public static void SetValue(this InputNumberEntity entity, double @value)
+    /// <summary>Set the value of an input number entity.</summary>
+    /// <param name="entity">The InputNumberEntity to call this service for</param>
+    /// <param name="value">The target value the entity should be set to.</param>
+    public static void SetValue(this InputNumberEntity entity, double value)
     {
-        entity.CallService("set_value", new InputNumberSetValueParameters { Value = @value });
+        entity.CallService("set_value", new InputNumberSetValueParameters { Value = value });
     }
 }
 
@@ -14697,12 +15591,12 @@ public static class InputSelectEntityExtensionMethods
         entity.CallService("select_next", data);
     }
 
-    ///<summary>Select the next options of an input select entity.</summary>
-    ///<param name="entity">The InputSelectEntity to call this service for</param>
-    ///<param name="cycle">If the option should cycle from the last to the first.</param>
-    public static void SelectNext(this InputSelectEntity entity, bool? @cycle = null)
+    /// <summary>Select the next options of an input select entity.</summary>
+    /// <param name="entity">The InputSelectEntity to call this service for</param>
+    /// <param name="cycle">If the option should cycle from the last to the first.</param>
+    public static void SelectNext(this InputSelectEntity entity, bool? cycle = null)
     {
-        entity.CallService("select_next", new InputSelectSelectNextParameters { Cycle = @cycle });
+        entity.CallService("select_next", new InputSelectSelectNextParameters { Cycle = cycle });
     }
 
     ///<summary>Select an option of an input select entity.</summary>
@@ -14711,12 +15605,12 @@ public static class InputSelectEntityExtensionMethods
         entity.CallService("select_option", data);
     }
 
-    ///<summary>Select an option of an input select entity.</summary>
-    ///<param name="entity">The InputSelectEntity to call this service for</param>
-    ///<param name="option">Option to be selected. eg: "Item A"</param>
-    public static void SelectOption(this InputSelectEntity entity, string @option)
+    /// <summary>Select an option of an input select entity.</summary>
+    /// <param name="entity">The InputSelectEntity to call this service for</param>
+    /// <param name="option">Option to be selected. eg: "Item A"</param>
+    public static void SelectOption(this InputSelectEntity entity, string option)
     {
-        entity.CallService("select_option", new InputSelectSelectOptionParameters { Option = @option });
+        entity.CallService("select_option", new InputSelectSelectOptionParameters { Option = option });
     }
 
     ///<summary>Select the previous options of an input select entity.</summary>
@@ -14725,12 +15619,12 @@ public static class InputSelectEntityExtensionMethods
         entity.CallService("select_previous", data);
     }
 
-    ///<summary>Select the previous options of an input select entity.</summary>
-    ///<param name="entity">The InputSelectEntity to call this service for</param>
-    ///<param name="cycle">If the option should cycle from the first to the last.</param>
-    public static void SelectPrevious(this InputSelectEntity entity, bool? @cycle = null)
+    /// <summary>Select the previous options of an input select entity.</summary>
+    /// <param name="entity">The InputSelectEntity to call this service for</param>
+    /// <param name="cycle">If the option should cycle from the first to the last.</param>
+    public static void SelectPrevious(this InputSelectEntity entity, bool? cycle = null)
     {
-        entity.CallService("select_previous", new InputSelectSelectPreviousParameters { Cycle = @cycle });
+        entity.CallService("select_previous", new InputSelectSelectPreviousParameters { Cycle = cycle });
     }
 
     ///<summary>Set the options of an input select entity.</summary>
@@ -14739,12 +15633,12 @@ public static class InputSelectEntityExtensionMethods
         entity.CallService("set_options", data);
     }
 
-    ///<summary>Set the options of an input select entity.</summary>
-    ///<param name="entity">The InputSelectEntity to call this service for</param>
-    ///<param name="options">Options for the input select entity. eg: ["Item A", "Item B", "Item C"]</param>
-    public static void SetOptions(this InputSelectEntity entity, object @options)
+    /// <summary>Set the options of an input select entity.</summary>
+    /// <param name="entity">The InputSelectEntity to call this service for</param>
+    /// <param name="options">Options for the input select entity. eg: ["Item A", "Item B", "Item C"]</param>
+    public static void SetOptions(this InputSelectEntity entity, object options)
     {
-        entity.CallService("set_options", new InputSelectSetOptionsParameters { Options = @options });
+        entity.CallService("set_options", new InputSelectSetOptionsParameters { Options = options });
     }
 }
 
@@ -14756,12 +15650,12 @@ public static class InputTextEntityExtensionMethods
         entity.CallService("set_value", data);
     }
 
-    ///<summary>Set the value of an input text entity.</summary>
-    ///<param name="entity">The InputTextEntity to call this service for</param>
-    ///<param name="value">The target value the entity should be set to. eg: This is an example text</param>
-    public static void SetValue(this InputTextEntity entity, string @value)
+    /// <summary>Set the value of an input text entity.</summary>
+    /// <param name="entity">The InputTextEntity to call this service for</param>
+    /// <param name="value">The target value the entity should be set to. eg: This is an example text</param>
+    public static void SetValue(this InputTextEntity entity, string value)
     {
-        entity.CallService("set_value", new InputTextSetValueParameters { Value = @value });
+        entity.CallService("set_value", new InputTextSetValueParameters { Value = value });
     }
 }
 
@@ -14773,24 +15667,30 @@ public static class LightEntityExtensionMethods
         entity.CallService("toggle", data);
     }
 
-    ///<summary>Toggles one or more lights, from on to off, or, off to on, based on their current state. </summary>
-    ///<param name="entity">The LightEntity to call this service for</param>
-    ///<param name="transition">Duration it takes to get to next state.</param>
-    ///<param name="rgbColor">Color for the light in RGB-format. eg: [255, 100, 100]</param>
-    ///<param name="colorName">A human readable color name.</param>
-    ///<param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
-    ///<param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
-    ///<param name="colorTemp">Color temperature for the light in mireds.</param>
-    ///<param name="kelvin">Color temperature for the light in Kelvin.</param>
-    ///<param name="whiteValue">Number indicating level of white.</param>
-    ///<param name="brightness">Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</param>
-    ///<param name="brightnessPct">Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and 100 is the maximum brightness supported by the light.</param>
-    ///<param name="profile">Name of a light profile to use. eg: relax</param>
-    ///<param name="flash">If the light should flash.</param>
-    ///<param name="effect">Light effect.</param>
-    public static void Toggle(this LightEntity entity, long? @transition = null, object? @rgbColor = null, string? @colorName = null, object? @hsColor = null, object? @xyColor = null, long? @colorTemp = null, long? @kelvin = null, long? @whiteValue = null, long? @brightness = null, long? @brightnessPct = null, string? @profile = null, string? @flash = null, string? @effect = null)
+    /// <summary>Toggles one or more lights, from on to off, or, off to on, based on their current state. </summary>
+    /// <param name="entity">The LightEntity to call this service for</param>
+    /// <param name="transition">Duration it takes to get to next state.</param>
+    /// <param name="rgbColor">Color for the light in RGB-format. eg: [255, 100, 100]</param>
+    /// <param name="colorName">A human readable color name.</param>
+    /// <param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
+    /// <param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
+    /// <param name="colorTemp">Color temperature for the light in mireds.</param>
+    /// <param name="kelvin">Color temperature for the light in Kelvin.</param>
+    /// <param name="whiteValue">Number indicating level of white.</param>
+    /// <param name="brightness">
+    ///     Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255
+    ///     is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="brightnessPct">
+    ///     Number indicating percentage of full brightness, where 0 turns the light off, 1 is the
+    ///     minimum brightness and 100 is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="profile">Name of a light profile to use. eg: relax</param>
+    /// <param name="flash">If the light should flash.</param>
+    /// <param name="effect">Light effect.</param>
+    public static void Toggle(this LightEntity entity, long? transition = null, object? rgbColor = null, string? colorName = null, object? hsColor = null, object? xyColor = null, long? colorTemp = null, long? kelvin = null, long? whiteValue = null, long? brightness = null, long? brightnessPct = null, string? profile = null, string? flash = null, string? effect = null)
     {
-        entity.CallService("toggle", new LightToggleParameters { Transition = @transition, RgbColor = @rgbColor, ColorName = @colorName, HsColor = @hsColor, XyColor = @xyColor, ColorTemp = @colorTemp, Kelvin = @kelvin, WhiteValue = @whiteValue, Brightness = @brightness, BrightnessPct = @brightnessPct, Profile = @profile, Flash = @flash, Effect = @effect });
+        entity.CallService("toggle", new LightToggleParameters { Transition = transition, RgbColor = rgbColor, ColorName = colorName, HsColor = hsColor, XyColor = xyColor, ColorTemp = colorTemp, Kelvin = kelvin, WhiteValue = whiteValue, Brightness = brightness, BrightnessPct = brightnessPct, Profile = profile, Flash = flash, Effect = effect });
     }
 
     ///<summary>Turns off one or more lights.</summary>
@@ -14799,13 +15699,13 @@ public static class LightEntityExtensionMethods
         entity.CallService("turn_off", data);
     }
 
-    ///<summary>Turns off one or more lights.</summary>
-    ///<param name="entity">The LightEntity to call this service for</param>
-    ///<param name="transition">Duration it takes to get to next state.</param>
-    ///<param name="flash">If the light should flash.</param>
-    public static void TurnOff(this LightEntity entity, long? @transition = null, string? @flash = null)
+    /// <summary>Turns off one or more lights.</summary>
+    /// <param name="entity">The LightEntity to call this service for</param>
+    /// <param name="transition">Duration it takes to get to next state.</param>
+    /// <param name="flash">If the light should flash.</param>
+    public static void TurnOff(this LightEntity entity, long? transition = null, string? flash = null)
     {
-        entity.CallService("turn_off", new LightTurnOffParameters { Transition = @transition, Flash = @flash });
+        entity.CallService("turn_off", new LightTurnOffParameters { Transition = transition, Flash = flash });
     }
 
     ///<summary>Turn on one or more lights and adjust properties of the light, even when they are turned on already. </summary>
@@ -14814,28 +15714,46 @@ public static class LightEntityExtensionMethods
         entity.CallService("turn_on", data);
     }
 
-    ///<summary>Turn on one or more lights and adjust properties of the light, even when they are turned on already. </summary>
-    ///<param name="entity">The LightEntity to call this service for</param>
-    ///<param name="transition">Duration it takes to get to next state.</param>
-    ///<param name="rgbColor">A list containing three integers between 0 and 255 representing the RGB (red, green, blue) color for the light. eg: [255, 100, 100]</param>
-    ///<param name="rgbwColor">A list containing four integers between 0 and 255 representing the RGBW (red, green, blue, white) color for the light. eg: [255, 100, 100, 50]</param>
-    ///<param name="rgbwwColor">A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue, cold white, warm white) color for the light. eg: [255, 100, 100, 50, 70]</param>
-    ///<param name="colorName">A human readable color name.</param>
-    ///<param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
-    ///<param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
-    ///<param name="colorTemp">Color temperature for the light in mireds.</param>
-    ///<param name="kelvin">Color temperature for the light in Kelvin.</param>
-    ///<param name="brightness">Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</param>
-    ///<param name="brightnessPct">Number indicating percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness and 100 is the maximum brightness supported by the light.</param>
-    ///<param name="brightnessStep">Change brightness by an amount.</param>
-    ///<param name="brightnessStepPct">Change brightness by a percentage.</param>
-    ///<param name="white">Set the light to white mode and change its brightness, where 0 turns the light off, 1 is the minimum brightness and 255 is the maximum brightness supported by the light.</param>
-    ///<param name="profile">Name of a light profile to use. eg: relax</param>
-    ///<param name="flash">If the light should flash.</param>
-    ///<param name="effect">Light effect.</param>
-    public static void TurnOn(this LightEntity entity, long? @transition = null, object? @rgbColor = null, object? @rgbwColor = null, object? @rgbwwColor = null, string? @colorName = null, object? @hsColor = null, object? @xyColor = null, long? @colorTemp = null, long? @kelvin = null, long? @brightness = null, long? @brightnessPct = null, long? @brightnessStep = null, long? @brightnessStepPct = null, long? @white = null, string? @profile = null, string? @flash = null, string? @effect = null)
+    /// <summary>Turn on one or more lights and adjust properties of the light, even when they are turned on already. </summary>
+    /// <param name="entity">The LightEntity to call this service for</param>
+    /// <param name="transition">Duration it takes to get to next state.</param>
+    /// <param name="rgbColor">
+    ///     A list containing three integers between 0 and 255 representing the RGB (red, green, blue) color
+    ///     for the light. eg: [255, 100, 100]
+    /// </param>
+    /// <param name="rgbwColor">
+    ///     A list containing four integers between 0 and 255 representing the RGBW (red, green, blue,
+    ///     white) color for the light. eg: [255, 100, 100, 50]
+    /// </param>
+    /// <param name="rgbwwColor">
+    ///     A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue,
+    ///     cold white, warm white) color for the light. eg: [255, 100, 100, 50, 70]
+    /// </param>
+    /// <param name="colorName">A human readable color name.</param>
+    /// <param name="hsColor">Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100. eg: [300, 70]</param>
+    /// <param name="xyColor">Color for the light in XY-format. eg: [0.52, 0.43]</param>
+    /// <param name="colorTemp">Color temperature for the light in mireds.</param>
+    /// <param name="kelvin">Color temperature for the light in Kelvin.</param>
+    /// <param name="brightness">
+    ///     Number indicating brightness, where 0 turns the light off, 1 is the minimum brightness and 255
+    ///     is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="brightnessPct">
+    ///     Number indicating percentage of full brightness, where 0 turns the light off, 1 is the
+    ///     minimum brightness and 100 is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="brightnessStep">Change brightness by an amount.</param>
+    /// <param name="brightnessStepPct">Change brightness by a percentage.</param>
+    /// <param name="white">
+    ///     Set the light to white mode and change its brightness, where 0 turns the light off, 1 is the
+    ///     minimum brightness and 255 is the maximum brightness supported by the light.
+    /// </param>
+    /// <param name="profile">Name of a light profile to use. eg: relax</param>
+    /// <param name="flash">If the light should flash.</param>
+    /// <param name="effect">Light effect.</param>
+    public static void TurnOn(this LightEntity entity, long? transition = null, object? rgbColor = null, object? rgbwColor = null, object? rgbwwColor = null, string? colorName = null, object? hsColor = null, object? xyColor = null, long? colorTemp = null, long? kelvin = null, long? brightness = null, long? brightnessPct = null, long? brightnessStep = null, long? brightnessStepPct = null, long? white = null, string? profile = null, string? flash = null, string? effect = null)
     {
-        entity.CallService("turn_on", new LightTurnOnParameters { Transition = @transition, RgbColor = @rgbColor, RgbwColor = @rgbwColor, RgbwwColor = @rgbwwColor, ColorName = @colorName, HsColor = @hsColor, XyColor = @xyColor, ColorTemp = @colorTemp, Kelvin = @kelvin, Brightness = @brightness, BrightnessPct = @brightnessPct, BrightnessStep = @brightnessStep, BrightnessStepPct = @brightnessStepPct, White = @white, Profile = @profile, Flash = @flash, Effect = @effect });
+        entity.CallService("turn_on", new LightTurnOnParameters { Transition = transition, RgbColor = rgbColor, RgbwColor = rgbwColor, RgbwwColor = rgbwwColor, ColorName = colorName, HsColor = hsColor, XyColor = xyColor, ColorTemp = colorTemp, Kelvin = kelvin, Brightness = brightness, BrightnessPct = brightnessPct, BrightnessStep = brightnessStep, BrightnessStepPct = brightnessStepPct, White = white, Profile = profile, Flash = flash, Effect = effect });
     }
 }
 
@@ -14847,12 +15765,12 @@ public static class LockEntityExtensionMethods
         entity.CallService("lock", data);
     }
 
-    ///<summary>Lock all or specified locks.</summary>
-    ///<param name="entity">The LockEntity to call this service for</param>
-    ///<param name="code">An optional code to lock the lock with. eg: 1234</param>
-    public static void Lock(this LockEntity entity, string? @code = null)
+    /// <summary>Lock all or specified locks.</summary>
+    /// <param name="entity">The LockEntity to call this service for</param>
+    /// <param name="code">An optional code to lock the lock with. eg: 1234</param>
+    public static void Lock(this LockEntity entity, string? code = null)
     {
-        entity.CallService("lock", new LockLockParameters { Code = @code });
+        entity.CallService("lock", new LockLockParameters { Code = code });
     }
 
     ///<summary>Open all or specified locks.</summary>
@@ -14861,12 +15779,12 @@ public static class LockEntityExtensionMethods
         entity.CallService("open", data);
     }
 
-    ///<summary>Open all or specified locks.</summary>
-    ///<param name="entity">The LockEntity to call this service for</param>
-    ///<param name="code">An optional code to open the lock with. eg: 1234</param>
-    public static void Open(this LockEntity entity, string? @code = null)
+    /// <summary>Open all or specified locks.</summary>
+    /// <param name="entity">The LockEntity to call this service for</param>
+    /// <param name="code">An optional code to open the lock with. eg: 1234</param>
+    public static void Open(this LockEntity entity, string? code = null)
     {
-        entity.CallService("open", new LockOpenParameters { Code = @code });
+        entity.CallService("open", new LockOpenParameters { Code = code });
     }
 
     ///<summary>Unlock all or specified locks.</summary>
@@ -14875,12 +15793,12 @@ public static class LockEntityExtensionMethods
         entity.CallService("unlock", data);
     }
 
-    ///<summary>Unlock all or specified locks.</summary>
-    ///<param name="entity">The LockEntity to call this service for</param>
-    ///<param name="code">An optional code to unlock the lock with. eg: 1234</param>
-    public static void Unlock(this LockEntity entity, string? @code = null)
+    /// <summary>Unlock all or specified locks.</summary>
+    /// <param name="entity">The LockEntity to call this service for</param>
+    /// <param name="code">An optional code to unlock the lock with. eg: 1234</param>
+    public static void Unlock(this LockEntity entity, string? code = null)
     {
-        entity.CallService("unlock", new LockUnlockParameters { Code = @code });
+        entity.CallService("unlock", new LockUnlockParameters { Code = code });
     }
 }
 
@@ -14898,12 +15816,15 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("join", data);
     }
 
-    ///<summary>Group players together. Only works on platforms with support for player groups.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="groupMembers">The players which will be synced with the target player. eg: ["media_player.multiroom_player2", "media_player.multiroom_player3"]</param>
-    public static void Join(this MediaPlayerEntity entity, object? @groupMembers = null)
+    /// <summary>Group players together. Only works on platforms with support for player groups.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="groupMembers">
+    ///     The players which will be synced with the target player. eg:
+    ///     ["media_player.multiroom_player2", "media_player.multiroom_player3"]
+    /// </param>
+    public static void Join(this MediaPlayerEntity entity, object? groupMembers = null)
     {
-        entity.CallService("join", new MediaPlayerJoinParameters { GroupMembers = @groupMembers });
+        entity.CallService("join", new MediaPlayerJoinParameters { GroupMembers = groupMembers });
     }
 
     ///<summary>Send the media player the command for next track.</summary>
@@ -14942,12 +15863,12 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("media_seek", data);
     }
 
-    ///<summary>Send the media player the command to seek in current playing media.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="seekPosition">Position to seek to. The format is platform dependent.</param>
-    public static void MediaSeek(this MediaPlayerEntity entity, double @seekPosition)
+    /// <summary>Send the media player the command to seek in current playing media.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="seekPosition">Position to seek to. The format is platform dependent.</param>
+    public static void MediaSeek(this MediaPlayerEntity entity, double seekPosition)
     {
-        entity.CallService("media_seek", new MediaPlayerMediaSeekParameters { SeekPosition = @seekPosition });
+        entity.CallService("media_seek", new MediaPlayerMediaSeekParameters { SeekPosition = seekPosition });
     }
 
     ///<summary>Send the media player the stop command.</summary>
@@ -14962,13 +15883,19 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("play_media", data);
     }
 
-    ///<summary>Send the media player the command for playing media.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="mediaContentId">The ID of the content to play. Platform dependent. eg: https://home-assistant.io/images/cast/splash.png</param>
-    ///<param name="mediaContentType">The type of the content to play. Like image, music, tvshow, video, episode, channel or playlist. eg: music</param>
-    public static void PlayMedia(this MediaPlayerEntity entity, string @mediaContentId, string @mediaContentType)
+    /// <summary>Send the media player the command for playing media.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="mediaContentId">
+    ///     The ID of the content to play. Platform dependent. eg:
+    ///     https://home-assistant.io/images/cast/splash.png
+    /// </param>
+    /// <param name="mediaContentType">
+    ///     The type of the content to play. Like image, music, tvshow, video, episode, channel or
+    ///     playlist. eg: music
+    /// </param>
+    public static void PlayMedia(this MediaPlayerEntity entity, string mediaContentId, string mediaContentType)
     {
-        entity.CallService("play_media", new MediaPlayerPlayMediaParameters { MediaContentId = @mediaContentId, MediaContentType = @mediaContentType });
+        entity.CallService("play_media", new MediaPlayerPlayMediaParameters { MediaContentId = mediaContentId, MediaContentType = mediaContentType });
     }
 
     ///<summary>Set repeat mode</summary>
@@ -14977,12 +15904,12 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("repeat_set", data);
     }
 
-    ///<summary>Set repeat mode</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="repeat">Repeat mode to set.</param>
-    public static void RepeatSet(this MediaPlayerEntity entity, string @repeat)
+    /// <summary>Set repeat mode</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="repeat">Repeat mode to set.</param>
+    public static void RepeatSet(this MediaPlayerEntity entity, string repeat)
     {
-        entity.CallService("repeat_set", new MediaPlayerRepeatSetParameters { Repeat = @repeat });
+        entity.CallService("repeat_set", new MediaPlayerRepeatSetParameters { Repeat = repeat });
     }
 
     ///<summary>Send the media player the command to change sound mode.</summary>
@@ -14991,12 +15918,12 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("select_sound_mode", data);
     }
 
-    ///<summary>Send the media player the command to change sound mode.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="soundMode">Name of the sound mode to switch to. eg: Music</param>
-    public static void SelectSoundMode(this MediaPlayerEntity entity, string? @soundMode = null)
+    /// <summary>Send the media player the command to change sound mode.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="soundMode">Name of the sound mode to switch to. eg: Music</param>
+    public static void SelectSoundMode(this MediaPlayerEntity entity, string? soundMode = null)
     {
-        entity.CallService("select_sound_mode", new MediaPlayerSelectSoundModeParameters { SoundMode = @soundMode });
+        entity.CallService("select_sound_mode", new MediaPlayerSelectSoundModeParameters { SoundMode = soundMode });
     }
 
     ///<summary>Send the media player the command to change input source.</summary>
@@ -15005,12 +15932,12 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("select_source", data);
     }
 
-    ///<summary>Send the media player the command to change input source.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="source">Name of the source to switch to. Platform dependent. eg: video1</param>
-    public static void SelectSource(this MediaPlayerEntity entity, string @source)
+    /// <summary>Send the media player the command to change input source.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="source">Name of the source to switch to. Platform dependent. eg: video1</param>
+    public static void SelectSource(this MediaPlayerEntity entity, string source)
     {
-        entity.CallService("select_source", new MediaPlayerSelectSourceParameters { Source = @source });
+        entity.CallService("select_source", new MediaPlayerSelectSourceParameters { Source = source });
     }
 
     ///<summary>Set shuffling state.</summary>
@@ -15019,12 +15946,12 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("shuffle_set", data);
     }
 
-    ///<summary>Set shuffling state.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="shuffle">True/false for enabling/disabling shuffle.</param>
-    public static void ShuffleSet(this MediaPlayerEntity entity, bool @shuffle)
+    /// <summary>Set shuffling state.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="shuffle">True/false for enabling/disabling shuffle.</param>
+    public static void ShuffleSet(this MediaPlayerEntity entity, bool shuffle)
     {
-        entity.CallService("shuffle_set", new MediaPlayerShuffleSetParameters { Shuffle = @shuffle });
+        entity.CallService("shuffle_set", new MediaPlayerShuffleSetParameters { Shuffle = shuffle });
     }
 
     ///<summary>Toggles a media player power state.</summary>
@@ -15063,12 +15990,12 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("volume_mute", data);
     }
 
-    ///<summary>Mute a media player's volume.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="isVolumeMuted">True/false for mute/unmute.</param>
-    public static void VolumeMute(this MediaPlayerEntity entity, bool @isVolumeMuted)
+    /// <summary>Mute a media player's volume.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="isVolumeMuted">True/false for mute/unmute.</param>
+    public static void VolumeMute(this MediaPlayerEntity entity, bool isVolumeMuted)
     {
-        entity.CallService("volume_mute", new MediaPlayerVolumeMuteParameters { IsVolumeMuted = @isVolumeMuted });
+        entity.CallService("volume_mute", new MediaPlayerVolumeMuteParameters { IsVolumeMuted = isVolumeMuted });
     }
 
     ///<summary>Set a media player's volume level.</summary>
@@ -15077,12 +16004,12 @@ public static class MediaPlayerEntityExtensionMethods
         entity.CallService("volume_set", data);
     }
 
-    ///<summary>Set a media player's volume level.</summary>
-    ///<param name="entity">The MediaPlayerEntity to call this service for</param>
-    ///<param name="volumeLevel">Volume level to set as float.</param>
-    public static void VolumeSet(this MediaPlayerEntity entity, double @volumeLevel)
+    /// <summary>Set a media player's volume level.</summary>
+    /// <param name="entity">The MediaPlayerEntity to call this service for</param>
+    /// <param name="volumeLevel">Volume level to set as float.</param>
+    public static void VolumeSet(this MediaPlayerEntity entity, double volumeLevel)
     {
-        entity.CallService("volume_set", new MediaPlayerVolumeSetParameters { VolumeLevel = @volumeLevel });
+        entity.CallService("volume_set", new MediaPlayerVolumeSetParameters { VolumeLevel = volumeLevel });
     }
 
     ///<summary>Turn a media player volume up.</summary>
@@ -15100,12 +16027,15 @@ public static class MelcloudEntityExtensionMethods
         entity.CallService("set_vane_horizontal", data);
     }
 
-    ///<summary>Sets horizontal vane position.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="position">Horizontal vane position. Possible options can be found in the vane_horizontal_positions state attribute.  eg: auto</param>
-    public static void SetVaneHorizontal(this ClimateEntity entity, string @position)
+    /// <summary>Sets horizontal vane position.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="position">
+    ///     Horizontal vane position. Possible options can be found in the vane_horizontal_positions state
+    ///     attribute.  eg: auto
+    /// </param>
+    public static void SetVaneHorizontal(this ClimateEntity entity, string position)
     {
-        entity.CallService("set_vane_horizontal", new MelcloudSetVaneHorizontalParameters { Position = @position });
+        entity.CallService("set_vane_horizontal", new MelcloudSetVaneHorizontalParameters { Position = position });
     }
 
     ///<summary>Sets vertical vane position.</summary>
@@ -15114,12 +16044,15 @@ public static class MelcloudEntityExtensionMethods
         entity.CallService("set_vane_vertical", data);
     }
 
-    ///<summary>Sets vertical vane position.</summary>
-    ///<param name="entity">The ClimateEntity to call this service for</param>
-    ///<param name="position">Vertical vane position. Possible options can be found in the vane_vertical_positions state attribute.  eg: auto</param>
-    public static void SetVaneVertical(this ClimateEntity entity, string @position)
+    /// <summary>Sets vertical vane position.</summary>
+    /// <param name="entity">The ClimateEntity to call this service for</param>
+    /// <param name="position">
+    ///     Vertical vane position. Possible options can be found in the vane_vertical_positions state
+    ///     attribute.  eg: auto
+    /// </param>
+    public static void SetVaneVertical(this ClimateEntity entity, string position)
     {
-        entity.CallService("set_vane_vertical", new MelcloudSetVaneVerticalParameters { Position = @position });
+        entity.CallService("set_vane_vertical", new MelcloudSetVaneVerticalParameters { Position = position });
     }
 }
 
@@ -15131,12 +16064,12 @@ public static class NumberEntityExtensionMethods
         entity.CallService("set_value", data);
     }
 
-    ///<summary>Set the value of a Number entity.</summary>
-    ///<param name="entity">The NumberEntity to call this service for</param>
-    ///<param name="value">The target value the entity should be set to. eg: 42</param>
-    public static void SetValue(this NumberEntity entity, string? @value = null)
+    /// <summary>Set the value of a Number entity.</summary>
+    /// <param name="entity">The NumberEntity to call this service for</param>
+    /// <param name="value">The target value the entity should be set to. eg: 42</param>
+    public static void SetValue(this NumberEntity entity, string? value = null)
     {
-        entity.CallService("set_value", new NumberSetValueParameters { Value = @value });
+        entity.CallService("set_value", new NumberSetValueParameters { Value = value });
     }
 }
 
@@ -15148,12 +16081,12 @@ public static class PiHoleEntityExtensionMethods
         entity.CallService("disable", data);
     }
 
-    ///<summary>Disable configured Pi-hole(s) for an amount of time</summary>
-    ///<param name="entity">The SwitchEntity to call this service for</param>
-    ///<param name="duration">Time that the Pi-hole should be disabled for eg: 00:00:15</param>
-    public static void Disable(this SwitchEntity entity, string @duration)
+    /// <summary>Disable configured Pi-hole(s) for an amount of time</summary>
+    /// <param name="entity">The SwitchEntity to call this service for</param>
+    /// <param name="duration">Time that the Pi-hole should be disabled for eg: 00:00:15</param>
+    public static void Disable(this SwitchEntity entity, string duration)
     {
-        entity.CallService("disable", new PiHoleDisableParameters { Duration = @duration });
+        entity.CallService("disable", new PiHoleDisableParameters { Duration = duration });
     }
 }
 
@@ -15165,13 +16098,13 @@ public static class RemoteEntityExtensionMethods
         entity.CallService("delete_command", data);
     }
 
-    ///<summary>Deletes a command or a list of commands from the database.</summary>
-    ///<param name="entity">The RemoteEntity to call this service for</param>
-    ///<param name="device">Name of the device from which commands will be deleted. eg: television</param>
-    ///<param name="command">A single command or a list of commands to delete. eg: Mute</param>
-    public static void DeleteCommand(this RemoteEntity entity, object @command, string? @device = null)
+    /// <summary>Deletes a command or a list of commands from the database.</summary>
+    /// <param name="entity">The RemoteEntity to call this service for</param>
+    /// <param name="device">Name of the device from which commands will be deleted. eg: television</param>
+    /// <param name="command">A single command or a list of commands to delete. eg: Mute</param>
+    public static void DeleteCommand(this RemoteEntity entity, object command, string? device = null)
     {
-        entity.CallService("delete_command", new RemoteDeleteCommandParameters { Device = @device, Command = @command });
+        entity.CallService("delete_command", new RemoteDeleteCommandParameters { Device = device, Command = command });
     }
 
     ///<summary>Learns a command or a list of commands from a device.</summary>
@@ -15180,16 +16113,16 @@ public static class RemoteEntityExtensionMethods
         entity.CallService("learn_command", data);
     }
 
-    ///<summary>Learns a command or a list of commands from a device.</summary>
-    ///<param name="entity">The RemoteEntity to call this service for</param>
-    ///<param name="device">Device ID to learn command from. eg: television</param>
-    ///<param name="command">A single command or a list of commands to learn. eg: Turn on</param>
-    ///<param name="commandType">The type of command to be learned.</param>
-    ///<param name="alternative">If code must be stored as alternative (useful for discrete remotes).</param>
-    ///<param name="timeout">Timeout for the command to be learned.</param>
-    public static void LearnCommand(this RemoteEntity entity, string? @device = null, object? @command = null, string? @commandType = null, bool? @alternative = null, long? @timeout = null)
+    /// <summary>Learns a command or a list of commands from a device.</summary>
+    /// <param name="entity">The RemoteEntity to call this service for</param>
+    /// <param name="device">Device ID to learn command from. eg: television</param>
+    /// <param name="command">A single command or a list of commands to learn. eg: Turn on</param>
+    /// <param name="commandType">The type of command to be learned.</param>
+    /// <param name="alternative">If code must be stored as alternative (useful for discrete remotes).</param>
+    /// <param name="timeout">Timeout for the command to be learned.</param>
+    public static void LearnCommand(this RemoteEntity entity, string? device = null, object? command = null, string? commandType = null, bool? alternative = null, long? timeout = null)
     {
-        entity.CallService("learn_command", new RemoteLearnCommandParameters { Device = @device, Command = @command, CommandType = @commandType, Alternative = @alternative, Timeout = @timeout });
+        entity.CallService("learn_command", new RemoteLearnCommandParameters { Device = device, Command = command, CommandType = commandType, Alternative = alternative, Timeout = timeout });
     }
 
     ///<summary>Sends a command or a list of commands to a device.</summary>
@@ -15198,16 +16131,16 @@ public static class RemoteEntityExtensionMethods
         entity.CallService("send_command", data);
     }
 
-    ///<summary>Sends a command or a list of commands to a device.</summary>
-    ///<param name="entity">The RemoteEntity to call this service for</param>
-    ///<param name="device">Device ID to send command to. eg: 32756745</param>
-    ///<param name="command">A single command or a list of commands to send. eg: Play</param>
-    ///<param name="numRepeats">The number of times you want to repeat the command(s).</param>
-    ///<param name="delaySecs">The time you want to wait in between repeated commands.</param>
-    ///<param name="holdSecs">The time you want to have it held before the release is send.</param>
-    public static void SendCommand(this RemoteEntity entity, string @command, string? @device = null, long? @numRepeats = null, double? @delaySecs = null, double? @holdSecs = null)
+    /// <summary>Sends a command or a list of commands to a device.</summary>
+    /// <param name="entity">The RemoteEntity to call this service for</param>
+    /// <param name="device">Device ID to send command to. eg: 32756745</param>
+    /// <param name="command">A single command or a list of commands to send. eg: Play</param>
+    /// <param name="numRepeats">The number of times you want to repeat the command(s).</param>
+    /// <param name="delaySecs">The time you want to wait in between repeated commands.</param>
+    /// <param name="holdSecs">The time you want to have it held before the release is send.</param>
+    public static void SendCommand(this RemoteEntity entity, string command, string? device = null, long? numRepeats = null, double? delaySecs = null, double? holdSecs = null)
     {
-        entity.CallService("send_command", new RemoteSendCommandParameters { Device = @device, Command = @command, NumRepeats = @numRepeats, DelaySecs = @delaySecs, HoldSecs = @holdSecs });
+        entity.CallService("send_command", new RemoteSendCommandParameters { Device = device, Command = command, NumRepeats = numRepeats, DelaySecs = delaySecs, HoldSecs = holdSecs });
     }
 
     ///<summary>Toggles a device.</summary>
@@ -15228,12 +16161,12 @@ public static class RemoteEntityExtensionMethods
         entity.CallService("turn_on", data);
     }
 
-    ///<summary>Sends the Power On Command.</summary>
-    ///<param name="entity">The RemoteEntity to call this service for</param>
-    ///<param name="activity">Activity ID or Activity Name to start. eg: BedroomTV</param>
-    public static void TurnOn(this RemoteEntity entity, string? @activity = null)
+    /// <summary>Sends the Power On Command.</summary>
+    /// <param name="entity">The RemoteEntity to call this service for</param>
+    /// <param name="activity">Activity ID or Activity Name to start. eg: BedroomTV</param>
+    public static void TurnOn(this RemoteEntity entity, string? activity = null)
     {
-        entity.CallService("turn_on", new RemoteTurnOnParameters { Activity = @activity });
+        entity.CallService("turn_on", new RemoteTurnOnParameters { Activity = activity });
     }
 }
 
@@ -15266,12 +16199,12 @@ public static class SelectEntityExtensionMethods
         entity.CallService("select_option", data);
     }
 
-    ///<summary>Select an option of an select entity.</summary>
-    ///<param name="entity">The SelectEntity to call this service for</param>
-    ///<param name="option">Option to be selected. eg: "Item A"</param>
-    public static void SelectOption(this SelectEntity entity, string @option)
+    /// <summary>Select an option of an select entity.</summary>
+    /// <param name="entity">The SelectEntity to call this service for</param>
+    /// <param name="option">Option to be selected. eg: "Item A"</param>
+    public static void SelectOption(this SelectEntity entity, string option)
     {
-        entity.CallService("select_option", new SelectSelectOptionParameters { Option = @option });
+        entity.CallService("select_option", new SelectSelectOptionParameters { Option = option });
     }
 }
 
@@ -15331,12 +16264,12 @@ public static class TimerEntityExtensionMethods
         entity.CallService("start", data);
     }
 
-    ///<summary>Start a timer</summary>
-    ///<param name="entity">The TimerEntity to call this service for</param>
-    ///<param name="duration">Duration the timer requires to finish. [optional] eg: 00:01:00 or 60</param>
-    public static void Start(this TimerEntity entity, string? @duration = null)
+    /// <summary>Start a timer</summary>
+    /// <param name="entity">The TimerEntity to call this service for</param>
+    /// <param name="duration">Duration the timer requires to finish. [optional] eg: 00:01:00 or 60</param>
+    public static void Start(this TimerEntity entity, string? duration = null)
     {
-        entity.CallService("start", new TimerStartParameters { Duration = @duration });
+        entity.CallService("start", new TimerStartParameters { Duration = duration });
     }
 }
 
@@ -15348,12 +16281,12 @@ public static class UtilityMeterEntityExtensionMethods
         entity.CallService("calibrate", data);
     }
 
-    ///<summary>Calibrates a utility meter sensor.</summary>
-    ///<param name="entity">The SensorEntity to call this service for</param>
-    ///<param name="value">Value to which set the meter eg: 100</param>
-    public static void Calibrate(this SensorEntity entity, string @value)
+    /// <summary>Calibrates a utility meter sensor.</summary>
+    /// <param name="entity">The SensorEntity to call this service for</param>
+    /// <param name="value">Value to which set the meter eg: 100</param>
+    public static void Calibrate(this SensorEntity entity, string value)
     {
-        entity.CallService("calibrate", new UtilityMeterCalibrateParameters { Value = @value });
+        entity.CallService("calibrate", new UtilityMeterCalibrateParameters { Value = value });
     }
 }
 
@@ -15365,12 +16298,12 @@ public static class ZhaEntityExtensionMethods
         entity.CallService("clear_lock_user_code", data);
     }
 
-    ///<summary>Clear a user code from a lock</summary>
-    ///<param name="entity">The LockEntity to call this service for</param>
-    ///<param name="codeSlot">Code slot to clear code from eg: 1</param>
-    public static void ClearLockUserCode(this LockEntity entity, string @codeSlot)
+    /// <summary>Clear a user code from a lock</summary>
+    /// <param name="entity">The LockEntity to call this service for</param>
+    /// <param name="codeSlot">Code slot to clear code from eg: 1</param>
+    public static void ClearLockUserCode(this LockEntity entity, string codeSlot)
     {
-        entity.CallService("clear_lock_user_code", new ZhaClearLockUserCodeParameters { CodeSlot = @codeSlot });
+        entity.CallService("clear_lock_user_code", new ZhaClearLockUserCodeParameters { CodeSlot = codeSlot });
     }
 
     ///<summary>Disable a user code on a lock</summary>
@@ -15379,12 +16312,12 @@ public static class ZhaEntityExtensionMethods
         entity.CallService("disable_lock_user_code", data);
     }
 
-    ///<summary>Disable a user code on a lock</summary>
-    ///<param name="entity">The LockEntity to call this service for</param>
-    ///<param name="codeSlot">Code slot to disable eg: 1</param>
-    public static void DisableLockUserCode(this LockEntity entity, string @codeSlot)
+    /// <summary>Disable a user code on a lock</summary>
+    /// <param name="entity">The LockEntity to call this service for</param>
+    /// <param name="codeSlot">Code slot to disable eg: 1</param>
+    public static void DisableLockUserCode(this LockEntity entity, string codeSlot)
     {
-        entity.CallService("disable_lock_user_code", new ZhaDisableLockUserCodeParameters { CodeSlot = @codeSlot });
+        entity.CallService("disable_lock_user_code", new ZhaDisableLockUserCodeParameters { CodeSlot = codeSlot });
     }
 
     ///<summary>Enable a user code on a lock</summary>
@@ -15393,12 +16326,12 @@ public static class ZhaEntityExtensionMethods
         entity.CallService("enable_lock_user_code", data);
     }
 
-    ///<summary>Enable a user code on a lock</summary>
-    ///<param name="entity">The LockEntity to call this service for</param>
-    ///<param name="codeSlot">Code slot to enable eg: 1</param>
-    public static void EnableLockUserCode(this LockEntity entity, string @codeSlot)
+    /// <summary>Enable a user code on a lock</summary>
+    /// <param name="entity">The LockEntity to call this service for</param>
+    /// <param name="codeSlot">Code slot to enable eg: 1</param>
+    public static void EnableLockUserCode(this LockEntity entity, string codeSlot)
     {
-        entity.CallService("enable_lock_user_code", new ZhaEnableLockUserCodeParameters { CodeSlot = @codeSlot });
+        entity.CallService("enable_lock_user_code", new ZhaEnableLockUserCodeParameters { CodeSlot = codeSlot });
     }
 
     ///<summary>Set a user code on a lock</summary>
@@ -15407,12 +16340,12 @@ public static class ZhaEntityExtensionMethods
         entity.CallService("set_lock_user_code", data);
     }
 
-    ///<summary>Set a user code on a lock</summary>
-    ///<param name="entity">The LockEntity to call this service for</param>
-    ///<param name="codeSlot">Code slot to set the code in eg: 1</param>
-    ///<param name="userCode">Code to set eg: 1234</param>
-    public static void SetLockUserCode(this LockEntity entity, string @codeSlot, string @userCode)
+    /// <summary>Set a user code on a lock</summary>
+    /// <param name="entity">The LockEntity to call this service for</param>
+    /// <param name="codeSlot">Code slot to set the code in eg: 1</param>
+    /// <param name="userCode">Code to set eg: 1234</param>
+    public static void SetLockUserCode(this LockEntity entity, string codeSlot, string userCode)
     {
-        entity.CallService("set_lock_user_code", new ZhaSetLockUserCodeParameters { CodeSlot = @codeSlot, UserCode = @userCode });
+        entity.CallService("set_lock_user_code", new ZhaSetLockUserCodeParameters { CodeSlot = codeSlot, UserCode = userCode });
     }
 }

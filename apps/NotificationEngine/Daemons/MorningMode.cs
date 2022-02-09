@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Reactive.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using NetDaemon.Extensions.Scheduler;
-using NetDaemon.HassModel.Common;
+using HomeAssistantGenerated;
+using NetDaemon.HassModel;
 using NetDaemon.HassModel.Entities;
 
 namespace Ha.Daemons;
 
 public class MorningMode : INotificationDaemon
 {
-    private Entities _entities;
-
-    public NotificationConfig Config { get; private set; }
-
-    public event EventHandler<NotificationEventArgs> NotificationRaised;
+    private readonly Entities _entities;
 
     public MorningMode(IHaContext ha)
     {
@@ -28,6 +21,8 @@ public class MorningMode : INotificationDaemon
             "Good morning<break />Should I enable Day Mode",
             new List<MediaPlayerEntity> { _entities.MediaPlayer.Kitchen });
     }
+
+    public NotificationConfig Config { get; }
 
     public async Task Initialise()
     {
@@ -43,6 +38,8 @@ public class MorningMode : INotificationDaemon
             .Where(s => s.Old.IsOff() && s.New.IsOn())
             .Subscribe(change => { RaiseNotification(); });
     }
+
+    public event EventHandler<NotificationEventArgs> NotificationRaised;
 
     private void RaiseNotification()
     {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using HomeAssistantGenerated;
 
 namespace Ha;
 
@@ -24,8 +25,5 @@ namespace Ha;
 
 public record NotificationConfig(NotificationEnum Type, string MessageTemplate, List<MediaPlayerEntity> Targets, double Snooze = 5)
 {
-    public string Message(object[] messageParams)
-    {
-        return messageParams.Any() ? string.Format(MessageTemplate, messageParams) : MessageTemplate;
-    }
-};
+    public string Message(object[] messageParams) => messageParams.Any() ? string.Format(MessageTemplate, messageParams) : MessageTemplate;
+}

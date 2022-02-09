@@ -1,10 +1,7 @@
 using System;
 using Microsoft.Extensions.Hosting;
 using NetDaemon;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Extensions.Logging.File;
-using Serilog.Formatting.Compact;
 
 try
 {
