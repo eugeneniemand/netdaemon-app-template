@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using HomeAssistantGenerated;
 using Microsoft.Extensions.Logging;
@@ -13,8 +14,15 @@ public class Manager
     private readonly List<string>           _onStates = new() { "on", "playing" };
     private          ILogger<LightsManager> _logger;
     private          string                 _ndUserId;
-    private          RandomManager          _randomManager;
+    private          IRandomManager         _randomManager;
+    private          IScheduler             _scheduler;
     public bool Debug { get; set; }
+
+
+    public bool IsAnyControlEntityOn => AllControlEntities.Any(e => e.IsOn());
+    public bool IsNightMode => NightTimeEntity != null && NightTimeEntityStates.Contains(NightTimeEntity.State);
+    public bool IsOccupied => PresenceEntities.Union(KeepAliveEntities).Any(entity => entity.IsOn() || _onStates.Contains(entity.State!));
+    public bool IsTooBright => LuxEntity != null && ( LuxLimitEntity != null ? LuxEntity.State >= LuxLimitEntity.State : LuxEntity.State >= LuxLimit );
     public IEnumerable<BinarySensorEntity> KeepAliveEntities { get; set; } = new List<BinarySensorEntity>();
     public IEnumerable<BinarySensorEntity> PresenceEntities { get; set; } = new List<BinarySensorEntity>();
     public IEnumerable<LightEntity> ControlEntities { get; set; } = new List<LightEntity>();
@@ -25,33 +33,28 @@ public class Manager
     public int NightTimeout { get; set; }
     public int Timeout { get; set; }
     public int? LuxLimit { get; set; }
+    public List<LightEntity> AllControlEntities => ControlEntities.Union(NightControlEntities).ToList();
     public NumericSensorEntity? LuxEntity { get; set; }
     public NumericSensorEntity? LuxLimitEntity { get; set; }
     public string Name { get; set; } = null!;
     public SwitchEntity? CircadianSwitchEntity { get; set; }
+    public TimeSpan DynamicTimeout => TimeSpan.FromSeconds(IsNightMode ? NightTimeout == 0 ? 90 : NightTimeout : Timeout);
 
-
-    private bool IsAnyControlEntityOn => AllControlEntities.Any(e => e.IsOn());
-    private bool IsNightMode => NightTimeEntity != null && NightTimeEntityStates.Contains(NightTimeEntity.State);
-    private bool IsOccupied => PresenceEntities.Union(KeepAliveEntities).Any(entity => entity.IsOn() || _onStates.Contains(entity.State!));
-
-    private bool IsTooBright => LuxEntity != null && ( LuxLimitEntity != null ? LuxEntity.State >= LuxLimitEntity.State : LuxEntity.State >= LuxLimit );
-    private List<LightEntity> AllControlEntities => ControlEntities.Union(NightControlEntities).ToList();
-    private TimeSpan DynamicTimeout => TimeSpan.FromSeconds(IsNightMode ? NightTimeout == 0 ? 90 : NightTimeout : Timeout);
-
-    public void Init(ILogger<LightsManager> logger, string ndUserId, RandomManager randomManager)
+    public void Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler)
     {
         _logger        = logger;
         _ndUserId      = ndUserId;
         _randomManager = randomManager;
+        _scheduler     = scheduler;
         _logger.LogInformation("Setup {room}", Name);
 
         SubscribePresenceOnEvent();
         SubscribePresenceOffEvent();
         SubscribeOverrideEvent();
         SubscribeHouseModeEvent();
-        //SubscribeRandomModeEvent();
-        _randomManager.AddControlEntities(AllControlEntities, RandomStates);
+
+        if (RandomStates.Any())
+            _randomManager.Init(ControlEntities, RandomStates);
     }
 
     private bool IsNdUserOrHa(StateChange stateChange) => stateChange?.New?.Context?.UserId == null || stateChange?.New?.Context?.UserId == _ndUserId;
@@ -69,7 +72,14 @@ public class Manager
         {
             _logger.LogInformation("{room} House Mode Changed", Name);
             if (!IsAnyControlEntityOn) return;
-            ControlEntities.Except(NightControlEntities).ToList().ForEach(e => e.TurnOff());
+
+            if (IsNightMode)
+                ControlEntities.Except(NightControlEntities).ToList()
+                               .ForEach(f => f.TurnOff());
+            if (!IsNightMode)
+                NightControlEntities.Except(ControlEntities).ToList()
+                                    .ForEach(f => f.TurnOff());
+
             TurnOnEntities();
         });
     }
@@ -96,7 +106,7 @@ public class Manager
         PresenceEntities.Union(KeepAliveEntities)
                         .StateChanges()
                         .Where(e => e.New.IsOff())
-                        .Throttle(_ => Observable.Timer(DynamicTimeout))
+                        .Throttle(_ => Observable.Timer(DynamicTimeout, _scheduler))
                         .Subscribe(e =>
                         {
                             _logger.LogInformation("{room} No Motion", Name);
@@ -107,7 +117,9 @@ public class Manager
                             }
 
                             _logger.LogInformation("{room} Turn Off", Name);
-                            AllControlEntities.ForEach(e => e.TurnOff());
+                            AllControlEntities
+                                .Where(w => w.IsOn()).ToList()
+                                .ForEach(e => e.TurnOff());
                         });
     }
 
@@ -126,25 +138,30 @@ public class Manager
                             }
 
                             TurnOnEntities();
-
-                            if (CircadianSwitchEntity == null) return;
-                            _logger.LogInformation("{room} Turn on circadian switch", Name);
-                            CircadianSwitchEntity.TurnOn();
                         });
     }
 
 
     private void TurnOnEntities()
     {
+        List<LightEntity> lightEntities;
         if (IsNightMode)
         {
             _logger.LogInformation("{room} Turn On Night Control Entities", Name);
-            NightControlEntities.ToList().ForEach(e => e.TurnOn());
+            lightEntities = NightControlEntities.ToList();
         }
         else
         {
             _logger.LogInformation("{room} Turn On Control Entities", Name);
-            ControlEntities.ToList().ForEach(e => e.TurnOn());
+            lightEntities = ControlEntities.ToList();
+        }
+
+        foreach (var e in lightEntities.Where(e => e.IsOff()))
+        {
+            e.TurnOn();
+            if (CircadianSwitchEntity == null) return;
+            _logger.LogInformation("{room} Turn on circadian switch", Name);
+            CircadianSwitchEntity.TurnOn();
         }
     }
 }

@@ -2,8 +2,8 @@ lightsManager:
   class: LightManagerV2.LightsManager
   nd_user_id: ef606e2918da4355ba036a019cdcc6a0
   guard_timeout: 300
-  min_duration: "0.00:05:00"
-  max_duration: "0.00:30:00"
+  min_duration: "0.00:03:00"
+  max_duration: "0.00:15:00"
   random_switch_entity: alarm_control_panel.alarmo
   rooms:
   - name: Study
@@ -27,7 +27,7 @@ lightsManager:
     lux_entity: sensor.office_lux
     circadian_switch_entity: switch.adaptive_lighting_study    
     random_states:
-    - armed_night
+    - armed_home
     - armed_away
     # debug: true
 
@@ -50,7 +50,7 @@ lightsManager:
       - light.dining_1
     circadian_switch_entity: switch.circadian_lighting_circadian_dining
     random_states:
-    - armed_night
+    - armed_home
     - armed_away
     # debug: true
 
@@ -102,6 +102,32 @@ lightsManager:
     #condition_entity_state: below_horizon
     # debug: true
 
+  - name: Drive
+    presence_entities:
+      - binary_sensor.niemand_drive_motion
+      - binary_sensor.niemand_drive_motion_2
+    control_entities:
+      - light.lounge
+    timeout: 300
+
+  - name: Garden
+    presence_entities:
+      - binary_sensor.niemand_garden_motion
+      - binary_sensor.niemand_garden_motion_2
+    control_entities:
+      - light.dining
+      - light.dining_wall
+    timeout: 300
+
+  - name: Garage
+    presence_entities:
+      - binary_sensor.niemand_garage_motion
+      - binary_sensor.niemand_garage_motion_2
+    control_entities:
+      - light.utility
+      - light.kitchen
+    timeout: 300
+
   - name: Aaron
     timeout: 300
     nightTimeout: 90
@@ -150,7 +176,7 @@ lightsManager:
     lux_entity: sensor.entrance_lux
     circadian_switch_entity: switch.adaptive_lighting_hallway
     random_states:
-    - armed_night
+    - armed_home
     - armed_away
     # debug: true
 
@@ -164,7 +190,7 @@ lightsManager:
     lux_entity: sensor.entrance_lux
     circadian_switch_entity: switch.adaptive_lighting_entrance
     random_states:
-    - armed_night
+    - armed_home
     - armed_away
     # debug: true
 
@@ -195,7 +221,6 @@ lightsManager:
       - binary_sensor.lounge
     control_entities:
       - light.lounge
-      - switch.tuya_socket_2
     lux_entity: sensor.lounge_lux
     lux_limit_entity: input_number.lounge_lux_limit
     keep_alive_entities:
@@ -207,10 +232,9 @@ lightsManager:
       - sleeping
     night_control_entities:
       - light.floor
-      - switch.tuya_socket_2
     circadian_switch_entity: switch.adaptive_lighting_floor
     random_states:
-    - armed_night
+    - armed_home
     - armed_away
     # debug: true
 
@@ -236,7 +260,7 @@ lightsManager:
     lux_limit_entity: input_number.kitchen_lux_limit
     circadian_switch_entity: switch.adaptive_lighting_kitchen
     random_states:
-    - armed_night
+    - armed_home
     - armed_away
     # debug: true
 
@@ -249,9 +273,6 @@ lightsManager:
     lux_entity: sensor.toilet_lux
     lux_limit_entity: input_number.toilet_lux_limit
     circadian_switch_entity: switch.adaptive_lighting_toilet
-    random_states:
-    - armed_night
-    - armed_away
     # debug: true
 
   - name: Utility
@@ -270,6 +291,6 @@ lightsManager:
     night_control_entities:
       - light.utility_1
     random_states:
-    - armed_night
+    - armed_home
     - armed_away
     # debug: true

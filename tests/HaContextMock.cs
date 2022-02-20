@@ -3,14 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Subjects;
-using System.Runtime.Serialization.Formatters;
 using System.Text.Json;
 using Moq;
-using NetDaemon.HassModel.Common;
 using NetDaemon.HassModel.Entities;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NetDaemon.HassModel.Tests.Entities;
 
@@ -23,18 +18,24 @@ internal class HaContextMock : Mock<IHaContext>
             .Callback<string, string, ServiceTarget, object?>((domain, service, target, data) => { ServiceCalls.Add(new ServiceCall(domain, service, target, data)); });
     }
 
-    public Subject<StateChange> StateAllChangeSubject { get; } = new();
-
     public List<ServiceCall> ServiceCalls { get; } = new();
+
+    public Subject<StateChange> StateAllChangeSubject { get; } = new();
 
     public record ServiceCall(string Domain, string Service, ServiceTarget? Target, object? Data);
 }
 
 internal static class Extensions
 {
-    public static IEnumerable<HaContextMock.ServiceCall> ForDomain(this IEnumerable<HaContextMock.ServiceCall> serviceCalls, string domain)
+    public static IReadOnlyCollection<string> AreaIds(this IEnumerable<HaContextMock.ServiceCall> serviceCalls)
     {
-        return serviceCalls.Where(sc => sc.Domain == domain);
+        return serviceCalls.SelectMany(sc => sc?.Target?.AreaIds ?? new List<string>()).ToList();
+    }
+
+    public static JsonElement AsJsonElement(this object value)
+    {
+        var jsonString = JsonSerializer.Serialize(value);
+        return JsonSerializer.Deserialize<JsonElement>(jsonString);
     }
 
     public static IEnumerable<Dictionary<string, object>> Data(this IEnumerable<HaContextMock.ServiceCall> serviceCalls)
@@ -42,14 +43,11 @@ internal static class Extensions
         return serviceCalls.ToDictionary().Select(sc => sc["data"].ToDictionary());
     }
 
-    public static Dictionary<string, object> Data(this HaContextMock.ServiceCall serviceCalls)
-    {
-        return serviceCalls.ToDictionary()["data"].ToDictionary();
-    }
+    public static Dictionary<string, object> Data(this HaContextMock.ServiceCall serviceCalls) => serviceCalls.ToDictionary()["data"].ToDictionary();
 
-    public static IEnumerable<HaContextMock.ServiceCall> ForService(this IEnumerable<HaContextMock.ServiceCall> serviceCalls, string service)
+    public static IReadOnlyCollection<string> DeviceIds(this IEnumerable<HaContextMock.ServiceCall> serviceCalls)
     {
-        return serviceCalls.Where(sc => sc.Service == service);
+        return serviceCalls.SelectMany(sc => sc?.Target?.DeviceIds ?? new List<string>()).ToList();
     }
 
     public static IReadOnlyCollection<string> EntityIds(this IEnumerable<HaContextMock.ServiceCall> serviceCalls)
@@ -57,20 +55,14 @@ internal static class Extensions
         return serviceCalls.SelectMany(sc => sc?.Target?.EntityIds ?? new List<string>()).ToList();
     }
 
-    public static IReadOnlyCollection<string> AreaIds(this IEnumerable<HaContextMock.ServiceCall> serviceCalls)
+    public static IEnumerable<HaContextMock.ServiceCall> ForDomain(this IEnumerable<HaContextMock.ServiceCall> serviceCalls, string domain)
     {
-        return serviceCalls.SelectMany(sc => sc?.Target?.AreaIds ?? new List<string>()).ToList();
+        return serviceCalls.Where(sc => sc.Domain == domain);
     }
 
-    public static IReadOnlyCollection<string> DeviceIds(this IEnumerable<HaContextMock.ServiceCall> serviceCalls)
+    public static IEnumerable<HaContextMock.ServiceCall> ForService(this IEnumerable<HaContextMock.ServiceCall> serviceCalls, string service)
     {
-        return serviceCalls.SelectMany(sc => sc?.Target?.DeviceIds ?? new List<string>()).ToList();
-    }
-
-    public static JsonElement AsJsonElement(this object value)
-    {
-        var jsonString = JsonSerializer.Serialize(value);
-        return JsonSerializer.Deserialize<JsonElement>(jsonString);
+        return serviceCalls.Where(sc => sc.Service == service);
     }
 
     public static Mock<IObserver<T>> SubscribeMock<T>(this IObservable<T> observable)
@@ -90,10 +82,7 @@ public static class ObjectToDictionaryHelper
         return sources.Select(s => s.ToDictionary<object>());
     }
 
-    public static Dictionary<string, object> ToDictionary(this object source)
-    {
-        return source.ToDictionary<object>();
-    }
+    public static Dictionary<string, object> ToDictionary(this object source) => source.ToDictionary<object>();
 
     public static Dictionary<string, T> ToDictionary<T>(this object source)
     {
@@ -102,7 +91,7 @@ public static class ObjectToDictionaryHelper
 
         var dictionary = new Dictionary<string, T>();
         foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(source))
-            AddPropertyToDictionary<T>(property, source, dictionary);
+            AddPropertyToDictionary(property, source, dictionary);
 
         return dictionary;
     }
@@ -114,10 +103,7 @@ public static class ObjectToDictionaryHelper
             dictionary.Add(property.Name.ToLower(), (T)value);
     }
 
-    private static bool IsOfType<T>(object value)
-    {
-        return value is T;
-    }
+    private static bool IsOfType<T>(object value) => value is T;
 
     private static void ThrowExceptionWhenSourceArgumentIsNull()
     {
