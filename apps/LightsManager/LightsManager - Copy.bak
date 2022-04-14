@@ -1,5 +1,4 @@
-lightsManager:
-  class: LightManagerV2.LightsManager
+LightManagerV2.ManagerConfig:  
   nd_user_id: ef606e2918da4355ba036a019cdcc6a0
   guard_timeout: 300
   min_duration: "0.00:03:00"

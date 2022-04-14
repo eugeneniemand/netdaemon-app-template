@@ -1,0 +1,295 @@
+LightManagerV2.ManagerConfig:  
+  NdUserId: ef606e2918da4355ba036a019cdcc6a0
+  GuardTimeout: 300
+  MinDuration: "0.00:03:00"
+  MaxDuration: "0.00:15:00"
+  RandomSwitchEntity: alarm_control_panel.alarmo
+  Rooms:
+  - Name: Study
+    Timeout: 300
+    PresenceEntities:
+      - binary_sensor.office_motion
+      - binary_sensor.study
+    KeepAliveEntities:
+      - binary_sensor.eugene_laptop_in_use
+      - binary_sensor.haileys_macbook_air_active
+    ControlEntities:
+      - light.office
+      - switch.office_skylight
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.office
+    LuxlimitEntity: input_number.office_lux_limit
+    LuxEntity: sensor.office_lux
+    CircadianSwitchEntity: switch.adaptive_lighting_study    
+    RandomStates:
+    - armed_home
+    - armed_away
+    # debug: true
+
+  - Name: Dining
+    PresenceEntities:
+      - binary_sensor.dining_motion
+      - binary_sensor.dining
+    ControlEntities:
+      - light.dining
+      - light.dining_wall
+    Timeout: 300
+    NightTimeout: 90
+    LuxEntity: sensor.dining_lux
+    LuxlimitEntity: input_number.dining_lux_limit
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.dining_1
+    CircadianSwitchEntity: switch.circadian_lighting_circadian_dining
+    RandomStates:
+    - armed_home
+    - armed_away
+    # debug: true
+
+  - Name: Fish
+    PresenceEntities:
+      - binary_sensor.dining_motion
+      - binary_sensor.dining
+    ControlEntities:
+      - switch.plug_2
+    Timeout: 900
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.dining_1
+    # debug: true
+
+  - Name: Landing
+    PresenceEntities:
+      - binary_sensor.landing_motion
+      - binary_sensor.landing
+    ControlEntities:
+      - light.landing_day
+      - light.landing_night
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.landing_night
+    Timeout: 90
+    LuxEntity: sensor.landing_lux
+    LuxlimitEntity: input_number.landing_lux_limit
+    RandomStates:
+    - armed_away
+    # debug: true
+
+  - Name: Porch
+    PresenceEntities:
+      - binary_sensor.front_door
+      - binary_sensor.niemand_front_door_motion
+    KeepAliveEntities:
+      - binary_sensor.front_door
+    ControlEntities:
+      - light.porch
+    Timeout: 90
+    #condition_entity: sun.sun
+    #condition_entity_state: below_horizon
+    # debug: true
+
+  - Name: Drive
+    PresenceEntities:
+      - binary_sensor.niemand_drive_motion
+      - binary_sensor.niemand_drive_motion_2
+    ControlEntities:
+      - light.lounge
+    Timeout: 300
+
+  - Name: Garden
+    PresenceEntities:
+      - binary_sensor.niemand_garden_motion
+      - binary_sensor.niemand_garden_motion_2
+    ControlEntities:
+      - light.dining
+      - light.dining_wall
+    Timeout: 300
+
+  - Name: Garage
+    PresenceEntities:
+      - binary_sensor.niemand_garage_motion
+      - binary_sensor.niemand_garage_motion_2
+    ControlEntities:
+      - light.utility
+      - light.kitchen
+    Timeout: 300
+
+  - Name: Aaron
+    Timeout: 300
+    NightTimeout: 90
+    PresenceEntities:
+      - binary_sensor.aaron_motion
+    ControlEntities:
+      - light.aaron
+    LuxEntity: sensor.aaron_lux
+    LuxlimitEntity: input_number.aaron_lux_limit
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.aaron_4
+    CircadianSwitchEntity: switch.circadian_lighting_circadian_aaron
+    RandomStates:
+    - armed_away
+
+  - Name: Jayden
+    Timeout: 300
+    NightTimeout: 600
+    PresenceEntities:
+      - binary_sensor.jayden_motion
+    ControlEntities:
+      - light.jayden
+    LuxEntity: sensor.jayden_lux
+    LuxlimitEntity: input_number.jayden_lux_limit
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.jayden_3
+    RandomStates:
+    - armed_away
+
+  - Name: Hallway
+    Timeout: 300
+    PresenceEntities:
+      - binary_sensor.landing_motion
+      - binary_sensor.hallway
+    ControlEntities:
+      - light.hallway
+    LuxlimitEntity: input_number.hallway_lux_limit
+    LuxEntity: sensor.entrance_lux
+    CircadianSwitchEntity: switch.adaptive_lighting_hallway
+    RandomStates:
+    - armed_home
+    - armed_away
+    # debug: true
+
+  - Name: Entrance
+    Timeout: 300
+    PresenceEntities:
+      - binary_sensor.entrance_motion
+    ControlEntities:
+      - light.entrance
+    LuxlimitEntity: input_number.entrance_lux_limit
+    LuxEntity: sensor.entrance_lux
+    CircadianSwitchEntity: switch.adaptive_lighting_entrance
+    RandomStates:
+    - armed_home
+    - armed_away
+    # debug: true
+
+  - Name: Master
+    Timeout: 300
+    NightTimeout: 90
+    PresenceEntities:
+      - binary_sensor.master_motion
+    ControlEntities:
+      - light.master
+    LuxEntity: sensor.master_lux
+    LuxlimitEntity: input_number.master_lux_limit
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.master_5
+    CircadianSwitchEntity: switch.circadian_lighting_circadian_master
+    RandomStates:
+    - armed_away
+
+  - Name: Lounge
+    Timeout: 300
+    NightTimeout: 300
+    PresenceEntities:
+      - binary_sensor.lounge_motion
+      - binary_sensor.lounge
+    ControlEntities:
+      - light.lounge
+    LuxEntity: sensor.lounge_lux
+    LuxlimitEntity: input_number.lounge_lux_limit
+    KeepAliveEntities:
+      - media_player.lounge
+      - media_player.lounge_tv
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.floor
+    CircadianSwitchEntity: switch.adaptive_lighting_floor
+    RandomStates:
+    - armed_home
+    - armed_away
+    # debug: true
+
+  - Name: Playroom
+    Timeout: 300
+    PresenceEntities:
+      - binary_sensor.playroom_motion
+    ControlEntities:
+      - light.playroom
+    LuxEntity: sensor.playroom_lux
+    LuxlimitEntity: input_number.playroom_lux_limit
+    RandomStates:
+    - armed_away
+
+  - Name: Kitchen
+    Timeout: 300
+    PresenceEntities:
+      - binary_sensor.kitchen_motion
+      - binary_sensor.kitchen
+    ControlEntities:
+      - light.kitchen
+    LuxEntity: sensor.kitchen_lux
+    LuxlimitEntity: input_number.kitchen_lux_limit
+    CircadianSwitchEntity: switch.adaptive_lighting_kitchen
+    RandomStates:
+    - armed_home
+    - armed_away
+    # debug: true
+
+  - Name: Toilet
+    Timeout: 300
+    PresenceEntities:
+      - binary_sensor.toilet_motion
+    ControlEntities:
+      - light.toilet
+    LuxEntity: sensor.toilet_lux
+    luxLimitEntity: input_number.toilet_lux_limit
+    CircadianSwitchEntity: switch.adaptive_lighting_toilet
+    # debug: true
+
+  - Name: Utility
+    Timeout: 300
+    PresenceEntities:
+      - binary_sensor.utility_motion
+    ControlEntities:
+      - light.utility
+    LuxEntity: sensor.utility_lux
+    LuxLimitEntity: input_number.utility_lux_limit
+    CircadianSwitchEntity: switch.adaptive_lighting_utility
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.utility_1
+    RandomStates:
+    - armed_home
+    - armed_away
+    # debug: true

@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using HomeAssistantGenerated;
-
-namespace Ha;
+namespace NotificationEngine;
 
 //public class NotificationConfig
 //{
@@ -23,7 +19,9 @@ namespace Ha;
 //    public string Message => MessageParams.Any() ? string.Format(MessageTemplate, MessageParams) : MessageTemplate;
 //};
 
-public record NotificationConfig(NotificationEnum Type, string MessageTemplate, List<MediaPlayerEntity> Targets, double Snooze = 5)
-{
-    public string Message(object[] messageParams) => messageParams.Any() ? string.Format(MessageTemplate, messageParams) : MessageTemplate;
-}
+//public record Notification(NotificationEnum Type, string MessageTemplate, List<MediaPlayerEntity> Targets, double Snooze = 5)
+//{
+//    public string Message(object[] messageParams) => messageParams.Any() ? string.Format(MessageTemplate, messageParams) : MessageTemplate;
+//}
+
+public record Notification(string Name, string Message, bool TimeSensitive = false) : INotification;

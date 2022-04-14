@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "daemonapp", "daemonapp.cspr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "daemonapp_test", "tests\daemonapp_test.csproj", "{E279326D-AFA5-4304-8681-A908AACEA4C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Tests", "..\LightManager.Tests\LightManager.Tests.csproj", "{871621D2-E1D5-4725-8FCD-CA33A27B0062}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightManager.Tests", "..\LightManager.Tests\LightManager.Tests.csproj", "{871621D2-E1D5-4725-8FCD-CA33A27B0062}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetDaemon.Extensions.MqttEntityManager", "..\netdaemon\src\Extensions\NetDaemon.Extensions.MqttEntityManager\NetDaemon.Extensions.MqttEntityManager.csproj", "{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,18 @@ Global
 		{871621D2-E1D5-4725-8FCD-CA33A27B0062}.Release|x64.Build.0 = Release|Any CPU
 		{871621D2-E1D5-4725-8FCD-CA33A27B0062}.Release|x86.ActiveCfg = Release|Any CPU
 		{871621D2-E1D5-4725-8FCD-CA33A27B0062}.Release|x86.Build.0 = Release|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Debug|x64.Build.0 = Debug|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Debug|x86.Build.0 = Debug|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Release|x64.ActiveCfg = Release|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Release|x64.Build.0 = Release|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Release|x86.ActiveCfg = Release|Any CPU
+		{8F6A688F-E20D-4F67-AC45-3AD5F4E91FD5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

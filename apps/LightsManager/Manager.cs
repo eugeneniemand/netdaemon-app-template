@@ -5,17 +5,34 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using HomeAssistantGenerated;
 using Microsoft.Extensions.Logging;
+using NetDaemon.Extensions.MqttEntityManager;
+using NetDaemon.HassModel;
 using NetDaemon.HassModel.Entities;
 
 namespace LightManagerV2;
 
 public class Manager
 {
-    private readonly List<string>           _onStates = new() { "on", "playing" };
+    private readonly List<string>           _onStates;
+    private          IMqttEntityManager     _entityManager;
+    private          IHaContext             _haContext;
     private          ILogger<LightsManager> _logger;
     private          string                 _ndUserId;
     private          IRandomManager         _randomManager;
     private          IScheduler             _scheduler;
+
+    public Manager()
+    {
+        ControlEntities       = new List<LightEntity>();
+        KeepAliveEntities     = new List<BinarySensorEntity>();
+        PresenceEntities      = new List<BinarySensorEntity>();
+        NightControlEntities  = new List<LightEntity>();
+        NightTimeEntityStates = new List<string>();
+        RandomStates          = new List<string>();
+        _onStates             = new List<string> { "on", "playing" };
+        Name                  = null!;
+    }
+
     public bool Debug { get; set; }
 
 
@@ -23,31 +40,34 @@ public class Manager
     public bool IsNightMode => NightTimeEntity != null && NightTimeEntityStates.Contains(NightTimeEntity.State);
     public bool IsOccupied => PresenceEntities.Union(KeepAliveEntities).Any(entity => entity.IsOn() || _onStates.Contains(entity.State!));
     public bool IsTooBright => LuxEntity != null && ( LuxLimitEntity != null ? LuxEntity.State >= LuxLimitEntity.State : LuxEntity.State >= LuxLimit );
-    public IEnumerable<BinarySensorEntity> KeepAliveEntities { get; set; } = new List<BinarySensorEntity>();
-    public IEnumerable<BinarySensorEntity> PresenceEntities { get; set; } = new List<BinarySensorEntity>();
-    public IEnumerable<LightEntity> ControlEntities { get; set; } = new List<LightEntity>();
-    public IEnumerable<LightEntity> NightControlEntities { get; set; } = new List<LightEntity>();
-    public IEnumerable<string> NightTimeEntityStates { get; set; } = new List<string>();
-    public IEnumerable<string> RandomStates { get; set; } = new List<string>();
     public InputSelectEntity? NightTimeEntity { get; set; }
     public int NightTimeout { get; set; }
     public int Timeout { get; set; }
     public int? LuxLimit { get; set; }
-    public List<LightEntity> AllControlEntities => ControlEntities.Union(NightControlEntities).ToList();
+    public List<BinarySensorEntity> KeepAliveEntities { get; set; }
+    public List<BinarySensorEntity> PresenceEntities { get; set; }
+    public List<LightEntity> AllControlEntities => ControlEntities!.Union(NightControlEntities).ToList();
+    public List<LightEntity> ControlEntities { get; set; }
+    public List<LightEntity> NightControlEntities { get; set; }
+    public List<string> NightTimeEntityStates { get; set; }
+    public List<string> RandomStates { get; set; }
     public NumericSensorEntity? LuxEntity { get; set; }
     public NumericSensorEntity? LuxLimitEntity { get; set; }
-    public string Name { get; set; } = null!;
+    public string Name { get; set; }
+    public SwitchEntity ManagerEnabled { get; set; }
     public SwitchEntity? CircadianSwitchEntity { get; set; }
     public TimeSpan DynamicTimeout => TimeSpan.FromSeconds(IsNightMode ? NightTimeout == 0 ? 90 : NightTimeout : Timeout);
 
-    public void Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler)
+    public void Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager)
     {
         _logger        = logger;
         _ndUserId      = ndUserId;
         _randomManager = randomManager;
         _scheduler     = scheduler;
+        _haContext     = haContext;
+        _entityManager = entityManager;
         _logger.LogInformation("Setup {room}", Name);
-
+        SetupEnabledSwitch();
         SubscribePresenceOnEvent();
         SubscribePresenceOffEvent();
         SubscribeOverrideEvent();
@@ -64,6 +84,15 @@ public class Manager
         e.Old.IsOn() && e.New.IsOn()
         && ( !Equals(e.Old?.Attributes?.Brightness, e.New?.Attributes?.Brightness)
              || !Equals(e.Old?.Attributes?.ColorTemp, e.New?.Attributes?.ColorTemp) );
+
+    private void SetupEnabledSwitch()
+    {
+        var entityId = $"switch.light_manager_{Name.ToLower()}";
+        if (_haContext.Entity(entityId).State == null) _entityManager.CreateAsync(entityId, new EntityCreationOptions(Name: $"Light Manager {Name}", DeviceClass: "switch", Persist: true)).GetAwaiter().GetResult();
+        _entityManager.PrepareCommandSubscriptionAsync(entityId).GetAwaiter().GetResult().Subscribe(s => _entityManager.SetStateAsync(entityId, s).GetAwaiter().GetResult());
+        ManagerEnabled = new SwitchEntity(_haContext, entityId);
+        ManagerEnabled.TurnOn();
+    }
 
     private void SubscribeHouseModeEvent()
     {
@@ -103,42 +132,54 @@ public class Manager
     private void SubscribePresenceOffEvent()
     {
         _logger.LogInformation("{room} Subscribed to Presence Off Events", Name);
-        PresenceEntities.Union(KeepAliveEntities)
-                        .StateChanges()
-                        .Where(e => e.New.IsOff())
-                        .Throttle(_ => Observable.Timer(DynamicTimeout, _scheduler))
-                        .Subscribe(e =>
-                        {
-                            _logger.LogInformation("{room} No Motion", Name);
-                            if (IsOccupied)
-                            {
-                                _logger.LogInformation("{room} Cant turn off - Occupied", Name);
-                                return;
-                            }
+        PresenceEntities!.Union(KeepAliveEntities)
+                         .StateChanges()
+                         .Where(e => e.New.IsOff())
+                         .Throttle(_ => Observable.Timer(DynamicTimeout, _scheduler))
+                         .Subscribe(e =>
+                         {
+                             _logger.LogInformation("{room} No Motion", Name);
+                             if (ManagerEnabled.IsOff())
+                             {
+                                 _logger.LogInformation("{room} Manager Disabled", Name);
+                                 return;
+                             }
 
-                            _logger.LogInformation("{room} Turn Off", Name);
-                            AllControlEntities
-                                .Where(w => w.IsOn()).ToList()
-                                .ForEach(e => e.TurnOff());
-                        });
+                             if (IsOccupied)
+                             {
+                                 _logger.LogInformation("{room} Cant turn off - Occupied", Name);
+                                 return;
+                             }
+
+                             _logger.LogInformation("{room} Turn Off", Name);
+                             AllControlEntities
+                                 .Where(w => w.IsOn()).ToList()
+                                 .ForEach(e => e.TurnOff());
+                         });
     }
 
     private void SubscribePresenceOnEvent()
     {
         _logger.LogInformation("{room} Subscribed to Presence On Events", Name);
-        PresenceEntities.StateChanges()
-                        .Where(e => e.New.IsOn())
-                        .Subscribe(e =>
-                        {
-                            _logger.LogInformation("{room} Motion", Name);
-                            if (IsTooBright)
-                            {
-                                _logger.LogInformation("{room} Too Bright", Name);
-                                return;
-                            }
+        PresenceEntities!.StateChanges()
+                         .Where(e => e.New.IsOn())
+                         .Subscribe(e =>
+                         {
+                             _logger.LogInformation("{room} Motion", Name);
+                             if (ManagerEnabled.IsOff())
+                             {
+                                 _logger.LogInformation("{room} Manager Disabled", Name);
+                                 return;
+                             }
 
-                            TurnOnEntities();
-                        });
+                             if (IsTooBright)
+                             {
+                                 _logger.LogInformation("{room} Too Bright", Name);
+                                 return;
+                             }
+
+                             TurnOnEntities();
+                         });
     }
 
 

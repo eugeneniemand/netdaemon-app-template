@@ -4,8 +4,10 @@
       "commandName": "Project",
       "workingDirectory": "$(SolutionDir)",
       "environmentVariables": {
-        "ASPNET_ENV": "Development"
-      }
+        "ASPNET_ENV": "Development",
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "hotReloadEnabled": true
     }
   }
 }

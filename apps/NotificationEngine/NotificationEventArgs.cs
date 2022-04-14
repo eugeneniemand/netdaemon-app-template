@@ -1,14 +1,16 @@
-﻿namespace Ha.Daemons;
+﻿using NotificationEngine;
+
+namespace Ha.Daemons;
 
 public class NotificationEventArgs
 {
-    public NotificationConfig Config { get; }
-
-    public NotificationEventArgs(NotificationConfig config, params object[] messageParams)
+    public NotificationEventArgs(Notification config, params object[] messageParams)
     {
         Config        = config;
         MessageParams = messageParams;
     }
+
+    public Notification Config { get; }
 
     public object[] MessageParams { get; }
 }

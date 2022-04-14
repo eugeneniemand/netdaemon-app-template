@@ -46,8 +46,6 @@ namespace HomeAssistantGenerated
 
 		OctopusagileEntities Octopusagile { get; }
 
-		PersistentNotificationEntities PersistentNotification { get; }
-
 		PersonEntities Person { get; }
 
 		RemoteEntities Remote { get; }
@@ -96,7 +94,6 @@ namespace HomeAssistantGenerated
 		public MediaPlayerEntities MediaPlayer => new(_haContext);
 		public NumberEntities Number => new(_haContext);
 		public OctopusagileEntities Octopusagile => new(_haContext);
-		public PersistentNotificationEntities PersistentNotification => new(_haContext);
 		public PersonEntities Person => new(_haContext);
 		public RemoteEntities Remote => new(_haContext);
 		public ScriptEntities Script => new(_haContext);
@@ -347,6 +344,8 @@ namespace HomeAssistantGenerated
 		public BinarySensorEntity LoungeDoor => new(_haContext, "binary_sensor.lounge_door");
 		///<summary>Lounge Left Window</summary>
 		public BinarySensorEntity LoungeLeftWindow => new(_haContext, "binary_sensor.lounge_left_window");
+		///<summary>Lounge Microphone</summary>
+		public BinarySensorEntity LoungeMicrophone => new(_haContext, "binary_sensor.lounge_microphone");
 		///<summary>Lounge Motion</summary>
 		public BinarySensorEntity LoungeMotion => new(_haContext, "binary_sensor.lounge_motion");
 		///<summary>LUMI lumi.sensor_motion.aq2 7dce1303 occupancy</summary>
@@ -445,6 +444,134 @@ namespace HomeAssistantGenerated
 			_haContext = haContext;
 		}
 
+		///<summary>IKEA of Sweden FYRTUR block-out roller blind 29529dfe identify</summary>
+		public ButtonEntity IkeaOfSwedenFyrturBlockOutRollerBlind29529dfeIdentify => new(_haContext, "button.ikea_of_sweden_fyrtur_block_out_roller_blind_29529dfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb E27 W opal 1000lm 9919fcfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbE27WOpal1000lm9919fcfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_e27_w_opal_1000lm_9919fcfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb E27 W opal 1000lm b4b1f3fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbE27WOpal1000lmB4b1f3feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_e27_w_opal_1000lm_b4b1f3fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb E27 WS opal 1000lm 7aba12fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbE27WsOpal1000lm7aba12feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_e27_ws_opal_1000lm_7aba12fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb E27 WS opal 1000lm 9f6c01fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbE27WsOpal1000lm9f6c01feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_e27_ws_opal_1000lm_9f6c01fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb E27 WS opal 1000lm b87713fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbE27WsOpal1000lmB87713feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_e27_ws_opal_1000lm_b87713fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb E27 WS opal 1000lm c8a903fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbE27WsOpal1000lmC8a903feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_e27_ws_opal_1000lm_c8a903fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 062b4bfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm062b4bfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_062b4bfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 145c4bfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm145c4bfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_145c4bfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 1e5368fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm1e5368feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_1e5368fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 21daf6fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm21daf6feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_21daf6fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 235a5dfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm235a5dfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_235a5dfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 26f462fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm26f462feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_26f462fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 31244bfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm31244bfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_31244bfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 341922fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm341922feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_341922fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 502e4cfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm502e4cfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_502e4cfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 5c78f6fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm5c78f6feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_5c78f6fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 5ec17bfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm5ec17bfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_5ec17bfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 8bb43dfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm8bb43dfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_8bb43dfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm 937af8fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lm937af8feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_937af8fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm bb0a4cfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lmBb0a4cfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_bb0a4cfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm cdee3efe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lmCdee3efeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_cdee3efe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WS 400lm f8ea62fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ws400lmF8ea62feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ws_400lm_f8ea62fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 00caeefe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm00caeefeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_00caeefe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 0fc075fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm0fc075feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_0fc075fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 105c5dfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm105c5dfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_105c5dfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 22331afe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm22331afeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_22331afe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 2d9a33fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm2d9a33feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_2d9a33fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 32d2bdfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm32d2bdfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_32d2bdfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 436af0fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm436af0feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_436af0fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 50c275fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm50c275feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_50c275fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 680f1cfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm680f1cfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_680f1cfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 7d61cbfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm7d61cbfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_7d61cbfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 85b375fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm85b375feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_85b375fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm 8ba6b5fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lm8ba6b5feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_8ba6b5fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm b0683bfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lmB0683bfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_b0683bfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm b86ff0fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lmB86ff0feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_b86ff0fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm cf4febfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lmCf4febfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_cf4febfe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm d4fdf0fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lmD4fdf0feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_d4fdf0fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm f58cf0fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lmF58cf0feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_f58cf0fe_identify");
+		///<summary>IKEA of Sweden TRADFRI bulb GU10 WW 400lm fd78f0fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriBulbGu10Ww400lmFd78f0feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_bulb_gu10_ww_400lm_fd78f0fe_identify");
+		///<summary>IKEA of Sweden TRADFRI open/close remote 3dcb2efe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriOpenCloseRemote3dcb2efeIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_open_close_remote_3dcb2efe_identify");
+		///<summary>IKEA of Sweden TRADFRI remote control 580e51fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriRemoteControl580e51feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_remote_control_580e51fe_identify");
+		///<summary>IKEA of Sweden TRADFRI remote control d73648fe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfriRemoteControlD73648feIdentify => new(_haContext, "button.ikea_of_sweden_tradfri_remote_control_d73648fe_identify");
+		///<summary>IKEA of Sweden TRADFRIbulbG125E27WSopal470lm 9b7e6bfe identify</summary>
+		public ButtonEntity IkeaOfSwedenTradfribulbg125e27wsopal470lm9b7e6bfeIdentify => new(_haContext, "button.ikea_of_sweden_tradfribulbg125e27wsopal470lm_9b7e6bfe_identify");
+		///<summary>LUMI lumi.sensor_magnet.aq2 38f0ec02 identify</summary>
+		public ButtonEntity LumiLumiSensorMagnetAq238f0ec02Identify => new(_haContext, "button.lumi_lumi_sensor_magnet_aq2_38f0ec02_identify");
+		///<summary>LUMI lumi.sensor_magnet.aq2 56141203 identify</summary>
+		public ButtonEntity LumiLumiSensorMagnetAq256141203Identify => new(_haContext, "button.lumi_lumi_sensor_magnet_aq2_56141203_identify");
+		///<summary>LUMI lumi.sensor_magnet.aq2 83903a03 identify</summary>
+		public ButtonEntity LumiLumiSensorMagnetAq283903a03Identify => new(_haContext, "button.lumi_lumi_sensor_magnet_aq2_83903a03_identify");
+		///<summary>LUMI lumi.sensor_magnet.aq2 9e0b1203 identify</summary>
+		public ButtonEntity LumiLumiSensorMagnetAq29e0b1203Identify => new(_haContext, "button.lumi_lumi_sensor_magnet_aq2_9e0b1203_identify");
+		///<summary>LUMI lumi.sensor_magnet.aq2 ac831303 identify</summary>
+		public ButtonEntity LumiLumiSensorMagnetAq2Ac831303Identify => new(_haContext, "button.lumi_lumi_sensor_magnet_aq2_ac831303_identify");
+		///<summary>LUMI lumi.sensor_magnet.aq2 e6b02103 identify</summary>
+		public ButtonEntity LumiLumiSensorMagnetAq2E6b02103Identify => new(_haContext, "button.lumi_lumi_sensor_magnet_aq2_e6b02103_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 34796603 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq234796603Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_34796603_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 3ca2f202 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq23ca2f202Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_3ca2f202_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 4123f403 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq24123f403Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_4123f403_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 54c2f302 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq254c2f302Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_54c2f302_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 591d1b03 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq2591d1b03Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_591d1b03_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 5cf75702 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq25cf75702Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_5cf75702_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 7dce1303 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq27dce1303Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_7dce1303_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 97a7f202 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq297a7f202Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_97a7f202_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 b4796603 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq2B4796603Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_b4796603_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 c0a6f202 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq2C0a6f202Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_c0a6f202_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 ea1a1404 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq2Ea1a1404Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_ea1a1404_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 ef2f1404 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq2Ef2f1404Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_ef2f1404_identify");
+		///<summary>LUMI lumi.sensor_motion.aq2 f33b1404 identify</summary>
+		public ButtonEntity LumiLumiSensorMotionAq2F33b1404Identify => new(_haContext, "button.lumi_lumi_sensor_motion_aq2_f33b1404_identify");
 		///<summary>shellyswitch25-E5A1D2 OTA Update</summary>
 		public ButtonEntity Shellyswitch25E5a1d2OtaUpdate => new(_haContext, "button.shellyswitch25_e5a1d2_ota_update");
 		///<summary>shellyswitch25-E5A1D2 Reboot</summary>
@@ -725,6 +852,8 @@ namespace HomeAssistantGenerated
 		public DeviceTrackerEntity SammiLeighSA52 => new(_haContext, "device_tracker.sammi_leigh_s_a52");
 		///<summary>shelly1-55E8B5</summary>
 		public DeviceTrackerEntity Shelly155e8b5 => new(_haContext, "device_tracker.shelly1_55e8b5");
+		///<summary>shelly1-BA6C98</summary>
+		public DeviceTrackerEntity Shelly1Ba6c98 => new(_haContext, "device_tracker.shelly1_ba6c98");
 		///<summary>smart-plug-1</summary>
 		public DeviceTrackerEntity SmartPlug1 => new(_haContext, "device_tracker.smart_plug_1");
 		///<summary>smart-plug-2</summary>
@@ -747,6 +876,7 @@ namespace HomeAssistantGenerated
 		public DeviceTrackerEntity Unifi2aD7E18c21A6Default => new(_haContext, "device_tracker.unifi_2a_d7_e1_8c_21_a6_default");
 		///<summary>SonosZP</summary>
 		public DeviceTrackerEntity Unifi347e5cD68b20Default => new(_haContext, "device_tracker.unifi_34_7e_5c_d6_8b_20_default");
+		public DeviceTrackerEntity Unifi3a8980817eCeDefault => new(_haContext, "device_tracker.unifi_3a_89_80_81_7e_ce_default");
 		///<summary>Jayden iPad</summary>
 		public DeviceTrackerEntity Unifi54Ae270e3732Default => new(_haContext, "device_tracker.unifi_54_ae_27_0e_37_32_default");
 		public DeviceTrackerEntity Unifi5a0c5eBc5aE3Default => new(_haContext, "device_tracker.unifi_5a_0c_5e_bc_5a_e3_default");
@@ -757,13 +887,16 @@ namespace HomeAssistantGenerated
 		public DeviceTrackerEntity Unifi8a513f0f9323Default => new(_haContext, "device_tracker.unifi_8a_51_3f_0f_93_23_default");
 		public DeviceTrackerEntity Unifi92A5C740B6F0Default => new(_haContext, "device_tracker.unifi_92_a5_c7_40_b6_f0_default");
 		public DeviceTrackerEntity UnifiA8E3EeDdD898Default => new(_haContext, "device_tracker.unifi_a8_e3_ee_dd_d8_98_default");
+		public DeviceTrackerEntity UnifiBa1d1e7c94C8Default => new(_haContext, "device_tracker.unifi_ba_1d_1e_7c_94_c8_default");
 		public DeviceTrackerEntity UnifiBa7aDe6312CbDefault => new(_haContext, "device_tracker.unifi_ba_7a_de_63_12_cb_default");
+		public DeviceTrackerEntity UnifiBeA71b06283cDefault => new(_haContext, "device_tracker.unifi_be_a7_1b_06_28_3c_default");
 		public DeviceTrackerEntity UnifiC24cDdA852FeDefault => new(_haContext, "device_tracker.unifi_c2_4c_dd_a8_52_fe_default");
 		public DeviceTrackerEntity UnifiC25413325fF5Default => new(_haContext, "device_tracker.unifi_c2_54_13_32_5f_f5_default");
 		///<summary>Jayden RaspberryPi</summary>
 		public DeviceTrackerEntity UnifiDcA632Dc56AfDefault => new(_haContext, "device_tracker.unifi_dc_a6_32_dc_56_af_default");
 		public DeviceTrackerEntity UnifiE223Bf9c8221Default => new(_haContext, "device_tracker.unifi_e2_23_bf_9c_82_21_default");
 		public DeviceTrackerEntity UnifiEa7f17B856D1Default => new(_haContext, "device_tracker.unifi_ea_7f_17_b8_56_d1_default");
+		public DeviceTrackerEntity UnifiFa0005393fDfDefault => new(_haContext, "device_tracker.unifi_fa_00_05_39_3f_df_default");
 		public DeviceTrackerEntity UnifiFa00D75740FcDefault => new(_haContext, "device_tracker.unifi_fa_00_d7_57_40_fc_default");
 		public DeviceTrackerEntity UnifiFe5a3957E388Default => new(_haContext, "device_tracker.unifi_fe_5a_39_57_e3_88_default");
 		///<summary>Upstairs</summary>
@@ -798,8 +931,10 @@ namespace HomeAssistantGenerated
 
 		public InputBooleanEntity AlaramPanic => new(_haContext, "input_boolean.alaram_panic");
 		public InputBooleanEntity BackDoorChecked => new(_haContext, "input_boolean.back_door_checked");
-		///<summary>dev_netdaemon_debug_host_apps_extensions_throttle_queue_app</summary>
-		public InputBooleanEntity DevNetdaemonDebugHostAppsExtensionsThrottleQueueApp => new(_haContext, "input_boolean.dev_netdaemon_debug_host_apps_extensions_throttle_queue_app");
+		///<summary>dev_netdaemon_light_manager_v2_lights_manager</summary>
+		public InputBooleanEntity DevNetdaemonLightManagerV2LightsManager => new(_haContext, "input_boolean.dev_netdaemon_light_manager_v2_lights_manager");
+		///<summary>dev_netdaemon_niemand_discipline_manager</summary>
+		public InputBooleanEntity DevNetdaemonNiemandDisciplineManager => new(_haContext, "input_boolean.dev_netdaemon_niemand_discipline_manager");
 		public InputBooleanEntity DiningDoorChecked => new(_haContext, "input_boolean.dining_door_checked");
 		public InputBooleanEntity DryerAck => new(_haContext, "input_boolean.dryer_ack");
 		public InputBooleanEntity FrontDoorChecked => new(_haContext, "input_boolean.front_door_checked");
@@ -807,16 +942,10 @@ namespace HomeAssistantGenerated
 		public InputBooleanEntity KidsInBed => new(_haContext, "input_boolean.kids_in_bed");
 		public InputBooleanEntity LoungeDoorChecked => new(_haContext, "input_boolean.lounge_door_checked");
 		public InputBooleanEntity LoungeMotionLightsDisabled => new(_haContext, "input_boolean.lounge_motion_lights_disabled");
-		///<summary>netdaemon_apps_concurrency_test_app</summary>
-		public InputBooleanEntity NetdaemonAppsConcurrencyTestApp => new(_haContext, "input_boolean.netdaemon_apps_concurrency_test_app");
-		///<summary>netdaemon_apps_concurrency_test_app2</summary>
-		public InputBooleanEntity NetdaemonAppsConcurrencyTestApp2 => new(_haContext, "input_boolean.netdaemon_apps_concurrency_test_app2");
-		///<summary>netdaemon_apps_hello_app</summary>
-		public InputBooleanEntity NetdaemonAppsHelloApp => new(_haContext, "input_boolean.netdaemon_apps_hello_app");
-		///<summary>netdaemon_apps_yaml_app</summary>
-		public InputBooleanEntity NetdaemonAppsYamlApp => new(_haContext, "input_boolean.netdaemon_apps_yaml_app");
-		///<summary>netdaemon_debug_host_apps_extensions_mqtt_entity_manager_app</summary>
-		public InputBooleanEntity NetdaemonDebugHostAppsExtensionsMqttEntityManagerApp => new(_haContext, "input_boolean.netdaemon_debug_host_apps_extensions_mqtt_entity_manager_app");
+		///<summary>netdaemon_light_manager_v2_lights_manager</summary>
+		public InputBooleanEntity NetdaemonLightManagerV2LightsManager => new(_haContext, "input_boolean.netdaemon_light_manager_v2_lights_manager");
+		///<summary>netdaemon_niemand_discipline_manager</summary>
+		public InputBooleanEntity NetdaemonNiemandDisciplineManager => new(_haContext, "input_boolean.netdaemon_niemand_discipline_manager");
 		public InputBooleanEntity NotifyEugeneTelegram => new(_haContext, "input_boolean.notify_eugene_telegram");
 		public InputBooleanEntity WasherAck => new(_haContext, "input_boolean.washer_ack");
 	}
@@ -897,8 +1026,6 @@ namespace HomeAssistantGenerated
 		public LightEntity AaronMain => new(_haContext, "light.aaron_main");
 		///<summary>Aubrecia Drive light</summary>
 		public LightEntity AubreciaDriveLight => new(_haContext, "light.aubrecia_drive_light");
-		///<summary>Christmas Indoor Sonoff</summary>
-		public LightEntity ChristmasIndoorSonoff => new(_haContext, "light.christmas_indoor_sonoff");
 		///<summary>Dining</summary>
 		public LightEntity Dining => new(_haContext, "light.dining");
 		///<summary>dining 1</summary>
@@ -1021,6 +1148,8 @@ namespace HomeAssistantGenerated
 		public LightEntity Utility2 => new(_haContext, "light.utility_2");
 		///<summary>utility 3</summary>
 		public LightEntity Utility3 => new(_haContext, "light.utility_3");
+		///<summary>UtilityCupboard</summary>
+		public LightEntity Utilitycupboard => new(_haContext, "light.utilitycupboard");
 	}
 
 	public class LockEntities
@@ -1111,6 +1240,8 @@ namespace HomeAssistantGenerated
 		public NumberEntity DownstairsSnoozeMinutes => new(_haContext, "number.downstairs_snooze_minutes");
 		///<summary>Downstairs Volume</summary>
 		public NumberEntity DownstairsVolume => new(_haContext, "number.downstairs_volume");
+		///<summary>Lounge Audio Delay</summary>
+		public NumberEntity LoungeAudioDelay => new(_haContext, "number.lounge_audio_delay");
 		///<summary>Lounge Bass</summary>
 		public NumberEntity LoungeBass => new(_haContext, "number.lounge_bass");
 		///<summary>Lounge Treble</summary>
@@ -1156,22 +1287,6 @@ namespace HomeAssistantGenerated
 		public OctopusagileEntity UpdateTimersNextupdate => new(_haContext, "octopusagile.update_timers_nextupdate");
 		public OctopusagileEntity YearlyCost => new(_haContext, "octopusagile.yearly_cost");
 		public OctopusagileEntity YearlyUsage => new(_haContext, "octopusagile.yearly_usage");
-	}
-
-	public class PersistentNotificationEntities
-	{
-		private readonly IHaContext _haContext;
-		public PersistentNotificationEntities(IHaContext haContext)
-		{
-			_haContext = haContext;
-		}
-
-		///<summary>Alexa Media Reauthentication Required</summary>
-		public PersistentNotificationEntity AlexaMediaEugeneNiemandGmailComcoUk => new(_haContext, "persistent_notification.alexa_media_eugene_niemand_gmail_comco_uk");
-		///<summary>Integration requires reconfiguration</summary>
-		public PersistentNotificationEntity ConfigEntryReconfigure => new(_haContext, "persistent_notification.config_entry_reconfigure");
-		///<summary>Login attempt failed</summary>
-		public PersistentNotificationEntity HttpLogin => new(_haContext, "persistent_notification.http_login");
 	}
 
 	public class PersonEntities
@@ -1812,20 +1927,58 @@ namespace HomeAssistantGenerated
 		public NumericSensorEntity LoungeMotionBattery => new(_haContext, "sensor.lounge_motion_battery");
 		///<summary>Lounge Room Temperature</summary>
 		public NumericSensorEntity LoungeRoomTemperature => new(_haContext, "sensor.lounge_room_temperature");
+		///<summary>LUMI lumi.sensor_magnet.aq2 38f0ec02 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMagnetAq238f0ec02DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_38f0ec02_device_temperature");
 		///<summary>LUMI lumi.sensor_magnet.aq2 38f0ec02 power</summary>
 		public NumericSensorEntity LumiLumiSensorMagnetAq238f0ec02Power => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_38f0ec02_power");
+		///<summary>LUMI lumi.sensor_magnet.aq2 56141203 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMagnetAq256141203DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_56141203_device_temperature");
 		///<summary>LUMI lumi.sensor_magnet.aq2 56141203 power</summary>
 		public NumericSensorEntity LumiLumiSensorMagnetAq256141203Power => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_56141203_power");
+		///<summary>LUMI lumi.sensor_magnet.aq2 83903a03 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMagnetAq283903a03DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_83903a03_device_temperature");
 		///<summary>LUMI lumi.sensor_magnet.aq2 83903a03 power</summary>
 		public NumericSensorEntity LumiLumiSensorMagnetAq283903a03Power => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_83903a03_power");
 		///<summary>LUMI lumi.sensor_magnet.aq2 8c913a03 power</summary>
 		public NumericSensorEntity LumiLumiSensorMagnetAq28c913a03Power => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_8c913a03_power");
+		///<summary>LUMI lumi.sensor_magnet.aq2 9e0b1203 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMagnetAq29e0b1203DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_9e0b1203_device_temperature");
 		///<summary>LUMI lumi.sensor_magnet.aq2 9e0b1203 power</summary>
 		public NumericSensorEntity LumiLumiSensorMagnetAq29e0b1203Power => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_9e0b1203_power");
+		///<summary>LUMI lumi.sensor_magnet.aq2 ac831303 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMagnetAq2Ac831303DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_ac831303_device_temperature");
+		///<summary>LUMI lumi.sensor_magnet.aq2 e6b02103 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMagnetAq2E6b02103DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_e6b02103_device_temperature");
 		///<summary>LUMI lumi.sensor_magnet.aq2 e6b02103 power</summary>
 		public NumericSensorEntity LumiLumiSensorMagnetAq2E6b02103Power => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_e6b02103_power");
 		///<summary>Officer Contact  power</summary>
 		public NumericSensorEntity LumiLumiSensorMagnetAq2Power => new(_haContext, "sensor.lumi_lumi_sensor_magnet_aq2_power");
+		///<summary>LUMI lumi.sensor_motion.aq2 34796603 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq234796603DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_34796603_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 3ca2f202 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq23ca2f202DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_3ca2f202_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 4123f403 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq24123f403DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_4123f403_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 54c2f302 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq254c2f302DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_54c2f302_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 591d1b03 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq2591d1b03DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_591d1b03_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 5cf75702 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq25cf75702DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_5cf75702_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 7dce1303 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq27dce1303DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_7dce1303_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 97a7f202 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq297a7f202DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_97a7f202_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 b4796603 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq2B4796603DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_b4796603_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 c0a6f202 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq2C0a6f202DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_c0a6f202_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 ea1a1404 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq2Ea1a1404DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_ea1a1404_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 ef2f1404 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq2Ef2f1404DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_ef2f1404_device_temperature");
+		///<summary>LUMI lumi.sensor_motion.aq2 f33b1404 device_temperature</summary>
+		public NumericSensorEntity LumiLumiSensorMotionAq2F33b1404DeviceTemperature => new(_haContext, "sensor.lumi_lumi_sensor_motion_aq2_f33b1404_device_temperature");
 		///<summary>Master Echo RX</summary>
 		public NumericSensorEntity MasterEchoRx => new(_haContext, "sensor.master_echo_rx");
 		///<summary>Master Echo TX</summary>
@@ -2039,6 +2192,14 @@ namespace HomeAssistantGenerated
 		///<summary>Jayden iPad RX</summary>
 		public NumericSensorEntity Rx24 => new(_haContext, "sensor.rx_24");
 		///<summary> RX</summary>
+		public NumericSensorEntity Rx25 => new(_haContext, "sensor.rx_25");
+		///<summary> RX</summary>
+		public NumericSensorEntity Rx26 => new(_haContext, "sensor.rx_26");
+		///<summary> RX</summary>
+		public NumericSensorEntity Rx27 => new(_haContext, "sensor.rx_27");
+		///<summary> RX</summary>
+		public NumericSensorEntity Rx28 => new(_haContext, "sensor.rx_28");
+		///<summary> RX</summary>
 		public NumericSensorEntity Rx3 => new(_haContext, "sensor.rx_3");
 		///<summary> RX</summary>
 		public NumericSensorEntity Rx4 => new(_haContext, "sensor.rx_4");
@@ -2060,6 +2221,10 @@ namespace HomeAssistantGenerated
 		public NumericSensorEntity Shelly155e8b5Rx => new(_haContext, "sensor.shelly1_55e8b5_rx");
 		///<summary>shelly1-55E8B5 TX</summary>
 		public NumericSensorEntity Shelly155e8b5Tx => new(_haContext, "sensor.shelly1_55e8b5_tx");
+		///<summary>shelly1-BA6C98 RX</summary>
+		public NumericSensorEntity Shelly1Ba6c98Rx => new(_haContext, "sensor.shelly1_ba6c98_rx");
+		///<summary>shelly1-BA6C98 TX</summary>
+		public NumericSensorEntity Shelly1Ba6c98Tx => new(_haContext, "sensor.shelly1_ba6c98_tx");
 		///<summary>shellyswitch25-E5A1D2 Power</summary>
 		public NumericSensorEntity Shellyswitch25E5a1d2Power => new(_haContext, "sensor.shellyswitch25_e5a1d2_power");
 		///<summary>smart-plug-1 RX</summary>
@@ -2162,6 +2327,14 @@ namespace HomeAssistantGenerated
 		public NumericSensorEntity Tx23 => new(_haContext, "sensor.tx_23");
 		///<summary>Jayden iPad TX</summary>
 		public NumericSensorEntity Tx24 => new(_haContext, "sensor.tx_24");
+		///<summary> TX</summary>
+		public NumericSensorEntity Tx25 => new(_haContext, "sensor.tx_25");
+		///<summary> TX</summary>
+		public NumericSensorEntity Tx26 => new(_haContext, "sensor.tx_26");
+		///<summary> TX</summary>
+		public NumericSensorEntity Tx27 => new(_haContext, "sensor.tx_27");
+		///<summary> TX</summary>
+		public NumericSensorEntity Tx28 => new(_haContext, "sensor.tx_28");
 		///<summary> TX</summary>
 		public NumericSensorEntity Tx3 => new(_haContext, "sensor.tx_3");
 		///<summary> TX</summary>
@@ -2468,6 +2641,8 @@ namespace HomeAssistantGenerated
 		public SensorEntity EugenesIphoneUptime => new(_haContext, "sensor.eugenes_iphone_uptime");
 		///<summary>EugenespleWatch Uptime</summary>
 		public SensorEntity EugenesplewatchUptime => new(_haContext, "sensor.eugenesplewatch_uptime");
+		///<summary>fail2ban sshd</summary>
+		public SensorEntity Fail2banSshd => new(_haContext, "sensor.fail2ban_sshd");
 		///<summary>floor_light-2086 Uptime</summary>
 		public SensorEntity FloorLight2086Uptime => new(_haContext, "sensor.floor_light_2086_uptime");
 		///<summary>Floor Light Last Seen</summary>
@@ -2740,8 +2915,6 @@ namespace HomeAssistantGenerated
 		public SensorEntity Plug1EnergyStats => new(_haContext, "sensor.plug_1_energy_stats");
 		///<summary>Porch Uptime</summary>
 		public SensorEntity PorchUptime => new(_haContext, "sensor.porch_uptime");
-		///<summary>random_light</summary>
-		public SensorEntity RandomLight => new(_haContext, "sensor.random_light");
 		///<summary>RaspberryPi CUPS Uptime</summary>
 		public SensorEntity RaspberrypiCupsUptime => new(_haContext, "sensor.raspberrypi_cups_uptime");
 		///<summary>raspberrypi Uptime</summary>
@@ -2766,42 +2939,12 @@ namespace HomeAssistantGenerated
 		public SensorEntity Ringstickupcam9bUptime => new(_haContext, "sensor.ringstickupcam_9b_uptime");
 		///<summary>RMMINI-d9-2b-62 Uptime</summary>
 		public SensorEntity RmminiD92b62Uptime => new(_haContext, "sensor.rmmini_d9_2b_62_uptime");
-		///<summary>room_presence_aaron</summary>
-		public SensorEntity RoomPresenceAaron => new(_haContext, "sensor.room_presence_aaron");
-		///<summary>room_presence_boys</summary>
-		public SensorEntity RoomPresenceBoys => new(_haContext, "sensor.room_presence_boys");
-		///<summary>room_presence_dining</summary>
-		public SensorEntity RoomPresenceDining => new(_haContext, "sensor.room_presence_dining");
-		///<summary>room_presence_entrance</summary>
-		public SensorEntity RoomPresenceEntrance => new(_haContext, "sensor.room_presence_entrance");
-		///<summary>room_presence_fish</summary>
-		public SensorEntity RoomPresenceFish => new(_haContext, "sensor.room_presence_fish");
-		///<summary>room_presence_hallway</summary>
-		public SensorEntity RoomPresenceHallway => new(_haContext, "sensor.room_presence_hallway");
-		///<summary>room_presence_jayden</summary>
-		public SensorEntity RoomPresenceJayden => new(_haContext, "sensor.room_presence_jayden");
-		///<summary>room_presence_kitchen</summary>
-		public SensorEntity RoomPresenceKitchen => new(_haContext, "sensor.room_presence_kitchen");
-		///<summary>room_presence_landing</summary>
-		public SensorEntity RoomPresenceLanding => new(_haContext, "sensor.room_presence_landing");
-		///<summary>room_presence_lounge</summary>
-		public SensorEntity RoomPresenceLounge => new(_haContext, "sensor.room_presence_lounge");
-		///<summary>room_presence_master</summary>
-		public SensorEntity RoomPresenceMaster => new(_haContext, "sensor.room_presence_master");
-		///<summary>room_presence_playroom</summary>
-		public SensorEntity RoomPresencePlayroom => new(_haContext, "sensor.room_presence_playroom");
-		///<summary>room_presence_porch</summary>
-		public SensorEntity RoomPresencePorch => new(_haContext, "sensor.room_presence_porch");
-		///<summary>room_presence_study</summary>
-		public SensorEntity RoomPresenceStudy => new(_haContext, "sensor.room_presence_study");
-		///<summary>room_presence_toilet</summary>
-		public SensorEntity RoomPresenceToilet => new(_haContext, "sensor.room_presence_toilet");
-		///<summary>room_presence_utility</summary>
-		public SensorEntity RoomPresenceUtility => new(_haContext, "sensor.room_presence_utility");
 		///<summary>Sammi-Leigh-s-A52 Uptime</summary>
 		public SensorEntity SammiLeighSA52Uptime => new(_haContext, "sensor.sammi_leigh_s_a52_uptime");
 		///<summary>shelly1-55E8B5 Uptime</summary>
 		public SensorEntity Shelly155e8b5Uptime => new(_haContext, "sensor.shelly1_55e8b5_uptime");
+		///<summary>shelly1-BA6C98 Uptime</summary>
+		public SensorEntity Shelly1Ba6c98Uptime => new(_haContext, "sensor.shelly1_ba6c98_uptime");
 		///<summary>Side Snapshot Last Updated</summary>
 		public SensorEntity SideSnapshotLastUpdated => new(_haContext, "sensor.side_snapshot_last_updated");
 		///<summary>smart-plug-1 Uptime</summary>
@@ -2888,6 +3031,14 @@ namespace HomeAssistantGenerated
 		public SensorEntity Uptime23 => new(_haContext, "sensor.uptime_23");
 		///<summary>Jayden iPad Uptime</summary>
 		public SensorEntity Uptime24 => new(_haContext, "sensor.uptime_24");
+		///<summary> Uptime</summary>
+		public SensorEntity Uptime25 => new(_haContext, "sensor.uptime_25");
+		///<summary> Uptime</summary>
+		public SensorEntity Uptime26 => new(_haContext, "sensor.uptime_26");
+		///<summary> Uptime</summary>
+		public SensorEntity Uptime27 => new(_haContext, "sensor.uptime_27");
+		///<summary> Uptime</summary>
+		public SensorEntity Uptime28 => new(_haContext, "sensor.uptime_28");
 		///<summary> Uptime</summary>
 		public SensorEntity Uptime3 => new(_haContext, "sensor.uptime_3");
 		///<summary> Uptime</summary>
@@ -3106,6 +3257,8 @@ namespace HomeAssistantGenerated
 		public SwitchEntity CircadianLightingCircadianDining => new(_haContext, "switch.circadian_lighting_circadian_dining");
 		///<summary>Circadian Master</summary>
 		public SwitchEntity CircadianLightingCircadianMaster => new(_haContext, "switch.circadian_lighting_circadian_master");
+		///<summary>Discipline Manager</summary>
+		public SwitchEntity DisciplineManagerEnabled => new(_haContext, "switch.discipline_manager_enabled");
 		///<summary>Downstairs do not disturb switch</summary>
 		public SwitchEntity DownstairsDoNotDisturbSwitch => new(_haContext, "switch.downstairs_do_not_disturb_switch");
 		///<summary>Downstairs Play Ding Sound</summary>
@@ -3176,6 +3329,8 @@ namespace HomeAssistantGenerated
 		public SwitchEntity JaydenDoNotDisturbSwitch => new(_haContext, "switch.jayden_do_not_disturb_switch");
 		///<summary>Jayden do not disturb switch</summary>
 		public SwitchEntity JaydenDoNotDisturbSwitch2 => new(_haContext, "switch.jayden_do_not_disturb_switch_2");
+		///<summary>Jayden iPad</summary>
+		public SwitchEntity JaydenIpad => new(_haContext, "switch.jayden_ipad");
 		///<summary>Jayden RaspberryPi</summary>
 		public SwitchEntity JaydenRaspberrypi => new(_haContext, "switch.jayden_raspberrypi");
 		///<summary>Aaron repeat switch</summary>
@@ -3196,35 +3351,41 @@ namespace HomeAssistantGenerated
 		public SwitchEntity LandingNight => new(_haContext, "switch.landing_night");
 		///<summary>LG TV</summary>
 		public SwitchEntity LgTv => new(_haContext, "switch.lg_tv");
-		///<summary>light_manager_aaron</summary>
+		///<summary>Light Manager Aaron</summary>
 		public SwitchEntity LightManagerAaron => new(_haContext, "switch.light_manager_aaron");
-		///<summary>light_manager_dining</summary>
+		///<summary>Light Manager Dining</summary>
 		public SwitchEntity LightManagerDining => new(_haContext, "switch.light_manager_dining");
-		///<summary>light_manager_entrance</summary>
+		///<summary>Light Manager Drive</summary>
+		public SwitchEntity LightManagerDrive => new(_haContext, "switch.light_manager_drive");
+		///<summary>Light Manager Entrance</summary>
 		public SwitchEntity LightManagerEntrance => new(_haContext, "switch.light_manager_entrance");
-		///<summary>light_manager_fish</summary>
+		///<summary>Light Manager Fish</summary>
 		public SwitchEntity LightManagerFish => new(_haContext, "switch.light_manager_fish");
-		///<summary>light_manager_hallway</summary>
+		///<summary>Light Manager Garage</summary>
+		public SwitchEntity LightManagerGarage => new(_haContext, "switch.light_manager_garage");
+		///<summary>Light Manager Garden</summary>
+		public SwitchEntity LightManagerGarden => new(_haContext, "switch.light_manager_garden");
+		///<summary>Light Manager Hallway</summary>
 		public SwitchEntity LightManagerHallway => new(_haContext, "switch.light_manager_hallway");
-		///<summary>light_manager_jayden</summary>
+		///<summary>Light Manager Jayden</summary>
 		public SwitchEntity LightManagerJayden => new(_haContext, "switch.light_manager_jayden");
-		///<summary>light_manager_kitchen</summary>
+		///<summary>Light Manager Kitchen</summary>
 		public SwitchEntity LightManagerKitchen => new(_haContext, "switch.light_manager_kitchen");
-		///<summary>light_manager_landing</summary>
+		///<summary>Light Manager Landing</summary>
 		public SwitchEntity LightManagerLanding => new(_haContext, "switch.light_manager_landing");
-		///<summary>light_manager_lounge</summary>
+		///<summary>Light Manager Lounge</summary>
 		public SwitchEntity LightManagerLounge => new(_haContext, "switch.light_manager_lounge");
-		///<summary>light_manager_master</summary>
+		///<summary>Light Manager Master</summary>
 		public SwitchEntity LightManagerMaster => new(_haContext, "switch.light_manager_master");
-		///<summary>light_manager_playroom</summary>
+		///<summary>Light Manager Playroom</summary>
 		public SwitchEntity LightManagerPlayroom => new(_haContext, "switch.light_manager_playroom");
-		///<summary>light_manager_porch</summary>
+		///<summary>Light Manager Porch</summary>
 		public SwitchEntity LightManagerPorch => new(_haContext, "switch.light_manager_porch");
-		///<summary>light_manager_study</summary>
+		///<summary>Light Manager Study</summary>
 		public SwitchEntity LightManagerStudy => new(_haContext, "switch.light_manager_study");
-		///<summary>light_manager_toilet</summary>
+		///<summary>Light Manager Toilet</summary>
 		public SwitchEntity LightManagerToilet => new(_haContext, "switch.light_manager_toilet");
-		///<summary>light_manager_utility</summary>
+		///<summary>Light Manager Utility</summary>
 		public SwitchEntity LightManagerUtility => new(_haContext, "switch.light_manager_utility");
 		///<summary>Dining do not disturb switch</summary>
 		public SwitchEntity LoungeGroupDoNotDisturbSwitch => new(_haContext, "switch.lounge_group_do_not_disturb_switch");
@@ -3244,46 +3405,8 @@ namespace HomeAssistantGenerated
 		public SwitchEntity MasterRepeatSwitch => new(_haContext, "switch.master_repeat_switch");
 		///<summary>Master shuffle switch</summary>
 		public SwitchEntity MasterShuffleSwitch => new(_haContext, "switch.master_shuffle_switch");
-		///<summary>netdaemon_appmodelhelloyamlapp</summary>
-		public SwitchEntity NetdaemonAppmodelhelloyamlapp => new(_haContext, "switch.netdaemon_appmodelhelloyamlapp");
-		///<summary>netdaemon_automations</summary>
-		public SwitchEntity NetdaemonAutomations => new(_haContext, "switch.netdaemon_automations");
-		///<summary>netdaemon_automationsapp</summary>
-		public SwitchEntity NetdaemonAutomationsapp => new(_haContext, "switch.netdaemon_automationsapp");
-		///<summary>netdaemon_debug_app</summary>
-		public SwitchEntity NetdaemonDebugApp => new(_haContext, "switch.netdaemon_debug_app");
-		///<summary>netdaemon_extensionsschedulingschedulingapp</summary>
-		public SwitchEntity NetdaemonExtensionsschedulingschedulingapp => new(_haContext, "switch.netdaemon_extensionsschedulingschedulingapp");
-		///<summary>netdaemon_hassmodelhelloworldapp</summary>
-		public SwitchEntity NetdaemonHassmodelhelloworldapp => new(_haContext, "switch.netdaemon_hassmodelhelloworldapp");
-		///<summary>netdaemon_hassmodellightonmovement</summary>
-		public SwitchEntity NetdaemonHassmodellightonmovement => new(_haContext, "switch.netdaemon_hassmodellightonmovement");
-		///<summary>netdaemon_hello_world_app</summary>
-		public SwitchEntity NetdaemonHelloWorldApp => new(_haContext, "switch.netdaemon_hello_world_app");
-		///<summary>netdaemon_house</summary>
-		public SwitchEntity NetdaemonHouse => new(_haContext, "switch.netdaemon_house");
-		///<summary>netdaemon_housemode</summary>
-		public SwitchEntity NetdaemonHousemode => new(_haContext, "switch.netdaemon_housemode");
-		///<summary>netdaemon_housemodeapp</summary>
-		public SwitchEntity NetdaemonHousemodeapp => new(_haContext, "switch.netdaemon_housemodeapp");
-		///<summary>netdaemon_lights_app</summary>
-		public SwitchEntity NetdaemonLightsApp => new(_haContext, "switch.netdaemon_lights_app");
 		///<summary>netdaemon_lightsmanager</summary>
 		public SwitchEntity NetdaemonLightsmanager => new(_haContext, "switch.netdaemon_lightsmanager");
-		///<summary>netdaemon_niemand_lights</summary>
-		public SwitchEntity NetdaemonNiemandLights => new(_haContext, "switch.netdaemon_niemand_lights");
-		///<summary>netdaemon_niemand_notification_engine</summary>
-		public SwitchEntity NetdaemonNiemandNotificationEngine => new(_haContext, "switch.netdaemon_niemand_notification_engine");
-		///<summary>netdaemon_notificationengine</summary>
-		public SwitchEntity NetdaemonNotificationengine => new(_haContext, "switch.netdaemon_notificationengine");
-		///<summary>netdaemon_presence</summary>
-		public SwitchEntity NetdaemonPresence => new(_haContext, "switch.netdaemon_presence");
-		///<summary>netdaemon_roompresence</summary>
-		public SwitchEntity NetdaemonRoompresence => new(_haContext, "switch.netdaemon_roompresence");
-		///<summary>netdaemon_voicetimer</summary>
-		public SwitchEntity NetdaemonVoicetimer => new(_haContext, "switch.netdaemon_voicetimer");
-		///<summary>netdaemon_wakeupsimulator</summary>
-		public SwitchEntity NetdaemonWakeupsimulator => new(_haContext, "switch.netdaemon_wakeupsimulator");
 		///<summary>Niemand Drive Event Stream</summary>
 		public SwitchEntity NiemandDriveEventStream => new(_haContext, "switch.niemand_drive_event_stream");
 		///<summary>Niemand Drive Live Stream</summary>
@@ -3340,38 +3463,6 @@ namespace HomeAssistantGenerated
 		public SwitchEntity Plug4 => new(_haContext, "switch.plug_4");
 		///<summary>Plug 5</summary>
 		public SwitchEntity Plug5 => new(_haContext, "switch.plug_5");
-		///<summary>room_presence_enabled_aaron</summary>
-		public SwitchEntity RoomPresenceEnabledAaron => new(_haContext, "switch.room_presence_enabled_aaron");
-		///<summary>room_presence_enabled_boys</summary>
-		public SwitchEntity RoomPresenceEnabledBoys => new(_haContext, "switch.room_presence_enabled_boys");
-		///<summary>room_presence_enabled_dining</summary>
-		public SwitchEntity RoomPresenceEnabledDining => new(_haContext, "switch.room_presence_enabled_dining");
-		///<summary>room_presence_enabled_entrance</summary>
-		public SwitchEntity RoomPresenceEnabledEntrance => new(_haContext, "switch.room_presence_enabled_entrance");
-		///<summary>room_presence_enabled_fish</summary>
-		public SwitchEntity RoomPresenceEnabledFish => new(_haContext, "switch.room_presence_enabled_fish");
-		///<summary>room_presence_enabled_hallway</summary>
-		public SwitchEntity RoomPresenceEnabledHallway => new(_haContext, "switch.room_presence_enabled_hallway");
-		///<summary>room_presence_enabled_jayden</summary>
-		public SwitchEntity RoomPresenceEnabledJayden => new(_haContext, "switch.room_presence_enabled_jayden");
-		///<summary>room_presence_enabled_kitchen</summary>
-		public SwitchEntity RoomPresenceEnabledKitchen => new(_haContext, "switch.room_presence_enabled_kitchen");
-		///<summary>room_presence_enabled_landing</summary>
-		public SwitchEntity RoomPresenceEnabledLanding => new(_haContext, "switch.room_presence_enabled_landing");
-		///<summary>room_presence_enabled_lounge</summary>
-		public SwitchEntity RoomPresenceEnabledLounge => new(_haContext, "switch.room_presence_enabled_lounge");
-		///<summary>room_presence_enabled_master</summary>
-		public SwitchEntity RoomPresenceEnabledMaster => new(_haContext, "switch.room_presence_enabled_master");
-		///<summary>room_presence_enabled_playroom</summary>
-		public SwitchEntity RoomPresenceEnabledPlayroom => new(_haContext, "switch.room_presence_enabled_playroom");
-		///<summary>room_presence_enabled_porch</summary>
-		public SwitchEntity RoomPresenceEnabledPorch => new(_haContext, "switch.room_presence_enabled_porch");
-		///<summary>room_presence_enabled_study</summary>
-		public SwitchEntity RoomPresenceEnabledStudy => new(_haContext, "switch.room_presence_enabled_study");
-		///<summary>room_presence_enabled_toilet</summary>
-		public SwitchEntity RoomPresenceEnabledToilet => new(_haContext, "switch.room_presence_enabled_toilet");
-		///<summary>room_presence_enabled_utility</summary>
-		public SwitchEntity RoomPresenceEnabledUtility => new(_haContext, "switch.room_presence_enabled_utility");
 		///<summary>Schedule #5a4aba</summary>
 		public SwitchEntity Schedule5a4aba2 => new(_haContext, "switch.schedule_5a4aba_2");
 		///<summary>Schedule #5ed2d5</summary>
@@ -3688,17 +3779,6 @@ namespace HomeAssistantGenerated
 		}
 
 		public OctopusagileEntity(Entity entity) : base(entity)
-		{
-		}
-	}
-
-	public record PersistentNotificationEntity : Entity<PersistentNotificationEntity, EntityState<PersistentNotificationAttributes>, PersistentNotificationAttributes>
-	{
-		public PersistentNotificationEntity(IHaContext haContext, string entityId) : base(haContext, entityId)
-		{
-		}
-
-		public PersistentNotificationEntity(Entity entity) : base(entity)
 		{
 		}
 	}
@@ -4073,7 +4153,7 @@ namespace HomeAssistantGenerated
 		public double? PercentageDemand { get; init; }
 
 		[JsonPropertyName("preset_mode")]
-		public string? PresetMode { get; init; }
+		public object? PresetMode { get; init; }
 
 		[JsonPropertyName("preset_modes")]
 		public object? PresetModes { get; init; }
@@ -4141,9 +4221,6 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("battery_level")]
 		public double? BatteryLevel { get; init; }
 
-		[JsonPropertyName("course")]
-		public double? Course { get; init; }
-
 		[JsonPropertyName("essid")]
 		public string? Essid { get; init; }
 
@@ -4209,9 +4286,6 @@ namespace HomeAssistantGenerated
 
 		[JsonPropertyName("source_type")]
 		public string? SourceType { get; init; }
-
-		[JsonPropertyName("speed")]
-		public double? Speed { get; init; }
 
 		[JsonPropertyName("supported_features")]
 		public double? SupportedFeatures { get; init; }
@@ -4387,6 +4461,9 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("friendly_name")]
 		public string? FriendlyName { get; init; }
 
+		[JsonPropertyName("group_members")]
+		public object? GroupMembers { get; init; }
+
 		[JsonPropertyName("icon")]
 		public string? Icon { get; init; }
 
@@ -4471,173 +4548,173 @@ namespace HomeAssistantGenerated
 
 	public record OctopusagileAttributes
 	{
-		[JsonPropertyName("2022-02-18T19:00:00Z")]
-		public double? HA20220218T190000Z { get; init; }
+		[JsonPropertyName("2022-03-12T19:00:00Z")]
+		public double? HA20220312T190000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T19:30:00Z")]
-		public double? HA20220218T193000Z { get; init; }
+		[JsonPropertyName("2022-03-12T19:30:00Z")]
+		public double? HA20220312T193000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T20:00:00Z")]
-		public double? HA20220218T200000Z { get; init; }
+		[JsonPropertyName("2022-03-12T20:00:00Z")]
+		public double? HA20220312T200000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T20:30:00Z")]
-		public double? HA20220218T203000Z { get; init; }
+		[JsonPropertyName("2022-03-12T20:30:00Z")]
+		public double? HA20220312T203000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T21:00:00Z")]
-		public double? HA20220218T210000Z { get; init; }
+		[JsonPropertyName("2022-03-12T21:00:00Z")]
+		public double? HA20220312T210000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T21:30:00Z")]
-		public double? HA20220218T213000Z { get; init; }
+		[JsonPropertyName("2022-03-12T21:30:00Z")]
+		public double? HA20220312T213000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T22:00:00Z")]
-		public double? HA20220218T220000Z { get; init; }
+		[JsonPropertyName("2022-03-12T22:00:00Z")]
+		public double? HA20220312T220000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T22:30:00Z")]
-		public double? HA20220218T223000Z { get; init; }
+		[JsonPropertyName("2022-03-12T22:30:00Z")]
+		public double? HA20220312T223000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T23:00:00Z")]
-		public double? HA20220218T230000Z { get; init; }
+		[JsonPropertyName("2022-03-12T23:00:00Z")]
+		public double? HA20220312T230000Z { get; init; }
 
-		[JsonPropertyName("2022-02-18T23:30:00Z")]
-		public double? HA20220218T233000Z { get; init; }
+		[JsonPropertyName("2022-03-12T23:30:00Z")]
+		public double? HA20220312T233000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T00:00:00Z")]
-		public double? HA20220219T000000Z { get; init; }
+		[JsonPropertyName("2022-03-13T00:00:00Z")]
+		public double? HA20220313T000000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T00:30:00Z")]
-		public double? HA20220219T003000Z { get; init; }
+		[JsonPropertyName("2022-03-13T00:30:00Z")]
+		public double? HA20220313T003000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T01:00:00Z")]
-		public double? HA20220219T010000Z { get; init; }
+		[JsonPropertyName("2022-03-13T01:00:00Z")]
+		public double? HA20220313T010000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T01:30:00Z")]
-		public double? HA20220219T013000Z { get; init; }
+		[JsonPropertyName("2022-03-13T01:30:00Z")]
+		public double? HA20220313T013000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T02:00:00Z")]
-		public double? HA20220219T020000Z { get; init; }
+		[JsonPropertyName("2022-03-13T02:00:00Z")]
+		public double? HA20220313T020000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T02:30:00Z")]
-		public double? HA20220219T023000Z { get; init; }
+		[JsonPropertyName("2022-03-13T02:30:00Z")]
+		public double? HA20220313T023000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T03:00:00Z")]
-		public double? HA20220219T030000Z { get; init; }
+		[JsonPropertyName("2022-03-13T03:00:00Z")]
+		public double? HA20220313T030000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T03:30:00Z")]
-		public double? HA20220219T033000Z { get; init; }
+		[JsonPropertyName("2022-03-13T03:30:00Z")]
+		public double? HA20220313T033000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T04:00:00Z")]
-		public double? HA20220219T040000Z { get; init; }
+		[JsonPropertyName("2022-03-13T04:00:00Z")]
+		public double? HA20220313T040000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T04:30:00Z")]
-		public double? HA20220219T043000Z { get; init; }
+		[JsonPropertyName("2022-03-13T04:30:00Z")]
+		public double? HA20220313T043000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T05:00:00Z")]
-		public double? HA20220219T050000Z { get; init; }
+		[JsonPropertyName("2022-03-13T05:00:00Z")]
+		public double? HA20220313T050000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T05:30:00Z")]
-		public double? HA20220219T053000Z { get; init; }
+		[JsonPropertyName("2022-03-13T05:30:00Z")]
+		public double? HA20220313T053000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T06:00:00Z")]
-		public double? HA20220219T060000Z { get; init; }
+		[JsonPropertyName("2022-03-13T06:00:00Z")]
+		public double? HA20220313T060000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T06:30:00Z")]
-		public double? HA20220219T063000Z { get; init; }
+		[JsonPropertyName("2022-03-13T06:30:00Z")]
+		public double? HA20220313T063000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T07:00:00Z")]
-		public double? HA20220219T070000Z { get; init; }
+		[JsonPropertyName("2022-03-13T07:00:00Z")]
+		public double? HA20220313T070000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T07:30:00Z")]
-		public double? HA20220219T073000Z { get; init; }
+		[JsonPropertyName("2022-03-13T07:30:00Z")]
+		public double? HA20220313T073000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T08:00:00Z")]
-		public double? HA20220219T080000Z { get; init; }
+		[JsonPropertyName("2022-03-13T08:00:00Z")]
+		public double? HA20220313T080000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T08:30:00Z")]
-		public double? HA20220219T083000Z { get; init; }
+		[JsonPropertyName("2022-03-13T08:30:00Z")]
+		public double? HA20220313T083000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T09:00:00Z")]
-		public double? HA20220219T090000Z { get; init; }
+		[JsonPropertyName("2022-03-13T09:00:00Z")]
+		public double? HA20220313T090000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T09:30:00Z")]
-		public double? HA20220219T093000Z { get; init; }
+		[JsonPropertyName("2022-03-13T09:30:00Z")]
+		public double? HA20220313T093000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T10:00:00Z")]
-		public double? HA20220219T100000Z { get; init; }
+		[JsonPropertyName("2022-03-13T10:00:00Z")]
+		public double? HA20220313T100000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T10:30:00Z")]
-		public double? HA20220219T103000Z { get; init; }
+		[JsonPropertyName("2022-03-13T10:30:00Z")]
+		public double? HA20220313T103000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T11:00:00Z")]
-		public double? HA20220219T110000Z { get; init; }
+		[JsonPropertyName("2022-03-13T11:00:00Z")]
+		public double? HA20220313T110000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T11:30:00Z")]
-		public double? HA20220219T113000Z { get; init; }
+		[JsonPropertyName("2022-03-13T11:30:00Z")]
+		public double? HA20220313T113000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T12:00:00Z")]
-		public double? HA20220219T120000Z { get; init; }
+		[JsonPropertyName("2022-03-13T12:00:00Z")]
+		public double? HA20220313T120000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T12:30:00Z")]
-		public double? HA20220219T123000Z { get; init; }
+		[JsonPropertyName("2022-03-13T12:30:00Z")]
+		public double? HA20220313T123000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T13:00:00Z")]
-		public double? HA20220219T130000Z { get; init; }
+		[JsonPropertyName("2022-03-13T13:00:00Z")]
+		public double? HA20220313T130000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T13:30:00Z")]
-		public double? HA20220219T133000Z { get; init; }
+		[JsonPropertyName("2022-03-13T13:30:00Z")]
+		public double? HA20220313T133000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T14:00:00Z")]
-		public double? HA20220219T140000Z { get; init; }
+		[JsonPropertyName("2022-03-13T14:00:00Z")]
+		public double? HA20220313T140000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T14:30:00Z")]
-		public double? HA20220219T143000Z { get; init; }
+		[JsonPropertyName("2022-03-13T14:30:00Z")]
+		public double? HA20220313T143000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T15:00:00Z")]
-		public double? HA20220219T150000Z { get; init; }
+		[JsonPropertyName("2022-03-13T15:00:00Z")]
+		public double? HA20220313T150000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T15:30:00Z")]
-		public double? HA20220219T153000Z { get; init; }
+		[JsonPropertyName("2022-03-13T15:30:00Z")]
+		public double? HA20220313T153000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T16:00:00Z")]
-		public double? HA20220219T160000Z { get; init; }
+		[JsonPropertyName("2022-03-13T16:00:00Z")]
+		public double? HA20220313T160000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T16:30:00Z")]
-		public double? HA20220219T163000Z { get; init; }
+		[JsonPropertyName("2022-03-13T16:30:00Z")]
+		public double? HA20220313T163000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T17:00:00Z")]
-		public double? HA20220219T170000Z { get; init; }
+		[JsonPropertyName("2022-03-13T17:00:00Z")]
+		public double? HA20220313T170000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T17:30:00Z")]
-		public double? HA20220219T173000Z { get; init; }
+		[JsonPropertyName("2022-03-13T17:30:00Z")]
+		public double? HA20220313T173000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T18:00:00Z")]
-		public double? HA20220219T180000Z { get; init; }
+		[JsonPropertyName("2022-03-13T18:00:00Z")]
+		public double? HA20220313T180000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T18:30:00Z")]
-		public double? HA20220219T183000Z { get; init; }
+		[JsonPropertyName("2022-03-13T18:30:00Z")]
+		public double? HA20220313T183000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T19:00:00Z")]
-		public double? HA20220219T190000Z { get; init; }
+		[JsonPropertyName("2022-03-13T19:00:00Z")]
+		public double? HA20220313T190000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T19:30:00Z")]
-		public double? HA20220219T193000Z { get; init; }
+		[JsonPropertyName("2022-03-13T19:30:00Z")]
+		public double? HA20220313T193000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T20:00:00Z")]
-		public double? HA20220219T200000Z { get; init; }
+		[JsonPropertyName("2022-03-13T20:00:00Z")]
+		public double? HA20220313T200000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T20:30:00Z")]
-		public double? HA20220219T203000Z { get; init; }
+		[JsonPropertyName("2022-03-13T20:30:00Z")]
+		public double? HA20220313T203000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T21:00:00Z")]
-		public double? HA20220219T210000Z { get; init; }
+		[JsonPropertyName("2022-03-13T21:00:00Z")]
+		public double? HA20220313T210000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T21:30:00Z")]
-		public double? HA20220219T213000Z { get; init; }
+		[JsonPropertyName("2022-03-13T21:30:00Z")]
+		public double? HA20220313T213000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T22:00:00Z")]
-		public double? HA20220219T220000Z { get; init; }
+		[JsonPropertyName("2022-03-13T22:00:00Z")]
+		public double? HA20220313T220000Z { get; init; }
 
-		[JsonPropertyName("2022-02-19T22:30:00Z")]
-		public double? HA20220219T223000Z { get; init; }
+		[JsonPropertyName("2022-03-13T22:30:00Z")]
+		public double? HA20220313T223000Z { get; init; }
 
 		[JsonPropertyName("icon")]
 		public string? Icon { get; init; }
@@ -4647,18 +4724,6 @@ namespace HomeAssistantGenerated
 
 		[JsonPropertyName("unit_of_measurement")]
 		public string? UnitOfMeasurement { get; init; }
-	}
-
-	public record PersistentNotificationAttributes
-	{
-		[JsonPropertyName("friendly_name")]
-		public string? FriendlyName { get; init; }
-
-		[JsonPropertyName("message")]
-		public string? Message { get; init; }
-
-		[JsonPropertyName("title")]
-		public string? Title { get; init; }
 	}
 
 	public record PersonAttributes
@@ -4832,7 +4897,7 @@ namespace HomeAssistantGenerated
 		public string? LastEntityId { get; init; }
 
 		[JsonPropertyName("last_period")]
-		public double? LastPeriod { get; init; }
+		public string? LastPeriod { get; init; }
 
 		[JsonPropertyName("last_reset")]
 		public string? LastReset { get; init; }
@@ -4922,7 +4987,7 @@ namespace HomeAssistantGenerated
 		public string? TransportType { get; init; }
 
 		[JsonPropertyName("type")]
-		public string? Type_0 { get; init; }
+		public object? Type_0 { get; init; }
 
 		[JsonPropertyName("Type")]
 		public string? Type_1 { get; init; }
@@ -4953,9 +5018,6 @@ namespace HomeAssistantGenerated
 
 		[JsonPropertyName("Active Camera")]
 		public object? ActiveCamera { get; init; }
-
-		[JsonPropertyName("ActiveEntities")]
-		public string? ActiveEntities { get; init; }
 
 		[JsonPropertyName("Administrative Area")]
 		public string? AdministrativeArea { get; init; }
@@ -5020,14 +5082,8 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("category")]
 		public string? Category { get; init; }
 
-		[JsonPropertyName("Cellular Technology")]
-		public string? CellularTechnology { get; init; }
-
 		[JsonPropertyName("Confidence")]
 		public string? Confidence { get; init; }
-
-		[JsonPropertyName("ControlEntityIds")]
-		public object? ControlEntityIds { get; init; }
 
 		[JsonPropertyName("controller_reception_RSSI")]
 		public double? ControllerReceptionRSSI { get; init; }
@@ -5040,6 +5096,9 @@ namespace HomeAssistantGenerated
 
 		[JsonPropertyName("Current")]
 		public double? Current { get; init; }
+
+		[JsonPropertyName("current_bans")]
+		public object? CurrentBans { get; init; }
 
 		[JsonPropertyName("Current Capacity")]
 		public double? CurrentCapacity { get; init; }
@@ -5077,14 +5136,8 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("Display Names")]
 		public object? DisplayNames { get; init; }
 
-		[JsonPropertyName("duration")]
-		public double? Duration { get; init; }
-
-		[JsonPropertyName("EventEntity")]
-		public string? EventEntity { get; init; }
-
-		[JsonPropertyName("Expiry")]
-		public string? Expiry { get; init; }
+		[JsonPropertyName("event")]
+		public string? Event { get; init; }
 
 		[JsonPropertyName("firmware")]
 		public string? Firmware { get; init; }
@@ -5131,9 +5184,6 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("Is Present")]
 		public bool? IsPresent { get; init; }
 
-		[JsonPropertyName("KeepAliveEntities")]
-		public string? KeepAliveEntities { get; init; }
-
 		[JsonPropertyName("last_changed")]
 		public string? LastChanged { get; init; }
 
@@ -5170,9 +5220,6 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("Name")]
 		public string? Name { get; init; }
 
-		[JsonPropertyName("NightControlEntityIds")]
-		public object? NightControlEntityIds { get; init; }
-
 		[JsonPropertyName("node_id")]
 		public double? NodeId { get; init; }
 
@@ -5206,9 +5253,6 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("Power Source State")]
 		public string? PowerSourceState { get; init; }
 
-		[JsonPropertyName("PresenceEntityIds")]
-		public object? PresenceEntityIds { get; init; }
-
 		[JsonPropertyName("prior_value")]
 		public string? PriorValue { get; init; }
 
@@ -5218,20 +5262,11 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("product_type")]
 		public string? ProductType { get; init; }
 
-		[JsonPropertyName("RandomDuration")]
-		public double? RandomDuration { get; init; }
-
-		[JsonPropertyName("RandomEntityId")]
-		public string? RandomEntityId { get; init; }
-
-		[JsonPropertyName("RandomStates")]
-		public object? RandomStates { get; init; }
-
 		[JsonPropertyName("recording_status")]
 		public string? RecordingStatus { get; init; }
 
 		[JsonPropertyName("recurrence")]
-		public string? Recurrence { get; init; }
+		public object? Recurrence { get; init; }
 
 		[JsonPropertyName("reminder")]
 		public object? Reminder { get; init; }
@@ -5281,6 +5316,9 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("temperature")]
 		public double? Temperature { get; init; }
 
+		[JsonPropertyName("text")]
+		public string? Text { get; init; }
+
 		[JsonPropertyName("Thoroughfare")]
 		public string? Thoroughfare { get; init; }
 
@@ -5298,6 +5336,9 @@ namespace HomeAssistantGenerated
 
 		[JsonPropertyName("total_all")]
 		public double? TotalAll { get; init; }
+
+		[JsonPropertyName("total_bans")]
+		public object? TotalBans { get; init; }
 
 		[JsonPropertyName("Transport Type")]
 		public string? TransportType { get; init; }
@@ -5365,12 +5406,6 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("actions")]
 		public object? Actions { get; init; }
 
-		[JsonPropertyName("ActivePresenceSensors")]
-		public object? ActivePresenceSensors { get; init; }
-
-		[JsonPropertyName("app_state")]
-		public string? AppState { get; init; }
-
 		[JsonPropertyName("attribution")]
 		public string? Attribution { get; init; }
 
@@ -5392,9 +5427,6 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("color_temp_mired")]
 		public double? ColorTempMired { get; init; }
 
-		[JsonPropertyName("ControlEntityIds")]
-		public object? ControlEntityIds { get; init; }
-
 		[JsonPropertyName("current_slot")]
 		public object? CurrentSlot { get; init; }
 
@@ -5403,12 +5435,6 @@ namespace HomeAssistantGenerated
 
 		[JsonPropertyName("entities")]
 		public object? Entities { get; init; }
-
-		[JsonPropertyName("EventEntity")]
-		public string? EventEntity { get; init; }
-
-		[JsonPropertyName("Expiry")]
-		public string? Expiry { get; init; }
 
 		[JsonPropertyName("friendly_name")]
 		public string? FriendlyName { get; init; }
@@ -5434,17 +5460,8 @@ namespace HomeAssistantGenerated
 		[JsonPropertyName("next_trigger")]
 		public string? NextTrigger { get; init; }
 
-		[JsonPropertyName("PresenceEntityIds")]
-		public object? PresenceEntityIds { get; init; }
-
 		[JsonPropertyName("rgb_color")]
 		public object? RgbColor { get; init; }
-
-		[JsonPropertyName("runtime_info")]
-		public object? RuntimeInfo { get; init; }
-
-		[JsonPropertyName("State")]
-		public string? State { get; init; }
 
 		[JsonPropertyName("status")]
 		public string? Status { get; init; }
@@ -5582,6 +5599,8 @@ namespace HomeAssistantGenerated
 
 		InputBooleanServices InputBoolean { get; }
 
+		InputButtonServices InputButton { get; }
+
 		InputDatetimeServices InputDatetime { get; }
 
 		InputNumberServices InputNumber { get; }
@@ -5708,6 +5727,7 @@ namespace HomeAssistantGenerated
 		public HomeassistantServices Homeassistant => new(_haContext);
 		public HumidifierServices Humidifier => new(_haContext);
 		public InputBooleanServices InputBoolean => new(_haContext);
+		public InputButtonServices InputButton => new(_haContext);
 		public InputDatetimeServices InputDatetime => new(_haContext);
 		public InputNumberServices InputNumber => new(_haContext);
 		public InputSelectServices InputSelect => new(_haContext);
@@ -7520,6 +7540,27 @@ namespace HomeAssistantGenerated
 		public void TurnOn(ServiceTarget target)
 		{
 			_haContext.CallService("input_boolean", "turn_on", target);
+		}
+	}
+
+	public class InputButtonServices
+	{
+		private readonly IHaContext _haContext;
+		public InputButtonServices(IHaContext haContext)
+		{
+			_haContext = haContext;
+		}
+
+		///<summary>Press the input button entity.</summary>
+		///<param name="target">The target for this service call</param>
+		public void Press(ServiceTarget target)
+		{
+			_haContext.CallService("input_button", "press", target);
+		}
+
+		public void Reload()
+		{
+			_haContext.CallService("input_button", "reload", null);
 		}
 	}
 

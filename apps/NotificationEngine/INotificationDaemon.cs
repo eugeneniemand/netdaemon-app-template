@@ -1,12 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Reactive.Subjects;
 
-namespace Ha.Daemons;
+namespace NotificationEngine.Daemons;
 
 public interface INotificationDaemon
 {
-    NotificationConfig Config { get; }
-
-    event EventHandler<NotificationEventArgs> NotificationRaised;
-    Task Initialise();
+    Subject<INotification> Notifications { get; }
 }

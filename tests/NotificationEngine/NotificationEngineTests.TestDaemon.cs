@@ -1,23 +1,17 @@
 using System;
-using System.Threading.Tasks;
-using Ha;
+using System.Reactive.Subjects;
 using Ha.Daemons;
+using NotificationEngine;
+using NotificationEngine.Daemons;
 
-public partial class NotificationEngineTests
+public class NotificationEngineTests
 {
-    private record TestDaemon : INotificationDaemon
+    private record TestDaemon(Subject<INotification> Notifications) : INotificationDaemon
     {
-        public Task Initialise()
-        {
-            return Task.CompletedTask;
-        }
-
-        public void SetConfig(NotificationConfig config)
-        {
-            Config = config;
-        }
-
-        public NotificationConfig Config { get; private set; }
         public event EventHandler<NotificationEventArgs>? NotificationRaised;
+
+        public void SetConfig(Notification config)
+        {
+        }
     }
 }
