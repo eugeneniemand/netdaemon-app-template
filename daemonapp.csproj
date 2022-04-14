@@ -25,7 +25,7 @@
 	<ItemGroup>
 		<PackageReference Include="JoySoftware.NetDaemon.AppModel" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Logging" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.7.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.14.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.HassModel.Integration" Version="22.7.0" />
