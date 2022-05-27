@@ -13,7 +13,7 @@ using NetDaemon.HassModel;
 
 namespace LightManagerV2;
 
-[Focus]
+//[Focus]
 [NetDaemonApp]
 public class LightsManager : IAsyncInitializable
 {

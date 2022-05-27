@@ -14,7 +14,6 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.eugene_laptop_in_use
       - binary_sensor.haileys_macbook_air_active
     ControlEntities:
-      - light.office
       - switch.office_skylight
     NightTimeEntity: input_select.house_mode
     NightTimeEntityStates:
@@ -97,8 +96,8 @@ LightManagerV2.ManagerConfig:
     ControlEntities:
       - light.porch
     Timeout: 90
-    #condition_entity: sun.sun
-    #condition_entity_state: below_horizon
+    ConditionEntity: sun.sun
+    ConditionEntityState: below_horizon
     # debug: true
 
   - Name: Drive
@@ -108,6 +107,8 @@ LightManagerV2.ManagerConfig:
     ControlEntities:
       - light.lounge
     Timeout: 300
+    ConditionEntity: sun.sun
+    ConditionEntityState: below_horizon
 
   - Name: Garden
     PresenceEntities:
@@ -117,6 +118,8 @@ LightManagerV2.ManagerConfig:
       - light.dining
       - light.dining_wall
     Timeout: 300
+    ConditionEntity: sun.sun
+    ConditionEntityState: below_horizon
 
   - Name: Garage
     PresenceEntities:
@@ -126,6 +129,8 @@ LightManagerV2.ManagerConfig:
       - light.utility
       - light.kitchen
     Timeout: 300
+    ConditionEntity: sun.sun
+    ConditionEntityState: below_horizon
 
   - Name: Aaron
     Timeout: 300

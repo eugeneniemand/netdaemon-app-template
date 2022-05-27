@@ -25,6 +25,7 @@
 	<ItemGroup>
 		<PackageReference Include="JoySoftware.NetDaemon.AppModel" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Logging" Version="22.7.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Mqtt" Version="22.14.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.7.0" />
@@ -33,10 +34,8 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.2.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+		<PackageReference Include="stateless" Version="5.11.0" />
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\netdaemon\src\Extensions\NetDaemon.Extensions.MqttEntityManager\NetDaemon.Extensions.MqttEntityManager.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="appsettings.json">
@@ -46,9 +45,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="apps\HouseModeApp\HouseMode.yaml">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="apps\LightsManager\LightsManager - Copy.bak">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="apps\LightsManager\LightsManager.yaml">
