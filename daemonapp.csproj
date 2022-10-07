@@ -23,28 +23,22 @@
 		<None Remove="apps\Common\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="JoySoftware.NetDaemon.AppModel" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Logging" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Mqtt" Version="22.14.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.HassModel.Integration" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Runtime" Version="22.7.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.AppModel" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Logging" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Mqtt" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.HassModel.Integration" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.Runtime" Version="22.40.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.2.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
 		<PackageReference Include="stateless" Version="5.11.0" />
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="appsettings.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="apps\AutomationsApp\Automations.yaml">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="apps\HouseModeApp\HouseMode.yaml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="apps\LightsManager\LightsManager.yaml">

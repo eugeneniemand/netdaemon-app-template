@@ -1,6 +1,5 @@
 ﻿using System.Reactive.Subjects;
-using System.Timers;
-using Microsoft.Extensions.Logging;
+using Timer = System.Timers.Timer;
 
 namespace NotificationEngine.Daemons;
 

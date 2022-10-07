@@ -1179,9 +1179,9 @@ namespace HomeAssistantGenerated
 		///<summary>Bedroom Apple TV</summary>
 		public MediaPlayerEntity BedroomAppleTv2 => new(_haContext, "media_player.bedroom_apple_tv_2");
 		///<summary>Dining</summary>
-		public MediaPlayerEntity Dining => new(_haContext, "media_player.dining");
+		public MediaPlayerEntity? Dining => new(_haContext, "media_player.dining");
 		///<summary>Downstairs</summary>
-		public MediaPlayerEntity Downstairs => new(_haContext, "media_player.downstairs");
+		public MediaPlayerEntity? Downstairs => new(_haContext, "media_player.downstairs");
 		///<summary>Garden</summary>
 		public MediaPlayerEntity EugeneS2ndEchoDot => new(_haContext, "media_player.eugene_s_2nd_echo_dot");
 		///<summary>Garage</summary>
@@ -1193,11 +1193,11 @@ namespace HomeAssistantGenerated
 		///<summary>Lounge</summary>
 		public MediaPlayerEntity EugeneSSonosArc => new(_haContext, "media_player.eugene_s_sonos_arc");
 		///<summary>Everywhere</summary>
-		public MediaPlayerEntity Everywhere2 => new(_haContext, "media_player.everywhere_2");
+		public MediaPlayerEntity? Everywhere2 => new(_haContext, "media_player.everywhere_2");
 		///<summary>Jayden</summary>
 		public MediaPlayerEntity Jayden => new(_haContext, "media_player.jayden");
 		///<summary>Kitchen</summary>
-		public MediaPlayerEntity Kitchen => new(_haContext, "media_player.kitchen");
+		public MediaPlayerEntity? Kitchen => new(_haContext, "media_player.kitchen");
 		///<summary>Living Room</summary>
 		public MediaPlayerEntity LivingRoom => new(_haContext, "media_player.living_room");
 		///<summary>Living Room</summary>
@@ -1209,15 +1209,15 @@ namespace HomeAssistantGenerated
 		///<summary>Lounge TV</summary>
 		public MediaPlayerEntity LoungeTv => new(_haContext, "media_player.lounge_tv");
 		///<summary>Master</summary>
-		public MediaPlayerEntity Master => new(_haContext, "media_player.master");
+		public MediaPlayerEntity? Master => new(_haContext, "media_player.master");
 		///<summary>Master TV</summary>
 		public MediaPlayerEntity MasterTv2 => new(_haContext, "media_player.master_tv_2");
 		///<summary>Master TV Alexa</summary>
 		public MediaPlayerEntity MasterTvAlexa => new(_haContext, "media_player.master_tv_alexa");
 		///<summary>Office</summary>
-		public MediaPlayerEntity Office => new(_haContext, "media_player.office");
+		public MediaPlayerEntity? Office => new(_haContext, "media_player.office");
 		///<summary>Playroom</summary>
-		public MediaPlayerEntity Playroom => new(_haContext, "media_player.playroom");
+		public MediaPlayerEntity? Playroom => new(_haContext, "media_player.playroom");
 		///<summary>Spare echo</summary>
 		public MediaPlayerEntity SpareEcho => new(_haContext, "media_player.spare_echo");
 		///<summary>This Device</summary>
@@ -1225,7 +1225,7 @@ namespace HomeAssistantGenerated
 		///<summary>This Device</summary>
 		public MediaPlayerEntity ThisDevice2 => new(_haContext, "media_player.this_device_2");
 		///<summary>Upstairs</summary>
-		public MediaPlayerEntity Upstairs => new(_haContext, "media_player.upstairs");
+		public MediaPlayerEntity? Upstairs => new(_haContext, "media_player.upstairs");
 	}
 
 	public class NumberEntities
@@ -14867,7 +14867,7 @@ namespace HomeAssistantGenerated
 		///<summary>Set a media player's volume level.</summary>
 		///<param name="target">The MediaPlayerEntity to call this service for</param>
 		///<param name="volumeLevel">Volume level to set as float.</param>
-		public static void VolumeSet(this MediaPlayerEntity target, double @volumeLevel)
+		public static void VolumeSet(this MediaPlayerEntity? target, double @volumeLevel)
 		{
 			target.CallService("volume_set", new MediaPlayerVolumeSetParameters{VolumeLevel = @volumeLevel});
 		}
