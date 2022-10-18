@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using HomeAssistantGenerated;
 using Moq;
 using NetDaemon.HassModel.Entities;
@@ -24,6 +26,7 @@ public class DishwasherTests
 
         _ctx.InitDishwasher(config);
         // Act
+        _ctx.TriggerStateChange(config.DishwasherPower, "70");
         _ctx.TriggerStateChange(config.DishwasherPower, "2000");
         _ctx.TriggerStateChange(config.DishwasherPower, "70");
         _ctx.TriggerStateChange(config.DishwasherPower, "2000");
@@ -36,6 +39,43 @@ public class DishwasherTests
         // Assert
         VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Clean.ToString(), Times.Once());
     }
+
+    [Test]
+    public void DishwasherStateScenario()
+    {
+        var states = new List<EntityState>();
+        var dataLines = System.IO.File.ReadAllLines("test-data.json");
+        foreach( var line in dataLines)
+        {
+            var state = JsonSerializer.Deserialize<EntityState>(line);
+            states.Add(state);
+        }
+
+        var _ctx = new HaContextMock();
+
+
+        // Arrange
+        var config = new DishwasherConfiguration
+        {
+            DishwasherPower = _ctx.GetEntity<NumericSensorEntity>("sensor.dishwasher_power"),
+            DishwasherCycleSelect = _ctx.GetEntity<InputSelectEntity>("sensor.dishwasher_state", "Clean")
+        };
+
+        _ctx.InitDishwasher(config);
+        // Act
+        
+        foreach (var state in states)
+        {
+            var time = state.LastChanged;
+            _ctx.TriggerStateChange("sensor.dishwasher_power", state);
+        }
+
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Dirty.ToString(), Times.AtLeastOnce());
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Wash.ToString(), Times.Once());
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Rinse.ToString(), Times.Once());
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Clean.ToString(), Times.Once());
+    }
+
 
     [Test]
     public void DishwasherStateShouldBeDirtyAfterPowerDecreasesBelowOneWatt()
@@ -127,6 +167,7 @@ public class DishwasherTests
 
         _ctx.InitDishwasher(config);
         // Act
+        _ctx.TriggerStateChange(config.DishwasherPower, "70");
         _ctx.TriggerStateChange(config.DishwasherPower, "2000");
         // Assert
         VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Wash.ToString(), Times.Once());
