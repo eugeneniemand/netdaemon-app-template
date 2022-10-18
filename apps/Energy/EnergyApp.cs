@@ -1,38 +1,47 @@
 ﻿namespace Niemand.Energy;
 
 [NetDaemonApp]
+[Focus]
 public class App
 {
-    private readonly Alexa      _alexa;
+    //private readonly Alexa      _alexa;
     private readonly IEntities  _entities;
     private readonly IHaContext _haContext;
     private readonly IServices  _services;
 
-    public App(IHaContext haContext, IScheduler scheduler, ILogger<App> logger, IEntities entities, IServices services, Alexa alexa)
+    public App(IHaContext haContext, IScheduler scheduler, ILogger<App> logger, IEntities entities, IServices services) //, Alexa alexa)
     {
         _haContext = haContext;
-        _alexa     = alexa;
-        _entities  = entities;
-        _services  = services;
+        //_alexa     = alexa;
+        _entities = entities;
+        _services = services;
 
         _haContext.Entity("input_button.get_energy_rates")
                   .StateChanges()
-                  .Subscribe(_ => Debug());
+                  .Subscribe(_ => NotifyRates(Rates.CheapestWindows()));
 
-        scheduler.ScheduleCron("0 6 * * *", () =>
+        scheduler.ScheduleCron("0 6 * * *", () => NotifyRates(GetCheapestWindows(Rates)));
+        scheduler.ScheduleCron("0 18 * * *", () => NotifyRates(GetCheapestWindows(Rates)));
+    }
+
+    private SortedDictionary<DateTime, double> Rates
+    {
+        get
         {
-            var rates           = GetRates();
-            var cheapestWindows = GetCheapestWindows(rates);
-            _services.TelegramBot.SendMessage(GetRatesMessageFull(cheapestWindows), parseMode: "MarkdownV2");
-        });
+            var rates = ( (Dictionary<string, object>)_haContext.Entity("octopusagile.all_rates").Attributes )
+                        .Where(kvp => DateTime.Parse(kvp.Key) > DateTime.Now)
+                        .ToDictionary(kvp => DateTime.Parse(kvp.Key), kvp => ( (JsonElement)kvp.Value ).GetDouble())
+                        .ToSortedDictionary();
+            return rates;
+        }
     }
 
     private void Debug()
     {
-        var rates           = GetRates();
-        var cheapestWindows = GetCheapestWindows(rates);
-        _services.TelegramBot.SendMessage(GetRatesMessageFull(cheapestWindows), parseMode: "MarkdownV2");
-        _alexa.SendNotification(new TextToSpeech(GetRatesMessageVoice(cheapestWindows), TimeSpan.Zero));
+        var rates           = Rates;
+        var cheapestWindows = Rates.CheapestWindows();
+        _services.TelegramBot.SendMessage(GetRatesMessageText(cheapestWindows), parseMode: "MarkdownV2");
+        //_alexa.SendNotification(new TextToSpeech(GetRatesMessageVoice(cheapestWindows), TimeSpan.Zero));
     }
 
     private static List<(DateTime, double, int)> GetCheapestWindows(SortedDictionary<DateTime, double> rates)
@@ -47,23 +56,14 @@ public class App
             ( cheapestTwoHours.Key, cheapestTwoHours.Value, 2 ),
             ( cheapestThreeHours.Key, cheapestThreeHours.Value, 3 )
         };
-        return list.OrderBy(kvp =>
+        return list.OrderBy(tuple =>
         {
-            var (date, _, _) = kvp;
+            var (date, _, _) = tuple;
             return date;
         }).ToList();
     }
 
-    private SortedDictionary<DateTime, double> GetRates()
-    {
-        var rates = ( (Dictionary<string, object>)_haContext.Entity("octopusagile.all_rates").Attributes )
-                    .Where(kvp => DateTime.Parse(kvp.Key) > DateTime.Now)
-                    .ToDictionary(kvp => DateTime.Parse(kvp.Key), kvp => ( (JsonElement)kvp.Value ).GetDouble())
-                    .ToSortedDictionary();
-        return rates;
-    }
-
-    private static string GetRatesMessageFull(IEnumerable<(DateTime, double, int)> windows)
+    private static string GetRatesMessageText(IEnumerable<(DateTime, double, int)> windows)
     {
         var enumerable = windows.Select(tuple =>
         {
@@ -88,5 +88,10 @@ public class App
         });
 
         return "Cheapest energy rates are." + string.Join("\n", enumerable);
+    }
+
+    private void NotifyRates(List<(DateTime, double, int)> cheapestWindows)
+    {
+        _services.TelegramBot.SendMessage(GetRatesMessageText(cheapestWindows), parseMode: "MarkdownV2");
     }
 }

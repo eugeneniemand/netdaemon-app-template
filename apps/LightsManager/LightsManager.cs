@@ -1,19 +1,12 @@
 ﻿#region
 
-using System.Linq;
-using System.Reactive.Concurrency;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using NetDaemon.AppModel;
 using NetDaemon.Extensions.MqttEntityManager;
-using NetDaemon.HassModel;
 
 #endregion
 
 namespace LightManagerV2;
 
-//[Focus]
+[Focus]
 [NetDaemonApp]
 public class LightsManager : IAsyncInitializable
 {

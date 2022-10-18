@@ -17,10 +17,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Remove="apps\AutomationsApp\**" />
 		<Compile Remove="apps\Common\**" />
+		<Compile Remove="apps\NotificationManager\**" />
+		<Compile Remove="NetDaemonApps.Tests\**" />
 		<Compile Remove="tests\**" />
+		<EmbeddedResource Remove="apps\AutomationsApp\**" />
 		<EmbeddedResource Remove="apps\Common\**" />
+		<EmbeddedResource Remove="apps\NotificationManager\**" />
+		<EmbeddedResource Remove="NetDaemonApps.Tests\**" />
+		<EmbeddedResource Remove="tests\**" />
+		<None Remove="apps\AutomationsApp\**" />
 		<None Remove="apps\Common\**" />
+		<None Remove="apps\NotificationManager\**" />
+		<None Remove="NetDaemonApps.Tests\**" />
+		<None Remove="tests\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="JoySoftware.NetDaemon.AppModel" Version="22.40.0" />
@@ -32,6 +43,7 @@
 		<PackageReference Include="JoySoftware.NetDaemon.HassModel.Integration" Version="22.40.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Runtime" Version="22.40.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Reactive.Testing" Version="5.0.0" />
 		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.2.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
 		<PackageReference Include="stateless" Version="5.11.0" />

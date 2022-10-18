@@ -10,8 +10,15 @@ public static class Extentions
     public static IServiceCollection AddGeneratedCode(this IServiceCollection serviceCollection)
         => serviceCollection
            .AddTransient<IEntities, Entities>()
-           .AddTransient<IServices, Services>()
-           .AddTransient<Alexa>();
+           .AddTransient<IServices, Services>();
+    //.AddTransient<Alexa>();
+
+    public static bool Equals(this string enumString, Dishwasher.DishwasherCycle value)
+    {
+        if (Enum.TryParse<Dishwasher.DishwasherCycle>(enumString, out var v)) return value == v;
+
+        return false;
+    }
 
     public static string GetFixedHash(this string s)
     {
@@ -45,16 +52,6 @@ public static class Extentions
 
     public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey, TValue>(this Dictionary<TKey, TValue> existing) where TKey : notnull => new(existing);
 
-    /// <summary>
-    ///     Convert N3 to int 0.3 or W10 to in 1.0
-    /// </summary>
-    /// <param name="volume"></param>
-    /// <returns></returns>
-    public static double ToVolumeLevel(this Volume volume)
-    {
-        var intVol = int.Parse(Enum.GetName(volume)![1..]);
-        return intVol / 10d;
-    }
 
     public static SortedDictionary<DateTime, double> WindowLeft(this SortedDictionary<DateTime, double> existing, int size)
     {
@@ -65,4 +62,16 @@ public static class Extentions
 
         return dict;
     }
+
+
+    ///// <summary>
+    /////     Convert N3 to int 0.3 or W10 to in 1.0
+    ///// </summary>
+    ///// <param name="volume"></param>
+    ///// <returns></returns>
+    //public static double ToVolumeLevel(this Volume volume)
+    //{
+    //    var intVol = int.Parse(Enum.GetName(volume)![1..]);
+    //    return intVol / 10d;
+    //}
 }

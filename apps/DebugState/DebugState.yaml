@@ -1,0 +1,4 @@
+﻿DebugStateConfiguration:
+  DebugStateEnabled: true
+  DebugStateEntities: 
+    - sensor.dishwasher_power

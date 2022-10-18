@@ -3,7 +3,6 @@
 namespace Niemand.AutomationsApp;
 
 [NetDaemonApp]
-[Focus]
 public class Automations
 {
     private readonly IEntities _entities;
@@ -18,6 +17,7 @@ public class Automations
 
     private void Dishwasher(IHaContext haContext, IEntities entities)
     {
+        var dishwasherPower = (SensorEntity)haContext.Entity("sensor.dishwasher_power");
     }
 
     private void KidsOutOfBed(IHaContext haContext, IEntities entities)
