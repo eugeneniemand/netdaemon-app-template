@@ -6,7 +6,7 @@ public class DebugStateConfiguration
     public List<Entity>? DebugStateEntities { get; set; }
 }
 
-[Focus]
+//[Focus]
 [NetDaemonApp]
 public class DebugState
 {

@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-
-public class DishwasherConfiguration
+﻿public class DishwasherConfiguration
 {
     public InputSelectEntity? DishwasherCycleSelect { get; set; }
     public NumericSensorEntity? DishwasherPower { get; set; }
 }
 
-[Focus]
+//[Focus]
 [NetDaemonApp]
 public class Dishwasher
 {
@@ -18,14 +16,15 @@ public class Dishwasher
         Dirty
     }
 
+    private readonly DishwasherConfiguration _config;
+
     private int _powerDecreaseCount;
 
     private int _powerIncreaseCount;
-    DishwasherConfiguration _config;
 
     public Dishwasher(IHaContext ha, IAppConfig<DishwasherConfiguration> configuration)
     {
-        _config = configuration.Value;
+        _config             = configuration.Value;
         _powerDecreaseCount = 0;
         _powerIncreaseCount = 0;
         _config.DishwasherCycleSelect!.SelectOption(DishwasherCycle.Dirty.ToString());
@@ -33,10 +32,7 @@ public class Dishwasher
         _config.DishwasherPower!.StateChanges().Subscribe(e =>
         {
             var time = e.New.LastChanged;
-            if (_config.DishwasherCycleSelect.State is null || _config.DishwasherCycleSelect.State == DishwasherCycle.Clean.ToString() && e.New?.State == 0)
-            {                
-                SetDishwasherCycle(DishwasherCycle.Dirty);
-            }
+            if (_config.DishwasherCycleSelect.State is null || _config.DishwasherCycleSelect.State == DishwasherCycle.Clean.ToString() && e.New?.State == 0) SetDishwasherCycle(DishwasherCycle.Dirty);
 
             if (e.Old?.State < 100 && e.New?.State > 1500)
                 _powerIncreaseCount++;
@@ -61,6 +57,6 @@ public class Dishwasher
     {
         _config.DishwasherCycleSelect!.SelectOption(cycle.ToString());
         _powerDecreaseCount = 0;
-        _powerIncreaseCount = 0;        
+        _powerIncreaseCount = 0;
     }
 }

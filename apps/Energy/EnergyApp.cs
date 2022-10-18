@@ -1,7 +1,7 @@
 ﻿namespace Niemand.Energy;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class App
 {
     //private readonly Alexa      _alexa;
@@ -20,8 +20,8 @@ public class App
                   .StateChanges()
                   .Subscribe(_ => NotifyRates(Rates.CheapestWindows()));
 
-        scheduler.ScheduleCron("0 6 * * *", () => NotifyRates(GetCheapestWindows(Rates)));
-        scheduler.ScheduleCron("0 18 * * *", () => NotifyRates(GetCheapestWindows(Rates)));
+        scheduler.ScheduleCron("0 6 * * *", () => NotifyRates(Rates.CheapestWindows()));
+        scheduler.ScheduleCron("0 18 * * *", () => NotifyRates(Rates.CheapestWindows()));
     }
 
     private SortedDictionary<DateTime, double> Rates
@@ -42,25 +42,6 @@ public class App
         var cheapestWindows = Rates.CheapestWindows();
         _services.TelegramBot.SendMessage(GetRatesMessageText(cheapestWindows), parseMode: "MarkdownV2");
         //_alexa.SendNotification(new TextToSpeech(GetRatesMessageVoice(cheapestWindows), TimeSpan.Zero));
-    }
-
-    private static List<(DateTime, double, int)> GetCheapestWindows(SortedDictionary<DateTime, double> rates)
-    {
-        var cheapestHour       = rates.WindowLeft(2).MinWithKey();
-        var cheapestTwoHours   = rates.WindowLeft(4).MinWithKey();
-        var cheapestThreeHours = rates.WindowLeft(6).MinWithKey();
-
-        var list = new List<(DateTime, double, int)>
-        {
-            ( cheapestHour.Key, cheapestHour.Value, 1 ),
-            ( cheapestTwoHours.Key, cheapestTwoHours.Value, 2 ),
-            ( cheapestThreeHours.Key, cheapestThreeHours.Value, 3 )
-        };
-        return list.OrderBy(tuple =>
-        {
-            var (date, _, _) = tuple;
-            return date;
-        }).ToList();
     }
 
     private static string GetRatesMessageText(IEnumerable<(DateTime, double, int)> windows)
