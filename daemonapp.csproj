@@ -39,7 +39,7 @@
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Mqtt" Version="22.40.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="22.7.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.7.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.40.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.HassModel.Integration" Version="22.7.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Runtime" Version="22.7.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
