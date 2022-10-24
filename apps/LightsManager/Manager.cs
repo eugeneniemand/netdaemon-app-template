@@ -100,7 +100,7 @@ public class Manager
         _logger.LogDebug("{room} Setup Enabled Switch", Name);
         if (_haContext.Entity(_enabledSwitch).State == null || string.Equals(_haContext.Entity(_enabledSwitch).State, "unavailable", StringComparison.InvariantCultureIgnoreCase))
         {
-            _entityManager.CreateAsync(_enabledSwitch, new EntityCreationOptions(Name: $"Light Manager {Name}", DeviceClass: "switch", Persist: true)).GetAwaiter().GetResult();
+            //_entityManager.CreateAsync(_enabledSwitch, new EntityCreationOptions(Name: $"Light Manager {Name}", DeviceClass: "switch", Persist: true)).GetAwaiter().GetResult();
         }
         else
         {
@@ -108,10 +108,14 @@ public class Manager
             ManagerEnabled.TurnOn();
         }
 
-        if (_enabledSwitch != "switch.light_manager_testroom")
-            ( await _entityManager.PrepareCommandSubscriptionAsync(_enabledSwitch) ).Subscribe(async s =>
-                await _entityManager.SetStateAsync(_enabledSwitch, s)
-            );
+        //if (_enabledSwitch != "switch.light_manager_testroom")
+        //    ( await _entityManager.PrepareCommandSubscriptionAsync(_enabledSwitch) ).Subscribe(async s =>
+        //        {
+        //            _logger.LogDebug("{room} Changing Enabled Switch", Name);
+        //            await _entityManager.SetStateAsync(_enabledSwitch, s);
+        //            _logger.LogDebug("{room} Enabled Switch Set to {state}", Name, s);
+        //        }
+        //    );
     }
 
     private void SubscribeHouseModeEvent()
@@ -288,6 +292,7 @@ public class Manager
 
     private async Task UpdateAttributes()
     {
+        _logger.LogDebug("{room} Updating Attributes", Name);
         var attributes = new
         {
             OverrideActive,
@@ -297,8 +302,10 @@ public class Manager
             IsTooBright,
             ConditionEntityStateMet = ConditionEntity?.EntityId == null ? "N/A" : ConditionEntityStateNotMet.ToString(),
             ConditionEntity         = ConditionEntity?.EntityId ?? "N/A",
-            ConditionEntityState    = ConditionEntityState ?? "N/A"
+            ConditionEntityState    = ConditionEntityState ?? "N/A",
+            LastUpdated             = DateTime.Now.ToString("G")
         };
         await _entityManager.SetAttributesAsync(_enabledSwitch, attributes);
+        _logger.LogDebug("{room} Attributes updated to {attr}", Name, attributes);
     }
 }
