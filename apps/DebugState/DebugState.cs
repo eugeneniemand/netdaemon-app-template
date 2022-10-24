@@ -14,7 +14,7 @@ public class DebugState
     {
         if (!configuration.Value.DebugStateEnabled) return;
         foreach (var entity in configuration.Value.DebugStateEntities)
-            ha.Entity(entity.EntityId).StateChanges().Subscribe(s =>
+            ha.Entity(entity.EntityId).StateAllChanges().Subscribe(s =>
             {
                 var json = JsonSerializer.Serialize(s.New);
                 File.AppendAllText($"data_dump_{DateTime.Now:yyyyMMdd}.jsonl", json + '\n');

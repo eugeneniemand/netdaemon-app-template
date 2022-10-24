@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using HomeAssistantGenerated;
-using Microsoft.Extensions.Logging;
-using NetDaemon.Extensions.MqttEntityManager;
-using NetDaemon.HassModel;
-using NetDaemon.HassModel.Entities;
+﻿using NetDaemon.Extensions.MqttEntityManager;
 
 namespace LightManagerV2;
 
@@ -60,13 +51,13 @@ public class Manager
     public string? ConditionEntityState { get; set; }
     public SwitchEntity ManagerEnabled { get; set; }
     public SwitchEntity? CircadianSwitchEntity { get; set; }
-    public TimeSpan DynamicTimeout => TimeSpan.FromSeconds(OverrideActive ? 1800 : TimeoutParsed);
-    private bool ConditionEntityStateMet => ConditionEntity != null && ConditionEntityState != null && ConditionEntity.State != ConditionEntityState;
+    public TimeSpan DynamicTimeout => TimeSpan.FromSeconds(OverrideActive ? 10 : TimeoutParsed);
+    private bool ConditionEntityStateNotMet => ConditionEntity != null && ConditionEntityState != null && ConditionEntity.State != ConditionEntityState;
     private bool OverrideActive { get; set; }
     private int NightTimeoutParsed => NightTimeout == 0 ? 90 : NightTimeout;
     private int TimeoutParsed => IsNightMode ? NightTimeoutParsed : Timeout;
 
-    public void Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager)
+    public async Task Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager)
     {
         _logger        = logger;
         _ndUserId      = ndUserId;
@@ -76,7 +67,7 @@ public class Manager
         _entityManager = entityManager;
         _enabledSwitch = $"switch.light_manager_{Name.ToLower()}";
         _logger.LogInformation("Setup {room}", Name);
-        SetupEnabledSwitch();
+        await SetupEnabledSwitch();
         SubscribePresenceOnEvent();
         SubscribePresenceOffEvent();
         SubscribeOverrideEvent();
@@ -104,13 +95,28 @@ public class Manager
         !IsNdUserOrHa(e) &&
         e.Old.IsOff() && e.New.IsOn();
 
-    private void SetupEnabledSwitch()
+    private async Task SetupEnabledSwitch()
     {
         _logger.LogDebug("{room} Setup Enabled Switch", Name);
-        if (_haContext.Entity(_enabledSwitch).State == null || string.Equals(_haContext.Entity(_enabledSwitch).State, "unavailable", StringComparison.InvariantCultureIgnoreCase)) _entityManager.CreateAsync(_enabledSwitch, new EntityCreationOptions(Name: $"Light Manager {Name}", DeviceClass: "switch", Persist: true)).GetAwaiter().GetResult();
-        _entityManager.PrepareCommandSubscriptionAsync(_enabledSwitch).GetAwaiter().GetResult().Subscribe(s => _entityManager.SetStateAsync(_enabledSwitch, s).GetAwaiter().GetResult());
-        ManagerEnabled = new SwitchEntity(_haContext, _enabledSwitch);
-        ManagerEnabled.TurnOn();
+        if (_haContext.Entity(_enabledSwitch).State == null || string.Equals(_haContext.Entity(_enabledSwitch).State, "unavailable", StringComparison.InvariantCultureIgnoreCase))
+        {
+            _entityManager.CreateAsync(_enabledSwitch, new EntityCreationOptions(Name: $"Light Manager {Name}", DeviceClass: "switch", Persist: true)).GetAwaiter().GetResult();
+        }
+        else
+        {
+            ManagerEnabled = new SwitchEntity(_haContext, _enabledSwitch);
+            ManagerEnabled.TurnOn();
+        }
+
+        if (_enabledSwitch != "switch.light_manager_testroom")
+            ( await _entityManager.PrepareCommandSubscriptionAsync(_enabledSwitch) )
+                //.GetAwaiter()
+                //.GetResult()
+                .Subscribe(async s =>
+                        await _entityManager.SetStateAsync(_enabledSwitch, s)
+                    //.GetAwaiter()
+                    //.GetResult()
+                );
     }
 
     private void SubscribeHouseModeEvent()
@@ -199,7 +205,7 @@ public class Manager
     private void SubscribePresenceOnEvent()
     {
         _logger.LogDebug("{room} Subscribed to Presence On Events", Name);
-        PresenceEntities!.StateChanges()
+        PresenceEntities!.StateAllChanges()
                          .Where(e => e.New.IsOn())
                          .Subscribe(e =>
                          {
@@ -244,7 +250,7 @@ public class Manager
             return;
         }
 
-        if (ConditionEntityStateMet)
+        if (ConditionEntityStateNotMet)
         {
             _logger.LogInformation("{room} Condition not met {conditionEntity}!={state}", Name, ConditionEntity, ConditionEntityState);
             return;
@@ -285,7 +291,7 @@ public class Manager
             TimeoutParsed,
             IsOccupied,
             IsTooBright,
-            ConditionEntityStateMet = ConditionEntity?.EntityId == null ? "N/A" : ConditionEntityStateMet.ToString(),
+            ConditionEntityStateMet = ConditionEntity?.EntityId == null ? "N/A" : ConditionEntityStateNotMet.ToString(),
             ConditionEntity         = ConditionEntity?.EntityId ?? "N/A",
             ConditionEntityState    = ConditionEntityState ?? "N/A"
         };

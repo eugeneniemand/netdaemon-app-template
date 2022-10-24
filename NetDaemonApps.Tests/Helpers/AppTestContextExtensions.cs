@@ -1,4 +1,6 @@
-﻿using NetDaemon.HassModel.Entities;
+﻿using System.Linq;
+using Moq;
+using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Mocks.Moq;
 
 namespace NetDaemonApps.Tests.Helpers;
@@ -18,6 +20,15 @@ public static class AppTestContextExtensions
 
     public static T? GetEntity<T>(this HaContextMock ctx, string entityId) where T : Entity => Activator.CreateInstance(typeof(T), ctx.HaContext, entityId) as T;
 
+
+    public static T? GetEntity<T>(this AppTestContext ctx, string entityId, string state) where T : Entity
+
+    {
+        var instance = Activator.CreateInstance(typeof(T), ctx.HaContext, entityId) as T;
+        ctx.HaContextMock.TriggerStateChange(instance, state);
+        return instance;
+    }
+
     public static T? GetEntity<T>(this HaContextMock ctx, string entityId, string state) where T : Entity
 
     {
@@ -26,14 +37,16 @@ public static class AppTestContextExtensions
         return instance;
     }
 
-    //public static void VerifyCallService(this AppTestContext ctx, string serviceCall, int times = 1)
-    //{
-    //    var domain  = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
-    //    var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
+    public static void VerifyCallService(this AppTestContext ctx, string serviceCall, string entityId, Func<Times> times, object? data = null)
+    {
+        var domain  = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
+        var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
 
-    //    ctx.HaContext.Received(times)
-    //       .CallService(domain, service, Arg.Any<ServiceTarget>(), Arg.Any<object?>());
-    //}
+        ctx.HaContextMock.Verify(c => c.CallService(domain, service,
+                It.Is<ServiceTarget>(x => x.EntityIds != null && x.EntityIds.First() == entityId),
+                data), times
+        );
+    }
 
     //public static void VerifyInputSelect_SelectOption(this AppTestContext ctx, string entityId, string option)
     //{

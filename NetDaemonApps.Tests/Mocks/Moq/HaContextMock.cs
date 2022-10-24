@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reactive.Subjects;
 using HomeAssistantGenerated;
 using Moq;
 using NetDaemon.HassModel.Entities;
@@ -9,12 +10,15 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
 {
     public HaContextMock()
     {
-        void Callback(string domain, string service, ServiceTarget target, object data)
+        void Callback(string domain, string service, ServiceTarget target, object? data)
         {
-            TriggerStateChange(target.EntityIds.First(),
-                data is InputSelectSelectOptionParameters selectOption
-                    ? new EntityState { State = selectOption.Option }
-                    : new EntityState { State = data.ToString() });
+            if (data == null)
+                TriggerStateChange(target.EntityIds.First(), new EntityState { State = "" });
+            else
+                TriggerStateChange(target.EntityIds.First(),
+                    data is InputSelectSelectOptionParameters selectOption
+                        ? new EntityState { State = selectOption.Option }
+                        : new EntityState { State = data.ToString() });
         }
 
         Setup(m => m.CallService(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ServiceTarget>(), It.IsAny<object>()))
@@ -24,6 +28,8 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
     }
 
     public IHaContext HaContext { get; }
+
+    public Subject<StateChange> StateChangeSubject { get; } = new();
 
     public void TriggerStateChange(Entity entity, string newStatevalue, object? attributes = null)
     {

@@ -285,6 +285,7 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.utility_motion
     ControlEntities:
       - light.utility
+      - light.utilitycupboard
     LuxEntity: sensor.utility_lux
     LuxLimitEntity: input_number.utility_lux_limit
     CircadianSwitchEntity: switch.adaptive_lighting_utility
@@ -294,6 +295,7 @@ LightManagerV2.ManagerConfig:
       - sleeping
     NightControlEntities:
       - light.utility_1
+      - light.utilitycupboard
     RandomStates:
     - armed_home
     - armed_away

@@ -9,15 +9,7 @@ namespace NetDaemonApps.Tests.Helpers;
 /// </summary>
 public class AppTestContext
 {
-    public GlobalConfig TestConfig { get; } = new()
-    {
-        DayTime           = TimeSpan.Parse("09:00:00"),
-        MorningTime       = TimeSpan.Parse("09:00:00"),
-        NightTimeWeekdays = TimeSpan.Parse("22:40:00"),
-        NightTimeWeekends = TimeSpan.Parse("23:40:00")
-    };
-
-    public HaContextMockNSub HaContextMock { get; } = new();
+    public HaContextMock HaContextMock { get; } = new();
     public IHaContext HaContext => HaContextMock.HaContext;
     public TestScheduler Scheduler { get; } = new();
 
