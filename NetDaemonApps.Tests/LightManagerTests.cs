@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using HomeAssistantGenerated;
 using LightManagerV2;
@@ -142,22 +140,6 @@ public class LightManagerTests
 
         // Assert
         _ctx.VerifyCallService("light.turn_on", config.Light1().EntityId, Times.Once, new LightTurnOnParameters());
-    }
-
-    [Test]
-    public void TestData()
-    {
-        var states    = new List<EntityState>();
-        var dataLines = File.ReadAllLines("test-data-lights.json");
-        foreach (var line in dataLines)
-        {
-            var state = JsonSerializer.Deserialize<EntityState>(line);
-            states.Add(state);
-        }
-
-        var _ctx = new AppTestContext();
-        //_ctx.InitLightsManager(config);
-        foreach (var state in states) _ctx.HaContextMock.TriggerStateChange(state.EntityId, state);
     }
 
 
