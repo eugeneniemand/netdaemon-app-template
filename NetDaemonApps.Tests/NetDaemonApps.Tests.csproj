@@ -28,6 +28,9 @@
 	  <ProjectReference Include="..\daemonapp.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="agile_rates.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="test-data.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

@@ -41,6 +41,12 @@ public static class Extentions
         return ( (int)( hash % MustBeLessThan ) ).ToString();
     }
 
+    
+    /// <summary>
+    /// Returns the key and value of the item in the collection with the minimum value
+    /// </summary>
+    /// <param name="existing"></param>
+    /// <returns></returns>
     public static KeyValuePair<DateTime, double> MinWithKey(this SortedDictionary<DateTime, double> existing)
     {
         var dates = existing.Keys.ToList();
@@ -53,12 +59,18 @@ public static class Extentions
     public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey, TValue>(this Dictionary<TKey, TValue> existing) where TKey : notnull => new(existing);
 
 
-    public static SortedDictionary<DateTime, double> WindowLeft(this SortedDictionary<DateTime, double> existing, int size)
+    /// <summary>
+    /// Calculates a sliding the average from the left of collection over the window of items specified by size
+    /// </summary>
+    /// <param name="existing"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    public static SortedDictionary<DateTime, double> WindowedAverageLeft(this SortedDictionary<DateTime, double> existing, int size)
     {
         var dict   = new SortedDictionary<DateTime, double>();
         var keys   = existing.Keys.ToList();
         var values = existing.Values.ToList();
-        for (var i = 0; i < existing.Count - size - 1; i++) dict.Add(keys[i], values.Skip(i).Take(size).Average());
+        for (var i = 0; i < existing.Count - size+1; i++) dict.Add(keys[i], values.Skip(i).Take(size).Average());
 
         return dict;
     }

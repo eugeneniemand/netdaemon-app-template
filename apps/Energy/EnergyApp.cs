@@ -2,18 +2,18 @@
 
 [NetDaemonApp]
 //[Focus]
-public class App
+public class EnergyApp
 {
     //private readonly Alexa      _alexa;
-    private readonly IEntities  _entities;
+    
     private readonly IHaContext _haContext;
     private readonly IServices  _services;
 
-    public App(IHaContext haContext, IScheduler scheduler, ILogger<App> logger, IEntities entities, IServices services) //, Alexa alexa)
+    public EnergyApp(IHaContext haContext, IScheduler scheduler, ILogger<EnergyApp> logger, IServices services) //, Alexa alexa)
     {
         _haContext = haContext;
         //_alexa     = alexa;
-        _entities = entities;
+        
         _services = services;
 
         _haContext.Entity("input_button.get_energy_rates")

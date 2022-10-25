@@ -4,9 +4,9 @@ public static class ExtMethods
 {
     public static List<(DateTime, double, int)> CheapestWindows(this SortedDictionary<DateTime, double> rates)
     {
-        var cheapestHour       = rates.WindowLeft(2).MinWithKey();
-        var cheapestTwoHours   = rates.WindowLeft(4).MinWithKey();
-        var cheapestThreeHours = rates.WindowLeft(6).MinWithKey();
+        var cheapestHour       = rates.WindowedAverageLeft(2).MinWithKey();
+        var cheapestTwoHours   = rates.WindowedAverageLeft(4).MinWithKey();
+        var cheapestThreeHours = rates.WindowedAverageLeft(6).MinWithKey();
 
         var list = new List<(DateTime, double, int)>
         {
