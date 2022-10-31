@@ -47,4 +47,9 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
             It.Is<ServiceTarget?>(s => s!.EntityIds!.SingleOrDefault() == entity.EntityId),
             null));
     }
+
+    public void TriggerStateChange(string entityId, EntityState oldState, EntityState newState)
+    {
+        Object.TriggerStateChange(entityId, oldState, newState);
+    }
 }

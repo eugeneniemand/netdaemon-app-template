@@ -6,7 +6,9 @@ using LightManagerV2;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NetDaemon.Extensions.MqttEntityManager;
+using NetDaemon.HassModel;
 using NetDaemon.HassModel.Entities;
+using NetDaemon.HassModel.Mocks;
 using NetDaemon.HassModel.Mocks.Moq;
 using NetDaemonApps.Tests.Helpers;
 
@@ -15,131 +17,500 @@ namespace NetDaemonApps.Tests;
 public class LightManagerTests
 {
     [Test]
-    public void LightDontTurnOnIfOffAndConditionEntityStateIsNotMet()
+    public void CircadianSwitchTurnsOnWhenLightTurnsOn()
     {
-        var _ctx = new AppTestContext();
+        var ctx = new AppTestContext();
 
         // Arrange
-        var config = ManagerConfig(_ctx);
-        config.Room1().ConditionEntity      = _ctx.GetEntity<SensorEntity>("sensor.condition_entity");
-        config.Room1().ConditionEntityState = "under";
-        _ctx.InitLightsManager(config);
+        var config = ManagerConfig(ctx);
+        config.Room().CircadianSwitchEntity = ctx.GetEntity<SwitchEntity>("switch.circadian");
+        ctx.InitLightsManager(config);
 
         // Act
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "on");
+        ctx.TriggerStateChange(config.Pir1(), "on");
 
         // Assert
-        _ctx.VerifyCallService("light.turn_on", config.Light1().EntityId, Times.Never, new LightTurnOnParameters());
+        ctx.VerifyCallService("switch.turn_on", config.Room().CircadianSwitchEntity.EntityId, Times.Once);
+    }
+
+    [Test]
+    public void HouseModeSetToDayTurnsOffAllNonControlEntitiesAndTurnsOnAnyControlEntitiesThatAreOff()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.NightLight(), "on");
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Room().NightTimeEntity, "day");
+
+        // Assert
+        ctx.VerifyLightTurnOff(config.NightLight(), Times.Once);
+        ctx.VerifyLightTurnOff(config.NightLight(2), Times.Never);
+        ctx.VerifyLightTurnOn(config.Light(), Times.Once);
+        ctx.VerifyLightTurnOn(config.Light(2), Times.Once);
+    }
+
+    [Test]
+    public void HouseModeSetToNightTurnsOffAllNonNightControlEntitiesAndTurnsOnAnyNightControlEntitiesThatAreOff()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Light(), "on");
+        ctx.TriggerStateChange(config.NightLight(), "on");
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Room().NightTimeEntity, "night");
+
+        // Assert
+        ctx.VerifyLightTurnOff(config.Light(), Times.Once);
+        ctx.VerifyLightTurnOff(config.NightLight(), Times.Never);
+        ctx.VerifyLightTurnOn(config.NightLight(), Times.Never);
+        ctx.VerifyLightTurnOn(config.NightLight(2), Times.Once);
+    }
+
+    [Test]
+    public void LightBrightnessChangedManuallyTurnsOffCircadianSwitch()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        config.Room().CircadianSwitchEntity = ctx.GetEntity<SwitchEntity>("switch.circadian");
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Pir1(), "on");
+
+
+        var oldState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            }
+        }.WithAttributes(new LightTurnOnParameters
+        {
+            Brightness = config.Room().Timeout
+        });
+
+        var newState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            }
+        }.WithAttributes(new LightTurnOnParameters
+        {
+            Brightness = 100
+        });
+
+        ctx.TriggerStateChange(config.Light().EntityId, oldState, newState);
+
+        // Assert
+        ctx.VerifyCallService("switch.turn_off", config.Room().CircadianSwitchEntity.EntityId, Times.Once);
+    }
+
+    [Test]
+    public void LightBrightnessChangedManuallyTurnsOffCircadianSwitchIfExists()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Pir1(), "on");
+
+
+        var oldState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            }
+        }.WithAttributes(new LightTurnOnParameters
+        {
+            Brightness = 10
+        });
+
+        var newState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            }
+        }.WithAttributes(new LightTurnOnParameters
+        {
+            Brightness = 100
+        });
+
+        ctx.TriggerStateChange(config.Light().EntityId, oldState, newState);
+
+        // Assert
+        ctx.VerifyCallService("switch.turn_off", It.IsAny<string>(), Times.Never);
+    }
+
+    [Test]
+    public void LightColourChangedManuallyTurnsOffCircadianSwitch()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        config.Room().CircadianSwitchEntity = ctx.GetEntity<SwitchEntity>("switch.circadian");
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Pir1(), "on");
+
+
+        var oldState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            }
+        }.WithAttributes(new LightTurnOnParameters
+        {
+            ColorTemp = 4000L
+        });
+
+        var newState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            }
+        }.WithAttributes(new LightTurnOnParameters
+        {
+            ColorTemp = 1000L
+        });
+
+        ctx.TriggerStateChange(config.Light().EntityId, oldState, newState);
+
+        // Assert
+        ctx.VerifyCallService("switch.turn_off", config.Room().CircadianSwitchEntity.EntityId, Times.Once);
+    }
+
+
+    [Test]
+    public void LightDontTurnOnIfOffAndConditionEntityStateIsNotMet()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        config.Room().ConditionEntity      = ctx.GetEntity<SensorEntity>("sensor.condition_entity");
+        config.Room().ConditionEntityState = "under";
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Pir1(), "on");
+
+        // Assert
+        ctx.VerifyLightTurnOn(config.Light(), Times.Never);
     }
 
     [Test]
     public void LightDontTurnsOffIfOnAndManagerIsDisabled()
     {
-        var _ctx = new AppTestContext();
+        var ctx = new AppTestContext();
 
         // Arrange
-        var config = ManagerConfig(_ctx);
-        _ctx.HaContextMock.TriggerStateChange(config.Light1(), "on");
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "on");
-        _ctx.InitLightsManager(config);
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Light(), "on");
+        ctx.TriggerStateChange(config.Pir1(), "on");
+        ctx.InitLightsManager(config);
 
         // Act
-        _ctx.HaContextMock.TriggerStateChange(config.ManagerEnabled(), "off");
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "off");
-        _ctx.AdvanceTimeBy(TimeSpan.FromSeconds(10).Ticks);
+        ctx.TriggerStateChange(config.ManagerEnabled(), "off");
+        ctx.TriggerStateChange(config.Pir1(), "off");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().Timeout).Ticks);
 
         // Assert
-        _ctx.VerifyCallService("light.turn_off", config.Light1().EntityId, Times.Never, new LightTurnOffParameters());
+        ctx.VerifyLightTurnOff(config.Light(), Times.Never);
     }
 
     [Test]
     public void LightDontTurnsOffIfOnAndRoomIsOccupied()
     {
-        var _ctx = new AppTestContext();
+        var ctx = new AppTestContext();
 
         // Arrange
-        var config = ManagerConfig(_ctx);
-        _ctx.HaContextMock.TriggerStateChange(config.Light1(), "on");
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "on");
-        _ctx.HaContextMock.TriggerStateChange(config.KeepAlive1(), "on");
-        _ctx.InitLightsManager(config);
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Light(), "on");
+        ctx.TriggerStateChange(config.Pir1(), "on");
+        ctx.TriggerStateChange(config.KeepAlive1(), "on");
+        ctx.InitLightsManager(config);
 
         // Act
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "off");
-        _ctx.AdvanceTimeBy(TimeSpan.FromSeconds(10).Ticks);
+        ctx.TriggerStateChange(config.Pir1(), "off");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().Timeout).Ticks);
 
         // Assert
-        _ctx.VerifyCallService("light.turn_off", config.Light1().EntityId, Times.Never, new LightTurnOffParameters());
+        ctx.VerifyLightTurnOff(config.Light(), Times.Never);
     }
 
     [Test]
     public void LightDontTurnsOnIfOffAndManagerIsDisabled()
     {
-        var _ctx = new AppTestContext();
+        var ctx = new AppTestContext();
 
         // Arrange
-        var config = ManagerConfig(_ctx);
-        _ctx.InitLightsManager(config);
+        var config = ManagerConfig(ctx);
+        ctx.InitLightsManager(config);
 
         // Act
-        _ctx.HaContextMock.TriggerStateChange(config.ManagerEnabled(), "off");
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "on");
+        ctx.TriggerStateChange(config.ManagerEnabled(), "off");
+        ctx.TriggerStateChange(config.Pir1(), "on");
 
         // Assert
-        _ctx.VerifyCallService("light.turn_on", config.Light1().EntityId, Times.Never, new LightTurnOnParameters());
+        ctx.VerifyLightTurnOn(config.Light(), Times.Never);
     }
 
     [Test]
     public void LightDontTurnsOnIfOffAndToBright()
     {
-        var _ctx = new AppTestContext();
+        var ctx = new AppTestContext();
 
         // Arrange
-        var config = ManagerConfig(_ctx);
-        config.Room1().LuxEntity      = _ctx.GetEntity<NumericSensorEntity>("sensor.lux_value", "100");
-        config.Room1().LuxLimitEntity = _ctx.GetEntity<NumericSensorEntity>("sensor.lux_Limit", "10");
-        _ctx.InitLightsManager(config);
+        var config = ManagerConfig(ctx);
+        config.Room().LuxEntity      = ctx.GetEntity<NumericSensorEntity>("sensor.lux_value", "100");
+        config.Room().LuxLimitEntity = ctx.GetEntity<NumericSensorEntity>("sensor.lux_Limit", "10");
+        ctx.InitLightsManager(config);
 
         // Act
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "on");
+        ctx.TriggerStateChange(config.Pir1(), "on");
 
         // Assert
-        _ctx.VerifyCallService("light.turn_on", config.Light1().EntityId, Times.Never, new LightTurnOnParameters());
+        ctx.VerifyLightTurnOn(config.Light(), Times.Never);
+    }
+
+    [Test]
+    public void LightTurnedOffManuallyCancelsOverrideTimeoutOnlyIfAllControlEntitiesAreOff()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Light(2), "on");
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on"
+        });
+
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "off"
+        });
+        ctx.TriggerStateChange(config.Light(2), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "off"
+        });
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().OverrideTimeout).Ticks);
+
+        // Assert
+        ctx.VerifyLightTurnOff(config.Light(2), Times.Never);
+    }
+
+
+    [Test]
+    public void LightTurnedOffManuallyDoesNotCancelsOverrideTimeoutIfSomeControlEntitiesAreOn()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Light(2), "on");
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on"
+        });
+
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "off"
+        });
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().OverrideTimeout).Ticks);
+
+        // Assert
+        ctx.VerifyLightTurnOff(config.Light(2), Times.Once);
+    }
+
+    [Test]
+    public void LightTurnedOnManuallyActivatesOverrideTimeout()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on"
+        });
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().OverrideTimeout).Ticks);
+
+        // Assert
+        ctx.VerifyLightTurnOff(config.Light(), Times.Once);
     }
 
 
     [Test]
     public void LightTurnsOffWhenPresenceIsOffAfterTimeout()
     {
-        var _ctx = new AppTestContext();
+        var ctx = new AppTestContext();
 
         // Arrange
-        var config = ManagerConfig(_ctx);
-        _ctx.HaContextMock.TriggerStateChange(config.Light1(), "on");
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "on");
-        _ctx.InitLightsManager(config);
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Light(), "on");
+        ctx.TriggerStateChange(config.Pir1(), "on");
+        ctx.InitLightsManager(config);
 
         // Act
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "off");
-        _ctx.AdvanceTimeBy(TimeSpan.FromSeconds(10).Ticks);
+        ctx.TriggerStateChange(config.Pir1(), "off");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().Timeout).Ticks);
         // Assert
-        _ctx.VerifyCallService("light.turn_off", config.Light1().EntityId, Times.Once, new LightTurnOffParameters());
+        ctx.VerifyLightTurnOff(config.Light(), Times.Once);
     }
 
     [Test]
     public void LightTurnsOnWhenPresenceIsOn()
     {
-        var _ctx = new AppTestContext();
+        var ctx = new AppTestContext();
 
         // Arrange
-        var config = ManagerConfig(_ctx);
-        _ctx.InitLightsManager(config);
+        var config = ManagerConfig(ctx);
+        ctx.InitLightsManager(config);
 
         // Act
-        _ctx.HaContextMock.TriggerStateChange(config.Pir1(), "on");
+        ctx.TriggerStateChange(config.Pir1(), "on");
 
         // Assert
-        _ctx.VerifyCallService("light.turn_on", config.Light1().EntityId, Times.Once, new LightTurnOnParameters());
+        ctx.VerifyLightTurnOn(config.Light(), Times.Once);
+    }
+
+    [Test]
+    public void MotionAfterLastOffEventCancelsOffEventTimer()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Light(), "on");
+        ctx.TriggerStateChange(config.Pir1(), "on");
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Pir1(), "off");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().Timeout - 1).Ticks);
+        ctx.TriggerStateChange(config.Pir1(), "on");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(1).Ticks);
+        // Assert
+        //ctx.VerifyLightTurnOn(config.Light(), Times.Once);
+        ctx.VerifyLightTurnOff(config.Light(), Times.Never);
+    }
+
+
+    [Test]
+    public void NightLightTurnsOnWhenPresenceIsOnAndNightModeIsActive()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.InitLightsManager(config);
+
+        // Act
+        ctx.TriggerStateChange(config.Room().NightTimeEntity, "night");
+        ctx.TriggerStateChange(config.Pir1(), "on");
+
+        // Assert
+        ctx.VerifyLightTurnOn(config.NightLight(), Times.Once);
+    }
+
+    [Test]
+    public void OverriddenLightsObeyOverrideTimeoutRegardlessOfNormalTimeoutAndPresence()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.TriggerStateChange(config.Room().NightTimeEntity, "night");
+
+        ctx.InitLightsManager(config);
+
+
+        // Act
+        ctx.TriggerStateChange(config.Pir1(), "on");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(20).Ticks);
+        ctx.TriggerStateChange(config.Pir1(), "off");
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on"
+        });
+
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().NightTimeout).Ticks);
+
+        // Assert normal timer does nothing
+        ctx.VerifyLightTurnOn(config.NightLight(), Times.Once);
+        ctx.VerifyLightTurnOff(config.NightLight(), Times.Never);
+        ctx.VerifyLightTurnOff(config.Light(), Times.Never);
+
+        // Act
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().OverrideTimeout).Ticks);
+
+        // Assert override timer turns light off
+        ctx.VerifyLightTurnOff(config.Light(), Times.Once);
     }
 
 
@@ -151,31 +522,98 @@ public class LightManagerTests
         );
     }
 
-    private static ManagerConfig ManagerConfig(AppTestContext _ctx)
+    [Test]
+    public void WhenOverrideActiveOtherLightsThatAreOffDontTurnOnForPresence()
     {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.InitLightsManager(config);
+
+
+        // Act
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on"
+        });
+        ctx.TriggerStateChange(config.Pir1(), "on");
+
+        // Assert
+        ctx.VerifyLightTurnOn(config.Light(2), Times.Never);
+    }
+
+    [Test]
+    public void WhenOverrideActivePresenceResetsOverrideTimeout()
+    {
+        var ctx = new AppTestContext();
+
+        // Arrange
+        var config = ManagerConfig(ctx);
+        ctx.InitLightsManager(config);
+
+
+        // Act
+        ctx.TriggerStateChange(config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on"
+        });
+        ctx.TriggerStateChange(config.Pir1(), "off");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(900).Ticks);
+        ctx.TriggerStateChange(config.Pir1(), "on");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(900).Ticks);
+        ctx.VerifyLightTurnOff(config.Light(), Times.Never);
+        ctx.TriggerStateChange(config.Pir1(), "off");
+        ctx.AdvanceTimeBy(TimeSpan.FromSeconds(config.Room().OverrideTimeout).Ticks);
+        // Assert
+        ctx.VerifyLightTurnOff(config.Light(), Times.Once);
+    }
+
+    private static ManagerConfig ManagerConfig(AppTestContext ctx)
+    {
+#pragma warning disable CS8604
+#pragma warning disable CS8601
         var cfg = new ManagerConfig
         {
+            NdUserId           = "ND_USER_ID_1234",
             MinDuration        = "00:05:00",
             MaxDuration        = "00:15:00",
-            RandomSwitchEntity = _ctx.GetEntity<SwitchEntity>("switch.random"),
+            RandomSwitchEntity = ctx.GetEntity<SwitchEntity>("switch.random"),
             Rooms = new List<Manager>
             {
                 new()
                 {
-                    Name              = "TestRoom",
-                    PresenceEntities  = new List<BinarySensorEntity> { _ctx.GetEntity<BinarySensorEntity>("binary_sensor.pir") },
-                    ControlEntities   = new List<LightEntity> { _ctx.GetEntity<LightEntity>("light.bulb_1") },
-                    KeepAliveEntities = new List<BinarySensorEntity> { _ctx.GetEntity<BinarySensorEntity>("binary_sensor.keep_alive") },
-                    Timeout           = 10
+                    Name = "TestRoom",
+
+                    PresenceEntities      = new List<BinarySensorEntity> { ctx.GetEntity<BinarySensorEntity>("binary_sensor.pir") },
+                    ControlEntities       = new List<LightEntity> { ctx.GetEntity<LightEntity>("light.bulb_1"), ctx.GetEntity<LightEntity>("light.bulb_2") },
+                    KeepAliveEntities     = new List<BinarySensorEntity> { ctx.GetEntity<BinarySensorEntity>("binary_sensor.keep_alive") },
+                    NightControlEntities  = new List<LightEntity> { ctx.GetEntity<LightEntity>("light.bulb_3"), ctx.GetEntity<LightEntity>("light.bulb_4") },
+                    NightTimeEntity       = ctx.GetEntity<InputSelectEntity>("input_select.house_mode"),
+                    NightTimeEntityStates = new List<string> { "night" },
+                    Timeout               = 90,
+                    NightTimeout          = 30,
+                    OverrideTimeout       = 1800
                 }
             }
         };
 
-        foreach (var entity in cfg.Rooms.First().PresenceEntities) _ctx.HaContextMock.TriggerStateChange(entity, "off");
-        foreach (var entity in cfg.Rooms.First().ControlEntities) _ctx.HaContextMock.TriggerStateChange(entity, "off");
-        foreach (var entity in cfg.Rooms.First().KeepAliveEntities) _ctx.HaContextMock.TriggerStateChange(entity, "off");
-        cfg.Rooms.First().ManagerEnabled = _ctx.GetEntity<SwitchEntity>("switch.light_manager_test");
+        foreach (var entity in cfg.Room().PresenceEntities) ctx.TriggerStateChange(entity, "off");
+        foreach (var entity in cfg.Room().ControlEntities) ctx.TriggerStateChange(entity, "off");
+        foreach (var entity in cfg.Room().NightControlEntities) ctx.TriggerStateChange(entity, "off");
+        foreach (var entity in cfg.Room().KeepAliveEntities) ctx.TriggerStateChange(entity, "off");
+        cfg.Room().ManagerEnabled = ctx.GetEntity<SwitchEntity>("switch.light_manager_test");
         return cfg;
+#pragma warning restore CS8601
+#pragma warning restore CS8604
     }
 }
 
@@ -190,11 +628,10 @@ public static class LightManagerAppTestContextInstanceExtensions
         return initLightsManager;
     }
 
-    public static BinarySensorEntity KeepAlive1(this ManagerConfig config) => config.Rooms.First().KeepAliveEntities.First();
-
-    public static LightEntity Light1(this ManagerConfig config) => config.Rooms.First().ControlEntities.First();
-    public static SwitchEntity ManagerEnabled(this ManagerConfig config) => config.Rooms.First().ManagerEnabled;
-
-    public static BinarySensorEntity Pir1(this ManagerConfig config) => config.Rooms.First().PresenceEntities.First();
-    public static Manager Room1(this ManagerConfig config) => config.Rooms.First();
+    public static BinarySensorEntity KeepAlive1(this ManagerConfig config) => config.Room().KeepAliveEntities.First();
+    public static LightEntity Light(this ManagerConfig config, int index = 1) => config.Room().ControlEntities[index - 1];
+    public static SwitchEntity ManagerEnabled(this ManagerConfig config) => config.Room().ManagerEnabled;
+    public static LightEntity NightLight(this ManagerConfig config, int index = 1) => config.Room().NightControlEntities[index - 1];
+    public static BinarySensorEntity Pir1(this ManagerConfig config) => config.Room().PresenceEntities.First();
+    public static Manager Room(this ManagerConfig config, int index = 1) => config.Rooms.ToList()[index - 1];
 }

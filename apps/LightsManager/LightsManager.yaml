@@ -7,6 +7,7 @@ LightManagerV2.ManagerConfig:
   Rooms:
   - Name: Study
     Timeout: 300
+    OverrideTimeout: 1800
     PresenceEntities:
       - binary_sensor.office_motion
       - binary_sensor.study
@@ -107,8 +108,8 @@ LightManagerV2.ManagerConfig:
     ControlEntities:
       - light.lounge
     Timeout: 300
-    ConditionEntity: sun.sun
-    ConditionEntityState: below_horizon
+    ConditionEntity: alarm_control_panel.alarmo
+    ConditionEntityState: armded_night
 
   - Name: Garden
     PresenceEntities:
@@ -118,8 +119,8 @@ LightManagerV2.ManagerConfig:
       - light.dining
       - light.dining_wall
     Timeout: 300
-    ConditionEntity: sun.sun
-    ConditionEntityState: below_horizon
+    ConditionEntity: alarm_control_panel.alarmo
+    ConditionEntityState: armded_night
 
   - Name: Garage
     PresenceEntities:
@@ -129,8 +130,8 @@ LightManagerV2.ManagerConfig:
       - light.utility
       - light.kitchen
     Timeout: 300
-    ConditionEntity: sun.sun
-    ConditionEntityState: below_horizon
+    ConditionEntity: alarm_control_panel.alarmo
+    ConditionEntityState: armded_night
 
   - Name: Aaron
     Timeout: 300

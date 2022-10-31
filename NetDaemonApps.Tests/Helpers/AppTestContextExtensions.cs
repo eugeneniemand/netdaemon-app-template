@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using HomeAssistantGenerated;
 using Moq;
 using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Mocks.Moq;
@@ -43,9 +44,19 @@ public static class AppTestContextExtensions
         var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
 
         ctx.HaContextMock.Verify(c => c.CallService(domain, service,
-                It.Is<ServiceTarget>(x => x.EntityIds != null && x.EntityIds.First() == entityId),
+                It.Is<ServiceTarget>(s => Match(entityId, s)),
                 data), times
         );
+    }
+
+    public static void VerifyLightTurnOff(this AppTestContext ctx, LightEntity entity, Func<Times> times)
+    {
+        ctx.VerifyCallService("light.turn_off", entity.EntityId, times, new LightTurnOffParameters());
+    }
+
+    public static void VerifyLightTurnOn(this AppTestContext ctx, LightEntity entity, Func<Times> times)
+    {
+        ctx.VerifyCallService("light.turn_on", entity.EntityId, times, new LightTurnOnParameters());
     }
 
     //public static void VerifyInputSelect_SelectOption(this AppTestContext ctx, string entityId, string option)
@@ -70,5 +81,10 @@ public static class AppTestContextExtensions
         var stateChangeContext = new StateChangeContext(ctx, entityId);
         stateChangeContext.WithEntityState(entityId, state);
         return stateChangeContext;
+    }
+
+    private static bool Match(string s, ServiceTarget x)
+    {
+        return x.EntityIds != null && x.EntityIds.Any(id => id == s);
     }
 }

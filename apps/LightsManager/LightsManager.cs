@@ -38,12 +38,10 @@ public class LightsManager : IAsyncInitializable
                     : _config.Rooms.ToList() )
                 .ForEach(async r =>
                 {
-                    foreach (var controlEntity in r.PresenceEntities)
-                        _haContext.StateAllChanges().Where(s => s.Entity.EntityId == controlEntity.EntityId).Subscribe(s =>
-                            _managerLogger.LogDebug("StateChange for {room} : {entity} from {oldSate} to state {newState}", r.Name, s?.New?.EntityId, s?.Old?.State, s?.New?.State)
-                        );
-
-
+                    //foreach (var controlEntity in r.PresenceEntities)
+                    //    _haContext.StateAllChanges().Where(s => s.Entity.EntityId == controlEntity.EntityId).Subscribe(s =>
+                    //        _managerLogger.LogDebug("StateChange for {room} : {entity} from {oldSate} to state {newState}", r.Name, s?.New?.EntityId, s?.Old?.State, s?.New?.State)
+                    //    );
                     await r.Init(_managerLogger, _config.NdUserId, _randomManager, _scheduler, _haContext, _entityManager);
                 });
         }

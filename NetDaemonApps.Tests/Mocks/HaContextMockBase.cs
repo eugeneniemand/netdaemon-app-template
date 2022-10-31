@@ -54,6 +54,12 @@ public class HaContextMockBase : IHaContext, IHaContextMock
     {
         EventsSubject.OnNext(@event);
     }
+
+    public void TriggerStateChange(string entityId, EntityState oldState, EntityState newState)
+    {
+        _entityStates[entityId] = newState;
+        StateAllChangeSubject.OnNext(new StateChange(new Entity(this, entityId), oldState, newState));
+    }
 }
 
 public interface IHaContextMock

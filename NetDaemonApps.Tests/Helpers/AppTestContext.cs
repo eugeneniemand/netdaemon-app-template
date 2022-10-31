@@ -1,5 +1,6 @@
 ﻿using Microsoft.Reactive.Testing;
 using NetDaemon.HassModel;
+using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Mocks.Moq;
 
 namespace NetDaemonApps.Tests.Helpers;
@@ -35,5 +36,20 @@ public class AppTestContext
     public void SetCurrentTime(DateTime time)
     {
         AdvanceTimeTo(time.Ticks);
+    }
+
+    public void TriggerStateChange(Entity entity, string newStatevalue, object? attributes = null)
+    {
+        HaContextMock.TriggerStateChange(entity, newStatevalue, attributes);
+    }
+
+    public void TriggerStateChange(Entity entity, EntityState newState)
+    {
+        HaContextMock.TriggerStateChange(entity.EntityId, newState);
+    }
+
+    public void TriggerStateChange(string entityId, EntityState oldState, EntityState newState)
+    {
+        HaContextMock.TriggerStateChange(entityId, oldState, newState);
     }
 }

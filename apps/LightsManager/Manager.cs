@@ -10,6 +10,7 @@ public class Manager
     private          IHaContext             _haContext;
     private          ILogger<LightsManager> _logger;
     private          string                 _ndUserId;
+    private          bool                   _overrideActive;
     private          IRandomManager         _randomManager;
     private          IScheduler             _scheduler;
     private          IDisposable            overrideSchedule;
@@ -36,6 +37,7 @@ public class Manager
     public Entity? ConditionEntity { get; set; }
     public InputSelectEntity? NightTimeEntity { get; set; }
     public int NightTimeout { get; set; }
+    public int OverrideTimeout { get; set; }
     public int Timeout { get; set; }
     public int? LuxLimit { get; set; }
     public List<BinarySensorEntity> KeepAliveEntities { get; set; }
@@ -51,10 +53,10 @@ public class Manager
     public string? ConditionEntityState { get; set; }
     public SwitchEntity ManagerEnabled { get; set; }
     public SwitchEntity? CircadianSwitchEntity { get; set; }
-    public TimeSpan DynamicTimeout => TimeSpan.FromSeconds(OverrideActive ? 10 : TimeoutParsed);
+    public TimeSpan DynamicTimeout => TimeSpan.FromSeconds(_overrideActive ? OverrideTimeoutParsed : TimeoutParsed);
     private bool ConditionEntityStateNotMet => ConditionEntity != null && ConditionEntityState != null && ConditionEntity.State != ConditionEntityState;
-    private bool OverrideActive { get; set; }
     private int NightTimeoutParsed => NightTimeout == 0 ? 90 : NightTimeout;
+    private int OverrideTimeoutParsed => OverrideTimeout == 0 ? 1800 : OverrideTimeout;
     private int TimeoutParsed => IsNightMode ? NightTimeoutParsed : Timeout;
 
     public async Task Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager)
@@ -95,6 +97,17 @@ public class Manager
         !IsNdUserOrHa(e) &&
         e.Old.IsOff() && e.New.IsOn();
 
+    private void ResetOverride()
+    {
+        overrideSchedule?.Dispose();
+        _overrideActive = true;
+        overrideSchedule = _scheduler.Schedule(DynamicTimeout, s =>
+        {
+            _overrideActive = false;
+            TurnOffEntities();
+        });
+    }
+
     private async Task SetupEnabledSwitch()
     {
         _logger.LogDebug("{room} Setup Enabled Switch", Name);
@@ -134,7 +147,7 @@ public class Manager
                 ControlEntities.Except(NightControlEntities).ToList()
                                .ForEach(f => f.TurnOff());
             if (!IsNightMode)
-                NightControlEntities.Except(ControlEntities).ToList()
+                NightControlEntities.Except(ControlEntities).Where(w => w.IsOn()).ToList()
                                     .ForEach(f => f.TurnOff());
 
             TurnOnEntities();
@@ -145,82 +158,101 @@ public class Manager
     private void SubscribeManualTurnOffOverrideEvent()
     {
         _logger.LogDebug("{room} Subscribed to Manual Turn Off Override Events", Name);
-        ControlEntities
-            .StateAllChanges()
-            .Where(LightTurnedOffManually)
-            .Subscribe(async e =>
-            {
-                _logger.LogInformation("{room} Manual Turn Off Override by user", Name);
-                _logger.LogInformation("{room} Resetting override as control entities are all off", Name);
-                OverrideActive = false;
-                await UpdateAttributes();
-            });
+        ControlEntities.Union(NightControlEntities)
+                       .StateAllChanges()
+                       .Where(LightTurnedOffManually)
+                       .Subscribe(async e =>
+                       {
+                           _logger.LogInformation("{room} Manual Turn Off Override by user", Name);
+                           if (AllControlEntities.Any(e => e.IsOn()))
+                           {
+                               _logger.LogInformation("{room} Override active as some control entities are on", Name);
+                               return;
+                           }
+
+                           _logger.LogInformation("{room} Override reset as all control entities are off", Name);
+                           _overrideActive = false;
+                           overrideSchedule?.Dispose();
+                           await UpdateAttributes();
+                       });
     }
 
     private void SubscribeManualTurnOnOverrideEvent()
     {
         _logger.LogDebug("{room} Subscribed to Manual Turn On Override Events", Name);
-        ControlEntities
-            .StateAllChanges()
-            .Where(LightTurnedOnManually)
-            .Subscribe(async e =>
-            {
-                _logger.LogInformation("{room} Manual Turn On Override by user", Name);
-                OverrideActive = true;
-                overrideSchedule?.Dispose();
-                overrideSchedule = _scheduler.Schedule(DynamicTimeout, TurnOffEntities);
-                await UpdateAttributes();
-            });
+        ControlEntities.Union(NightControlEntities)
+                       .StateAllChanges()
+                       .Where(LightTurnedOnManually)
+                       .Subscribe(async e =>
+                       {
+                           _logger.LogInformation("{room} Manual Turn On Override by user", Name);
+                           ResetOverride();
+                           await UpdateAttributes();
+                       });
     }
 
     private void SubscribeOverrideEvent()
     {
         _logger.LogDebug("{room} Subscribed to Attribute Override Events", Name);
-        ControlEntities
-            .StateAllChanges()
-            .Where(LightAttributesOverride)
-            .Subscribe(async e =>
-            {
-                _logger.LogInformation("{room} Attribute Override by user", Name);
-                OverrideActive = true;
-                if (CircadianSwitchEntity == null)
-                {
-                    await UpdateAttributes();
-                    return;
-                }
+        ControlEntities.Union(NightControlEntities)
+                       .StateAllChanges()
+                       .Where(LightAttributesOverride)
+                       .Subscribe(async e =>
+                       {
+                           _logger.LogInformation("{room} Attribute Override by user", Name);
+                           ResetOverride();
+                           if (CircadianSwitchEntity == null)
+                           {
+                               await UpdateAttributes();
+                               return;
+                           }
 
-                _logger.LogInformation("{room} Turn off circadian switch", Name);
-                CircadianSwitchEntity.TurnOff();
-                await UpdateAttributes();
-            });
+                           _logger.LogInformation("{room} Turn off circadian switch", Name);
+                           CircadianSwitchEntity.TurnOff();
+                           await UpdateAttributes();
+                       });
     }
 
     private void SubscribePresenceOffEvent()
     {
         _logger.LogDebug("{room} Subscribed to Presence Off Events", Name);
-        PresenceEntities!.Union(KeepAliveEntities)
-                         .StateChanges()
-                         .Where(e => e.New.IsOff())
-                         .Throttle(_ => Observable.Timer(DynamicTimeout, _scheduler))
-                         .Subscribe(async e =>
-                         {
-                             _logger.LogInformation("{room} No Motion", Name);
-                             TurnOffEntities();
-                             await UpdateAttributes();
-                         });
+        PresenceEntities.Union(KeepAliveEntities)
+                        .StateChanges()
+                        .Where(e => e.New.IsOff())
+                        .Throttle(_ => Observable.Timer(DynamicTimeout, _scheduler))
+                        .Subscribe(async e =>
+                        {
+                            _logger.LogInformation("{room} No Motion", Name);
+                            if (_overrideActive)
+                            {
+                                _logger.LogInformation("{room} Not turning off - Override active ", Name);
+                                return;
+                            }
+
+                            TurnOffEntities();
+                            await UpdateAttributes();
+                        });
     }
 
     private void SubscribePresenceOnEvent()
     {
         _logger.LogDebug("{room} Subscribed to Presence On Events", Name);
-        PresenceEntities!.StateAllChanges()
-                         .Where(e => e.New.IsOn())
-                         .Subscribe(async e =>
-                         {
-                             _logger.LogInformation("{room} Motion", Name);
-                             TurnOnEntities();
-                             await UpdateAttributes();
-                         });
+        PresenceEntities.StateAllChanges()
+                        .Where(e => e.New.IsOn())
+                        .Subscribe(async e =>
+                        {
+                            _logger.LogInformation("{room} Motion", Name);
+                            if (_overrideActive)
+                            {
+                                _logger.LogInformation("{room} Not turning on - resetting Override timeout", Name);
+                                ResetOverride();
+                                await UpdateAttributes();
+                                return;
+                            }
+
+                            TurnOnEntities();
+                            await UpdateAttributes();
+                        });
     }
 
     private void TurnOffEntities()
@@ -237,14 +269,14 @@ public class Manager
             return;
         }
 
-
-        _logger.LogInformation("{room} Reset override", Name);
-        OverrideActive = false;
-
         _logger.LogInformation("{room} Turn Off", Name);
         AllControlEntities
             .Where(w => w.IsOn()).ToList()
-            .ForEach(e => e.TurnOff());
+            .ForEach(e =>
+            {
+                _logger.LogDebug("{room} turning off {light}", Name, e.EntityId);
+                e.TurnOff();
+            });
     }
 
 
@@ -283,11 +315,13 @@ public class Manager
 
         foreach (var e in lightEntities.Where(e => e.IsOff()))
         {
+            _logger.LogDebug("{room} turning on {light}", Name, e.EntityId);
             e.TurnOn();
-            if (CircadianSwitchEntity == null) return;
-            _logger.LogInformation("{room} Turn on circadian switch", Name);
-            CircadianSwitchEntity.TurnOn();
         }
+
+        if (CircadianSwitchEntity == null) return;
+        _logger.LogInformation("{room} Turn on circadian switch", Name);
+        CircadianSwitchEntity.TurnOn();
     }
 
     private async Task UpdateAttributes()
@@ -295,9 +329,9 @@ public class Manager
         _logger.LogDebug("{room} Updating Attributes", Name);
         var attributes = new
         {
-            OverrideActive,
-            TurningOff = _scheduler.Now + DynamicTimeout,
-            TimeoutParsed,
+            OverrideActive = _overrideActive,
+            TurningOff     = _scheduler.Now + DynamicTimeout,
+            DynamicTimeout,
             IsOccupied,
             IsTooBright,
             ConditionEntityStateMet = ConditionEntity?.EntityId == null ? "N/A" : ConditionEntityStateNotMet.ToString(),
@@ -305,7 +339,7 @@ public class Manager
             ConditionEntityState    = ConditionEntityState ?? "N/A",
             LastUpdated             = DateTime.Now.ToString("G")
         };
-        await _entityManager.SetAttributesAsync(_enabledSwitch, attributes);
+        //await _entityManager.SetAttributesAsync(_enabledSwitch, attributes);
         _logger.LogDebug("{room} Attributes updated to {attr}", Name, attributes);
     }
 }
