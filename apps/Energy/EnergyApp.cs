@@ -7,13 +7,15 @@ public class EnergyApp
     //private readonly Alexa      _alexa;
     
     private readonly IHaContext _haContext;
+    private readonly IScheduler _scheduler;
     private readonly IServices  _services;
 
     public EnergyApp(IHaContext haContext, IScheduler scheduler, ILogger<EnergyApp> logger, IServices services) //, Alexa alexa)
     {
         _haContext = haContext;
+        _scheduler = scheduler;
         //_alexa     = alexa;
-        
+
         _services = services;
 
         _haContext.Entity("input_button.get_energy_rates")
@@ -24,12 +26,12 @@ public class EnergyApp
         scheduler.ScheduleCron("0 18 * * *", () => NotifyRates(Rates.CheapestWindows()));
     }
 
-    private SortedDictionary<DateTime, double> Rates
+    public SortedDictionary<DateTime, double> Rates
     {
         get
         {
             var rates = ( (Dictionary<string, object>)_haContext.Entity("octopusagile.all_rates").Attributes )
-                        .Where(kvp => DateTime.Parse(kvp.Key) > DateTime.Now)
+                        .Where(kvp => DateTime.Parse(kvp.Key) > _scheduler.Now.DateTime)
                         .ToDictionary(kvp => DateTime.Parse(kvp.Key), kvp => ( (JsonElement)kvp.Value ).GetDouble())
                         .ToSortedDictionary();
             return rates;
@@ -44,7 +46,7 @@ public class EnergyApp
         //_alexa.SendNotification(new TextToSpeech(GetRatesMessageVoice(cheapestWindows), TimeSpan.Zero));
     }
 
-    private static string GetRatesMessageText(IEnumerable<(DateTime, double, int)> windows)
+    public static string GetRatesMessageText(IEnumerable<(DateTime, double, int)> windows)
     {
         var enumerable = windows.Select(tuple =>
         {

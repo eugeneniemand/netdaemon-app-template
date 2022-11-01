@@ -11,6 +11,74 @@ namespace NetDaemonApps.Tests;
 
 public class DishwasherTests
 {
+
+    [Test]
+    public void FullTest()
+    {
+        var _ctx = new HaContextMock();
+
+
+        // Arrange
+        var config = new DishwasherConfiguration
+        {
+            DishwasherPower = _ctx.GetEntity<NumericSensorEntity>("sensor.dishwasher_power"),
+            DishwasherCycleSelect = _ctx.GetEntity<InputSelectEntity>("sensor.dishwasher_state")
+        };
+
+        _ctx.InitDishwasher(config);
+        // Act
+        
+        _ctx.TriggerStateChange(config.DishwasherPower, "30");
+        _ctx.TriggerStateChange(config.DishwasherPower, "60");
+        _ctx.TriggerStateChange(config.DishwasherPower, "90");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Wash.ToString(), Times.Once());
+        _ctx.TriggerStateChange(config.DishwasherPower, "1783");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+        _ctx.TriggerStateChange(config.DishwasherPower, "75");
+        _ctx.TriggerStateChange(config.DishwasherPower, "7");
+
+        _ctx.TriggerStateChange(config.DishwasherPower, "60");
+        _ctx.TriggerStateChange(config.DishwasherPower, "90");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1783");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+        _ctx.TriggerStateChange(config.DishwasherPower, "75");
+
+        _ctx.TriggerStateChange(config.DishwasherPower, "60");
+        _ctx.TriggerStateChange(config.DishwasherPower, "90");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1783");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+        _ctx.TriggerStateChange(config.DishwasherPower, "75");
+
+        _ctx.TriggerStateChange(config.DishwasherPower, "75");
+        _ctx.TriggerStateChange(config.DishwasherPower, "7");
+
+        _ctx.TriggerStateChange(config.DishwasherPower, "75");
+        _ctx.TriggerStateChange(config.DishwasherPower, "7");
+
+        _ctx.TriggerStateChange(config.DishwasherPower, "75");
+        _ctx.TriggerStateChange(config.DishwasherPower, "7");
+
+        _ctx.TriggerStateChange(config.DishwasherPower, "60");
+        _ctx.TriggerStateChange(config.DishwasherPower, "90");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Rinse.ToString(), Times.Once());
+        _ctx.TriggerStateChange(config.DishwasherPower, "1783");
+        _ctx.TriggerStateChange(config.DishwasherPower, "177");
+        _ctx.TriggerStateChange(config.DishwasherPower, "1832");
+
+        _ctx.TriggerStateChange(config.DishwasherPower, "75");
+        _ctx.TriggerStateChange(config.DishwasherPower, "7");
+        _ctx.TriggerStateChange(config.DishwasherPower, "0");
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Clean.ToString(), Times.Once());
+
+
+        // Assert
+        VerifyInputSelect_SelectOption(_ctx, config.DishwasherCycleSelect!.EntityId, Dishwasher.DishwasherCycle.Clean.ToString(), Times.Once());
+    }
+
     [Test]
     public void DishwasherStateShouldBeCleanAfterPowerDecreasesForTheFourthTime()
     {

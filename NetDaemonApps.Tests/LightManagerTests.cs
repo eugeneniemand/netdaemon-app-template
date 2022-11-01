@@ -452,7 +452,6 @@ public class LightManagerTests
         ctx.TriggerStateChange(config.Pir1(), "on");
         ctx.AdvanceTimeBy(TimeSpan.FromSeconds(1).Ticks);
         // Assert
-        //ctx.VerifyLightTurnOn(config.Light(), Times.Once);
         ctx.VerifyLightTurnOff(config.Light(), Times.Never);
     }
 
