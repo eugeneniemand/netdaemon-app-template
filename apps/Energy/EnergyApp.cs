@@ -109,10 +109,9 @@ public class EnergyApp
         if (cheapestWindows == null)
             CacheCheapestWindows();
 
-        if (cheapestWindows.Single(t => t.hourWindow == 3).startDateTime.ToShortTimeString() == _scheduler.Now.DateTime.ToShortTimeString())
-        {
-            _logger.LogDebug("NotifyWindowsStarted {window}", Shared.Events.Cheap3HourWindowStarted);
-            _haContext.SendEvent(Shared.Events.Cheap3HourWindowStarted.ToString());
-        }
+        if (cheapestWindows.Single(t => t.hourWindow == 3).startDateTime.ToShortTimeString() != _scheduler.Now.DateTime.ToShortTimeString()) return;
+
+        _logger.LogDebug("NotifyWindowsStarted {window}", Shared.Events.Cheap3HourWindowStarted);
+        _haContext.SendEvent(Shared.Events.Cheap3HourWindowStarted.ToString());
     }
 }
