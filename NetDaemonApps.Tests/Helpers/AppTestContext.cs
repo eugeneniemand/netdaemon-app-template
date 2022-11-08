@@ -38,6 +38,11 @@ public class AppTestContext
         AdvanceTimeTo(time.Ticks);
     }
 
+    public void TriggerEvent(Event @event)
+    {
+        HaContextMock.TriggerEvent(@event);
+    }
+
     public void TriggerStateChange(Entity entity, string newStatevalue, object? attributes = null)
     {
         HaContextMock.TriggerStateChange(entity, newStatevalue, attributes);

@@ -49,6 +49,19 @@ public static class AppTestContextExtensions
         );
     }
 
+    public static void VerifyEventRaised(this AppTestContext ctx, string eventType, Func<Times> times, object? data = null)
+    {
+        ctx.HaContextMock.Verify(c => c.SendEvent(eventType, data), times);
+    }
+
+    public static void VerifyInputSelect_SelectOption(this AppTestContext ctx, string entityId, string option, Times times)
+    {
+        ctx.HaContextMock.Verify(c => c.CallService("sensor", "select_option",
+                It.Is<ServiceTarget>(x => x.EntityIds != null && x.EntityIds.First() == entityId),
+                It.Is<InputSelectSelectOptionParameters>(x => x.Option == option)), times
+        );
+    }
+
     public static void VerifyLightTurnOff(this AppTestContext ctx, LightEntity entity, Func<Times> times)
     {
         ctx.VerifyCallService("light.turn_off", entity.EntityId, times, new LightTurnOffParameters());
@@ -58,6 +71,17 @@ public static class AppTestContextExtensions
     {
         ctx.VerifyCallService("light.turn_on", entity.EntityId, times, new LightTurnOnParameters());
     }
+
+    public static void VerifySwitchTurnOff(this AppTestContext ctx, SwitchEntity entity, Func<Times> times)
+    {
+        ctx.VerifyCallService("switch.turn_off", entity.EntityId, times);
+    }
+
+    public static void VerifySwitchTurnOn(this AppTestContext ctx, SwitchEntity entity, Func<Times> times)
+    {
+        ctx.VerifyCallService("switch.turn_on", entity.EntityId, times);
+    }
+
 
     //public static void VerifyInputSelect_SelectOption(this AppTestContext ctx, string entityId, string option)
     //{
