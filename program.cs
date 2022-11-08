@@ -1,21 +1,20 @@
-using System;
 using System.Reflection;
+using HomeAssistantGenerated.Logging;
 using Microsoft.Extensions.Hosting;
-using NetDaemon.AppModel;
-using NetDaemon.Extensions.Logging;
 using NetDaemon.Extensions.MqttEntityManager;
-using NetDaemon.Extensions.Scheduler;
 using NetDaemon.Extensions.Tts;
 using NetDaemon.Runtime;
-using Niemand.Helpers;
 
 #pragma warning disable CA1812
 
 try
 {
+    Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
     await Host.CreateDefaultBuilder(args)
               .UseNetDaemonAppSettings()
-              .UseNetDaemonDefaultLogging()
+              //.UseNetDaemonDefaultLogging()
+              .UseCustomLogging()
               .UseNetDaemonRuntime()
               .UseNetDaemonTextToSpeech()
               .UseNetDaemonMqttEntityManagement()
