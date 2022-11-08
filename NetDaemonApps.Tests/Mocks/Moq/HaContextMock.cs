@@ -48,6 +48,11 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
             null));
     }
 
+    public void TriggerEvent(Event @event)
+    {
+        Object.TriggerEvent(@event);
+    }
+
     public void TriggerStateChange(string entityId, EntityState oldState, EntityState newState)
     {
         Object.TriggerStateChange(entityId, oldState, newState);

@@ -1,3 +1,4 @@
 ﻿DishwasherConfiguration:
   DishwasherPower: sensor.dishwasher_power
   DishwasherCycleSelect: input_select.dishwashercycleselect
+  DishwasherSwitch: switch.dishwasher

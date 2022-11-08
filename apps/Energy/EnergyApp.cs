@@ -5,45 +5,46 @@
 public class EnergyApp
 {
     //private readonly Alexa      _alexa;
-    
-    private readonly IHaContext _haContext;
-    private readonly IScheduler _scheduler;
-    private readonly IServices  _services;
+
+    private readonly IHaContext                                         _haContext;
+    private readonly ILogger<EnergyApp>                                 _logger;
+    private readonly IScheduler                                         _scheduler;
+    private readonly IServices                                          _services;
+    private          List<(DateTime startDate, double rate, int hours)> _cheapestWindows;
 
     public EnergyApp(IHaContext haContext, IScheduler scheduler, ILogger<EnergyApp> logger, IServices services) //, Alexa alexa)
     {
         _haContext = haContext;
         _scheduler = scheduler;
+        _logger    = logger;
         //_alexa     = alexa;
 
         _services = services;
+        CacheCheapestWindows();
 
         _haContext.Entity("input_button.get_energy_rates")
                   .StateChanges()
-                  .Subscribe(_ => NotifyRates(Rates.CheapestWindows()));
+                  .Subscribe(_ => { NotifyRates(_cheapestWindows); });
 
-        scheduler.ScheduleCron("0 6 * * *", () => NotifyRates(Rates.CheapestWindows()));
-        scheduler.ScheduleCron("0 18 * * *", () => NotifyRates(Rates.CheapestWindows()));
+        _haContext.Entity("octopusagile.all_rates")
+                  .StateAllChanges()
+                  .Subscribe(_ => CacheCheapestWindows());
+
+        scheduler.ScheduleCron("0 6 * * *", () => NotifyRates(_cheapestWindows));
+        scheduler.ScheduleCron("0 18 * * *", () => NotifyRates(_cheapestWindows));
+        scheduler.ScheduleCron("0/30 * * * *", () => NotifyWindowsStarted(_cheapestWindows));
     }
 
     public SortedDictionary<DateTime, double> Rates
     {
         get
         {
-            var rates = ( (Dictionary<string, object>)_haContext.Entity("octopusagile.all_rates").Attributes )
+            var rates = ( (Dictionary<string, object>)_haContext.Entity("octopusagile.all_rates").Attributes ?? new Dictionary<string, object>() )
                         .Where(kvp => DateTime.Parse(kvp.Key) > _scheduler.Now.DateTime)
                         .ToDictionary(kvp => DateTime.Parse(kvp.Key), kvp => ( (JsonElement)kvp.Value ).GetDouble())
                         .ToSortedDictionary();
             return rates;
         }
-    }
-
-    private void Debug()
-    {
-        var rates           = Rates;
-        var cheapestWindows = Rates.CheapestWindows();
-        _services.TelegramBot.SendMessage(GetRatesMessageText(cheapestWindows), parseMode: "MarkdownV2");
-        //_alexa.SendNotification(new TextToSpeech(GetRatesMessageVoice(cheapestWindows), TimeSpan.Zero));
     }
 
     public static string GetRatesMessageText(IEnumerable<(DateTime, double, int)> windows)
@@ -61,6 +62,26 @@ public class EnergyApp
                "```";
     }
 
+    private void CacheCheapestWindows()
+    {
+        if (Rates.Count == 0)
+        {
+            _logger.LogWarning("No Rates Available");
+            return;
+        }
+
+        _cheapestWindows = Rates.CheapestWindows();
+        _logger.LogInformation(GetRatesMessageText(_cheapestWindows));
+    }
+
+    private void Debug()
+    {
+        var rates           = Rates;
+        var cheapestWindows = Rates.CheapestWindows();
+        _services.TelegramBot.SendMessage(GetRatesMessageText(cheapestWindows), parseMode: "MarkdownV2");
+        //_alexa.SendNotification(new TextToSpeech(GetRatesMessageVoice(cheapestWindows), TimeSpan.Zero));
+    }
+
     private string GetRatesMessageVoice(IEnumerable<(DateTime, double, int)> windows)
     {
         var enumerable = windows.Select(tuple =>
@@ -73,8 +94,25 @@ public class EnergyApp
         return "Cheapest energy rates are." + string.Join("\n", enumerable);
     }
 
-    private void NotifyRates(List<(DateTime, double, int)> cheapestWindows)
+    private void NotifyRates(List<(DateTime, double, int)>? cheapestWindows)
     {
+        _logger.LogDebug("NotifyRates");
+        if (cheapestWindows == null)
+            CacheCheapestWindows();
+
         _services.TelegramBot.SendMessage(GetRatesMessageText(cheapestWindows), parseMode: "MarkdownV2");
+    }
+
+    private void NotifyWindowsStarted(List<(DateTime startDateTime, double rate, int hourWindow)>? cheapestWindows)
+    {
+        _logger.LogDebug("NotifyWindowsStarted");
+        if (cheapestWindows == null)
+            CacheCheapestWindows();
+
+        if (cheapestWindows.Single(t => t.hourWindow == 3).startDateTime.ToShortTimeString() == _scheduler.Now.DateTime.ToShortTimeString())
+        {
+            _logger.LogDebug("NotifyWindowsStarted {window}", Shared.Events.Cheap3HourWindowStarted);
+            _haContext.SendEvent(Shared.Events.Cheap3HourWindowStarted.ToString());
+        }
     }
 }
