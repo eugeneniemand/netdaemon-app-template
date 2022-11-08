@@ -2,7 +2,7 @@
 
 public static class ExtMethods
 {
-    public static List<(DateTime startDate, double rate, int hours)> CheapestWindows(this SortedDictionary<DateTime, double> rates)
+    public static List<(DateTime startDate, double rate, int hours)>? CheapestWindows(this SortedDictionary<DateTime, double> rates)
     {
         var cheapestHour       = rates.WindowedAverageLeft(2).MinWithKey();
         var cheapestTwoHours   = rates.WindowedAverageLeft(4).MinWithKey();
