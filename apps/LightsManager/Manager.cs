@@ -1,4 +1,5 @@
 ﻿using NetDaemon.Extensions.MqttEntityManager;
+using NetDaemon.Extensions.Scheduler;
 
 namespace LightManagerV2;
 
@@ -6,6 +7,7 @@ public class Manager
 {
     private readonly List<string>           _onStates;
     private          string                 _enabledSwitch;
+    private int _guardTimeout;
     private          IMqttEntityManager     _entityManager;
     private          IHaContext             _haContext;
     private          ILogger<LightsManager> _logger;
@@ -54,12 +56,15 @@ public class Manager
     public SwitchEntity ManagerEnabled { get; set; }
     public SwitchEntity? CircadianSwitchEntity { get; set; }
     public TimeSpan DynamicTimeout => TimeSpan.FromSeconds(_overrideActive ? OverrideTimeoutParsed : TimeoutParsed);
+
+    public string RoomState { get; set; }
+
     private bool ConditionEntityStateNotMet => ConditionEntity != null && ConditionEntityState != null && ConditionEntity.State != ConditionEntityState;
     private int NightTimeoutParsed => NightTimeout == 0 ? 90 : NightTimeout;
     private int OverrideTimeoutParsed => OverrideTimeout == 0 ? 1800 : OverrideTimeout;
     private int TimeoutParsed => IsNightMode ? NightTimeoutParsed : Timeout;
 
-    public async Task Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager)
+    public async Task Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager, int guardTimeout)
     {
         _logger        = logger;
         _ndUserId      = ndUserId;
@@ -68,6 +73,7 @@ public class Manager
         _haContext     = haContext;
         _entityManager = entityManager;
         _enabledSwitch = $"switch.light_manager_{Name.ToLower()}";
+        _guardTimeout = guardTimeout;
         _logger.LogInformation("Setup {room}", Name);
         await SetupEnabledSwitch();
         SubscribePresenceOnEvent();
@@ -76,6 +82,7 @@ public class Manager
         SubscribeManualTurnOnOverrideEvent();
         SubscribeManualTurnOffOverrideEvent();
         SubscribeHouseModeEvent();
+        SubscribeGuard();
 
         if (RandomStates.Any())
             _randomManager.Init(ControlEntities, RandomStates);
@@ -255,6 +262,15 @@ public class Manager
                         });
     }
 
+    private void SubscribeGuard()
+    {
+        _logger.LogDebug("{room} Subscribed to Presence On Events", Name);
+        _scheduler.RunEvery(TimeSpan.FromSeconds(_guardTimeout), _scheduler.Now, () => {
+            if (RoomState == null || RoomState == "on" || _overrideActive) return;
+            TurnOffEntities();
+        });
+    }
+
     private void TurnOffEntities()
     {
         if (ManagerEnabled.IsOff())
@@ -277,6 +293,7 @@ public class Manager
                 _logger.LogDebug("{room} turning off {light}", Name, e.EntityId);
                 e.TurnOff();
             });
+        RoomState = "off";
     }
 
 
@@ -318,7 +335,7 @@ public class Manager
             _logger.LogDebug("{room} turning on {light}", Name, e.EntityId);
             e.TurnOn();
         }
-
+        RoomState = "on";
         if (CircadianSwitchEntity == null) return;
         _logger.LogInformation("{room} Turn on circadian switch", Name);
         CircadianSwitchEntity.TurnOn();
