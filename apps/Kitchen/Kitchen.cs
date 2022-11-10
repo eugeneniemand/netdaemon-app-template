@@ -1,8 +1,7 @@
-﻿namespace Niemand;
-
-public class KitchenConfiguration
+﻿public class KitchenConfiguration
 {
-    public string? TestConfig { get; set; }
+    public LightEntity? CoffeeMachineLight { get; set; }
+    public NumericSensorEntity? CoffeeMachinePower { get; set; }
 }
 
 [Focus]
@@ -16,5 +15,12 @@ public class Kitchen
     {
         _logger = logger;
         _config = config.Value;
+
+        _config.CoffeeMachinePower!.StateChanges().Subscribe(e =>
+        {
+            if (e.New.State < 4 || _config.CoffeeMachineLight.IsOff()) return;
+            _logger.LogInformation("Coffee machine turned on");
+            _config.CoffeeMachineLight.TurnOn(new LightTurnOnParameters { BrightnessPct = 100 });
+        });
     }
 }

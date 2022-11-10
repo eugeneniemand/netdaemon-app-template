@@ -1,2 +1,3 @@
-﻿Niemand.KitchenConfiguration:
-  TestConfig: TestValue
+﻿KitchenConfiguration:
+  CoffeeMachineLight: light.kitchen_4
+  CoffeeMachinePower: sensor.tuya_socket_2_current_consumption

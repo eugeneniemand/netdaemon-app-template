@@ -12,9 +12,7 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-	<ItemGroup>
-		<None Include="apps\**\*.yaml" CopyToPublishDirectory="Always" />
-	</ItemGroup>
+	
 
 	<ItemGroup>
 		<Compile Remove="apps\AutomationsApp\**" />
@@ -53,13 +51,12 @@
 		<None Update="appsettings.json">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="apps\LightsManager\LightsManager.yaml">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="apps\VoiceTimer\VoiceTimer.yaml">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="apps\**\*.yaml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
-
 
 </Project>
