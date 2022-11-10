@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using HomeAssistantGenerated;
-
-namespace LightManagerV2;
+﻿namespace LightManagerV2;
 
 public class ManagerConfig
 {

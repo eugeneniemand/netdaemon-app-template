@@ -6,6 +6,7 @@ using Moq;
 using NetDaemon.HassModel;
 using NetDaemon.HassModel.Entities;
 using NetDaemonApps.Tests.Helpers;
+using Niemand;
 using Niemand.Helpers;
 
 namespace NetDaemonApps.Tests;

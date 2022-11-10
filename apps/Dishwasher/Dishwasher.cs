@@ -1,4 +1,6 @@
-﻿public class DishwasherConfiguration
+﻿namespace Niemand;
+
+public class DishwasherConfiguration
 {
     public InputSelectEntity? DishwasherCycleSelect { get; set; }
     public NumericSensorEntity? DishwasherPower { get; set; }
