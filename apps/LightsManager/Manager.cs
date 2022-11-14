@@ -154,7 +154,7 @@ public class Manager
 
         _scheduler.ScheduleCron($"*/{totalMinutes} * * * *", () =>
         {
-            if (string.IsNullOrEmpty(RoomState) || RoomState == "on" || _overrideActive || AllControlEntities.All(e => e.IsOff())) return;
+            if (RoomState == "on" || _overrideActive || AllControlEntities.All(e => e.IsOff())) return;
             _logger.LogDebug("{room} Watchdog turning off entities", Name);
             TurnOffEntities($"Watchdog ({Name})");
         });
