@@ -110,6 +110,7 @@ LightManagerV2.ManagerConfig:
     Timeout: 300
     ConditionEntity: alarm_control_panel.alarmo
     ConditionEntityState: armded_night
+    Watchdog: false
 
   - Name: Garden
     PresenceEntities:
@@ -121,6 +122,7 @@ LightManagerV2.ManagerConfig:
     Timeout: 300
     ConditionEntity: alarm_control_panel.alarmo
     ConditionEntityState: armded_night
+    Watchdog: false
 
   - Name: Garage
     PresenceEntities:
@@ -132,6 +134,7 @@ LightManagerV2.ManagerConfig:
     Timeout: 300
     ConditionEntity: alarm_control_panel.alarmo
     ConditionEntityState: armded_night
+    Watchdog: false
 
   - Name: Aaron
     Timeout: 300

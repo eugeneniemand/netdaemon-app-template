@@ -637,7 +637,7 @@ public class LightManagerTests
             NdUserId           = "ND_USER_ID_1234",
             MinDuration        = "00:05:00",
             MaxDuration        = "00:15:00",
-            GuardTimeout       = 10,
+            GuardTimeout       = 301,
             RandomSwitchEntity = ctx.GetEntity<SwitchEntity>("switch.random"),
             Rooms = new List<Manager>
             {

@@ -14,6 +14,7 @@ public class Manager
     private          bool                   _overrideActive;
     private          IRandomManager         _randomManager;
     private          IScheduler             _scheduler;
+    private          Services               _services;
     private          IDisposable            overrideSchedule;
 
     public Manager()
@@ -35,6 +36,7 @@ public class Manager
     public bool IsNightMode => NightTimeEntity != null && NightTimeEntityStates.Contains(NightTimeEntity.State);
     public bool IsOccupied => PresenceEntities.Union(KeepAliveEntities).Any(entity => entity.IsOn() || _onStates.Contains(entity.State!));
     public bool IsTooBright => LuxEntity != null && ( LuxLimitEntity != null ? LuxEntity.State >= LuxLimitEntity.State : LuxEntity.State >= LuxLimit );
+    public bool Watchdog { get; set; } = true;
     public Entity? ConditionEntity { get; set; }
     public InputSelectEntity? NightTimeEntity { get; set; }
     public int NightTimeout { get; set; }
@@ -73,6 +75,7 @@ public class Manager
         _entityManager = entityManager;
         _enabledSwitch = $"switch.light_manager_{Name.ToLower()}";
         _guardTimeout  = guardTimeout;
+        _services      = new Services(haContext);
         _logger.LogInformation("Setup {room}", Name);
         await SetupEnabledSwitch();
         SubscribePresenceOnEvent();
@@ -110,7 +113,7 @@ public class Manager
         overrideSchedule = _scheduler.Schedule(DynamicTimeout, s =>
         {
             _overrideActive = false;
-            TurnOffEntities();
+            TurnOffEntities($"Override ({Name})");
         });
     }
 
@@ -139,12 +142,21 @@ public class Manager
 
     private void SubscribeGuard()
     {
-        _logger.LogDebug("{room} Subscribed to Presence On Events", Name);
-        _scheduler.RunEvery(TimeSpan.FromSeconds(_guardTimeout), _scheduler.Now, () =>
+        if (!Watchdog)
+        {
+            _logger.LogDebug("{room} Watchdog Disabled", Name);
+            return;
+        }
+
+        _logger.LogDebug("{room} Subscribed to Watchdog Schedule", Name);
+
+        var totalMinutes = (int)TimeSpan.FromSeconds(_guardTimeout).TotalMinutes;
+
+        _scheduler.ScheduleCron($"*/{totalMinutes} * * * *", () =>
         {
             if (string.IsNullOrEmpty(RoomState) || RoomState == "on" || _overrideActive || AllControlEntities.All(e => e.IsOff())) return;
             _logger.LogDebug("{room} Watchdog turning off entities", Name);
-            TurnOffEntities();
+            TurnOffEntities($"Watchdog ({Name})");
         });
     }
 
@@ -167,7 +179,7 @@ public class Manager
                 NightControlEntities.Except(ControlEntities).Where(w => w.IsOn()).ToList()
                                     .ForEach(f => f.TurnOff());
 
-            TurnOnEntities();
+            TurnOnEntities(NightTimeEntity.EntityId);
             await UpdateAttributes();
         });
     }
@@ -239,14 +251,14 @@ public class Manager
                         .Throttle(_ => Observable.Timer(DynamicTimeout, _scheduler))
                         .Subscribe(async e =>
                         {
-                            _logger.LogInformation("{room} No Motion Timeout", Name);
+                            _logger.LogInformation("{room} No Motion Timeout '{entity}'", Name, e.New.EntityId);
                             if (_overrideActive)
                             {
                                 _logger.LogInformation("{room} Not turning off - Override active ", Name);
                                 return;
                             }
 
-                            TurnOffEntities();
+                            TurnOffEntities(e.New.EntityId);
                         });
 
         PresenceEntities.Union(KeepAliveEntities)
@@ -254,7 +266,7 @@ public class Manager
                         .Where(e => e.New.IsOff())
                         .Subscribe(async e =>
                         {
-                            _logger.LogInformation("{room} No Motion", Name);
+                            _logger.LogInformation("{room} No Motion '{entity}'", Name, e.New.EntityId);
                             await UpdateAttributes(true);
                         });
     }
@@ -266,7 +278,7 @@ public class Manager
                         .Where(e => e.New.IsOn())
                         .Subscribe(async e =>
                         {
-                            _logger.LogInformation("{room} Motion", Name);
+                            _logger.LogInformation("{room} Motion '{entity}'", Name, e.New.EntityId);
                             if (_overrideActive)
                             {
                                 _logger.LogInformation("{room} Not turning on - resetting Override timeout", Name);
@@ -275,12 +287,12 @@ public class Manager
                                 return;
                             }
 
-                            TurnOnEntities();
+                            TurnOnEntities(e.New.EntityId);
                             await UpdateAttributes();
                         });
     }
 
-    private void TurnOffEntities()
+    private void TurnOffEntities(string trigger)
     {
         if (ManagerEnabled.IsOff())
         {
@@ -301,12 +313,17 @@ public class Manager
             {
                 _logger.LogDebug("{room} Turning Off {light}", Name, e.EntityId);
                 e.TurnOff();
+                _services.Logbook.Log(
+                    entityId: e.EntityId,
+                    message: $"Turned off by {trigger}",
+                    name: e.EntityId,
+                    domain: "light");
             });
         RoomState = "off";
     }
 
 
-    private void TurnOnEntities()
+    private void TurnOnEntities(string trigger)
     {
         List<LightEntity> lightEntities;
 
@@ -343,6 +360,11 @@ public class Manager
         {
             _logger.LogInformation("{room} Turning On {light}", Name, e.EntityId);
             e.TurnOn();
+            _services.Logbook.Log(
+                entityId: e.EntityId,
+                message: $"Turned on by {trigger}",
+                name: e.EntityId,
+                domain: "light");
         }
 
         RoomState = "on";

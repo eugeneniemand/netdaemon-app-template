@@ -32,7 +32,11 @@ public class EnergyApp
 
         scheduler.ScheduleCron("0 6 * * *", () => NotifyRates(_cheapestWindows));
         scheduler.ScheduleCron("0 18 * * *", () => NotifyRates(_cheapestWindows));
-        scheduler.ScheduleCron("0/30 * * * *", () => NotifyWindowsStarted(_cheapestWindows));
+        scheduler.ScheduleCron("0,30 * * * *", () =>
+        {
+            CacheCheapestWindows();
+            NotifyWindowsStarted(_cheapestWindows);
+        });
     }
 
     public SortedDictionary<DateTime, double> Rates
@@ -40,7 +44,7 @@ public class EnergyApp
         get
         {
             var rates = ( (Dictionary<string, object>)_haContext.Entity("octopusagile.all_rates").Attributes ?? new Dictionary<string, object>() )
-                        .Where(kvp => DateTime.Parse(kvp.Key) > _scheduler.Now.DateTime)
+                        .Where(kvp => DateTime.Parse(kvp.Key) >= _scheduler.Now.DateTime)
                         .ToDictionary(kvp => DateTime.Parse(kvp.Key), kvp => ( (JsonElement)kvp.Value ).GetDouble())
                         .ToSortedDictionary();
             return rates;
@@ -64,6 +68,7 @@ public class EnergyApp
 
     private void CacheCheapestWindows()
     {
+        _logger.LogDebug("Caching rates");
         if (Rates.Count == 0)
         {
             _logger.LogWarning("No Rates Available");

@@ -12,6 +12,7 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
     {
         void Callback(string domain, string service, ServiceTarget target, object? data)
         {
+            if (domain == "logbook") return;
             if (data == null)
                 TriggerStateChange(target.EntityIds.First(), new EntityState { State = "" });
             else

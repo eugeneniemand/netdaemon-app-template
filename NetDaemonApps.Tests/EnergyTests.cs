@@ -50,7 +50,7 @@ public class EnergyTests
     public void TestRatesAtSpecifiedTime()
     {
         var ctx = new AppTestContext();
-        ctx.Scheduler.AdvanceTo(new DateTime(2022, 11, 02, 5, 0, 0).Ticks);
+        ctx.Scheduler.AdvanceTo(new DateTime(2022, 11, 02, 5, 0, 1).Ticks);
         var Rates = ctx.GetEntity<Entity>("octopusagile.all_rates");
 
         ctx.TriggerStateChange(Rates, "", LoadRates("agile_rates_2.txt"));
