@@ -28,13 +28,13 @@
 	  <ProjectReference Include="..\daemonapp.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="agile_rates_3.txt">
+	  <None Update="EnergyRates\agile_rates_3.txt">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="agile_rates_2.txt">
+	  <None Update="EnergyRates\agile_rates_2.txt">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="agile_rates.txt">
+	  <None Update="EnergyRates\agile_rates.txt">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="test-data.json">

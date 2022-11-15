@@ -143,6 +143,7 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.aaron_motion
     ControlEntities:
       - light.aaron
+      - light.aaron_main
     LuxEntity: sensor.aaron_lux
     LuxlimitEntity: input_number.aaron_lux_limit
     NightTimeEntity: input_select.house_mode

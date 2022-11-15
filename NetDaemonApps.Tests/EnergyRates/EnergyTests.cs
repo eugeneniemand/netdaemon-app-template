@@ -40,7 +40,7 @@ public class EnergyTests
         ctx.Scheduler.AdvanceTo(new DateTime(2022, 11, 07, 2, 29, 59).Ticks);
         var Rates = ctx.GetEntity<Entity>("octopusagile.all_rates");
         var app   = ctx.InitEnergy();
-        ctx.TriggerStateChange(Rates, "", LoadRates("agile_rates_3.txt"));
+        ctx.TriggerStateChange(Rates, "", LoadRates("EnergyRates/agile_rates_3.txt"));
         ctx.Scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
 
         ctx.VerifyEventRaised(Shared.Events.Cheap3HourWindowStarted.ToString(), Times.Once);
@@ -53,7 +53,7 @@ public class EnergyTests
         ctx.Scheduler.AdvanceTo(new DateTime(2022, 11, 02, 5, 0, 1).Ticks);
         var Rates = ctx.GetEntity<Entity>("octopusagile.all_rates");
 
-        ctx.TriggerStateChange(Rates, "", LoadRates("agile_rates_2.txt"));
+        ctx.TriggerStateChange(Rates, "", LoadRates("EnergyRates/agile_rates_2.txt"));
 
         var app = ctx.InitEnergy();
 
@@ -67,7 +67,7 @@ public class EnergyTests
         var ctx   = new AppTestContext();
         var Rates = ctx.GetEntity<Entity>("octopusagile.all_rates");
 
-        ctx.TriggerStateChange(Rates, "", LoadRates("agile_rates_2.txt"));
+        ctx.TriggerStateChange(Rates, "", LoadRates("EnergyRates/agile_rates_2.txt"));
 
         var app = ctx.InitEnergy();
 
@@ -78,7 +78,7 @@ public class EnergyTests
     [Test]
     public void TestRealRates2()
     {
-        var Rates = LoadRates("agile_rates_2.txt");
+        var Rates = LoadRates("EnergyRates/agile_rates_2.txt");
 
         // Act
         var oneHourAvg   = Rates.WindowedAverageLeft(2).MinWithKey();
@@ -94,7 +94,7 @@ public class EnergyTests
     [Test]
     public void TestRealRates3()
     {
-        var Rates = LoadRates("agile_rates_3.txt");
+        var Rates = LoadRates("EnergyRates/agile_rates_3.txt");
 
         // Act
         var oneHourAvg   = Rates.WindowedAverageLeft(2).MinWithKey();

@@ -12,14 +12,30 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
     {
         void Callback(string domain, string service, ServiceTarget target, object? data)
         {
-            if (domain == "logbook") return;
-            if (data == null)
-                TriggerStateChange(target.EntityIds.First(), new EntityState { State = "" });
-            else
-                TriggerStateChange(target.EntityIds.First(),
-                    data is InputSelectSelectOptionParameters selectOption
-                        ? new EntityState { State = selectOption.Option }
-                        : new EntityState { State = data.ToString() });
+            if (target == null) return;
+            
+            switch (data)
+            {
+                case null:
+                    TriggerStateChange(target.EntityIds.First(), new EntityState { State = "" });
+                    break;
+                case InputSelectSelectOptionParameters:
+                    TriggerStateChange(target.EntityIds.First(), new EntityState { State = ((InputSelectSelectOptionParameters)data).Option });
+                    break;
+                case object:
+                    TriggerStateChange(target.EntityIds.First(), new EntityState { State = data.ToString() });
+                    break;
+
+            }
+
+
+            //if (data == null)
+            //    TriggerStateChange(target.EntityIds.First(), new EntityState { State = "" });
+            //else
+            //    TriggerStateChange(target.EntityIds.First(),
+            //        data is InputSelectSelectOptionParameters selectOption
+            //            ? new EntityState { State = selectOption.Option }
+            //            : new EntityState { State = data.ToString() });
         }
 
         Setup(m => m.CallService(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ServiceTarget>(), It.IsAny<object>()))

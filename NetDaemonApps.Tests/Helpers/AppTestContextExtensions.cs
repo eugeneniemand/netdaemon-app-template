@@ -3,6 +3,7 @@ using HomeAssistantGenerated;
 using Moq;
 using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Mocks.Moq;
+using Newtonsoft.Json;
 
 namespace NetDaemonApps.Tests.Helpers;
 
@@ -40,14 +41,24 @@ public static class AppTestContextExtensions
 
     public static void VerifyCallService(this AppTestContext ctx, string serviceCall, string entityId, Func<Times> times, object? data = null)
     {
-        var domain  = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
-        var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
+        var domain = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
+        var service = serviceCall[(serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1)..];
 
         ctx.HaContextMock.Verify(c => c.CallService(domain, service,
                 It.Is<ServiceTarget>(s => Match(entityId, s)),
                 data), times
         );
     }
+
+    public static void VerifyCallService(this AppTestContext ctx, string serviceCall, Func<Times> times, object? data = null)
+    {
+        var domain = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
+        var service = serviceCall[(serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1)..];
+
+        ctx.HaContextMock.Verify(c => c.CallService(domain, service, null, It.Is<object>(y => VerifyHelper.AreEqualObjects(data, y))));
+    }
+
+
 
     public static void VerifyEventRaised(this AppTestContext ctx, string eventType, Func<Times> times, object? data = null)
     {
@@ -109,6 +120,17 @@ public static class AppTestContextExtensions
 
     private static bool Match(string s, ServiceTarget x)
     {
-        return x.EntityIds != null && x.EntityIds.Any(id => id == s);
+        return x == null || (x.EntityIds != null && x.EntityIds.Any(id => id == s));
+    }
+}
+
+public static class VerifyHelper
+{
+    public static bool AreEqualObjects(object expected, object actual)
+    {
+        var expectedJson = JsonConvert.SerializeObject(expected);
+        var actualJson = JsonConvert.SerializeObject(actual);
+
+        return expectedJson == actualJson;
     }
 }
