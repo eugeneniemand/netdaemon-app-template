@@ -135,6 +135,7 @@ LightManagerV2.ManagerConfig:
     ConditionEntity: alarm_control_panel.alarmo
     ConditionEntityState: armded_night
     Watchdog: false
+    #debug: true
 
   - Name: Aaron
     Timeout: 300
@@ -246,6 +247,18 @@ LightManagerV2.ManagerConfig:
     - armed_home
     - armed_away
     # debug: true
+
+  - Name: Christmas
+    Timeout: 600
+    PresenceEntities:
+      - binary_sensor.lounge_motion
+      - binary_sensor.lounge
+    ControlEntities:
+      - switch.tuya_socket_3
+      - switch.plug_1
+    KeepAliveEntities:
+      - media_player.lounge
+      - media_player.lounge_tv    
 
   - Name: Playroom
     Timeout: 300

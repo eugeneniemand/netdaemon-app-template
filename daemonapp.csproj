@@ -51,12 +51,24 @@
 		<None Update="appsettings.json">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="apps\AlexaConfig.yaml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="apps\**\*.yaml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove=".gitattributes" />
+	  <None Remove=".gitignore" />
+	  <None Remove="Deploy-NetDaemon.ps1" />
+	  <None Remove="Dockerfile" />
+	  <None Remove="hacs.json" />
+	  <None Remove="LICENSE" />
+	  <None Remove="README.md" />
 	</ItemGroup>
 
 </Project>

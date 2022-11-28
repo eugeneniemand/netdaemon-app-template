@@ -12,10 +12,8 @@ try
 
     await Host.CreateDefaultBuilder(args)
               .UseNetDaemonAppSettings()
-              //.UseNetDaemonDefaultLogging()
               .UseCustomLogging()
               .UseNetDaemonRuntime()
-              //.UseNetDaemonTextToSpeech()
               .UseNetDaemonMqttEntityManagement()
               .ConfigureServices((context, services) =>
                   services

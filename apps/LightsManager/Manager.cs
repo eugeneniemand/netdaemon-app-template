@@ -306,6 +306,12 @@ public class Manager
             return;
         }
 
+        if (ConditionEntityStateNotMet)
+        {
+            _logger.LogInformation("{room} Condition not met {conditionEntity}!={state}", Name, ConditionEntity.EntityId, ConditionEntityState);
+            return;
+        }
+
         _logger.LogInformation("{room} Turn Off", Name);
         AllControlEntities
             .Where(w => w.IsOn()).ToList()
@@ -335,7 +341,7 @@ public class Manager
 
         if (ConditionEntityStateNotMet)
         {
-            _logger.LogInformation("{room} Condition not met {conditionEntity}!={state}", Name, ConditionEntity, ConditionEntityState);
+            _logger.LogInformation("{room} Condition not met {conditionEntity}!={state}", Name, ConditionEntity.EntityId, ConditionEntityState);
             return;
         }
 

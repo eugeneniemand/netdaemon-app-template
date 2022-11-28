@@ -10,8 +10,8 @@ public static class Extentions
     public static IServiceCollection AddGeneratedCode(this IServiceCollection serviceCollection)
         => serviceCollection
            .AddTransient<IEntities, Entities>()
-           .AddTransient<IServices, Services>();
-    //.AddTransient<Alexa>();
+           .AddTransient<IServices, Services>()
+           .AddTransient<IAlexa, Alexa>();
 
     public static bool Equals(this string enumString, Dishwasher.DishwasherCycle value)
     {
@@ -41,9 +41,9 @@ public static class Extentions
         return ( (int)( hash % MustBeLessThan ) ).ToString();
     }
 
-    
+
     /// <summary>
-    /// Returns the key and value of the item in the collection with the minimum value
+    ///     Returns the key and value of the item in the collection with the minimum value
     /// </summary>
     /// <param name="existing"></param>
     /// <returns></returns>
@@ -56,11 +56,18 @@ public static class Extentions
         return new KeyValuePair<DateTime, double>(key, min);
     }
 
+    public static Dictionary<string, object>? ToDictionary(this object obj)
+    {
+        var json       = JsonSerializer.Serialize(obj);
+        var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+        return dictionary;
+    }
+
     public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey, TValue>(this Dictionary<TKey, TValue> existing) where TKey : notnull => new(existing);
 
 
     /// <summary>
-    /// Calculates a sliding the average from the left of collection over the window of items specified by size
+    ///     Calculates a sliding the average from the left of collection over the window of items specified by size
     /// </summary>
     /// <param name="existing"></param>
     /// <param name="size"></param>
@@ -70,7 +77,7 @@ public static class Extentions
         var dict   = new SortedDictionary<DateTime, double>();
         var keys   = existing.Keys.ToList();
         var values = existing.Values.ToList();
-        for (var i = 0; i < existing.Count - size+1; i++) dict.Add(keys[i], values.Skip(i).Take(size).Average());
+        for (var i = 0; i < existing.Count - size + 1; i++) dict.Add(keys[i], values.Skip(i).Take(size).Average());
 
         return dict;
     }
