@@ -47,11 +47,11 @@ LightManagerV2.ManagerConfig:
       - sleeping
     NightControlEntities:
       - light.dining_1
-    CircadianSwitchEntity: switch.circadian_lighting_circadian_dining
+    CircadianSwitchEntity: switch.adaptive_lighting_dining
     RandomStates:
     - armed_home
     - armed_away
-    # debug: true
+    debug: true
 
   - Name: Fish
     PresenceEntities:
@@ -153,7 +153,7 @@ LightManagerV2.ManagerConfig:
       - sleeping
     NightControlEntities:
       - light.aaron_4
-    CircadianSwitchEntity: switch.circadian_lighting_circadian_aaron
+    CircadianSwitchEntity: switch.adaptive_lighting_aaron
     RandomStates:
     - armed_away
 
@@ -172,6 +172,7 @@ LightManagerV2.ManagerConfig:
       - sleeping
     NightControlEntities:
       - light.jayden_3
+    CircadianSwitchEntity: switch.adaptive_lighting_jayden
     RandomStates:
     - armed_away
 
@@ -219,7 +220,7 @@ LightManagerV2.ManagerConfig:
       - sleeping
     NightControlEntities:
       - light.master_5
-    CircadianSwitchEntity: switch.circadian_lighting_circadian_master
+    CircadianSwitchEntity: switch.adaptive_lighting_master
     RandomStates:
     - armed_away
 
@@ -248,17 +249,17 @@ LightManagerV2.ManagerConfig:
     - armed_away
     # debug: true
 
-  - Name: Christmas
-    Timeout: 600
-    PresenceEntities:
-      - binary_sensor.lounge_motion
-      - binary_sensor.lounge
-    ControlEntities:
-      - switch.tuya_socket_3
-      - switch.plug_1
-    KeepAliveEntities:
-      - media_player.lounge
-      - media_player.lounge_tv    
+  #- Name: Christmas
+  #  Timeout: 600
+  #  PresenceEntities:
+  #    - binary_sensor.lounge_motion
+  #    - binary_sensor.lounge
+  #  ControlEntities:
+  #    - switch.tuya_socket_3
+  #    - switch.plug_1
+  #  KeepAliveEntities:
+  #    - media_player.lounge
+  #    - media_player.lounge_tv    
 
   - Name: Playroom
     Timeout: 300

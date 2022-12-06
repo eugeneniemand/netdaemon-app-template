@@ -1,10 +1,10 @@
 ﻿Niemand.Helpers.AlexaConfig:
   Devices:
     media_player.office:
-        DayVolume: 0.4
+        DayVolume: 0.5
         NightVolume: 0.3
         NightWhisper: false
     media_player.kitchen:
-        DayVolume: 0.5
-        NightVolume: 0.2
+        DayVolume: 0.6
+        NightVolume: 0.4
         NightWhisper: false

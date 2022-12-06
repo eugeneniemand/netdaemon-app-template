@@ -5,7 +5,7 @@
 public class Alarm
 {
     public Alarm(IEntities entities, IAlexa alexa)
-    {
+    {        
         entities.AlarmControlPanel.Alarmo.StateChanges().Subscribe(s =>
         {
             switch (s.New.State)

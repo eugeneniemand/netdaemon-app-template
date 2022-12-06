@@ -1,7 +1,7 @@
 ﻿namespace Niemand.TestApp;
 
 [NetDaemonApp]
-//[Focus]
+[Focus]
 public class TestApp
 {
     public TestApp(IAlexa alexa)

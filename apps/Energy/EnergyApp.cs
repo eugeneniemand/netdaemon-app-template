@@ -26,7 +26,7 @@ public class EnergyApp
                   .StateChanges()
                   .Subscribe(_ => { NotifyRates(_cheapestWindows); });
 
-        _haContext.Entity("octopusagile.all_rates")
+        _haContext.Entity("sensor.all_rates_new")
                   .StateAllChanges()
                   .Subscribe(_ => CacheCheapestWindows());
 
@@ -43,7 +43,8 @@ public class EnergyApp
     {
         get
         {
-            var rates = ( (Dictionary<string, object>)_haContext.Entity("octopusagile.all_rates").Attributes ?? new Dictionary<string, object>() )
+            var rates = ( (Dictionary<string, object>)_haContext.Entity("sensor.all_rates_new").Attributes ?? new Dictionary<string, object>() )
+                        .Where(kvp => kvp.Key != "friendly_name")
                         .Where(kvp => DateTime.Parse(kvp.Key) >= _scheduler.Now.DateTime)
                         .ToDictionary(kvp => DateTime.Parse(kvp.Key), kvp => ( (JsonElement)kvp.Value ).GetDouble())
                         .ToSortedDictionary();

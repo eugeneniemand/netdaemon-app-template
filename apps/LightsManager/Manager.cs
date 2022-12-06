@@ -362,6 +362,10 @@ public class Manager
             lightEntities = ControlEntities.ToList();
         }
 
+        if (CircadianSwitchEntity == null) return;
+        _logger.LogDebug("{room} Turn On Circadian Switch", Name);
+        CircadianSwitchEntity.TurnOn();
+
         foreach (var e in lightEntities.Where(e => e.IsOff()))
         {
             _logger.LogInformation("{room} Turning On {light}", Name, e.EntityId);
@@ -373,10 +377,7 @@ public class Manager
                 domain: "light");
         }
 
-        RoomState = "on";
-        if (CircadianSwitchEntity == null) return;
-        _logger.LogDebug("{room} Turn On Circadian Switch", Name);
-        CircadianSwitchEntity.TurnOn();
+        RoomState = "on";        
     }
 
     private async Task UpdateAttributes(bool showTurningOff = false)
