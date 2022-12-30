@@ -12,7 +12,7 @@
 		<PackageReference Include="FluentAssertions.Json" Version="6.1.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="22.40.0" />
 		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.40.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.40.0" />
+		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="22.52.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
 		<PackageReference Include="Microsoft.Reactive.Testing" Version="5.0.0" />
 		<PackageReference Include="Moq" Version="4.18.2" />
