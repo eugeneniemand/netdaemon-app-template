@@ -12,10 +12,13 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.office_motion
       - binary_sensor.study
     KeepAliveEntities:
-      - binary_sensor.eugene_laptop_in_use
+      - binary_sensor.eugenes_macbook_active
       - binary_sensor.haileys_macbook_air_active
     ControlEntities:
       - switch.office_skylight
+    MonitorEntities:
+      - light.office_1
+      - light.office_2
     NightTimeEntity: input_select.house_mode
     NightTimeEntityStates:
       - night
@@ -37,6 +40,14 @@ LightManagerV2.ManagerConfig:
     ControlEntities:
       - light.dining
       - light.dining_wall
+    MonitorEntities:
+      - light.dining_1
+      - light.dining_2
+      - light.dining_3
+      - light.dining_4
+      - light.dining_5
+      - light.dining_wall_1
+      - light.dining_wall_2
     Timeout: 300
     NightTimeout: 90
     LuxEntity: sensor.dining_lux
@@ -51,7 +62,7 @@ LightManagerV2.ManagerConfig:
     RandomStates:
     - armed_home
     - armed_away
-    debug: true
+    # debug: true
 
   - Name: Fish
     PresenceEntities:
@@ -60,12 +71,6 @@ LightManagerV2.ManagerConfig:
     ControlEntities:
       - switch.plug_2
     Timeout: 900
-    NightTimeEntity: input_select.house_mode
-    NightTimeEntityStates:
-      - night
-      - sleeping
-    NightControlEntities:
-      - light.dining_1
     # debug: true
 
   - Name: Landing
@@ -145,6 +150,11 @@ LightManagerV2.ManagerConfig:
     ControlEntities:
       - light.aaron
       - light.aaron_main
+    MonitorEntities:
+      - light.aaron_1
+      - light.aaron_2
+      - light.aaron_3
+      - light.aaron_4
     LuxEntity: sensor.aaron_lux
     LuxlimitEntity: input_number.aaron_lux_limit
     NightTimeEntity: input_select.house_mode
@@ -164,6 +174,11 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.jayden_motion
     ControlEntities:
       - light.jayden
+    MonitorEntities:
+      - light.jayden_1
+      - light.jayden_2
+      - light.jayden_3
+      - light.jayden_4
     LuxEntity: sensor.jayden_lux
     LuxlimitEntity: input_number.jayden_lux_limit
     NightTimeEntity: input_select.house_mode
@@ -212,6 +227,12 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.master_motion
     ControlEntities:
       - light.master
+    MonitorEntities:
+      - light.master_1
+      - light.master_2
+      - light.master_3
+      - light.master_4
+      - light.master_5
     LuxEntity: sensor.master_lux
     LuxlimitEntity: input_number.master_lux_limit
     NightTimeEntity: input_select.house_mode
@@ -232,6 +253,9 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.lounge
     ControlEntities:
       - light.lounge
+    MonitorEntities:
+      - light.lounge_front
+      - light.lounge_back
     LuxEntity: sensor.lounge_lux
     LuxlimitEntity: input_number.lounge_lux_limit
     KeepAliveEntities:
@@ -279,6 +303,13 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.kitchen
     ControlEntities:
       - light.kitchen
+    MonitorEntities:
+      - light.kitchen_1
+      - light.kitchen_2
+      - light.kitchen_3
+      - light.kitchen_4
+      - light.kitchen_5
+      - light.kitchen_6
     LuxEntity: sensor.kitchen_lux
     LuxlimitEntity: input_number.kitchen_lux_limit
     CircadianSwitchEntity: switch.adaptive_lighting_kitchen
@@ -305,6 +336,10 @@ LightManagerV2.ManagerConfig:
     ControlEntities:
       - light.utility
       - light.utilitycupboard
+    MonitorEntities:
+      - light.utility_1
+      - light.utility_2
+      - light.utility_3
     LuxEntity: sensor.utility_lux
     LuxLimitEntity: input_number.utility_lux_limit
     CircadianSwitchEntity: switch.adaptive_lighting_utility

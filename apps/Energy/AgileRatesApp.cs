@@ -49,9 +49,10 @@ public class AgileRatesApp : IAsyncInitializable, IDisposable
         var response = client.SendAsync(request);
         if (response.Result.StatusCode != HttpStatusCode.OK) throw new Exception("Couldn't Get Rates");
 
-        var ratesJson = await response.Result.Content.ReadAsStringAsync();
-        var rates     = JsonSerializer.Deserialize<Rates>(ratesJson);
-        return rates.Results.OrderByDescending(r => r.ValidFrom).Where(r => r.ValidTo >= DateTime.Now).ToDictionary(r => $"{r.ValidFrom:s}Z", r => r.Value);
+        var ratesJson     = await response.Result.Content.ReadAsStringAsync();
+        var rates         = JsonSerializer.Deserialize<Rates>(ratesJson);
+        var ratesForToday = rates.Results.OrderByDescending(r => r.ValidFrom).Where(r => r.ValidTo >= DateTime.Now.ToUniversalTime()).ToDictionary(r => $"{r.ValidFrom:s}Z", r => r.Value);
+        return ratesForToday;
     }
 
     private async Task SetRates()
@@ -66,6 +67,16 @@ public class AgileRatesApp : IAsyncInitializable, IDisposable
         catch (TimeoutException e)
         {
             _logger.LogInformation("Set Entity Attributes timed out for {entity}\n{error}", "sensor.all_rates_new", e.Message);
+        }
+    }
+
+    public class DateTimeConverterUsingDateTimeParse : JsonConverter<DateTime>
+    {
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => DateTime.Parse(reader.GetString() ?? string.Empty).ToLocalTime();
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToUniversalTime().ToString());
         }
     }
 

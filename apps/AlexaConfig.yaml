@@ -1,10 +1,21 @@
 ﻿Niemand.Helpers.AlexaConfig:
+  People:
+    amzn1.ask.person.ALDPDMKPZ4CYPMIBLT7L2VBOTFJADCRRV7CFWO7PZAJFS52CG5KTKED26MUCZXNO36G2K3GFTPSZDK5QFBCOMD3JPTKGXKSF4YHEXRWS:
+      Name: Eugene
+    amzn1.ask.person.ALDPDMKPZ4CYPMIBLT7L2VBOTFJADCRRV7CFWO7PZAJFS52CG5KTKFOQAO2WZOAO63ZCMH4WYXQDAK5QXABSAIC7MFP63OV5PG2R4RWI:
+      Name: Hailey
+    amzn1.ask.person.ALDPDMKPZ4CYPMIBLT7L2VBOTFJADCRRV7CFWO7PZAJFS52CG5KTKO55U7CKSCKXQBXQWJC6DY62DUULLBVA7GUJK3TBG7F4CBTLPMJJ:
+      Name: Jayden
   Devices:
+    media_player.master:
+      DayVolume: 0.5
+      NightVolume: 0.1
+      NightWhisper: true
     media_player.office:
-        DayVolume: 0.5
-        NightVolume: 0.3
-        NightWhisper: false
+      DayVolume: 0.5
+      NightVolume: 0.3
+      NightWhisper: false
     media_player.kitchen:
-        DayVolume: 0.6
-        NightVolume: 0.4
-        NightWhisper: false
+      DayVolume: 0.6
+      NightVolume: 0.4
+      NightWhisper: false

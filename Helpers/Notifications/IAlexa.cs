@@ -1,9 +1,14 @@
-﻿namespace Niemand.Helpers;
+﻿using System.Reactive.Subjects;
+
+namespace Niemand.Helpers;
 
 public interface IAlexa
 {
     void Announce(Alexa.Config config);
     void Announce(string mediaPlayer, string message);
+    void Prompt(string mediaPlayer, string message, string eventId);
     void TextToSpeech(Alexa.Config config);
     void TextToSpeech(string mediaPlayer, string message);
+    public Subject<PromptResponse> PromptResponses { get; }
+    public Dictionary<string, AlexaPeopleConfig> People { get;  } 
 }

@@ -18,7 +18,6 @@ public class BatteriesApp
         _services  = services;
         _alexa     = alexa;
         scheduler.ScheduleCron("0 7,18 * * *", () => CheckBatteries(haContext, services));
-        CheckBatteries(haContext, services);
     }
 
     private void CheckBatteries(IHaContext haContext, IServices services)

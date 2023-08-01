@@ -4,6 +4,7 @@ public class KitchenConfiguration
 {
     public LightEntity? CoffeeMachineLight { get; set; }
     public NumericSensorEntity? CoffeeMachinePower { get; set; }
+    public SwitchEntity? CoffeeMachineAdaptiveLighting { get; set; }
 }
 
 //[Focus]
@@ -25,6 +26,7 @@ public class Kitchen
 
             _logger.LogInformation("Coffee machine turned on");
             _config.CoffeeMachineLight.TurnOn(new LightTurnOnParameters { BrightnessPct = 100 });
+            _config.CoffeeMachineAdaptiveLighting.TurnOff();
         });
 
         _config.CoffeeMachinePower!.StateChanges().Where(s => s.Old.State >= 1200 && s.New.State < 1200).Subscribe(e =>

@@ -1,9 +1,10 @@
 ﻿namespace Niemand.Energy;
 
 [NetDaemonApp]
-//[Focus]
+[Focus]
 public class EnergyApp
 {
+    private readonly IEntities _entities;
     //private readonly Alexa      _alexa;
 
     private readonly IHaContext                                         _haContext;
@@ -12,7 +13,7 @@ public class EnergyApp
     private readonly IServices                                          _services;
     private          List<(DateTime startDate, double rate, int hours)> _cheapestWindows;
 
-    public EnergyApp(IHaContext haContext, IScheduler scheduler, ILogger<EnergyApp> logger, IServices services) //, Alexa alexa)
+    public EnergyApp(IHaContext haContext, IScheduler scheduler, ILogger<EnergyApp> logger, IServices services, IEntities entities) //, Alexa alexa)
     {
         _haContext = haContext;
         _scheduler = scheduler;
@@ -20,6 +21,7 @@ public class EnergyApp
         //_alexa     = alexa;
 
         _services = services;
+        _entities = entities;
         CacheCheapestWindows();
 
         _haContext.Entity("input_button.get_energy_rates")
@@ -77,6 +79,11 @@ public class EnergyApp
         }
 
         _cheapestWindows = Rates.CheapestWindows();
+
+        _entities.InputDatetime.Energy1HourWindow.SetDatetime(time: $"{_cheapestWindows.Single(r => r.hours == 1).startDate:T}");
+        _entities.InputDatetime.Energy2HourWindow.SetDatetime(time: $"{_cheapestWindows.Single(r => r.hours == 2).startDate:T}");
+        _entities.InputDatetime.Energy3HourWindow.SetDatetime(time: $"{_cheapestWindows.Single(r => r.hours == 3).startDate:T}");
+
         _logger.LogInformation(GetRatesMessageText(_cheapestWindows));
     }
 
@@ -106,7 +113,7 @@ public class EnergyApp
         if (cheapestWindows == null)
             CacheCheapestWindows();
 
-        _services.TelegramBot.SendMessage(GetRatesMessageText(cheapestWindows), parseMode: "MarkdownV2");
+        _services.TelegramBot.SendMessage(GetRatesMessageText(_cheapestWindows), parseMode: "MarkdownV2");
     }
 
     private void NotifyWindowsStarted(List<(DateTime startDateTime, double rate, int hourWindow)>? cheapestWindows)

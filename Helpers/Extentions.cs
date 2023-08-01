@@ -11,14 +11,8 @@ public static class Extentions
         => serviceCollection
            .AddTransient<IEntities, Entities>()
            .AddTransient<IServices, Services>()
-           .AddTransient<IAlexa, Alexa>();
-
-    public static bool Equals(this string enumString, Dishwasher.DishwasherCycle value)
-    {
-        if (Enum.TryParse<Dishwasher.DishwasherCycle>(enumString, out var v)) return value == v;
-
-        return false;
-    }
+           .AddTransient<IAlexa, Alexa>()
+           .AddSingleton<IVoiceProvider, VoiceProvider>();
 
     public static string GetFixedHash(this string s)
     {

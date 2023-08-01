@@ -1,3 +1,4 @@
 ﻿Niemand.KitchenConfiguration:
   CoffeeMachineLight: light.kitchen_4
   CoffeeMachinePower: sensor.tuya_socket_2_current_consumption
+  CoffeeMachineAdaptiveLighting: switch.adaptive_lighting_kitchen

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "daemonapp", "daemonapp.cspr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetDaemonApps.Tests", "NetDaemonApps.Tests\NetDaemonApps.Tests.csproj", "{D3039461-6A2C-4A88-A7B5-A5A55071302F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetDaemon.Extensions.MqttEntityManager", "..\netdaemon\src\Extensions\NetDaemon.Extensions.MqttEntityManager\NetDaemon.Extensions.MqttEntityManager.csproj", "{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{D3039461-6A2C-4A88-A7B5-A5A55071302F}.Release|x64.Build.0 = Release|Any CPU
 		{D3039461-6A2C-4A88-A7B5-A5A55071302F}.Release|x86.ActiveCfg = Release|Any CPU
 		{D3039461-6A2C-4A88-A7B5-A5A55071302F}.Release|x86.Build.0 = Release|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Debug|x64.Build.0 = Debug|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Debug|x86.Build.0 = Debug|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Release|x64.ActiveCfg = Release|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Release|x64.Build.0 = Release|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{0645ABCB-4B33-4C4F-AAD0-2FC5562165FB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

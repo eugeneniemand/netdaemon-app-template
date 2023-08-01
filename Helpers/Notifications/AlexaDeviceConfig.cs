@@ -11,3 +11,8 @@ public class AlexaDeviceConfig
     /// </summary>
     //public string EntityId { get; set; }
 }
+
+public class AlexaPeopleConfig
+{
+    public string Name { get; set; } = "UNKNOWN";
+}

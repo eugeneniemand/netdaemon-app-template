@@ -1,0 +1,14 @@
+﻿Niemand.VacationAppConfiguration:
+  lights:
+  - light.kitchen
+  - light.office
+  - light.dining
+  - light.dining_wall
+  - light.lounge
+  - light.floor
+  - light.utility
+  - light.landing
+  - light.aaron
+  - light.master
+  - light.jayden
+  - light.playroom
