@@ -2511,7 +2511,7 @@
         },
         {
           "id": "device_tracker.jayden_s_iphone_2",
-          "friendlyName": "Jayden-s-iPhone RX Jayden-s-iPhone",
+          "friendlyName": "Jayden-s-iPhone",
           "cSharpName": "JaydenSIphone2"
         },
         {
@@ -3499,19 +3499,14 @@
           "cSharpName": "BackDoorChecked"
         },
         {
-          "id": "input_boolean.dev_netdaemon_niemand_energy_energy_app",
-          "friendlyName": "dev_netdaemon_niemand_energy_energy_app",
-          "cSharpName": "DevNetdaemonNiemandEnergyEnergyApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_niemand_test_app_notifications_manager",
-          "friendlyName": "dev_netdaemon_niemand_test_app_notifications_manager",
-          "cSharpName": "DevNetdaemonNiemandTestAppNotificationsManager"
-        },
-        {
           "id": "input_boolean.dining_door_checked",
           "friendlyName": null,
           "cSharpName": "DiningDoorChecked"
+        },
+        {
+          "id": "input_boolean.dishwasher_ack",
+          "friendlyName": "dishwasher_ack",
+          "cSharpName": "DishwasherAck"
         },
         {
           "id": "input_boolean.dishwasher_reminder",
@@ -4140,6 +4135,11 @@
           "cSharpName": "LoungeFront"
         },
         {
+          "id": "light.lounge_lightener",
+          "friendlyName": "Lounge Lightener",
+          "cSharpName": "LoungeLightener"
+        },
+        {
           "id": "light.master",
           "friendlyName": "Master",
           "cSharpName": "Master"
@@ -4198,6 +4198,11 @@
           "id": "light.office_1",
           "friendlyName": "office 1",
           "cSharpName": "Office1"
+        },
+        {
+          "id": "light.office_2",
+          "friendlyName": "Office",
+          "cSharpName": "Office2"
         },
         {
           "id": "light.office_3",
@@ -7061,7 +7066,7 @@
         },
         {
           "id": "sensor.jayden_s_iphone_uptime_2",
-          "friendlyName": "Jayden-s-iPhone RX Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "JaydenSIphoneUptime2"
         },
         {
@@ -8559,7 +8564,7 @@
         {
           "jsonName": "Active Audio Output",
           "cSharpName": "ActiveAudioOutput",
-          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+          "clrType": "System.Object"
         },
         {
           "jsonName": "All Audio Output",
@@ -9594,6 +9599,96 @@
         {
           "jsonName": "2023-07-29T09:30:00Z",
           "cSharpName": "_20230729T093000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T21:30:00Z",
+          "cSharpName": "_20230804T213000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T21:00:00Z",
+          "cSharpName": "_20230804T210000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T20:30:00Z",
+          "cSharpName": "_20230804T203000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T20:00:00Z",
+          "cSharpName": "_20230804T200000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T19:30:00Z",
+          "cSharpName": "_20230804T193000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T19:00:00Z",
+          "cSharpName": "_20230804T190000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T18:30:00Z",
+          "cSharpName": "_20230804T183000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T18:00:00Z",
+          "cSharpName": "_20230804T180000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T17:30:00Z",
+          "cSharpName": "_20230804T173000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T17:00:00Z",
+          "cSharpName": "_20230804T170000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T16:30:00Z",
+          "cSharpName": "_20230804T163000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T16:00:00Z",
+          "cSharpName": "_20230804T160000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T15:30:00Z",
+          "cSharpName": "_20230804T153000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T15:00:00Z",
+          "cSharpName": "_20230804T150000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T14:30:00Z",
+          "cSharpName": "_20230804T143000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T14:00:00Z",
+          "cSharpName": "_20230804T140000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T13:30:00Z",
+          "cSharpName": "_20230804T133000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-08-04T13:00:00Z",
+          "cSharpName": "_20230804T130000Z",
           "clrType": "System.Double"
         }
       ]
@@ -11129,7 +11224,7 @@
         },
         {
           "id": "sensor.jayden_s_iphone_rx_2",
-          "friendlyName": "Jayden-s-iPhone RX RX",
+          "friendlyName": "RX",
           "cSharpName": "JaydenSIphoneRx2"
         },
         {
@@ -11154,7 +11249,7 @@
         },
         {
           "id": "sensor.jayden_s_iphone_tx_2",
-          "friendlyName": "Jayden-s-iPhone RX TX",
+          "friendlyName": "TX",
           "cSharpName": "JaydenSIphoneTx2"
         },
         {
@@ -11246,16 +11341,6 @@
           "id": "sensor.kitchen_echo_tx",
           "friendlyName": "Kitchen Echo TX",
           "cSharpName": "KitchenEchoTx"
-        },
-        {
-          "id": "sensor.kitchen_lights_energy",
-          "friendlyName": "Kitchen Lights energy",
-          "cSharpName": "KitchenLightsEnergy"
-        },
-        {
-          "id": "sensor.kitchen_lights_power",
-          "friendlyName": "Kitchen Lights power",
-          "cSharpName": "KitchenLightsPower"
         },
         {
           "id": "sensor.kitchen_lux",
@@ -12684,7 +12769,7 @@
         },
         {
           "id": "sensor.rx_80",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx80"
         },
         {
@@ -13188,6 +13273,21 @@
           "cSharpName": "TuyaSocket2Voltage"
         },
         {
+          "id": "sensor.tuya_socket_3_current",
+          "friendlyName": "tuya_socket_3_current",
+          "cSharpName": "TuyaSocket3Current"
+        },
+        {
+          "id": "sensor.tuya_socket_3_current_consumption",
+          "friendlyName": "tuya_socket_3_current_consumption",
+          "cSharpName": "TuyaSocket3CurrentConsumption"
+        },
+        {
+          "id": "sensor.tuya_socket_3_voltage",
+          "friendlyName": "tuya_socket_3_voltage",
+          "cSharpName": "TuyaSocket3Voltage"
+        },
+        {
           "id": "sensor.tx",
           "friendlyName": " TX",
           "cSharpName": "Tx"
@@ -13594,7 +13694,7 @@
         },
         {
           "id": "sensor.tx_80",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx80"
         },
         {
@@ -15340,7 +15440,7 @@
         },
         {
           "id": "switch.jayden_s_iphone_2",
-          "friendlyName": "Jayden-s-iPhone RX",
+          "friendlyName": null,
           "cSharpName": "JaydenSIphone2"
         },
         {
@@ -16214,6 +16314,11 @@
           "jsonName": "autoreset_time_remaining",
           "cSharpName": "AutoresetTimeRemaining",
           "clrType": "System.Object"
+        },
+        {
+          "jsonName": "force_rgb_color",
+          "cSharpName": "ForceRgbColor",
+          "clrType": "System.Boolean"
         }
       ]
     },
