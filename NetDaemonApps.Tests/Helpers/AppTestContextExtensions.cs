@@ -23,11 +23,11 @@ public static class AppTestContextExtensions
     public static T? GetEntity<T>(this HaContextMock ctx, string entityId) where T : Entity => Activator.CreateInstance(typeof(T), ctx.HaContext, entityId) as T;
 
 
-    public static T? GetEntity<T>(this AppTestContext ctx, string entityId, string state) where T : Entity
+    public static T? GetEntity<T>(this AppTestContext ctx, string entityId, string state, DateTime? lastUpdated = null, DateTime? lastChanged = null) where T : Entity
 
     {
         var instance = Activator.CreateInstance(typeof(T), ctx.HaContext, entityId) as T;
-        ctx.HaContextMock.TriggerStateChange(instance, state);
+        ctx.HaContextMock.TriggerStateChange(instance, state, lastChanged, lastUpdated);
         return instance;
     }
 
@@ -39,14 +39,27 @@ public static class AppTestContextExtensions
         return instance;
     }
 
+    public static void VerifyAnnounce(this AppTestContext ctx, string mediaPlayer, string message, Times times)
+    {
+        ctx.AlexaMock.Verify(m => m.Announce(mediaPlayer, message), times);
+    }
+
+    public static void VerifyCallScript(this AppTestContext ctx, string scriptName, Func<Times> times, object? data = null)
+    {
+        ctx.HaContextMock.Verify(c => c.CallService("script", scriptName, null, It.Is<object>(y => VerifyHelper.AreEqualObjects(data, y))), times);
+    }
+
+    public static void VerifyCallScript(this AppTestContext ctx, string scriptName, Times times, object? data = null)
+    {
+        ctx.HaContextMock.Verify(c => c.CallService("script", scriptName, null, It.Is<object>(y => VerifyHelper.AreEqualObjects(data, y))), times);
+    }
+
     public static void VerifyCallService(this AppTestContext ctx, string serviceCall, string entityId, Func<Times> times, object? data = null)
     {
         var domain  = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
         var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
 
-        ctx.HaContextMock.Verify(c => c.CallService(domain, service,
-                It.Is<ServiceTarget>(s => Match(entityId, s)),
-                data), times
+        ctx.HaContextMock.Verify(c => c.CallService(domain, service, It.Is<ServiceTarget>(s => Match(entityId, s)), data), times
         );
     }
 
@@ -55,7 +68,15 @@ public static class AppTestContextExtensions
         var domain  = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
         var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
 
-        ctx.HaContextMock.Verify(c => c.CallService(domain, service, null, It.Is<object>(y => VerifyHelper.AreEqualObjects(data, y))));
+        ctx.HaContextMock.Verify(c => c.CallService(domain, service, null, It.Is<object>(y => VerifyHelper.AreEqualObjects(data, y))), times);
+    }
+
+    public static void VerifyCallService(this AppTestContext ctx, string serviceCall, Times times, object? data = null)
+    {
+        var domain  = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
+        var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
+
+        ctx.HaContextMock.Verify(c => c.CallService(domain, service, null, It.Is<object>(y => VerifyHelper.AreEqualObjects(data, y))), times);
     }
 
     public static void VerifyCallService(this AppTestContext ctx, string serviceCall, string entityId, Times times, object? data = null)
@@ -63,10 +84,7 @@ public static class AppTestContextExtensions
         var domain  = serviceCall[..serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase)];
         var service = serviceCall[( serviceCall.IndexOf(".", StringComparison.InvariantCultureIgnoreCase) + 1 )..];
 
-        ctx.HaContextMock.Verify(c => c.CallService(domain, service,
-                It.Is<ServiceTarget>(s => Match(entityId, s)),
-                data), times
-        );
+        ctx.HaContextMock.Verify(c => c.CallService(domain, service, It.Is<ServiceTarget>(s => Match(entityId, s)), data), times);
     }
 
 
@@ -93,6 +111,11 @@ public static class AppTestContextExtensions
         ctx.VerifyCallService("light.turn_on", entity.EntityId, times, new LightTurnOnParameters());
     }
 
+    public static void VerifyPrompt(this AppTestContext ctx, string mediaPlayer, string message, string eventId, Times times)
+    {
+        ctx.AlexaMock.Verify(m => m.Prompt(mediaPlayer, message, eventId), times);
+    }
+
     public static void VerifySwitchTurnOff(this AppTestContext ctx, SwitchEntity entity, Func<Times> times)
     {
         ctx.VerifyCallService("switch.turn_off", entity.EntityId, times);
@@ -101,6 +124,11 @@ public static class AppTestContextExtensions
     public static void VerifySwitchTurnOn(this AppTestContext ctx, SwitchEntity entity, Func<Times> times)
     {
         ctx.VerifyCallService("switch.turn_on", entity.EntityId, times);
+    }
+
+    public static void VerifyTextToSpeech(this AppTestContext ctx, string mediaPlayer, string message, Times times)
+    {
+        ctx.AlexaMock.Verify(m => m.TextToSpeech(mediaPlayer, message), times);
     }
 
 

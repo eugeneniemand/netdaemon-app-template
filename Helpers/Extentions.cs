@@ -12,7 +12,8 @@ public static class Extentions
            .AddTransient<IEntities, Entities>()
            .AddTransient<IServices, Services>()
            .AddTransient<IAlexa, Alexa>()
-           .AddSingleton<IVoiceProvider, VoiceProvider>();
+           .AddSingleton<IVoiceProvider, VoiceProvider>()
+           .AddSingleton<IServiceProvider>(sp => sp);
 
     public static string GetFixedHash(this string s)
     {

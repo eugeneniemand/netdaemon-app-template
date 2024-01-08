@@ -5,8 +5,8 @@
   #- binary_sensor.dining_motion
   #- binary_sensor.kitchen_motion
   #- binary_sensor.utility_motion
-  #- binary_sensor.landing_motion
-  #- binary_sensor.bathroom_motion
+  - binary_sensor.landing_motion
+  - binary_sensor.bathroom_motion
   - binary_sensor.master_motion
   - binary_sensor.jayden_motion
   - binary_sensor.aaron_motion
@@ -15,4 +15,4 @@
   #- binary_sensor.lounge
   #- binary_sensor.dining
   #- binary_sensor.kitchen
-  #- binary_sensor.landing
+  - binary_sensor.landing

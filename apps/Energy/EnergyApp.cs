@@ -1,7 +1,7 @@
 ﻿namespace Niemand.Energy;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class EnergyApp
 {
     private readonly IEntities _entities;

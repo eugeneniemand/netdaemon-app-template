@@ -1,22 +1,29 @@
-﻿namespace Niemand.TestApp;
+﻿using daemonapp.apps.NotificationsManager;
+
+namespace Niemand;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class NotificationsManager
 {
-    private const    string                        DishwasherDoneEventId = "DishwasherDone";
     private readonly IAlexa                        _alexa;
+    private readonly IApplianceNotification        _dishwasherNotification;
+    private readonly ApplianceNotification         _dryerNotification;
     private readonly IEntities                     _entities;
     private readonly IHaContext                    _haContext;
     private readonly IDictionary<string, DateTime> _lastPrompt = new Dictionary<string, DateTime>();
     private readonly IScheduler                    _scheduler;
+    private readonly IApplianceNotification        _washingNotification;
 
     public NotificationsManager(IHaContext haContext, IEntities entities, IAlexa alexa, IScheduler scheduler)
     {
-        _haContext = haContext;
-        _entities  = entities;
-        _alexa     = alexa;
-        _scheduler = scheduler;
+        _haContext              = haContext;
+        _entities               = entities;
+        _alexa                  = alexa;
+        _scheduler              = scheduler;
+        _dishwasherNotification = new ApplianceNotification(scheduler, new DishwasherNotificationConfig(entities));
+        _washingNotification    = new ApplianceNotification(scheduler, new WasherNotificationConfig(entities));
+        _dryerNotification      = new ApplianceNotification(scheduler, new DryerNotificationConfig(entities));
 
         MediaPlayerVolume();
         AlarmReminder();
@@ -30,16 +37,16 @@ public class NotificationsManager
             switch (s.New.State)
             {
                 case "armed_night":
-                    var reminders = new List<string>();
+                    var reminderMessages = new List<string>();
                     if (_entities.InputBoolean.DryerReminder.IsOn())
-                        reminders.Add("Dryer");
+                        reminderMessages.Add("Dryer");
                     if (_entities.InputBoolean.WashingReminder.IsOn())
-                        reminders.Add("Washer");
+                        reminderMessages.Add("Washer");
                     if (_entities.InputBoolean.DryerReminder.IsOn())
-                        reminders.Add("Dishwasher");
+                        reminderMessages.Add("Dishwasher");
 
-                    var message = string.Join(",", reminders) + " is ready but not turned on.";
-                    _alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { "media_player.master", "media_player.office" }, Message = message });
+                    var reminderMessage = reminderMessages.Any() ? string.Join(",", reminderMessages) + " is ready but not turned on." : "";
+                    _alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { "media_player.master", "media_player.office" }, Message = $"{reminderMessage} Alarm armed" });
                     break;
                 case "disarmed":
                     break;
@@ -51,44 +58,57 @@ public class NotificationsManager
     {
         _entities.Sensor.TumbleDryerDryerMachineState.StateChanges().Subscribe(s =>
         {
-            switch (s.New.State.ToLower())
+            switch (_washingNotification.CycleState)
             {
-                case "run":
+                case CycleState.Running:
                     _entities.InputBoolean.DryerReminder.TurnOff();
                     break;
-                case "stop":
+                case CycleState.Finished:
                     _entities.InputBoolean.DryerAck.TurnOff();
                     break;
+                case CycleState.Ready:
+                    break;
+                case CycleState.Paused:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         });
 
         _entities.Sensor.WashingMachineWasherMachineState.StateChanges().Subscribe(s =>
         {
-            switch (s.New.State.ToLower())
+            switch (_washingNotification.CycleState)
             {
-                case "run":
+                case CycleState.Running:
                     _entities.InputBoolean.WashingReminder.TurnOff();
                     break;
-                case "stop":
+                case CycleState.Finished:
                     _entities.InputBoolean.WasherAck.TurnOff();
                     break;
-                case "pause":
+                case CycleState.Ready:
                     break;
+                case CycleState.Paused:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         });
 
         _entities.Sensor.DishwasherOperationState.StateChanges().Subscribe(s =>
         {
-            switch (s.New.State.ToLower())
+            switch (_dishwasherNotification.CycleState)
             {
-                case "run":
+                case CycleState.Running:
                     _entities.InputBoolean.DishwasherReminder.TurnOff();
                     break;
-                case "finished":
+                case CycleState.Finished:
+                    _alexa.Announce(_entities.MediaPlayer.Kitchen.EntityId, "The Dishwasher just finished");
                     _entities.InputBoolean.DishwasherAck.TurnOff();
                     break;
-                case "ready":
+                case CycleState.Ready:
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         });
 
@@ -96,31 +116,52 @@ public class NotificationsManager
                  .Where(s => s.Old.IsOff() && s.New.IsOn())
                  .Subscribe(s =>
                  {
-                     if (_entities.InputBoolean.DishwasherAck.IsOff() && PromptLessThanMinutesAgo(DishwasherDoneEventId, 15)) return;
-
-                     if (_entities.InputBoolean.DishwasherAck.IsOff() && !PromptLessThanMinutesAgo(DishwasherDoneEventId, 15))
-                     {
-                         _alexa.Prompt(_entities.MediaPlayer.Kitchen.EntityId, "The Dishwasher is done. Has it been unpacked?", DishwasherDoneEventId);
-                         _lastPrompt[DishwasherDoneEventId] = DateTime.Now;
-                     }
-
-                     if (_entities.InputBoolean.DishwasherAck.IsOn() && !PromptLessThanMinutesAgo(DishwasherDoneEventId, 60))
-                     {
-                         _alexa.Announce(_entities.MediaPlayer.Kitchen.EntityId, "The Dishwasher is ready");
-                         _lastPrompt[DishwasherDoneEventId] = DateTime.Now;
-                     }
+                     var notification = _dishwasherNotification.GetNotification(_dishwasherNotification.CycleState, LastPrompt(_dishwasherNotification.EventId));
+                     SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
                  });
 
-        _alexa.PromptResponses.Where(r => r.EventId == DishwasherDoneEventId).Subscribe(r =>
-        {
-            if (r.ResponseType == PromptResponseType.ResponseNo) _alexa.TextToSpeech(_entities.MediaPlayer.Kitchen.EntityId, "Ok");
-            if (r.ResponseType == PromptResponseType.ResponseYes)
-            {
-                _entities.InputBoolean.DishwasherAck.TurnOn();
-                _alexa.TextToSpeech(_entities.MediaPlayer.Kitchen.EntityId, "Thanks");
-            }
-        });
+        _entities.BinarySensor.UtilityMotion.StateChanges()
+                 .Where(s => s.Old.IsOff() && s.New.IsOn())
+                 .Subscribe(s =>
+                 {
+                     var notification = _washingNotification.GetNotification(_washingNotification.CycleState, LastPrompt(_washingNotification.EventId));
+                     SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
+                 });
+
+        _entities.BinarySensor.UtilityMotion.StateChanges()
+                 .Where(s => s.Old.IsOff() && s.New.IsOn())
+                 .Subscribe(s =>
+                 {
+                     var notification = _dryerNotification.GetNotification(_dryerNotification.CycleState, LastPrompt(_dryerNotification.EventId));
+                     SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
+                 });
+
+        _alexa.PromptResponses?
+              .Where(r => r.EventId == _dishwasherNotification.EventId)
+              .Subscribe(r =>
+              {
+                  var notification = _dishwasherNotification.HandleResponse(r.ResponseType);
+                  SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
+              });
+
+        _alexa.PromptResponses?
+              .Where(r => r.EventId == _washingNotification.EventId)
+              .Subscribe(r =>
+              {
+                  var notification = _washingNotification.HandleResponse(r.ResponseType);
+                  SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
+              });
+
+        _alexa.PromptResponses?
+              .Where(r => r.EventId == _dryerNotification.EventId)
+              .Subscribe(r =>
+              {
+                  var notification = _dryerNotification.HandleResponse(r.ResponseType);
+                  SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
+              });
     }
+
+    private TimeSpan LastPrompt(string eventId) => _lastPrompt.ContainsKey(eventId) ? _scheduler.Now.LocalDateTime - _lastPrompt[eventId] : TimeSpan.MaxValue;
 
     private void MediaPlayerVolume()
     {
@@ -138,5 +179,34 @@ public class NotificationsManager
         });
     }
 
-    private bool PromptLessThanMinutesAgo(string eventId, int minutes) => _lastPrompt.ContainsKey(eventId) && ( DateTime.Now - _lastPrompt[eventId] ).TotalMinutes <= minutes;
+    private void SendNotification(Notification? notification, string mediaPlayer)
+    {
+        if (notification == null || string.IsNullOrEmpty(notification.Message)) return;
+
+        switch (notification.Type)
+        {
+            case Alexa.NotificationType.Prompt:
+                _alexa.Prompt(mediaPlayer, notification.Message, notification.EventId);
+                break;
+            case Alexa.NotificationType.Announcement:
+                _alexa.Announce(mediaPlayer, notification.Message);
+                break;
+            case Alexa.NotificationType.Tts:
+                _alexa.TextToSpeech(mediaPlayer, notification.Message);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        _lastPrompt[notification.EventId] = _scheduler.Now.LocalDateTime;
+    }
+}
+
+public enum CycleState
+{
+    Running,
+    Finished,
+    Ready,
+    Paused,
+    Unknown
 }

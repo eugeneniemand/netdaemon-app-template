@@ -1,7 +1,10 @@
 ﻿using Microsoft.Reactive.Testing;
+using Moq;
 using NetDaemon.HassModel;
 using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Mocks.Moq;
+using Niemand.Helpers;
+using Niemand.Mocks;
 
 namespace NetDaemonApps.Tests.Helpers;
 
@@ -12,6 +15,7 @@ public class AppTestContext
 {
     public HaContextMock HaContextMock { get; } = new();
     public IHaContext HaContext => HaContextMock.HaContext;
+    public Mock<AlexaMock> AlexaMock { get; private set; } = new();
     public TestScheduler Scheduler { get; } = new();
 
     public void AdvanceTimeBy(long absoluteTime)
@@ -33,9 +37,19 @@ public class AppTestContext
         return ctx;
     }
 
+    public void SetAlexaMock(Mock<AlexaMock> mock)
+    {
+        AlexaMock = mock;
+    }
+
     public void SetCurrentTime(DateTime time)
     {
         AdvanceTimeTo(time.Ticks);
+    }
+
+    public void TriggerAlexaResponse(PromptResponse response)
+    {
+        AlexaMock.Object.QueueResponse(response);
     }
 
     public void TriggerEvent(Event @event)
@@ -45,7 +59,7 @@ public class AppTestContext
 
     public void TriggerStateChange(Entity entity, string newStatevalue, object? attributes = null)
     {
-        HaContextMock.TriggerStateChange(entity, newStatevalue, attributes);
+        HaContextMock.TriggerStateChange(entity, newStatevalue, null, null, attributes);
     }
 
     public void TriggerStateChange(Entity entity, EntityState newState)

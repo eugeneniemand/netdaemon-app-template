@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
 using NetDaemon.HassModel.Entities;
 
 namespace NetDaemon.HassModel.Mocks;
@@ -16,6 +17,8 @@ public class HaContextMockBase : IHaContext, IHaContextMock
     public virtual void CallService(string domain, string service, ServiceTarget? target = null, object? data = null)
     {
     }
+
+    public Task<JsonElement?> CallServiceWithResponseAsync(string domain, string service, ServiceTarget? target = null, object? data = null) => throw new NotImplementedException();
 
     public IObservable<Event> Events => EventsSubject;
 
@@ -31,9 +34,9 @@ public class HaContextMockBase : IHaContext, IHaContextMock
 
     public IObservable<StateChange> StateAllChanges() => StateAllChangeSubject;
 
-    public void TriggerStateChange(Entity entity, string newStatevalue, object? attributes = null)
+    public void TriggerStateChange(Entity entity, string newStatevalue, DateTime? lastUpdated = null, DateTime? lastChanged = null, object? attributes = null)
     {
-        var newState                     = new EntityState { State = newStatevalue };
+        var newState                     = new EntityState { State = newStatevalue, LastUpdated = lastUpdated, LastChanged = lastChanged };
         if (attributes != null) newState = newState.WithAttributes(attributes);
 
         TriggerStateChange(entity.EntityId, newState);
@@ -64,7 +67,7 @@ public class HaContextMockBase : IHaContext, IHaContextMock
 
 public interface IHaContextMock
 {
-    void TriggerStateChange(Entity entity, string newStatevalue, object? attributes = null);
+    void TriggerStateChange(Entity entity, string newStatevalue, DateTime? lastUpdated = null, DateTime? lastChanged = null, object? attributes = null);
     void TriggerStateChange(string entityId, EntityState newState);
     void VerifyServiceCalled(Entity entity, string domain, string service);
 }

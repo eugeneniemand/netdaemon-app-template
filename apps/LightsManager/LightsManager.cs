@@ -6,7 +6,7 @@ using NetDaemon.Extensions.MqttEntityManager;
 
 namespace LightManagerV2;
 
-//[Focus]
+[Focus]
 [NetDaemonApp]
 public class LightsManager : IAsyncInitializable
 {

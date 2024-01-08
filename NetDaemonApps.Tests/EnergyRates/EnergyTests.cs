@@ -210,5 +210,5 @@ public class EnergyTests
 
 public static class EnergyAppTestContextInstanceExtensions
 {
-    public static EnergyApp InitEnergy(this AppTestContext ctx) => new(ctx.HaContext, ctx.Scheduler, new Mock<ILogger<EnergyApp>>().Object, new Mock<IServices>().Object);
+    public static EnergyApp InitEnergy(this AppTestContext ctx) => new(ctx.HaContext, ctx.Scheduler, new Mock<ILogger<EnergyApp>>().Object, new Mock<IServices>().Object, new Mock<IEntities>().Object);
 }

@@ -14,6 +14,7 @@ LightManagerV2.ManagerConfig:
     KeepAliveEntities:
       - binary_sensor.eugenes_macbook_active
       - binary_sensor.haileys_macbook_air_active
+      - binary_sensor.eugene_desktop_active 
     ControlEntities:
       - switch.office_skylight
     MonitorEntities:
@@ -64,10 +65,10 @@ LightManagerV2.ManagerConfig:
     - armed_away
     # debug: true
 
-  - Name: Fish
+  - Name: Christmas
     PresenceEntities:
-      - binary_sensor.dining_motion
-      - binary_sensor.dining
+      - binary_sensor.lounge_motion
+      - binary_sensor.lounge
     ControlEntities:
       - switch.plug_2
     Timeout: 900
@@ -78,17 +79,17 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.landing_motion
       - binary_sensor.landing
     ControlEntities:
-      - light.landing_day
-      - light.landing_night
+      - light.landing      
     NightTimeEntity: input_select.house_mode
     NightTimeEntityStates:
       - night
       - sleeping
     NightControlEntities:
-      - light.landing_night
+      - light.landing_7
     Timeout: 90
     LuxEntity: sensor.landing_lux
     LuxlimitEntity: input_number.landing_lux_limit
+    CircadianSwitchEntity: switch.adaptive_lighting_landing
     RandomStates:
     - armed_away
     # debug: true
@@ -106,6 +107,20 @@ LightManagerV2.ManagerConfig:
     ConditionEntityState: below_horizon
     # debug: true
 
+  - Name: Backdoor
+    PresenceEntities:
+      - binary_sensor.back_door
+      - binary_sensor.niemand_garage_motion
+      - binary_sensor.niemand_garage_motion_2
+    KeepAliveEntities:
+      - binary_sensor.back_door
+    ControlEntities:
+      - light.backdoor
+    Timeout: 90
+    ConditionEntity: sun.sun
+    ConditionEntityState: below_horizon
+    # debug: true
+
   - Name: Drive
     PresenceEntities:
       - binary_sensor.niemand_drive_motion
@@ -114,7 +129,7 @@ LightManagerV2.ManagerConfig:
       - light.lounge
     Timeout: 300
     ConditionEntity: alarm_control_panel.alarmo
-    ConditionEntityState: armded_night
+    ConditionEntityState: armed_night
     Watchdog: false
 
   - Name: Garden
@@ -126,7 +141,7 @@ LightManagerV2.ManagerConfig:
       - light.dining_wall
     Timeout: 300
     ConditionEntity: alarm_control_panel.alarmo
-    ConditionEntityState: armded_night
+    ConditionEntityState: armed_night
     Watchdog: false
 
   - Name: Garage
@@ -138,7 +153,7 @@ LightManagerV2.ManagerConfig:
       - light.kitchen
     Timeout: 300
     ConditionEntity: alarm_control_panel.alarmo
-    ConditionEntityState: armded_night
+    ConditionEntityState: armed_night
     Watchdog: false
     #debug: true
 
@@ -163,6 +178,7 @@ LightManagerV2.ManagerConfig:
       - sleeping
     NightControlEntities:
       - light.aaron_4
+      - light.landing_7
     CircadianSwitchEntity: switch.adaptive_lighting_aaron
     RandomStates:
     - armed_away
@@ -186,7 +202,8 @@ LightManagerV2.ManagerConfig:
       - night
       - sleeping
     NightControlEntities:
-      - light.jayden_3
+      - light.jayden_1
+      - light.landing_7
     CircadianSwitchEntity: switch.adaptive_lighting_jayden
     RandomStates:
     - armed_away
@@ -196,8 +213,16 @@ LightManagerV2.ManagerConfig:
     PresenceEntities:
       - binary_sensor.landing_motion
       - binary_sensor.hallway
+      - binary_sensor.entrance_motion
     ControlEntities:
       - light.hallway
+      - light.entrance
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
+    NightControlEntities:
+      - light.landing_7
     LuxlimitEntity: input_number.hallway_lux_limit
     LuxEntity: sensor.entrance_lux
     CircadianSwitchEntity: switch.adaptive_lighting_hallway
@@ -211,6 +236,7 @@ LightManagerV2.ManagerConfig:
     PresenceEntities:
       - binary_sensor.entrance_motion
     ControlEntities:
+      - light.hallway
       - light.entrance
     LuxlimitEntity: input_number.entrance_lux_limit
     LuxEntity: sensor.entrance_lux
@@ -271,19 +297,7 @@ LightManagerV2.ManagerConfig:
     RandomStates:
     - armed_home
     - armed_away
-    # debug: true
-
-  #- Name: Christmas
-  #  Timeout: 600
-  #  PresenceEntities:
-  #    - binary_sensor.lounge_motion
-  #    - binary_sensor.lounge
-  #  ControlEntities:
-  #    - switch.tuya_socket_3
-  #    - switch.plug_1
-  #  KeepAliveEntities:
-  #    - media_player.lounge
-  #    - media_player.lounge_tv    
+    # debug: true 
 
   - Name: Playroom
     Timeout: 300
@@ -291,8 +305,17 @@ LightManagerV2.ManagerConfig:
       - binary_sensor.playroom_motion
     ControlEntities:
       - light.playroom
+      - light.playroom_main
+    NightControlEntities:
+      - light.playroom_4
+      - light.landing_7
+    NightTimeEntity: input_select.house_mode
+    NightTimeEntityStates:
+      - night
+      - sleeping
     LuxEntity: sensor.playroom_lux
     LuxlimitEntity: input_number.playroom_lux_limit
+    CircadianSwitchEntity: switch.adaptive_lighting_playroom
     RandomStates:
     - armed_away
 
