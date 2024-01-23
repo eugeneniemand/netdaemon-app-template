@@ -10,6 +10,6 @@ global using NetDaemon.AppModel;
 global using NetDaemon.Extensions.Scheduler;
 global using NetDaemon.HassModel.Entities;
 global using NetDaemon.HassModel;
-global using Niemand.Helpers;
+global using NetDaemon.Helpers;
 global using System.Threading;
 global using System.Threading.Tasks;

@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetDaemonApp.Specs", "..\Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Niemand.Tests", "Niemand.Tests\Niemand.Tests.csproj", "{2D60E34D-FD5B-46ED-BC6B-8428527EB7D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetDaemon.Extensions.Testing", "..\netdaemon-extentions-testing\NetDaemon.Extensions.Testing\NetDaemon.Extensions.Testing.csproj", "{FC355B08-30C0-41C2-A24D-4B0313FFFA93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{2D60E34D-FD5B-46ED-BC6B-8428527EB7D9}.Release|x64.Build.0 = Release|Any CPU
 		{2D60E34D-FD5B-46ED-BC6B-8428527EB7D9}.Release|x86.ActiveCfg = Release|Any CPU
 		{2D60E34D-FD5B-46ED-BC6B-8428527EB7D9}.Release|x86.Build.0 = Release|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Debug|x64.Build.0 = Debug|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Debug|x86.Build.0 = Debug|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Release|x64.ActiveCfg = Release|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Release|x64.Build.0 = Release|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC355B08-30C0-41C2-A24D-4B0313FFFA93}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

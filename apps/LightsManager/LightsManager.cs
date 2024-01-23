@@ -6,7 +6,7 @@ using NetDaemon.Extensions.MqttEntityManager;
 
 namespace LightManagerV2;
 
-[Focus]
+//[Focus]
 [NetDaemonApp]
 public class LightsManager : IAsyncInitializable
 {
@@ -30,27 +30,14 @@ public class LightsManager : IAsyncInitializable
 
     public Task InitializeAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            _randomManager = new RandomManager(_scheduler, _config.RandomSwitchEntity, _config.MinDuration, _config.MaxDuration, _randomLogger);
-            ( _config.Rooms.Any(r => r.Debug)
-                    ? _config.Rooms.Where(r => r.Debug).ToList()
-                    : _config.Rooms.ToList() )
-                .ForEach(async r =>
-                {
-                    //foreach (var controlEntity in r.PresenceEntities)
-                    //    _haContext.StateAllChanges().Where(s => s.Entity.EntityId == controlEntity.EntityId).Subscribe(s =>
-                    //        _managerLogger.LogDebug("StateChange for {room} : {entity} from {oldSate} to state {newState}", r.Name, s?.New?.EntityId, s?.Old?.State, s?.New?.State)
-                    //    );
-                    await r.Init(_managerLogger, _config.NdUserId, _randomManager, _scheduler, _haContext, _entityManager, _config.GuardTimeout);
-                });
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            _managerLogger.LogError(e, "Error Occurred");
-        }
-
-        return null;
+        _randomManager = new RandomManager(_scheduler, _config.RandomSwitchEntity, _config.MinDuration, _config.MaxDuration, _randomLogger);
+        ( _config.Rooms.Any(r => r.Debug)
+                ? _config.Rooms.Where(r => r.Debug).ToList()
+                : _config.Rooms.ToList() )
+            .ForEach(async r =>
+            {
+                await r.Init(_managerLogger, _config.NdUserId, _randomManager, _scheduler, _haContext, _entityManager, _config.GuardTimeout);
+            });
+        return Task.CompletedTask;
     }
 }

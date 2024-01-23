@@ -1,4 +1,6 @@
-﻿namespace Niemand.Energy;
+﻿using NetDaemon.Helpers;
+
+namespace Niemand.Energy;
 
 [NetDaemonApp]
 //[Focus]
@@ -39,6 +41,8 @@ public class EnergyApp
             CacheCheapestWindows();
             NotifyWindowsStarted(_cheapestWindows);
         });
+
+        NotifyRates(_cheapestWindows);
     }
 
     public SortedDictionary<DateTime, double> Rates
@@ -112,6 +116,12 @@ public class EnergyApp
         _logger.LogDebug("NotifyRates");
         if (cheapestWindows == null)
             CacheCheapestWindows();
+
+        if (_cheapestWindows == null)
+        {
+            _logger.LogError("No Rates Found");
+            return;
+        }
 
         _services.TelegramBot.SendMessage(GetRatesMessageText(_cheapestWindows), parseMode: "MarkdownV2");
     }

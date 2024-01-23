@@ -1,8 +1,9 @@
 ﻿using Humanizer;
 using Humanizer.Localisation;
-using Niemand;
+using NetDaemon;
+using Niemand.Helpers;
 
-namespace daemonapp.apps.NotificationsManager;
+namespace Niemand.NotificationManager;
 
 public class ApplianceNotification : IApplianceNotification
 {
@@ -67,6 +68,7 @@ public class ApplianceNotification : IApplianceNotification
 
                 break;
             case CycleState.Unknown:
+                throw new ArgumentOutOfRangeException();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

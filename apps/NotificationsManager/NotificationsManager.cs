@@ -1,6 +1,8 @@
-﻿using daemonapp.apps.NotificationsManager;
+﻿using Niemand.NotificationManager;
+using NetDaemon.Helpers;
+using Niemand.Helpers;
 
-namespace Niemand;
+namespace NetDaemon;
 
 [NetDaemonApp]
 //[Focus]

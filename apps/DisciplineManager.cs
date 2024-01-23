@@ -1,13 +1,4 @@
-﻿using System;
-using System.Reactive.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using HomeAssistantGenerated;
-using Microsoft.Extensions.Logging;
-using NetDaemon.AppModel;
-using NetDaemon.Extensions.MqttEntityManager;
-using NetDaemon.HassModel;
-using NetDaemon.HassModel.Entities;
+﻿using NetDaemon.Extensions.MqttEntityManager;
 
 namespace Niemand;
 

@@ -1,4 +1,4 @@
-﻿namespace Niemand.Helpers;
+﻿namespace NetDaemon.Helpers;
 
 public interface IVoiceProvider
 {

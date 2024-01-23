@@ -94,7 +94,7 @@
 //        // Assert
 //        _ctx.VerifyHouseState("Morgon");
 //    }
-    
+
 //    [Fact]
 //    public void HouseState_ShouldNotChangeToMorning_WhenLightIsBrightAndNotWithinLowerTimeLimits()
 //    {
@@ -111,11 +111,11 @@
 //            .ToState(35.0d);
 
 //        // Assert
-        
+
 //        // Check that no select option been called, i.e HouseState not set
 //        _ctx.HaContext.DidNotReceiveWithAnyArgs().CallService("input_select", "select_option", null, null);
 //    }
-    
+
 //    [Fact]
 //    public void HouseState_ShouldNotChangeToMorning_WhenLightIsBrightAndNotWithinHigherTimeLimits()
 //    {
@@ -133,11 +133,11 @@
 //            .ToState(35.0d);
 
 //        // Assert
-        
+
 //        // Check that no select option been called, i.e HouseState not set
 //        _ctx.HaContext.DidNotReceiveWithAnyArgs().CallService("input_select", "select_option", null, null);
 //    }
-    
+
 //    [Fact]
 //    public void HouseState_ShouldChangeToEvening_WhenLightIsDarkAndWithinTimeLimits()
 //    {
@@ -180,7 +180,7 @@
 //        _ctx.VerifyHouseState("Kväll");
 //    }
 
-    
+
 //    [Fact]
 //    public void HouseState_ShouldNotChangeToEvening_WhenLightIsBrightAndNotWithinLowerTimeLimits()
 //    {
@@ -198,10 +198,10 @@
 //            .ToState(EveningBrightness);
 
 //        // Assert
-        
+
 //        _ctx.VerifyHouseStateNotChanged();
 //    }    
-    
+
 //    [Fact]
 //    public void HouseState_ShouldNotChangeToEvening_WhenLightIsBrightAndNotWithinHigherTimeLimits()
 //    {
@@ -219,7 +219,7 @@
 //            .ToState(EveningBrightness);
 
 //        // Assert
-        
+
 //        _ctx.VerifyHouseStateNotChanged();
 //    }
 
@@ -262,3 +262,4 @@
 //        ctx.VerifyInputSelect_SelectOption_NotChanged("input_select.house_mode_select");
 //    }
 //}
+

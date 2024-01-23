@@ -1,6 +1,6 @@
-﻿using Niemand;
+﻿using NetDaemon;
 
-namespace daemonapp.apps.NotificationsManager;
+namespace Niemand.NotificationManager;
 
 public class WasherNotificationConfig : IApplianceNotificationConfig
 {

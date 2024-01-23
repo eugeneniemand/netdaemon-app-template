@@ -4,8 +4,6 @@ namespace Niemand.Tests.Mocks;
 
 public class RandomManagerMock : IRandomManager
 {
-    public SwitchEntity RandomSwitchEntity { get; }
-    public TimeSpan RandomDelay { get; set; }
     public void Init(LightEntity entity, IEnumerable<string> randomStates)
     {
         throw new NotImplementedException();
@@ -15,6 +13,9 @@ public class RandomManagerMock : IRandomManager
     {
         throw new NotImplementedException();
     }
+
+    public TimeSpan RandomDelay { get; set; }
+    public SwitchEntity RandomSwitchEntity { get; }
 
     public void StartQueue()
     {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Reactive.Subjects;
-using Niemand.Helpers;
+using NetDaemon.Helpers;
 
-namespace Niemand.Mocks;
+namespace NetDaemon.Mocks;
 
 public class AlexaMock : IAlexa
 {

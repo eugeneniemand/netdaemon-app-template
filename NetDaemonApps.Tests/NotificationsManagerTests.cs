@@ -2,8 +2,8 @@
 using HomeAssistantGenerated;
 using Moq;
 using NetDaemonApps.Tests.Helpers;
-using Niemand;
-using Niemand.Helpers;
+using NetDaemon;
+using NetDaemon.Helpers;
 
 namespace NetDaemonApps.Tests;
 

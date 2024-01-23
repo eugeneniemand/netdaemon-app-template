@@ -3,8 +3,8 @@ using Moq;
 using NetDaemon.HassModel;
 using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Mocks.Moq;
-using Niemand.Helpers;
-using Niemand.Mocks;
+using NetDaemon.Helpers;
+using NetDaemon.Mocks;
 
 namespace NetDaemonApps.Tests.Helpers;
 

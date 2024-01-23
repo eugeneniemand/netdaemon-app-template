@@ -1,4 +1,6 @@
-﻿namespace daemonapp.apps.NotificationsManager;
+﻿using Niemand.Helpers;
+
+namespace Niemand.NotificationManager;
 
 public class Notification
 {

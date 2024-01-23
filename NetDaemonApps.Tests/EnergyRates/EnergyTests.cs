@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NetDaemon.HassModel.Entities;
 using NetDaemonApps.Tests.Helpers;
-using Niemand.Energy;
-using Niemand.Helpers;
+using NetDaemon.Energy;
+using NetDaemon.Helpers;
 
 namespace NetDaemonApps.Tests;
 

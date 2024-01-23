@@ -1,8 +1,9 @@
 ﻿using Humanizer;
 using Humanizer.Localisation;
-using Niemand;
+using NetDaemon;
+using Niemand.Helpers;
 
-namespace daemonapp.apps.NotificationsManager;
+namespace Niemand.NotificationManager;
 
 public class WashingNotification : IApplianceNotification
 {

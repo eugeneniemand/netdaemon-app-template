@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using NetDaemon.HassModel.Entities;
 using NSubstitute;
@@ -8,27 +7,16 @@ namespace NetDaemonApps.Tests.Helpers;
 public class StateChangeContext : IFromState, IToState, IWithState
 {
     private readonly AppTestContext _ctx;
-    private readonly string _entityId;
+    private readonly string         _entityId;
 
     public StateChangeContext(AppTestContext ctx, string entityId)
     {
-        _ctx = ctx;
+        _ctx      = ctx;
         _entityId = entityId;
     }
 
     private EntityState? FromState { get; set; }
     private EntityState? ToState { get; set; }
-
-    IToState IFromState.FromState<T>(T state)
-    {
-        ArgumentNullException.ThrowIfNull(state);
-        FromState = new EntityState
-        {
-            EntityId = _entityId,
-            State = Convert.ToString(state, CultureInfo.InvariantCulture)
-        };
-        return this;
-    }
 
     IToState IFromState.FromHassState(EntityState hassState)
     {
@@ -37,20 +25,15 @@ public class StateChangeContext : IFromState, IToState, IWithState
         return this;
     }
 
-    void IToState.ToState<T>(T state)
+    IToState IFromState.FromState<T>(T state)
     {
         ArgumentNullException.ThrowIfNull(state);
-        ToState = new EntityState
+        FromState = new EntityState
         {
             EntityId = _entityId,
-            State = state.ToString()
+            State    = Convert.ToString(state, CultureInfo.InvariantCulture)
         };
-        _ctx.HaContext.GetState(_entityId).Returns(ToState);
-        _ctx.HaContextMock.StateChangeSubject.OnNext(
-            new StateChange(
-                new Entity(_ctx.HaContext, _entityId),
-                FromState!,
-                ToState!));
+        return this;
     }
 
     void IToState.ToHassState(EntityState hassState)
@@ -65,13 +48,31 @@ public class StateChangeContext : IFromState, IToState, IWithState
                 ToState!));
     }
 
+    void IToState.ToState<T>(T state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        ToState = new EntityState
+        {
+            EntityId = _entityId,
+            State    = state.ToString()
+        };
+        _ctx.HaContext.GetState(_entityId).Returns(ToState);
+        _ctx.HaContextMock.StateChangeSubject.OnNext(
+            new StateChange(
+                new Entity(_ctx.HaContext, _entityId),
+                FromState!,
+                ToState!));
+    }
+
+    public IFromState ChangeStateFor(string entityId) => new StateChangeContext(_ctx, entityId);
+
     public IWithState WithEntityState<T>(string entityId, T state)
     {
         _ctx.HaContext.GetState(entityId).Returns(
             new EntityState
             {
                 EntityId = _entityId,
-                State = Convert.ToString(state, CultureInfo.InvariantCulture)
+                State    = Convert.ToString(state, CultureInfo.InvariantCulture)
             }
         );
         return this;
@@ -83,10 +84,5 @@ public class StateChangeContext : IFromState, IToState, IWithState
             state
         );
         return this;
-    }
-
-    public IFromState ChangeStateFor(string entityId)
-    {
-        return new StateChangeContext(_ctx, entityId);
     }
 }

@@ -1,45 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="AutoFixture" Version="4.18.0" />
-		<PackageReference Include="FluentAssertions" Version="6.11.0" />
-		<PackageReference Include="FluentAssertions.Json" Version="6.1.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="23.33.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="23.33.0" />
-		<PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="23.33.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.0" />
-		<PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.0" />
-		<PackageReference Include="Moq" Version="4.18.4" />
-		<PackageReference Include="NSubstitute" Version="5.0.0" />
-		<PackageReference Include="coverlet.collector" Version="6.0.0">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="NUnit" Version="3.13.3" />
-		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\daemonapp.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Update="EnergyRates\agile_rates_3.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="EnergyRates\agile_rates_2.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="EnergyRates\agile_rates.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="test-data.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="AutoFixture" Version="4.18.0"/>
+        <PackageReference Include="FluentAssertions" Version="6.11.0"/>
+        <PackageReference Include="FluentAssertions.Json" Version="6.1.0"/>
+        <PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="23.33.0"/>
+        <PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="23.33.0"/>
+        <PackageReference Include="JoySoftware.NetDaemon.HassModel" Version="23.33.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.0"/>
+        <PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.0"/>
+        <PackageReference Include="Moq" Version="4.18.4"/>
+        <PackageReference Include="NSubstitute" Version="5.0.0"/>
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="NUnit" Version="3.13.3"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\daemonapp.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="EnergyRates\agile_rates_3.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="EnergyRates\agile_rates_2.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="EnergyRates\agile_rates.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test-data.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>
