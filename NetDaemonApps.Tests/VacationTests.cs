@@ -8,7 +8,7 @@ using Moq;
 using NetDaemon.Client;
 using NetDaemon.Extensions.MqttEntityManager;
 using NetDaemonApps.Tests.Helpers;
-using Niemand;
+using NetDaemon;
 
 namespace NetDaemonApps.Tests;
 

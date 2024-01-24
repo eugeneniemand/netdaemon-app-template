@@ -4,14 +4,23 @@ namespace Niemand.Helpers;
 
 public class Alexa : IAlexa
 {
+    public enum NotificationType
+    {
+        Prompt,
+        Announcement,
+        Tts
+    }
+
     private readonly IDictionary<string, AlexaDeviceConfig> _devices;
     private readonly IEntities                              _entities;
     private readonly IHaContext                             _ha;
     private readonly ILogger<Alexa>                         _logger;
     private readonly Subject<Config>                        _messages = new();
-    private readonly IScheduler                             _scheduler;
-    private readonly IServices                              _services;
-    private readonly IVoiceProvider                         _voice;
+
+    private readonly Subject<PromptResponse> _promptResponses = new();
+    private readonly IScheduler              _scheduler;
+    private readonly IServices               _services;
+    private readonly IVoiceProvider          _voice;
 
 
     public Alexa(IHaContext ha, IEntities entities, IServices services, IScheduler scheduler, IVoiceProvider voice, IAppConfig<AlexaConfig> config, ILogger<Alexa> logger)
@@ -47,7 +56,7 @@ public class Alexa : IAlexa
     public void Prompt(string mediaPlayer, string message, string eventId) =>
         QueueNotification(new Config { Entity = mediaPlayer, Message = message, EventId = eventId }, "prompt");
 
-    public Subject<PromptResponse> PromptResponses { get; } = new();
+    public IObservable<PromptResponse> PromptResponses => _promptResponses;
 
     public void TextToSpeech(Config config) =>
         QueueNotification(config, "tts");
@@ -103,7 +112,7 @@ public class Alexa : IAlexa
 
         foreach (var cfg in cfgs)
         {
-            message          += ( message != "" ? ",,,," : "" ) + cfg.Message;
+            message          += ( message != "" ? ",,,and," : "" ) + cfg.Message;
             entities         =  cfg.Entities;
             notificationType =  cfg.NotifyType;
             eventId          =  cfg.EventId;
@@ -158,7 +167,7 @@ public class Alexa : IAlexa
             if (responseEvent?.Data == null) return;
             if (responseEvent?.Data?.ResponsePersonId != null)
                 responseEvent.Data.ResponsePersonName = People[responseEvent.Data.ResponsePersonId].Name;
-            PromptResponses.OnNext(responseEvent.Data);
+            _promptResponses.OnNext(responseEvent.Data);
         });
     }
 

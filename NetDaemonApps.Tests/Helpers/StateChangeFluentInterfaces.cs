@@ -4,19 +4,19 @@ namespace NetDaemonApps.Tests.Helpers;
 
 public interface IWithState : IFromState
 {
+    IFromState ChangeStateFor(string entityId);
     IWithState WithEntityState<T>(string entityId, T state);
     IWithState WithEntityState(string entityId, EntityState state);
-    IFromState ChangeStateFor(string entityId);
 }
 
 public interface IFromState
 {
-    IToState FromState<T>(T state);
     IToState FromHassState(EntityState hassState);
+    IToState FromState<T>(T state);
 }
 
 public interface IToState
 {
-    void ToState<T>(T state);
     void ToHassState(EntityState hassState);
+    void ToState<T>(T state);
 }

@@ -13,19 +13,18 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
         void Callback(string domain, string service, ServiceTarget target, object? data)
         {
             if (target == null) return;
-            
+
             switch (data)
             {
                 case null:
                     TriggerStateChange(target.EntityIds.First(), new EntityState { State = "" });
                     break;
                 case InputSelectSelectOptionParameters:
-                    TriggerStateChange(target.EntityIds.First(), new EntityState { State = ((InputSelectSelectOptionParameters)data).Option });
+                    TriggerStateChange(target.EntityIds.First(), new EntityState { State = ( (InputSelectSelectOptionParameters)data ).Option });
                     break;
                 case object:
                     TriggerStateChange(target.EntityIds.First(), new EntityState { State = data.ToString() });
                     break;
-
             }
 
 
@@ -48,9 +47,9 @@ public class HaContextMock : Mock<HaContextMockBase>, IHaContextMock
 
     public Subject<StateChange> StateChangeSubject { get; } = new();
 
-    public void TriggerStateChange(Entity entity, string newStatevalue, object? attributes = null)
+    public void TriggerStateChange(Entity entity, string newStatevalue, DateTime? lastUpdated = null, DateTime? lastChanged = null, object? attributes = null)
     {
-        Object.TriggerStateChange(entity, newStatevalue, attributes);
+        Object.TriggerStateChange(entity, newStatevalue, lastUpdated, lastChanged, attributes);
     }
 
     public void TriggerStateChange(string entityId, EntityState newState)

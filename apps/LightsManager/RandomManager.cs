@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Concurrency;
-using System.Threading;
-using HomeAssistantGenerated;
-using Microsoft.Extensions.Logging;
-
-namespace LightManagerV2;
+﻿namespace LightManagerV2;
 
 public interface IRandomManager
 {

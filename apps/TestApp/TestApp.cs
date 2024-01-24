@@ -1,4 +1,7 @@
-﻿namespace Niemand.TestApp;
+﻿using NetDaemon.Helpers;
+using Niemand.Helpers;
+
+namespace Niemand.TestApp;
 
 [NetDaemonApp]
 //[Focus]

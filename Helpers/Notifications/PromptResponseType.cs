@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Niemand.Helpers;
+namespace NetDaemon.Helpers;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum PromptResponseType

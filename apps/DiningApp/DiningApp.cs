@@ -1,4 +1,7 @@
-﻿namespace Niemand.Dining;
+﻿using NetDaemon.Helpers;
+using Niemand.Helpers;
+
+namespace Niemand.Dining;
 
 [NetDaemonApp]
 //[Focus]

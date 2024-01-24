@@ -1,6 +1,6 @@
 ﻿DebugStateConfiguration:
   DebugStateEnabled: false
-  DebugStateEntities: 
+  DebugStateEntities:
     - binary_sensor.office_motion
     - binary_sensor.dining_motion
     - binary_sensor.landing_motion

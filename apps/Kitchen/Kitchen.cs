@@ -1,4 +1,7 @@
-﻿namespace Niemand;
+﻿using NetDaemon.Helpers;
+using Niemand.Helpers;
+
+namespace Niemand;
 
 public class KitchenConfiguration
 {

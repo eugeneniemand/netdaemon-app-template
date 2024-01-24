@@ -161,16 +161,6 @@
           "cSharpName": "Doorbell"
         },
         {
-          "id": "automation.dryer_done_response",
-          "friendlyName": "Dryer Done Response",
-          "cSharpName": "DryerDoneResponse"
-        },
-        {
-          "id": "automation.dryer_notification",
-          "friendlyName": "Dryer Notification",
-          "cSharpName": "DryerNotification"
-        },
-        {
           "id": "automation.front_door_motion",
           "friendlyName": "Front Door Motion",
           "cSharpName": "FrontDoorMotion"
@@ -224,16 +214,6 @@
           "id": "automation.keep_jayden_in_bed",
           "friendlyName": "Jayden Keep in bed",
           "cSharpName": "KeepJaydenInBed"
-        },
-        {
-          "id": "automation.laundry_done_request",
-          "friendlyName": "Laundry Done Request",
-          "cSharpName": "LaundryDoneRequest"
-        },
-        {
-          "id": "automation.laundry_done_response",
-          "friendlyName": "Laundry Done Response",
-          "cSharpName": "LaundryDoneResponse"
         },
         {
           "id": "automation.leave_home",
@@ -306,6 +286,11 @@
           "cSharpName": "SetRingSnapshotIntervalOnStartup"
         },
         {
+          "id": "automation.sleep_eugene_desktop",
+          "friendlyName": "Sleep Eugene Desktop",
+          "cSharpName": "SleepEugeneDesktop"
+        },
+        {
           "id": "automation.sleep_eugene_desktop_manual",
           "friendlyName": "Sleep Eugene Desktop Manual",
           "cSharpName": "SleepEugeneDesktopManual"
@@ -354,16 +339,6 @@
           "id": "automation.wakeup",
           "friendlyName": "Wakeup",
           "cSharpName": "Wakeup"
-        },
-        {
-          "id": "automation.washing_done_response",
-          "friendlyName": "Washing Done Response",
-          "cSharpName": "WashingDoneResponse"
-        },
-        {
-          "id": "automation.washing_notification",
-          "friendlyName": "Washing Notification",
-          "cSharpName": "WashingNotification"
         }
       ],
       "attributes": [
@@ -614,12 +589,12 @@
         },
         {
           "id": "binary_sensor.heater1",
-          "friendlyName": "Heater1",
+          "friendlyName": "hottubmanager Heater1",
           "cSharpName": "Heater1"
         },
         {
           "id": "binary_sensor.heater2",
-          "friendlyName": "Heater2",
+          "friendlyName": "hottubmanager Heater2",
           "cSharpName": "Heater2"
         },
         {
@@ -734,7 +709,7 @@
         },
         {
           "id": "binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off",
-          "friendlyName": "Officer Contact  on_off",
+          "friendlyName": "Office Door Opening",
           "cSharpName": "LumiLumiSensorMagnetAq2OnOff"
         },
         {
@@ -854,7 +829,7 @@
         },
         {
           "id": "binary_sensor.panel_lock",
-          "friendlyName": "Panel Lock",
+          "friendlyName": "hottubmanager Panel Lock",
           "cSharpName": "PanelLock"
         },
         {
@@ -864,17 +839,17 @@
         },
         {
           "id": "binary_sensor.pi_hole_core_update_available",
-          "friendlyName": "Pi-Hole Core Update Available",
+          "friendlyName": "Core Update Available",
           "cSharpName": "PiHoleCoreUpdateAvailable"
         },
         {
           "id": "binary_sensor.pi_hole_ftl_update_available",
-          "friendlyName": "Pi-Hole FTL Update Available",
+          "friendlyName": "FTL Update Available",
           "cSharpName": "PiHoleFtlUpdateAvailable"
         },
         {
           "id": "binary_sensor.pi_hole_web_update_available",
-          "friendlyName": "Pi-Hole Web Update Available",
+          "friendlyName": "Web Update Available",
           "cSharpName": "PiHoleWebUpdateAvailable"
         },
         {
@@ -904,7 +879,7 @@
         },
         {
           "id": "binary_sensor.power",
-          "friendlyName": "Power",
+          "friendlyName": "hottubmanager Power",
           "cSharpName": "Power"
         },
         {
@@ -1241,7 +1216,7 @@
       "entities": [
         {
           "id": "button.eugene_desktop_sleep",
-          "friendlyName": "EUGENE_DESKTOP_sleep",
+          "friendlyName": "EUGENE_DESKTOP _sleep",
           "cSharpName": "EugeneDesktopSleep"
         },
         {
@@ -1501,7 +1476,7 @@
         },
         {
           "id": "button.lumi_lumi_sensor_magnet_aq2_ac831303_identify",
-          "friendlyName": "Officer Contact  Identify",
+          "friendlyName": "Office Door Identify",
           "cSharpName": "LumiLumiSensorMagnetAq2Ac831303Identify"
         },
         {
@@ -2216,17 +2191,17 @@
       "entities": [
         {
           "id": "device_tracker.247d4d7d6c90_mysimplelink",
-          "friendlyName": "247D4D7D6C90-mysimplelink 247D4D7D6C90-mysimplelink",
+          "friendlyName": "247D4D7D6C90-mysimplelink",
           "cSharpName": "_247d4d7d6c90Mysimplelink"
         },
         {
           "id": "device_tracker.aaron_echo",
-          "friendlyName": "Aaron Echo Aaron Echo",
+          "friendlyName": "Aaron Echo",
           "cSharpName": "AaronEcho"
         },
         {
           "id": "device_tracker.android_b8c33f1cb7c0d776",
-          "friendlyName": "android-b8c33f1cb7c0d776 Treadmill",
+          "friendlyName": "Treadmill",
           "cSharpName": "AndroidB8c33f1cb7c0d776"
         },
         {
@@ -2256,37 +2231,37 @@
         },
         {
           "id": "device_tracker.bedroom_1_ac",
-          "friendlyName": "Bedroom 1 Bedroom 1 AC",
+          "friendlyName": "Bedroom 1 AC",
           "cSharpName": "Bedroom1Ac"
         },
         {
           "id": "device_tracker.bedroom_2_ac",
-          "friendlyName": "Bedroom 2 Bedroom 2 AC",
+          "friendlyName": "Bedroom 2 AC",
           "cSharpName": "Bedroom2Ac"
         },
         {
           "id": "device_tracker.bedroom_3_ac",
-          "friendlyName": "Bedroom 3 Bedroom 3 AC",
+          "friendlyName": "Bedroom 3 AC",
           "cSharpName": "Bedroom3Ac"
         },
         {
           "id": "device_tracker.bedroom_4_ac",
-          "friendlyName": "Bedroom 4 Bedroom 4 AC",
+          "friendlyName": "Bedroom 4 AC",
           "cSharpName": "Bedroom4Ac"
         },
         {
           "id": "device_tracker.bosch_dishwasher_01204052703001",
-          "friendlyName": "bosch-dishwasher-01204052703001 RX bosch-dishwasher-01204052703001",
+          "friendlyName": "bosch-dishwasher-01204052703001",
           "cSharpName": "BoschDishwasher01204052703001"
         },
         {
           "id": "device_tracker.c02t8gtygvc1",
-          "friendlyName": "C02T8GTYGVC1 RX C02T8GTYGVC1",
+          "friendlyName": "C02T8GTYGVC1",
           "cSharpName": "C02t8gtygvc1"
         },
         {
           "id": "device_tracker.christmas_indoor_1558",
-          "friendlyName": "christmas_indoor-1558 christmas_indoor-1558",
+          "friendlyName": "christmas_indoor-1558",
           "cSharpName": "ChristmasIndoor1558"
         },
         {
@@ -2296,52 +2271,52 @@
         },
         {
           "id": "device_tracker.dining",
-          "friendlyName": "Dining Dining",
+          "friendlyName": "Dining",
           "cSharpName": "Dining"
         },
         {
           "id": "device_tracker.dining_echo",
-          "friendlyName": "Dining Echo Dining Echo",
+          "friendlyName": "Dining Echo",
           "cSharpName": "DiningEcho"
         },
         {
           "id": "device_tracker.dryer",
-          "friendlyName": "dryer Samsung-Dryer",
+          "friendlyName": "Samsung-Dryer",
           "cSharpName": "Dryer"
         },
         {
           "id": "device_tracker.entrance",
-          "friendlyName": "Entrance Entrance",
+          "friendlyName": "Entrance",
           "cSharpName": "Entrance"
         },
         {
           "id": "device_tracker.esp_5e9eb5",
-          "friendlyName": "ESP_5E9EB5 RX Tuya Socket 1",
+          "friendlyName": "Tuya Socket 1",
           "cSharpName": "Esp5e9eb5"
         },
         {
           "id": "device_tracker.esp_6b7081",
-          "friendlyName": "ESP_6B7081 Tuya Socket 2",
+          "friendlyName": "Tuya Socket 2",
           "cSharpName": "Esp6b7081"
         },
         {
           "id": "device_tracker.esp_6b7a3a",
-          "friendlyName": "ESP_6B7A3A Tuya Socket 3",
+          "friendlyName": "Tuya Socket 3",
           "cSharpName": "Esp6b7a3a"
         },
         {
           "id": "device_tracker.eufy_robovac",
-          "friendlyName": "eufy RoboVac eufy RoboVac",
+          "friendlyName": "eufy RoboVac",
           "cSharpName": "EufyRobovac"
         },
         {
           "id": "device_tracker.eufy_robovac_2",
-          "friendlyName": "eufy RoboVac eufy RoboVac",
+          "friendlyName": "eufy RoboVac",
           "cSharpName": "EufyRobovac2"
         },
         {
           "id": "device_tracker.eugene_desktop",
-          "friendlyName": "EUGENE-DESKTOP EUGENE-DESKTOP",
+          "friendlyName": "EUGENE-DESKTOP",
           "cSharpName": "EugeneDesktop"
         },
         {
@@ -2376,32 +2351,32 @@
         },
         {
           "id": "device_tracker.foscam",
-          "friendlyName": "Foscam Foscam",
+          "friendlyName": "Foscam",
           "cSharpName": "Foscam"
         },
         {
           "id": "device_tracker.galaxy_s8",
-          "friendlyName": "Galaxy-S8 Galaxy-S8",
+          "friendlyName": "Galaxy-S8",
           "cSharpName": "GalaxyS8"
         },
         {
           "id": "device_tracker.garage_echo",
-          "friendlyName": "Garage Echo Garage Echo",
+          "friendlyName": "Garage Echo",
           "cSharpName": "GarageEcho"
         },
         {
           "id": "device_tracker.garden_echo",
-          "friendlyName": "Garden Echo RX Garden Echo",
+          "friendlyName": "Garden Echo",
           "cSharpName": "GardenEcho"
         },
         {
           "id": "device_tracker.garden_floodlights",
-          "friendlyName": "Garden Floodlights Garden Floodlights",
+          "friendlyName": "Garden Floodlights",
           "cSharpName": "GardenFloodlights"
         },
         {
           "id": "device_tracker.glow_ihd_5019b0",
-          "friendlyName": "Glow Smart Meter 4417935019B0 Glow-IHD-5019B0",
+          "friendlyName": "Glow-IHD-5019B0",
           "cSharpName": "GlowIhd5019b0"
         },
         {
@@ -2416,7 +2391,7 @@
         },
         {
           "id": "device_tracker.haileys_air",
-          "friendlyName": "Haileys-Air Haileys-Air",
+          "friendlyName": "Haileys-Air",
           "cSharpName": "HaileysAir"
         },
         {
@@ -2426,7 +2401,7 @@
         },
         {
           "id": "device_tracker.haileys_iphone_2",
-          "friendlyName": "Haileys-iPhone Haileys-iPhone",
+          "friendlyName": "Haileys-iPhone",
           "cSharpName": "HaileysIphone2"
         },
         {
@@ -2441,12 +2416,12 @@
         },
         {
           "id": "device_tracker.hottubcontrol",
-          "friendlyName": "Hottubcontrol Hottubcontrol",
+          "friendlyName": "Hottubcontrol",
           "cSharpName": "Hottubcontrol"
         },
         {
           "id": "device_tracker.huawei_p_smart_2019_86203",
-          "friendlyName": "HUAWEI_P_smart_2019-86203 HUAWEI_P_smart_2019-86203",
+          "friendlyName": "HUAWEI_P_smart_2019-86203",
           "cSharpName": "HuaweiPSmart201986203"
         },
         {
@@ -2466,7 +2441,7 @@
         },
         {
           "id": "device_tracker.iphone_2",
-          "friendlyName": "iPhone RX HaileysiPhone2",
+          "friendlyName": "HaileysiPhone2",
           "cSharpName": "Iphone2"
         },
         {
@@ -2481,12 +2456,12 @@
         },
         {
           "id": "device_tracker.jayden",
-          "friendlyName": "Jayden Jayden",
+          "friendlyName": "Jayden",
           "cSharpName": "Jayden"
         },
         {
           "id": "device_tracker.jayden_appletv",
-          "friendlyName": "Jayden AppleTv Jayden AppleTv",
+          "friendlyName": "Jayden AppleTv",
           "cSharpName": "JaydenAppletv"
         },
         {
@@ -2496,7 +2471,7 @@
         },
         {
           "id": "device_tracker.jayden_echo",
-          "friendlyName": "Jayden Echo Jayden Echo",
+          "friendlyName": "Jayden Echo",
           "cSharpName": "JaydenEcho"
         },
         {
@@ -2521,32 +2496,32 @@
         },
         {
           "id": "device_tracker.jayden_s_iphone_4",
-          "friendlyName": "Jayden-s-iPhone RX Jayden-s-iPhone",
+          "friendlyName": "Jayden-s-iPhone",
           "cSharpName": "JaydenSIphone4"
         },
         {
           "id": "device_tracker.kitchen",
-          "friendlyName": "Lounge Lounge",
+          "friendlyName": "Lounge",
           "cSharpName": "Kitchen"
         },
         {
           "id": "device_tracker.kitchen_echo",
-          "friendlyName": "Kitchen Echo Kitchen Echo",
+          "friendlyName": "Kitchen Echo",
           "cSharpName": "KitchenEcho"
         },
         {
           "id": "device_tracker.konnected_addon",
-          "friendlyName": "Konnected Alarm Panel Add On Konnected AddOn",
+          "friendlyName": "Konnected AddOn",
           "cSharpName": "KonnectedAddon"
         },
         {
           "id": "device_tracker.konnected_main",
-          "friendlyName": "Konnected Alarm Panel Konnected Main",
+          "friendlyName": "Konnected Main",
           "cSharpName": "KonnectedMain"
         },
         {
           "id": "device_tracker.landing",
-          "friendlyName": "Landing Landing",
+          "friendlyName": "Landing",
           "cSharpName": "Landing"
         },
         {
@@ -2561,7 +2536,7 @@
         },
         {
           "id": "device_tracker.lg_lounge",
-          "friendlyName": "LG Lounge LG Lounge",
+          "friendlyName": "LG Lounge",
           "cSharpName": "LgLounge"
         },
         {
@@ -2571,72 +2546,77 @@
         },
         {
           "id": "device_tracker.lounge",
-          "friendlyName": "Office Office",
+          "friendlyName": "Office",
           "cSharpName": "Lounge"
         },
         {
           "id": "device_tracker.lounge_ac",
-          "friendlyName": "Lounge Lounge AC",
+          "friendlyName": "Lounge AC",
           "cSharpName": "LoungeAc"
         },
         {
           "id": "device_tracker.lounge_blind",
-          "friendlyName": "Blind Lounge Lounge Blind",
+          "friendlyName": "Lounge Blind",
           "cSharpName": "LoungeBlind"
         },
         {
           "id": "device_tracker.lounge_echo",
-          "friendlyName": "Lounge Echo Lounge Echo",
+          "friendlyName": "Lounge Echo",
           "cSharpName": "LoungeEcho"
         },
         {
+          "id": "device_tracker.macbook_air",
+          "friendlyName": "G3061WM904",
+          "cSharpName": "MacbookAir"
+        },
+        {
           "id": "device_tracker.master_echo",
-          "friendlyName": "Master Echo Master Echo",
+          "friendlyName": "Master Echo",
           "cSharpName": "MasterEcho"
         },
         {
           "id": "device_tracker.master_tele",
-          "friendlyName": "Master Tele Master Tele",
+          "friendlyName": "Master Tele",
           "cSharpName": "MasterTele"
         },
         {
           "id": "device_tracker.ml_nx07kg671n",
-          "friendlyName": "ML-NX07KG671N ML-NX07KG671N",
+          "friendlyName": "ML-NX07KG671N",
           "cSharpName": "MlNx07kg671n"
         },
         {
           "id": "device_tracker.office_ac",
-          "friendlyName": "Office Office AC",
+          "friendlyName": "Office AC",
           "cSharpName": "OfficeAc"
         },
         {
           "id": "device_tracker.office_echo",
-          "friendlyName": "Office Echo Office Echo",
+          "friendlyName": "Office Echo",
           "cSharpName": "OfficeEcho"
         },
         {
           "id": "device_tracker.outside_drive",
-          "friendlyName": "Outside Drive Dishwasher",
+          "friendlyName": "Dishwasher",
           "cSharpName": "OutsideDrive"
         },
         {
           "id": "device_tracker.outside_garage",
-          "friendlyName": "Outside Garage Outside Garage",
+          "friendlyName": "Outside Garage",
           "cSharpName": "OutsideGarage"
         },
         {
           "id": "device_tracker.playroom_echo",
-          "friendlyName": "Playroom Echo Playroom Echo",
+          "friendlyName": "Playroom Echo",
           "cSharpName": "PlayroomEcho"
         },
         {
           "id": "device_tracker.porch",
-          "friendlyName": "Porch Porch",
+          "friendlyName": "Porch",
           "cSharpName": "Porch"
         },
         {
           "id": "device_tracker.raspberrypi",
-          "friendlyName": "raspberrypi raspberrypi",
+          "friendlyName": "raspberrypi",
           "cSharpName": "Raspberrypi"
         },
         {
@@ -2646,32 +2626,32 @@
         },
         {
           "id": "device_tracker.raspberrypi_cups",
-          "friendlyName": "RaspberryPi CUPS RaspberryPi CUPS",
+          "friendlyName": "RaspberryPi CUPS",
           "cSharpName": "RaspberrypiCups"
         },
         {
           "id": "device_tracker.ringhpcam_49",
-          "friendlyName": "RingHpCam-49 RingHpCam-49",
+          "friendlyName": "RingHpCam-49",
           "cSharpName": "Ringhpcam49"
         },
         {
           "id": "device_tracker.ringhpcam_4c",
-          "friendlyName": "RingHpCam-4c RingHpCam-4c",
+          "friendlyName": "RingHpCam-4c",
           "cSharpName": "Ringhpcam4c"
         },
         {
           "id": "device_tracker.ringpro_d6",
-          "friendlyName": "RingPro-d6",
+          "friendlyName": "",
           "cSharpName": "RingproD6"
         },
         {
           "id": "device_tracker.ringstickupcam_94",
-          "friendlyName": "RingStickUpCam-94 RingStickUpCam-94",
+          "friendlyName": "RingStickUpCam-94",
           "cSharpName": "Ringstickupcam94"
         },
         {
           "id": "device_tracker.ringstickupcam_9b",
-          "friendlyName": "RingStickUpCam-9b RingStickUpCam-9b",
+          "friendlyName": "RingStickUpCam-9b",
           "cSharpName": "Ringstickupcam9b"
         },
         {
@@ -2686,57 +2666,57 @@
         },
         {
           "id": "device_tracker.shelly1_55e8b5",
-          "friendlyName": "shelly1-55E8B5 Office Skylight",
+          "friendlyName": "Office Skylight",
           "cSharpName": "Shelly155e8b5"
         },
         {
           "id": "device_tracker.shelly1_ba69f6",
-          "friendlyName": "shelly1-BA69F6 RX Outside Drive",
+          "friendlyName": "Outside Drive",
           "cSharpName": "Shelly1Ba69f6"
         },
         {
           "id": "device_tracker.shelly1_ba6c98",
-          "friendlyName": "shelly1-BA6C98 RX Utility Cupboard",
+          "friendlyName": "Utility Cupboard",
           "cSharpName": "Shelly1Ba6c98"
         },
         {
           "id": "device_tracker.shelly1pm_e646fe",
-          "friendlyName": "shelly1pm-E646FE RX Power Meter Multiplug",
+          "friendlyName": "Power Meter Multiplug",
           "cSharpName": "Shelly1pmE646fe"
         },
         {
           "id": "device_tracker.smart_plug_1",
-          "friendlyName": "smart-plug-1",
+          "friendlyName": "tasmota-6069",
           "cSharpName": "SmartPlug1"
         },
         {
           "id": "device_tracker.smart_plug_2",
-          "friendlyName": "smart-plug-2 Fish lights",
+          "friendlyName": "Fish lights",
           "cSharpName": "SmartPlug2"
         },
         {
           "id": "device_tracker.smart_plug_4",
-          "friendlyName": "smart-plug-4 Eugene Desk Plug",
+          "friendlyName": "Eugene Desk Plug",
           "cSharpName": "SmartPlug4"
         },
         {
           "id": "device_tracker.sonoszp",
-          "friendlyName": "Lounge SonosZP",
+          "friendlyName": "SonosZP",
           "cSharpName": "Sonoszp"
         },
         {
           "id": "device_tracker.sonoszp_2",
-          "friendlyName": "SonosZP SonosZP",
+          "friendlyName": "SonosZP",
           "cSharpName": "Sonoszp2"
         },
         {
           "id": "device_tracker.suspect_device",
-          "friendlyName": "Suspect Device Suspect Device",
+          "friendlyName": "Suspect Device",
           "cSharpName": "SuspectDevice"
         },
         {
           "id": "device_tracker.suspect_huawei",
-          "friendlyName": "Suspect Huawei Suspect Huawei",
+          "friendlyName": "Suspect Huawei",
           "cSharpName": "SuspectHuawei"
         },
         {
@@ -2746,7 +2726,7 @@
         },
         {
           "id": "device_tracker.uk_020287222957",
-          "friendlyName": "UK-020287222957 UK-020287222957",
+          "friendlyName": "UK-020287222957",
           "cSharpName": "Uk020287222957"
         },
         {
@@ -2820,6 +2800,11 @@
           "cSharpName": "Unifi12C716BfE0BeDefault"
         },
         {
+          "id": "device_tracker.unifi_1e_ca_af_c5_d6_fb_default",
+          "friendlyName": "",
+          "cSharpName": "Unifi1eCaAfC5D6FbDefault"
+        },
+        {
           "id": "device_tracker.unifi_22_0d_10_91_99_09_default",
           "friendlyName": "",
           "cSharpName": "Unifi220d10919909Default"
@@ -2855,8 +2840,13 @@
           "cSharpName": "Unifi2e04A5Fb0956Default"
         },
         {
+          "id": "device_tracker.unifi_2e_14_ae_a0_2f_28_default",
+          "friendlyName": "",
+          "cSharpName": "Unifi2e14AeA02f28Default"
+        },
+        {
           "id": "device_tracker.unifi_34_7e_5c_d6_8b_20_default",
-          "friendlyName": " SonosZP",
+          "friendlyName": "SonosZP",
           "cSharpName": "Unifi347e5cD68b20Default"
         },
         {
@@ -2886,7 +2876,7 @@
         },
         {
           "id": "device_tracker.unifi_3e_64_d4_05_f3_12_default",
-          "friendlyName": " RX",
+          "friendlyName": "",
           "cSharpName": "Unifi3e64D405F312Default"
         },
         {
@@ -2896,12 +2886,12 @@
         },
         {
           "id": "device_tracker.unifi_42_37_7b_bf_55_f0_default",
-          "friendlyName": " RX",
+          "friendlyName": "",
           "cSharpName": "Unifi42377bBf55F0Default"
         },
         {
           "id": "device_tracker.unifi_46_f5_1e_43_96_f4_default",
-          "friendlyName": " RX",
+          "friendlyName": "",
           "cSharpName": "Unifi46F51e4396F4Default"
         },
         {
@@ -2916,7 +2906,7 @@
         },
         {
           "id": "device_tracker.unifi_54_ae_27_0e_37_32_default",
-          "friendlyName": " Jayden iPad",
+          "friendlyName": "Jayden iPad",
           "cSharpName": "Unifi54Ae270e3732Default"
         },
         {
@@ -2928,6 +2918,16 @@
           "id": "device_tracker.unifi_5a_0c_5e_bc_5a_e3_default",
           "friendlyName": "",
           "cSharpName": "Unifi5a0c5eBc5aE3Default"
+        },
+        {
+          "id": "device_tracker.unifi_5a_19_9c_d6_dc_ee_default",
+          "friendlyName": "",
+          "cSharpName": "Unifi5a199cD6DcEeDefault"
+        },
+        {
+          "id": "device_tracker.unifi_5e_f2_33_11_f6_d8_default",
+          "friendlyName": "",
+          "cSharpName": "Unifi5eF23311F6D8Default"
         },
         {
           "id": "device_tracker.unifi_62_0b_e5_52_7e_5f_default",
@@ -3015,6 +3015,11 @@
           "cSharpName": "Unifi9245B86269E2Default"
         },
         {
+          "id": "device_tracker.unifi_92_6f_fb_8c_01_6a_default",
+          "friendlyName": "",
+          "cSharpName": "Unifi926fFb8c016aDefault"
+        },
+        {
           "id": "device_tracker.unifi_92_95_27_39_bb_7e_default",
           "friendlyName": "",
           "cSharpName": "Unifi92952739Bb7eDefault"
@@ -3031,8 +3036,13 @@
         },
         {
           "id": "device_tracker.unifi_96_5c_1d_84_9d_b7_default",
-          "friendlyName": " RX",
+          "friendlyName": "",
           "cSharpName": "Unifi965c1d849dB7Default"
+        },
+        {
+          "id": "device_tracker.unifi_9a_bf_e1_85_19_7f_default",
+          "friendlyName": "",
+          "cSharpName": "Unifi9aBfE185197fDefault"
         },
         {
           "id": "device_tracker.unifi_9a_d8_94_01_cf_c3_default",
@@ -3051,7 +3061,7 @@
         },
         {
           "id": "device_tracker.unifi_a4_cf_99_29_0a_81_default",
-          "friendlyName": " iPhone",
+          "friendlyName": "iPhone",
           "cSharpName": "UnifiA4Cf99290a81Default"
         },
         {
@@ -3066,7 +3076,7 @@
         },
         {
           "id": "device_tracker.unifi_aa_3c_fe_09_f5_f2_default",
-          "friendlyName": " RX",
+          "friendlyName": "",
           "cSharpName": "UnifiAa3cFe09F5F2Default"
         },
         {
@@ -3181,7 +3191,7 @@
         },
         {
           "id": "device_tracker.unifi_dc_a6_32_dc_56_af_default",
-          "friendlyName": " Jayden RaspberryPi",
+          "friendlyName": "Jayden RaspberryPi",
           "cSharpName": "UnifiDcA632Dc56AfDefault"
         },
         {
@@ -3218,6 +3228,11 @@
           "id": "device_tracker.unifi_ee_3a_ce_9a_15_7a_default",
           "friendlyName": "",
           "cSharpName": "UnifiEe3aCe9a157aDefault"
+        },
+        {
+          "id": "device_tracker.unifi_ee_c5_02_3a_cf_7d_default",
+          "friendlyName": "",
+          "cSharpName": "UnifiEeC5023aCf7dDefault"
         },
         {
           "id": "device_tracker.unifi_ee_f1_08_c9_52_6a_default",
@@ -3266,27 +3281,27 @@
         },
         {
           "id": "device_tracker.upstairs",
-          "friendlyName": "Upstairs Upstairs",
+          "friendlyName": "Upstairs",
           "cSharpName": "Upstairs"
         },
         {
           "id": "device_tracker.wallpanel_fire_hd8",
-          "friendlyName": "Wallpanel Fire HD8 Wallpanel Fire HD8",
+          "friendlyName": "Wallpanel Fire HD8",
           "cSharpName": "WallpanelFireHd8"
         },
         {
           "id": "device_tracker.washer",
-          "friendlyName": "washer Samsung-Washer",
+          "friendlyName": "Samsung-Washer",
           "cSharpName": "Washer"
         },
         {
           "id": "device_tracker.wiserheat031c5e",
-          "friendlyName": "Wiser HeatHub (WiserHeat031C5E) WiserHeat031C5E",
+          "friendlyName": "WiserHeat031C5E",
           "cSharpName": "Wiserheat031c5e"
         },
         {
           "id": "device_tracker.wlan0",
-          "friendlyName": "wlan0 RX wlan0",
+          "friendlyName": "wlan0",
           "cSharpName": "Wlan0"
         },
         {
@@ -3296,7 +3311,7 @@
         },
         {
           "id": "device_tracker.xbox",
-          "friendlyName": "XBOX XBOX",
+          "friendlyName": "XBOX",
           "cSharpName": "Xbox"
         }
       ],
@@ -3599,19 +3614,14 @@
           "cSharpName": "NetdaemonNiemandMotionAlerts"
         },
         {
+          "id": "input_boolean.netdaemon_niemand_notifications_manager",
+          "friendlyName": "netdaemon_niemand_notifications_manager",
+          "cSharpName": "NetdaemonNiemandNotificationsManager"
+        },
+        {
           "id": "input_boolean.netdaemon_niemand_office",
           "friendlyName": "netdaemon_niemand_office",
           "cSharpName": "NetdaemonNiemandOffice"
-        },
-        {
-          "id": "input_boolean.netdaemon_niemand_test_app_alarm",
-          "friendlyName": "netdaemon_niemand_test_app_alarm",
-          "cSharpName": "NetdaemonNiemandTestAppAlarm"
-        },
-        {
-          "id": "input_boolean.netdaemon_niemand_test_app_notifications_manager",
-          "friendlyName": "netdaemon_niemand_test_app_notifications_manager",
-          "cSharpName": "NetdaemonNiemandTestAppNotificationsManager"
         },
         {
           "id": "input_boolean.netdaemon_niemand_test_app_test_app",
@@ -3729,6 +3739,16 @@
           "cSharpName": "DiningLuxLimit"
         },
         {
+          "id": "input_number.energy_rate_threshold_cheap",
+          "friendlyName": "Energy Rate Threshold Cheap",
+          "cSharpName": "EnergyRateThresholdCheap"
+        },
+        {
+          "id": "input_number.energy_rate_threshold_expensive",
+          "friendlyName": "Energy Rate Threshold Expensive ",
+          "cSharpName": "EnergyRateThresholdExpensive"
+        },
+        {
           "id": "input_number.entrance_lux_limit",
           "friendlyName": null,
           "cSharpName": "EntranceLuxLimit"
@@ -3839,6 +3859,21 @@
           "jsonName": "supported_features",
           "cSharpName": "SupportedFeatures",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "unit_of_measurement",
+          "cSharpName": "UnitOfMeasurement",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "icon",
+          "cSharpName": "Icon",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
         }
       ]
     },
@@ -3961,7 +3996,7 @@
         },
         {
           "id": "light.aubrecia_drive_light",
-          "friendlyName": "Aubrecia Drive light",
+          "friendlyName": "Aubrecia Drive Light",
           "cSharpName": "AubreciaDriveLight"
         },
         {
@@ -4026,7 +4061,7 @@
         },
         {
           "id": "light.garden_light_2",
-          "friendlyName": "Garden light",
+          "friendlyName": "Garden Light",
           "cSharpName": "GardenLight2"
         },
         {
@@ -4171,7 +4206,7 @@
         },
         {
           "id": "light.niemand_drive_light",
-          "friendlyName": "Niemand Drive light",
+          "friendlyName": "Niemand Drive Light",
           "cSharpName": "NiemandDriveLight"
         },
         {
@@ -4181,7 +4216,7 @@
         },
         {
           "id": "light.niemand_garden_light",
-          "friendlyName": "Niemand Garden light",
+          "friendlyName": "Niemand Garden Light",
           "cSharpName": "NiemandGardenLight"
         },
         {
@@ -4405,11 +4440,6 @@
           "id": "media_player.aaron",
           "friendlyName": "Aaron",
           "cSharpName": "Aaron"
-        },
-        {
-          "id": "media_player.aaron_atv",
-          "friendlyName": "Aaron ATV",
-          "cSharpName": "AaronAtv"
         },
         {
           "id": "media_player.alarm_clock_devices",
@@ -5672,11 +5702,6 @@
       "domain": "remote",
       "entities": [
         {
-          "id": "remote.aaron_atv",
-          "friendlyName": "Aaron ATV",
-          "cSharpName": "AaronAtv"
-        },
-        {
           "id": "remote.xbox_remote",
           "friendlyName": "Xbox Remote",
           "cSharpName": "XboxRemote"
@@ -6271,12 +6296,12 @@
         },
         {
           "id": "sensor.aubrecia_drive_last_activity",
-          "friendlyName": "Aubrecia Drive Last Activity",
+          "friendlyName": "Aubrecia Drive Last activity",
           "cSharpName": "AubreciaDriveLastActivity"
         },
         {
           "id": "sensor.aubrecia_drive_last_motion",
-          "friendlyName": "Aubrecia Drive Last Motion",
+          "friendlyName": "Aubrecia Drive Last motion",
           "cSharpName": "AubreciaDriveLastMotion"
         },
         {
@@ -6291,7 +6316,7 @@
         },
         {
           "id": "sensor.aubrecia_front_door_last_activity_2",
-          "friendlyName": "Aubrecia Front Door Last Activity",
+          "friendlyName": "Aubrecia Front Door Last activity",
           "cSharpName": "AubreciaFrontDoorLastActivity2"
         },
         {
@@ -6301,7 +6326,7 @@
         },
         {
           "id": "sensor.aubrecia_front_door_last_ding_2",
-          "friendlyName": "Aubrecia Front Door Last Ding",
+          "friendlyName": "Aubrecia Front Door Last ding",
           "cSharpName": "AubreciaFrontDoorLastDing2"
         },
         {
@@ -6311,7 +6336,7 @@
         },
         {
           "id": "sensor.aubrecia_front_door_last_motion_2",
-          "friendlyName": "Aubrecia Front Door Last Motion",
+          "friendlyName": "Aubrecia Front Door Last motion",
           "cSharpName": "AubreciaFrontDoorLastMotion2"
         },
         {
@@ -6466,18 +6491,23 @@
         },
         {
           "id": "sensor.eugene_desktop_lastactive",
-          "friendlyName": "EUGENE_DESKTOP_lastactive",
+          "friendlyName": "EUGENE_DESKTOP _lastactive",
           "cSharpName": "EugeneDesktopLastactive"
         },
         {
           "id": "sensor.eugene_desktop_lastsystemstatechange",
-          "friendlyName": "EUGENE_DESKTOP_lastsystemstatechange",
+          "friendlyName": "EUGENE_DESKTOP _lastsystemstatechange",
           "cSharpName": "EugeneDesktopLastsystemstatechange"
         },
         {
           "id": "sensor.eugene_desktop_microphoneprocess",
-          "friendlyName": "EUGENE_DESKTOP_microphoneprocess",
+          "friendlyName": "EUGENE_DESKTOP _microphoneprocess",
           "cSharpName": "EugeneDesktopMicrophoneprocess"
+        },
+        {
+          "id": "sensor.eugene_desktop_monitorpowerstate",
+          "friendlyName": "EUGENE_DESKTOP _monitorpowerstate",
+          "cSharpName": "EugeneDesktopMonitorpowerstate"
         },
         {
           "id": "sensor.eugene_desktop_uptime",
@@ -6721,12 +6751,12 @@
         },
         {
           "id": "sensor.garden_last_activity_2",
-          "friendlyName": "Garden Last Activity",
+          "friendlyName": "Garden Last activity",
           "cSharpName": "GardenLastActivity2"
         },
         {
           "id": "sensor.garden_last_motion_2",
-          "friendlyName": "Garden Last Motion",
+          "friendlyName": "Garden Last motion",
           "cSharpName": "GardenLastMotion2"
         },
         {
@@ -6876,7 +6906,7 @@
         },
         {
           "id": "sensor.huawei_p_smart_2019_86203_uptime",
-          "friendlyName": "HUAWEI_P_smart_2019-86203 Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "HuaweiPSmart201986203Uptime"
         },
         {
@@ -7061,7 +7091,7 @@
         },
         {
           "id": "sensor.jayden_s_iphone_uptime",
-          "friendlyName": "Uptime",
+          "friendlyName": "Jayden-s-iPhone RX Uptime",
           "cSharpName": "JaydenSIphoneUptime"
         },
         {
@@ -7081,17 +7111,17 @@
         },
         {
           "id": "sensor.johan_front_door_last_activity",
-          "friendlyName": "Johan Front Door Last Activity",
+          "friendlyName": "Johan Front Door Last activity",
           "cSharpName": "JohanFrontDoorLastActivity"
         },
         {
           "id": "sensor.johan_front_door_last_ding",
-          "friendlyName": "Johan Front Door Last Ding",
+          "friendlyName": "Johan Front Door Last ding",
           "cSharpName": "JohanFrontDoorLastDing"
         },
         {
           "id": "sensor.johan_front_door_last_motion",
-          "friendlyName": "Johan Front Door Last Motion",
+          "friendlyName": "Johan Front Door Last motion",
           "cSharpName": "JohanFrontDoorLastMotion"
         },
         {
@@ -7240,18 +7270,23 @@
           "cSharpName": "NetdaemonStatus"
         },
         {
+          "id": "sensor.niemand",
+          "friendlyName": "Niemand",
+          "cSharpName": "Niemand"
+        },
+        {
           "id": "sensor.niemand_drive_info",
           "friendlyName": "Niemand Drive Info",
           "cSharpName": "NiemandDriveInfo"
         },
         {
           "id": "sensor.niemand_drive_last_activity",
-          "friendlyName": "Niemand Drive Last Activity",
+          "friendlyName": "Niemand Drive Last activity",
           "cSharpName": "NiemandDriveLastActivity"
         },
         {
           "id": "sensor.niemand_drive_last_motion",
-          "friendlyName": "Niemand Drive Last Motion",
+          "friendlyName": "Niemand Drive Last motion",
           "cSharpName": "NiemandDriveLastMotion"
         },
         {
@@ -7266,17 +7301,17 @@
         },
         {
           "id": "sensor.niemand_front_door_last_activity",
-          "friendlyName": "Niemand Front Door Last Activity",
+          "friendlyName": "Niemand Front Door Last activity",
           "cSharpName": "NiemandFrontDoorLastActivity"
         },
         {
           "id": "sensor.niemand_front_door_last_ding",
-          "friendlyName": "Niemand Front Door Last Ding",
+          "friendlyName": "Niemand Front Door Last ding",
           "cSharpName": "NiemandFrontDoorLastDing"
         },
         {
           "id": "sensor.niemand_front_door_last_motion",
-          "friendlyName": "Niemand Front Door Last Motion",
+          "friendlyName": "Niemand Front Door Last motion",
           "cSharpName": "NiemandFrontDoorLastMotion"
         },
         {
@@ -7291,12 +7326,12 @@
         },
         {
           "id": "sensor.niemand_garage_last_activity",
-          "friendlyName": "Niemand Garage Last Activity",
+          "friendlyName": "Niemand Garage Last activity",
           "cSharpName": "NiemandGarageLastActivity"
         },
         {
           "id": "sensor.niemand_garage_last_motion",
-          "friendlyName": "Niemand Garage Last Motion",
+          "friendlyName": "Niemand Garage Last motion",
           "cSharpName": "NiemandGarageLastMotion"
         },
         {
@@ -7311,12 +7346,12 @@
         },
         {
           "id": "sensor.niemand_garden_last_activity",
-          "friendlyName": "Niemand Garden Last Activity",
+          "friendlyName": "Niemand Garden Last activity",
           "cSharpName": "NiemandGardenLastActivity"
         },
         {
           "id": "sensor.niemand_garden_last_motion",
-          "friendlyName": "Niemand Garden Last Motion",
+          "friendlyName": "Niemand Garden Last motion",
           "cSharpName": "NiemandGardenLastMotion"
         },
         {
@@ -7325,18 +7360,33 @@
           "cSharpName": "NiemandGardenVolume"
         },
         {
+          "id": "sensor.niemand_guest",
+          "friendlyName": "Niemand-Guest",
+          "cSharpName": "NiemandGuest"
+        },
+        {
+          "id": "sensor.niemand_iot",
+          "friendlyName": "Niemand-IOT",
+          "cSharpName": "NiemandIot"
+        },
+        {
+          "id": "sensor.niemand_mesh",
+          "friendlyName": "Niemand-Mesh",
+          "cSharpName": "NiemandMesh"
+        },
+        {
           "id": "sensor.niemand_side_info",
           "friendlyName": "Niemand Side Info",
           "cSharpName": "NiemandSideInfo"
         },
         {
           "id": "sensor.niemand_side_last_activity",
-          "friendlyName": "Niemand Side Last Activity",
+          "friendlyName": "Niemand Side Last activity",
           "cSharpName": "NiemandSideLastActivity"
         },
         {
           "id": "sensor.niemand_side_last_motion",
-          "friendlyName": "Niemand Side Last Motion",
+          "friendlyName": "Niemand Side Last motion",
           "cSharpName": "NiemandSideLastMotion"
         },
         {
@@ -7511,7 +7561,7 @@
         },
         {
           "id": "sensor.smart_plug_1_uptime",
-          "friendlyName": "Uptime",
+          "friendlyName": "smart-plug-1 Uptime",
           "cSharpName": "SmartPlug1Uptime"
         },
         {
@@ -7651,7 +7701,7 @@
         },
         {
           "id": "sensor.uptime_10",
-          "friendlyName": " RX Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "Uptime10"
         },
         {
@@ -7681,7 +7731,7 @@
         },
         {
           "id": "sensor.uptime_16",
-          "friendlyName": " Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "Uptime16"
         },
         {
@@ -7726,7 +7776,7 @@
         },
         {
           "id": "sensor.uptime_24",
-          "friendlyName": " Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "Uptime24"
         },
         {
@@ -7836,12 +7886,12 @@
         },
         {
           "id": "sensor.uptime_44",
-          "friendlyName": " RX Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "Uptime44"
         },
         {
           "id": "sensor.uptime_45",
-          "friendlyName": " Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "Uptime45"
         },
         {
@@ -7851,7 +7901,7 @@
         },
         {
           "id": "sensor.uptime_47",
-          "friendlyName": " Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "Uptime47"
         },
         {
@@ -7976,7 +8026,7 @@
         },
         {
           "id": "sensor.uptime_9",
-          "friendlyName": " Uptime",
+          "friendlyName": "Uptime",
           "cSharpName": "Uptime9"
         },
         {
@@ -8115,11 +8165,6 @@
           "cSharpName": "WiserLtsTargetTemperatureBoys"
         },
         {
-          "id": "sensor.wiser_lts_target_temperature_guest_room",
-          "friendlyName": "Wiser LTS Target Temperature Guest Room",
-          "cSharpName": "WiserLtsTargetTemperatureGuestRoom"
-        },
-        {
           "id": "sensor.wiser_roomstat_utility_signal",
           "friendlyName": "Wiser RoomStat Utility Signal",
           "cSharpName": "WiserRoomstatUtilitySignal"
@@ -8159,7 +8204,7 @@
         {
           "jsonName": "total_bans",
           "cSharpName": "TotalBans",
-          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+          "clrType": "System.Object"
         },
         {
           "jsonName": "device_class",
@@ -9690,6 +9735,81 @@
           "jsonName": "2023-08-04T13:00:00Z",
           "cSharpName": "_20230804T130000Z",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T21:30:00Z",
+          "cSharpName": "_20230908T213000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T21:00:00Z",
+          "cSharpName": "_20230908T210000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T20:30:00Z",
+          "cSharpName": "_20230908T203000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T20:00:00Z",
+          "cSharpName": "_20230908T200000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T19:30:00Z",
+          "cSharpName": "_20230908T193000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T19:00:00Z",
+          "cSharpName": "_20230908T190000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T18:30:00Z",
+          "cSharpName": "_20230908T183000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T18:00:00Z",
+          "cSharpName": "_20230908T180000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T17:30:00Z",
+          "cSharpName": "_20230908T173000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T17:00:00Z",
+          "cSharpName": "_20230908T170000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T16:30:00Z",
+          "cSharpName": "_20230908T163000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T16:00:00Z",
+          "cSharpName": "_20230908T160000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T15:30:00Z",
+          "cSharpName": "_20230908T153000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T15:00:00Z",
+          "cSharpName": "_20230908T150000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2023-09-08T14:30:00Z",
+          "cSharpName": "_20230908T143000Z",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -11019,12 +11139,12 @@
         },
         {
           "id": "sensor.huawei_p_smart_2019_86203_rx",
-          "friendlyName": "HUAWEI_P_smart_2019-86203 RX",
+          "friendlyName": "RX",
           "cSharpName": "HuaweiPSmart201986203Rx"
         },
         {
           "id": "sensor.huawei_p_smart_2019_86203_tx",
-          "friendlyName": "HUAWEI_P_smart_2019-86203 TX",
+          "friendlyName": "TX",
           "cSharpName": "HuaweiPSmart201986203Tx"
         },
         {
@@ -11219,7 +11339,7 @@
         },
         {
           "id": "sensor.jayden_s_iphone_rx",
-          "friendlyName": "RX",
+          "friendlyName": "Jayden-s-iPhone RX RX",
           "cSharpName": "JaydenSIphoneRx"
         },
         {
@@ -11244,7 +11364,7 @@
         },
         {
           "id": "sensor.jayden_s_iphone_tx",
-          "friendlyName": "TX",
+          "friendlyName": "Jayden-s-iPhone RX TX",
           "cSharpName": "JaydenSIphoneTx"
         },
         {
@@ -11341,6 +11461,16 @@
           "id": "sensor.kitchen_echo_tx",
           "friendlyName": "Kitchen Echo TX",
           "cSharpName": "KitchenEchoTx"
+        },
+        {
+          "id": "sensor.kitchen_lights_energy",
+          "friendlyName": "Kitchen Lights energy",
+          "cSharpName": "KitchenLightsEnergy"
+        },
+        {
+          "id": "sensor.kitchen_lights_power",
+          "friendlyName": "Kitchen Lights power",
+          "cSharpName": "KitchenLightsPower"
         },
         {
           "id": "sensor.kitchen_lux",
@@ -11609,7 +11739,7 @@
         },
         {
           "id": "sensor.lumi_lumi_sensor_magnet_aq2_ac831303_device_temperature",
-          "friendlyName": "Officer Contact  Device temperature",
+          "friendlyName": "Office Door Device temperature",
           "cSharpName": "LumiLumiSensorMagnetAq2Ac831303DeviceTemperature"
         },
         {
@@ -11624,7 +11754,7 @@
         },
         {
           "id": "sensor.lumi_lumi_sensor_magnet_aq2_power",
-          "friendlyName": "Officer Contact  power",
+          "friendlyName": "Office Door power",
           "cSharpName": "LumiLumiSensorMagnetAq2Power"
         },
         {
@@ -11691,6 +11821,16 @@
           "id": "sensor.lumi_lumi_sensor_motion_aq2_f33b1404_device_temperature",
           "friendlyName": "office motion Device temperature",
           "cSharpName": "LumiLumiSensorMotionAq2F33b1404DeviceTemperature"
+        },
+        {
+          "id": "sensor.macbook_air_rx",
+          "friendlyName": "MacBook-Air RX",
+          "cSharpName": "MacbookAirRx"
+        },
+        {
+          "id": "sensor.macbook_air_tx",
+          "friendlyName": "MacBook-Air TX",
+          "cSharpName": "MacbookAirTx"
         },
         {
           "id": "sensor.master_1_energy",
@@ -11893,6 +12033,11 @@
           "cSharpName": "OctopusEnergyGasE6s167352018617401432210CurrentStandingCharge"
         },
         {
+          "id": "sensor.octopus_energy_gas_e6s16735201861_7401432210_next_rate",
+          "friendlyName": "Gas E6S16735201861 7401432210 Next Rate",
+          "cSharpName": "OctopusEnergyGasE6s167352018617401432210NextRate"
+        },
+        {
           "id": "sensor.octopus_energy_gas_e6s16735201861_7401432210_previous_accumulative_consumption",
           "friendlyName": "Gas E6S16735201861 7401432210 Previous Accumulative Consumption",
           "cSharpName": "OctopusEnergyGasE6s167352018617401432210PreviousAccumulativeConsumption"
@@ -11906,6 +12051,11 @@
           "id": "sensor.octopus_energy_gas_e6s16735201861_7401432210_previous_accumulative_cost",
           "friendlyName": "Gas E6S16735201861 7401432210 Previous Accumulative Cost",
           "cSharpName": "OctopusEnergyGasE6s167352018617401432210PreviousAccumulativeCost"
+        },
+        {
+          "id": "sensor.octopus_energy_gas_e6s16735201861_7401432210_previous_rate",
+          "friendlyName": "Gas E6S16735201861 7401432210 Previous Rate",
+          "cSharpName": "OctopusEnergyGasE6s167352018617401432210PreviousRate"
         },
         {
           "id": "sensor.office_1_energy",
@@ -12369,23 +12519,58 @@
         },
         {
           "id": "sensor.rx_10",
-          "friendlyName": " RX RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx10"
         },
         {
           "id": "sensor.rx_100",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx100"
         },
         {
           "id": "sensor.rx_101",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx101"
         },
         {
           "id": "sensor.rx_102",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx102"
+        },
+        {
+          "id": "sensor.rx_103",
+          "friendlyName": "RX",
+          "cSharpName": "Rx103"
+        },
+        {
+          "id": "sensor.rx_104",
+          "friendlyName": "RX",
+          "cSharpName": "Rx104"
+        },
+        {
+          "id": "sensor.rx_105",
+          "friendlyName": "RX",
+          "cSharpName": "Rx105"
+        },
+        {
+          "id": "sensor.rx_106",
+          "friendlyName": "RX",
+          "cSharpName": "Rx106"
+        },
+        {
+          "id": "sensor.rx_107",
+          "friendlyName": "RX",
+          "cSharpName": "Rx107"
+        },
+        {
+          "id": "sensor.rx_108",
+          "friendlyName": "RX",
+          "cSharpName": "Rx108"
+        },
+        {
+          "id": "sensor.rx_109",
+          "friendlyName": "RX",
+          "cSharpName": "Rx109"
         },
         {
           "id": "sensor.rx_11",
@@ -12414,7 +12599,7 @@
         },
         {
           "id": "sensor.rx_16",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx16"
         },
         {
@@ -12459,7 +12644,7 @@
         },
         {
           "id": "sensor.rx_24",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx24"
         },
         {
@@ -12569,12 +12754,12 @@
         },
         {
           "id": "sensor.rx_44",
-          "friendlyName": " RX RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx44"
         },
         {
           "id": "sensor.rx_45",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx45"
         },
         {
@@ -12584,7 +12769,7 @@
         },
         {
           "id": "sensor.rx_47",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx47"
         },
         {
@@ -12699,7 +12884,7 @@
         },
         {
           "id": "sensor.rx_68",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx68"
         },
         {
@@ -12744,7 +12929,7 @@
         },
         {
           "id": "sensor.rx_76",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx76"
         },
         {
@@ -12759,7 +12944,7 @@
         },
         {
           "id": "sensor.rx_79",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx79"
         },
         {
@@ -12774,102 +12959,102 @@
         },
         {
           "id": "sensor.rx_81",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx81"
         },
         {
           "id": "sensor.rx_82",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx82"
         },
         {
           "id": "sensor.rx_83",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx83"
         },
         {
           "id": "sensor.rx_84",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx84"
         },
         {
           "id": "sensor.rx_85",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx85"
         },
         {
           "id": "sensor.rx_86",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx86"
         },
         {
           "id": "sensor.rx_87",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx87"
         },
         {
           "id": "sensor.rx_88",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx88"
         },
         {
           "id": "sensor.rx_89",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx89"
         },
         {
           "id": "sensor.rx_9",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx9"
         },
         {
           "id": "sensor.rx_90",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx90"
         },
         {
           "id": "sensor.rx_91",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx91"
         },
         {
           "id": "sensor.rx_92",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx92"
         },
         {
           "id": "sensor.rx_93",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx93"
         },
         {
           "id": "sensor.rx_94",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx94"
         },
         {
           "id": "sensor.rx_95",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx95"
         },
         {
           "id": "sensor.rx_96",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx96"
         },
         {
           "id": "sensor.rx_97",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx97"
         },
         {
           "id": "sensor.rx_98",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx98"
         },
         {
           "id": "sensor.rx_99",
-          "friendlyName": " RX",
+          "friendlyName": "RX",
           "cSharpName": "Rx99"
         },
         {
@@ -13034,12 +13219,12 @@
         },
         {
           "id": "sensor.smart_plug_1_rx",
-          "friendlyName": "RX",
+          "friendlyName": "smart-plug-1 RX",
           "cSharpName": "SmartPlug1Rx"
         },
         {
           "id": "sensor.smart_plug_1_tx",
-          "friendlyName": "TX",
+          "friendlyName": "smart-plug-1 TX",
           "cSharpName": "SmartPlug1Tx"
         },
         {
@@ -13294,23 +13479,58 @@
         },
         {
           "id": "sensor.tx_10",
-          "friendlyName": " RX TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx10"
         },
         {
           "id": "sensor.tx_100",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx100"
         },
         {
           "id": "sensor.tx_101",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx101"
         },
         {
           "id": "sensor.tx_102",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx102"
+        },
+        {
+          "id": "sensor.tx_103",
+          "friendlyName": "TX",
+          "cSharpName": "Tx103"
+        },
+        {
+          "id": "sensor.tx_104",
+          "friendlyName": "TX",
+          "cSharpName": "Tx104"
+        },
+        {
+          "id": "sensor.tx_105",
+          "friendlyName": "TX",
+          "cSharpName": "Tx105"
+        },
+        {
+          "id": "sensor.tx_106",
+          "friendlyName": "TX",
+          "cSharpName": "Tx106"
+        },
+        {
+          "id": "sensor.tx_107",
+          "friendlyName": "TX",
+          "cSharpName": "Tx107"
+        },
+        {
+          "id": "sensor.tx_108",
+          "friendlyName": "TX",
+          "cSharpName": "Tx108"
+        },
+        {
+          "id": "sensor.tx_109",
+          "friendlyName": "TX",
+          "cSharpName": "Tx109"
         },
         {
           "id": "sensor.tx_11",
@@ -13339,7 +13559,7 @@
         },
         {
           "id": "sensor.tx_16",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx16"
         },
         {
@@ -13384,7 +13604,7 @@
         },
         {
           "id": "sensor.tx_24",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx24"
         },
         {
@@ -13494,12 +13714,12 @@
         },
         {
           "id": "sensor.tx_44",
-          "friendlyName": " RX TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx44"
         },
         {
           "id": "sensor.tx_45",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx45"
         },
         {
@@ -13509,7 +13729,7 @@
         },
         {
           "id": "sensor.tx_47",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx47"
         },
         {
@@ -13624,7 +13844,7 @@
         },
         {
           "id": "sensor.tx_68",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx68"
         },
         {
@@ -13669,7 +13889,7 @@
         },
         {
           "id": "sensor.tx_76",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx76"
         },
         {
@@ -13684,7 +13904,7 @@
         },
         {
           "id": "sensor.tx_79",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx79"
         },
         {
@@ -13699,102 +13919,102 @@
         },
         {
           "id": "sensor.tx_81",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx81"
         },
         {
           "id": "sensor.tx_82",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx82"
         },
         {
           "id": "sensor.tx_83",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx83"
         },
         {
           "id": "sensor.tx_84",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx84"
         },
         {
           "id": "sensor.tx_85",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx85"
         },
         {
           "id": "sensor.tx_86",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx86"
         },
         {
           "id": "sensor.tx_87",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx87"
         },
         {
           "id": "sensor.tx_88",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx88"
         },
         {
           "id": "sensor.tx_89",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx89"
         },
         {
           "id": "sensor.tx_9",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx9"
         },
         {
           "id": "sensor.tx_90",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx90"
         },
         {
           "id": "sensor.tx_91",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx91"
         },
         {
           "id": "sensor.tx_92",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx92"
         },
         {
           "id": "sensor.tx_93",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx93"
         },
         {
           "id": "sensor.tx_94",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx94"
         },
         {
           "id": "sensor.tx_95",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx95"
         },
         {
           "id": "sensor.tx_96",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx96"
         },
         {
           "id": "sensor.tx_97",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx97"
         },
         {
           "id": "sensor.tx_98",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx98"
         },
         {
           "id": "sensor.tx_99",
-          "friendlyName": " TX",
+          "friendlyName": "TX",
           "cSharpName": "Tx99"
         },
         {
@@ -13929,7 +14149,7 @@
         },
         {
           "id": "sensor.water_temperature",
-          "friendlyName": "Water Temperature",
+          "friendlyName": "hottubmanager Water Temperature",
           "cSharpName": "WaterTemperature"
         },
         {
@@ -14066,6 +14286,11 @@
           "id": "sensor.wiser_lts_target_temperature_entrance",
           "friendlyName": "Wiser LTS Target Temperature Entrance",
           "cSharpName": "WiserLtsTargetTemperatureEntrance"
+        },
+        {
+          "id": "sensor.wiser_lts_target_temperature_guest_room",
+          "friendlyName": "Wiser LTS Target Temperature Guest Room",
+          "cSharpName": "WiserLtsTargetTemperatureGuestRoom"
         },
         {
           "id": "sensor.wiser_lts_target_temperature_landing",
@@ -14688,6 +14913,26 @@
           "jsonName": "Is Finishing Charge",
           "cSharpName": "IsFinishingCharge",
           "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "applicable_rates",
+          "cSharpName": "ApplicableRates",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+        },
+        {
+          "jsonName": "tariff",
+          "cSharpName": "Tariff",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "is_intelligent_adjusted",
+          "cSharpName": "IsIntelligentAdjusted",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "all_rates",
+          "cSharpName": "AllRates",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
         }
       ]
     },
@@ -15095,12 +15340,12 @@
         },
         {
           "id": "switch.aubrecia_drive_siren",
-          "friendlyName": "Aubrecia Drive siren",
+          "friendlyName": "Aubrecia Drive Siren",
           "cSharpName": "AubreciaDriveSiren"
         },
         {
           "id": "switch.bubbles",
-          "friendlyName": "Bubbles",
+          "friendlyName": "hottubmanager Bubbles",
           "cSharpName": "Bubbles"
         },
         {
@@ -15380,7 +15625,7 @@
         },
         {
           "id": "switch.garden_siren_2",
-          "friendlyName": "Garden siren",
+          "friendlyName": "Garden Siren",
           "cSharpName": "GardenSiren2"
         },
         {
@@ -15435,7 +15680,7 @@
         },
         {
           "id": "switch.jayden_s_iphone",
-          "friendlyName": null,
+          "friendlyName": "Jayden-s-iPhone RX",
           "cSharpName": "JaydenSIphone"
         },
         {
@@ -15615,7 +15860,7 @@
         },
         {
           "id": "switch.massage",
-          "friendlyName": "Massage",
+          "friendlyName": "hottubmanager Massage",
           "cSharpName": "Massage"
         },
         {
@@ -15639,6 +15884,11 @@
           "cSharpName": "NetdaemonLightsmanager"
         },
         {
+          "id": "switch.niemand",
+          "friendlyName": "Niemand",
+          "cSharpName": "Niemand"
+        },
+        {
           "id": "switch.niemand_drive_event_stream",
           "friendlyName": "Niemand Drive Event Stream",
           "cSharpName": "NiemandDriveEventStream"
@@ -15650,7 +15900,7 @@
         },
         {
           "id": "switch.niemand_drive_siren",
-          "friendlyName": "Niemand Drive siren",
+          "friendlyName": "Niemand Drive Siren",
           "cSharpName": "NiemandDriveSiren"
         },
         {
@@ -15680,7 +15930,7 @@
         },
         {
           "id": "switch.niemand_garage_siren",
-          "friendlyName": "Niemand Garage siren",
+          "friendlyName": "Niemand Garage Siren",
           "cSharpName": "NiemandGarageSiren"
         },
         {
@@ -15700,13 +15950,28 @@
         },
         {
           "id": "switch.niemand_garden_siren",
-          "friendlyName": "Niemand Garden siren",
+          "friendlyName": "Niemand Garden Siren",
           "cSharpName": "NiemandGardenSiren"
         },
         {
           "id": "switch.niemand_garden_siren_2",
           "friendlyName": "Niemand Garden Siren",
           "cSharpName": "NiemandGardenSiren2"
+        },
+        {
+          "id": "switch.niemand_guest",
+          "friendlyName": "Niemand-Guest",
+          "cSharpName": "NiemandGuest"
+        },
+        {
+          "id": "switch.niemand_iot",
+          "friendlyName": "Niemand-IOT",
+          "cSharpName": "NiemandIot"
+        },
+        {
+          "id": "switch.niemand_mesh",
+          "friendlyName": "Niemand-Mesh",
+          "cSharpName": "NiemandMesh"
         },
         {
           "id": "switch.niemand_side_event_stream",
@@ -15720,7 +15985,7 @@
         },
         {
           "id": "switch.niemand_side_siren",
-          "friendlyName": "Niemand Side siren",
+          "friendlyName": "Niemand Side Siren",
           "cSharpName": "NiemandSideSiren"
         },
         {
@@ -15895,7 +16160,7 @@
         },
         {
           "id": "switch.water_pump",
-          "friendlyName": "Water Pump",
+          "friendlyName": "hottubmanager Water Pump",
           "cSharpName": "WaterPump"
         },
         {
@@ -16148,7 +16413,7 @@
         {
           "jsonName": "manual_control",
           "cSharpName": "ManualControl",
-          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+          "clrType": "System.Object"
         },
         {
           "jsonName": "icon",
@@ -16630,6 +16895,31 @@
           "jsonName": "visibility",
           "cSharpName": "Visibility",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "apparent_temperature",
+          "cSharpName": "ApparentTemperature",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "dew_point",
+          "cSharpName": "DewPoint",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "cloud_coverage",
+          "cSharpName": "CloudCoverage",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "uv_index",
+          "cSharpName": "UvIndex",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "wind_gust_speed",
+          "cSharpName": "WindGustSpeed",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -16710,7 +17000,7 @@
         },
         {
           "id": "input_datetime.energy_3_hour_window",
-          "friendlyName": "Energy 3 hour Window",
+          "friendlyName": "Energy 3 Hour Window",
           "cSharpName": "Energy3HourWindow"
         }
       ],

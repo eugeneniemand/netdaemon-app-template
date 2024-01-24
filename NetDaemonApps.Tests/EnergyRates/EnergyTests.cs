@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NetDaemon.HassModel.Entities;
 using NetDaemonApps.Tests.Helpers;
-using Niemand.Energy;
-using Niemand.Helpers;
+using NetDaemon.Energy;
+using NetDaemon.Helpers;
 
 namespace NetDaemonApps.Tests;
 
@@ -210,5 +210,5 @@ public class EnergyTests
 
 public static class EnergyAppTestContextInstanceExtensions
 {
-    public static EnergyApp InitEnergy(this AppTestContext ctx) => new(ctx.HaContext, ctx.Scheduler, new Mock<ILogger<EnergyApp>>().Object, new Mock<IServices>().Object);
+    public static EnergyApp InitEnergy(this AppTestContext ctx) => new(ctx.HaContext, ctx.Scheduler, new Mock<ILogger<EnergyApp>>().Object, new Mock<IServices>().Object, new Mock<IEntities>().Object);
 }

@@ -20,7 +20,7 @@ try
                       .AddAppsFromAssembly(Assembly.GetExecutingAssembly())
                       .AddNetDaemonStateManager()
                       .AddNetDaemonScheduler()
-                      .AddGeneratedCode()
+                      .SetupDependencies()
               )
               .Build()
               .RunAsync()

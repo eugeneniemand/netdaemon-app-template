@@ -2,7 +2,7 @@
 
 public class ManagerConfig
 {
-    public IEnumerable<Manager>? Rooms { get; set; }
+    public List<Manager> Rooms { get; set; } = new List<Manager>();
     public int GuardTimeout { get; set; } = 900;
     public string MaxDuration { get; set; }
     public string MinDuration { get; set; }

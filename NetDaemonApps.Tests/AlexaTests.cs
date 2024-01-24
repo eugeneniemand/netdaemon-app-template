@@ -5,7 +5,7 @@ using Moq;
 using NetDaemon.HassModel.Entities;
 using NetDaemon.HassModel.Mocks;
 using NetDaemonApps.Tests.Helpers;
-using Niemand.Helpers;
+using NetDaemon.Helpers;
 
 namespace NetDaemonApps.Tests;
 

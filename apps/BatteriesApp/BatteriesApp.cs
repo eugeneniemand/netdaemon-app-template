@@ -1,4 +1,7 @@
-﻿namespace Niemand.Energy;
+﻿using NetDaemon.Helpers;
+using Niemand.Helpers;
+
+namespace Niemand.Energy;
 
 [NetDaemonApp]
 //[Focus]

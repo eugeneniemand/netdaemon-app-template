@@ -84,11 +84,12 @@ public class LightManagerTests
 
         // Act
         ctx.TriggerStateChange(config.Room().NightTimeEntity, "night");
-
+        ctx.Scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
+        
         // Assert
         ctx.VerifyLightTurnOff(config.Light(), Times.Once);
-        ctx.VerifyLightTurnOff(config.NightLight(), Times.Never);
-        ctx.VerifyLightTurnOn(config.NightLight(), Times.Never);
+        ctx.VerifyLightTurnOff(config.NightLight(), Times.Once);
+        ctx.VerifyLightTurnOn(config.NightLight(), Times.Once);
         ctx.VerifyLightTurnOn(config.NightLight(2), Times.Once);
     }
 

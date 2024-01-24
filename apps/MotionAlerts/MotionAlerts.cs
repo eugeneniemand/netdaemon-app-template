@@ -28,7 +28,7 @@ public class MotionAlerts
                .Subscribe(e =>
                {
                    //if (lastNotification != DateTime.MinValue && ( DateTime.Now - lastNotification ).TotalMinutes < 15) return;
-                   if (DateTime.Now.Hour is >= 19 or <= 5)
+                   if (DateTime.Now.Hour is >= 19 or <= 5 || _entities.InputBoolean.NetdaemonDebugState.IsOn())
                        services.Notify.Eugene($"Motion detected on {e.Entity.EntityId.Replace("binary_sensor.", "", StringComparison.OrdinalIgnoreCase).Replace("_motion", "", StringComparison.OrdinalIgnoreCase)}");
                    //lastNotification = DateTime.Now;
                });

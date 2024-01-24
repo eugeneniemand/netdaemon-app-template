@@ -86,6 +86,21 @@ public class AgileRatesApp : IAsyncInitializable, IDisposable
         [JsonPropertyName("results")] public List<Rate> Results { get; set; }
         [JsonPropertyName("next")] public string Next { get; set; }
         [JsonPropertyName("previous")] public string Previous { get; set; }
+
+        // {
+        //     "count": 31536,
+        //     "next": "https://api.octopus.energy/v1/products/AGILE-VAR-22-10-19/electricity-tariffs/E-1R-AGILE-VAR-22-10-19-A/standard-unit-rates/?page\u003d2",
+        //     "previous": null,
+        //     "results": [
+        //          {
+        //           "value_exc_vat": 14.22,
+        //           "value_inc_vat": 14.931,
+        //           "valid_from": "2024-01-17T22:30:00Z",
+        //           "valid_to": "2024-01-17T23:00:00Z",
+        //           "payment_method": null
+        //          }
+        //      ]
+        // }
     }
 
     private class Rate
@@ -93,5 +108,15 @@ public class AgileRatesApp : IAsyncInitializable, IDisposable
         [JsonPropertyName("valid_from")] public DateTime ValidFrom { get; set; }
         [JsonPropertyName("valid_to")] public DateTime ValidTo { get; set; }
         [JsonPropertyName("value_inc_vat")] public double Value { get; set; }
+        [JsonPropertyName("value_exc_vat")] public double ValueExVat { get; set; }
+        [JsonPropertyName("payment_method")] public object? PaymentMethod { get; set; }
+        
+        // "value_exc_vat": 14.22,
+        // "value_inc_vat": 14.931,
+        // "valid_from": "2024-01-17T22:30:00Z",
+        // "valid_to": "2024-01-17T23:00:00Z",
+        // "payment_method": null
     }
+    
+   
 }

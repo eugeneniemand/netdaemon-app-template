@@ -1,18 +1,23 @@
 ﻿using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Niemand;
+using Niemand.Helpers;
 
-namespace Niemand.Helpers;
+namespace NetDaemon.Helpers;
 
 public static class Extentions
 {
     private const int MustBeLessThan = 100000000; // 8 decimal digits
 
-    public static IServiceCollection AddGeneratedCode(this IServiceCollection serviceCollection)
+    public static IServiceCollection SetupDependencies(this IServiceCollection serviceCollection)
         => serviceCollection
            .AddTransient<IEntities, Entities>()
            .AddTransient<IServices, Services>()
            .AddTransient<IAlexa, Alexa>()
-           .AddSingleton<IVoiceProvider, VoiceProvider>();
+           .AddSingleton<IVoiceProvider, VoiceProvider>()
+           .AddScoped<People>()
+           .AddSingleton<IServiceProvider>(sp => sp);
+        
 
     public static string GetFixedHash(this string s)
     {
