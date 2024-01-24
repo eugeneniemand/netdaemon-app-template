@@ -4,7 +4,7 @@ namespace Niemand.Tests.LightManager;
 
 public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, TestEntityBuilder entityBuilder)
 {
-    // Watchdog should ignore lights while room state is on. It turned off kitchen lights while I was making coffee exactluy on the hour 22:00
+    // Watchdog should ignore lights while room state is on. It turned off kitchen lights while I was making coffee exactly on the hour 22:00
     // Only turn on Adaptive lights when AL is off
     
     
@@ -20,7 +20,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
 
         // Assert
         state.ServiceCalls.Should().ContainEquivalentOf(
-            Events.Switch.TurnOn(sut.Config.Room().CircadianSwitchEntity)
+            Events.Switch.TurnOn(sut.Config.Room().CircadianSwitchEntity!)
         );
     }
 
@@ -52,7 +52,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         sut.Init();
 
         //Act
-        state.Change(sut.Config.Room().NightTimeEntity, "night");
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
 
         //Assert
         state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(new[]
@@ -75,7 +75,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         sut.Init();
 
         // Act
-        state.Change(sut.Config.Room().NightTimeEntity, "night");
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
 
         //Assert
@@ -209,9 +209,9 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
     {
         // Arrange
         sut.Config.Room().LuxEntity = entityBuilder.CreateNumericEntity("sensor.lux_value");
-        state.Change(sut.Config.Room().LuxEntity, "100");
+        state.Change(sut.Config.Room().LuxEntity!, "100");
         sut.Config.Room().LuxLimitEntity = entityBuilder.CreateNumericEntity("sensor.lux_Limit");
-        state.Change(sut.Config.Room().LuxLimitEntity, "10");
+        state.Change(sut.Config.Room().LuxLimitEntity!, "10");
         sut.Init();
 
         // Act
@@ -386,7 +386,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         sut.Init();
 
         // Act
-        state.Change(sut.Config.Room().NightTimeEntity, "night");
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
         state.Change(sut.Config.Pir1(), "on");
 
         // Assert
@@ -399,7 +399,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
     public void OverriddenLightsObeyOverrideTimeoutRegardlessOfNormalTimeoutAndPresence()
     {
         // Arrange
-        state.Change(sut.Config.Room().NightTimeEntity, "night");
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
         sut.Init();
 
         // Act
@@ -485,7 +485,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
     public void TurnOnNightLight()
     {
         // Arrange
-        state.Change(sut.Config.Room().NightTimeEntity, "night");
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
         sut.Init();
 
         // Act

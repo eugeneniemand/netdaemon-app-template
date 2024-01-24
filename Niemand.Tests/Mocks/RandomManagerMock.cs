@@ -1,4 +1,5 @@
 using LightManagerV2;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace Niemand.Tests.Mocks;
 
@@ -15,7 +16,7 @@ public class RandomManagerMock : IRandomManager
     }
 
     public TimeSpan RandomDelay { get; set; }
-    public SwitchEntity RandomSwitchEntity { get; }
+    public SwitchEntity RandomSwitchEntity { get; } 
 
     public void StartQueue()
     {
