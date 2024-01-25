@@ -6,8 +6,8 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
 {
     // Watchdog should ignore lights while room state is on. It turned off kitchen lights while I was making coffee exactly on the hour 22:00
     // Only turn on Adaptive lights when AL is off
-    
-    
+
+
     [Fact]
     public void CircadianSwitchTurnsOnWhenLightTurnsOn()
     {
@@ -35,10 +35,89 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         // Act  
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(sut.Config.GuardTimeout).Ticks);
 
-        // Assert
+        // Assert 
         state.ServiceCalls.Should().ContainEquivalentOf(
             Events.Light.TurnOff(sut.Config.Light())
         );
+    }
+
+    [Fact]
+    public void ControlEntitiesDontTurnOffWhenConditionIsNotMet()
+    {
+        // Arrange
+        sut.Config.Room().ConditionEntity      = entityBuilder.CreateEntity<SensorEntity>("sensor.sun", "above_horizon");
+        sut.Config.Room().ConditionEntityState = "below_horizon";
+        state.Change(sut.Config.Light(), "on");
+        state.Change(sut.Config.Pir1(), "on");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Pir1(), "off");
+        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(sut.Config.Room().Timeout).Ticks);
+
+        // Assert 
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void CircadianSwitchIsTurnedOnWhenLightsTurnOffAfterTimeout()
+    {
+        // Arrange
+        sut.Config.Room().CircadianSwitchEntity = entityBuilder.CreateEntity<SwitchEntity>("switch.adaptive_lighting", "off");
+        state.Change(sut.Config.Light(), "on");
+        state.Change(sut.Config.Pir1(), "on");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Pir1(), "off");
+        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(sut.Config.Room().Timeout).Ticks);
+
+        // Assert 
+        state.ServiceCalls.Filter(Domain.Switch).Should().ContainEquivalentOf(
+            Events.Switch.TurnOn(sut.Config.Room().CircadianSwitchEntity!)
+        );
+    }
+
+    [Fact]
+    public void ControlEntitiesDontTurnOffWhenOverrideIsActive()
+    {
+        // Arrange
+        state.Change(sut.Config.Light(), "off");
+        state.Change(sut.Config.Pir1(), "on");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on"
+        });
+
+        state.Change(sut.Config.Pir1(), "off");
+        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(sut.Config.Room().Timeout).Ticks);
+
+        // Assert 
+        state.ServiceCalls.Light().Should().NotContainEquivalentOf(
+            Events.Light.TurnOff(sut.Config.Light())
+        );
+    }
+
+    [Fact]
+    public void WatchdogDoesNotRunWhenDisabled()
+    {
+        // Arrange
+        sut.Config.Room().Watchdog = false;
+        state.Change(sut.Config.Light(), "on");
+        sut.Init();
+
+        // Act  
+        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(sut.Config.GuardTimeout).Ticks);
+
+        // Assert
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEmpty();
     }
 
     [Fact]
@@ -62,6 +141,121 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
                 Events.Light.TurnOff(sut.Config.NightLight()),
                 Events.Light.TurnOff(sut.Config.NightLight(2))
             }
+        );
+    }
+
+    [Fact]
+    public void HouseModeSetToDayTurnsOffCircadianSleepMode()
+    {
+        //Arrange
+        sut.Config.Room().CircadianSwitchEntity = entityBuilder.CreateEntity<SwitchEntity>("switch.adaptive_lighting_testroom", "on");
+        sut.Init();
+
+        //Act
+        state.Change(sut.Config.Room().NightTimeEntity!, "day");
+
+        //Assert
+        state.ServiceCalls.Switch().Should().ContainEquivalentOf(
+            Events.Switch.TurnOff(entityBuilder.CreateSwitchEntity("switch.adaptive_lighting_sleep_mode_testroom"))
+        );
+    }
+
+    [Fact]
+    public void HouseModeSetToNightTurnsOnCircadianSleepMode()
+    {
+        //Arrange
+        sut.Config.Room().CircadianSwitchEntity = entityBuilder.CreateEntity<SwitchEntity>("switch.adaptive_lighting_testroom", "on");
+        sut.Init();
+
+        //Act
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
+
+        //Assert
+        state.ServiceCalls.Switch().Should().ContainEquivalentOf(
+            Events.Switch.TurnOn(entityBuilder.CreateSwitchEntity("switch.adaptive_lighting_sleep_mode_testroom"))
+        );
+    }
+
+    [Fact]
+    public void OverrideEventTurnsOffCircadianSwitch()
+    {
+        //Arrange
+        sut.Config.Room().CircadianSwitchEntity = entityBuilder.CreateEntity<SwitchEntity>("switch.adaptive_lighting_testroom", "on");
+        sut.Init();
+
+        //Act
+        var oldState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            AttributesJson = new LightTurnOnParameters
+            {
+                Brightness = 0
+            }.AsJsonElement()
+        };
+
+        var newState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            AttributesJson = new LightTurnOnParameters
+            {
+                Brightness = 100
+            }.AsJsonElement()
+        };
+
+        state.Change(sut.Config.Light(), oldState, newState);
+
+        //Assert
+        state.ServiceCalls.Switch().Should().ContainEquivalentOf(
+            Events.Switch.TurnOff(sut.Config.Room().CircadianSwitchEntity!)
+        );
+    }
+
+    [Fact]
+    public void OverrideEventTurnsDoesNotAttemptToTurnOffCircadianSwitchIfItDoesNotExist()
+    {
+        //Arrange
+        sut.Init();
+
+        //Act
+        var oldState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            AttributesJson = new LightTurnOnParameters
+            {
+                Brightness = 0
+            }.AsJsonElement()
+        };
+
+        var newState = new EntityState
+        {
+            State = "on",
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            AttributesJson = new LightTurnOnParameters
+            {
+                Brightness = 100
+            }.AsJsonElement()
+        };
+
+        state.Change(sut.Config.Light(), oldState, newState);
+
+        //Assert
+        state.ServiceCalls.Switch().Should().BeEquivalentTo(new[]
+            { Events.Switch.TurnOn(sut.Config.Room().ManagerEnabled) }
         );
     }
 
@@ -544,7 +738,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         state.ServiceCalls.Should().NotContainEquivalentOf(
             Events.Light.TurnOff(sut.Config.Light())
         );
-        
+
         // Act
         state.Change(sut.Config.Pir1(), "off");
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(sut.Config.Room().OverrideTimeout).Ticks);

@@ -36,9 +36,9 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Humanizer.Core" Version="2.14.1"/>
-        <PackageReference Include="JoySoftware.NetDaemon.Extensions.Mqtt" Version="23.44.1" />
         <PackageReference Include="NetDaemon.AppModel" Version="23.46.1" />
         <PackageReference Include="NetDaemon.Extensions.Logging" Version="23.46.1" />
+        <PackageReference Include="NetDaemon.Extensions.Mqtt" Version="24.3.1" />
         <PackageReference Include="NetDaemon.Extensions.Scheduling" Version="23.46.1" />
         <PackageReference Include="NetDaemon.Extensions.Tts" Version="23.46.1" />
         <PackageReference Include="NetDaemon.HassModel" Version="23.46.1" />
