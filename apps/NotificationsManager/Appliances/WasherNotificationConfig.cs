@@ -12,7 +12,11 @@ public class WasherNotificationConfig : IApplianceNotificationConfig
     }
 
     public InputBooleanEntity Acknowledge => _entities.InputBoolean.WasherAck;
-
+    public InputBooleanEntity Reminder => _entities.InputBoolean.WashingReminder;
+    
+    public MediaPlayerEntity MediaPlayer => _entities.MediaPlayer.Kitchen;
+    public BinarySensorEntity MotionSensor => _entities.BinarySensor.UtilityMotion;
+    public ICycleStateHandler CycleStateHandler => new WasherCycleStateHandler();
     public Dictionary<string, CycleState> CycleStates => new()
     {
         { "run", CycleState.Running },

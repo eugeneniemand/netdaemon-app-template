@@ -12,7 +12,12 @@ public class DryerNotificationConfig : IApplianceNotificationConfig
     }
 
     public InputBooleanEntity Acknowledge => _entities.InputBoolean.DryerAck;
+    public InputBooleanEntity Reminder => _entities.InputBoolean.DryerReminder;
+    
+    public MediaPlayerEntity MediaPlayer => _entities.MediaPlayer.Kitchen;
+    public BinarySensorEntity MotionSensor => _entities.BinarySensor.UtilityMotion;
 
+    public ICycleStateHandler CycleStateHandler => new DryerCycleStateHandler();
     public Dictionary<string, CycleState> CycleStates => new()
     {
         { "run", CycleState.Running },

@@ -358,6 +358,11 @@
           "cSharpName": "AaronsIpadFocus"
         },
         {
+          "id": "binary_sensor.aarons_iphone_focus",
+          "friendlyName": "Aaron\u2019s iPhone Focus",
+          "cSharpName": "AaronsIphoneFocus"
+        },
+        {
           "id": "binary_sensor.aubrecia_drive_motion",
           "friendlyName": "Aubrecia Drive Motion",
           "cSharpName": "AubreciaDriveMotion"
@@ -2246,6 +2251,11 @@
           "jsonName": "is_passive",
           "cSharpName": "IsPassive",
           "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "restored",
+          "cSharpName": "Restored",
+          "clrType": "System.Boolean"
         }
       ]
     },
@@ -2298,6 +2308,11 @@
           "id": "device_tracker.aarons_ipad",
           "friendlyName": "Aaron\u2019s iPad",
           "cSharpName": "AaronsIpad"
+        },
+        {
+          "id": "device_tracker.aarons_iphone",
+          "friendlyName": "Aaron\u2019s iPhone",
+          "cSharpName": "AaronsIphone"
         },
         {
           "id": "device_tracker.android_b8c33f1cb7c0d776",
@@ -6730,6 +6745,46 @@
           "cSharpName": "AaronsIpadSsid"
         },
         {
+          "id": "sensor.aarons_iphone_activity",
+          "friendlyName": "Aaron\u2019s iPhone Activity",
+          "cSharpName": "AaronsIphoneActivity"
+        },
+        {
+          "id": "sensor.aarons_iphone_battery_state",
+          "friendlyName": "Aaron\u2019s iPhone Battery State",
+          "cSharpName": "AaronsIphoneBatteryState"
+        },
+        {
+          "id": "sensor.aarons_iphone_bssid",
+          "friendlyName": "Aaron\u2019s iPhone BSSID",
+          "cSharpName": "AaronsIphoneBssid"
+        },
+        {
+          "id": "sensor.aarons_iphone_connection_type",
+          "friendlyName": "Aaron\u2019s iPhone Connection Type",
+          "cSharpName": "AaronsIphoneConnectionType"
+        },
+        {
+          "id": "sensor.aarons_iphone_geocoded_location",
+          "friendlyName": "Aaron\u2019s iPhone Geocoded Location",
+          "cSharpName": "AaronsIphoneGeocodedLocation"
+        },
+        {
+          "id": "sensor.aarons_iphone_last_update_trigger",
+          "friendlyName": "Aaron\u2019s iPhone Last Update Trigger",
+          "cSharpName": "AaronsIphoneLastUpdateTrigger"
+        },
+        {
+          "id": "sensor.aarons_iphone_sim_1",
+          "friendlyName": "Aaron\u2019s iPhone SIM 1",
+          "cSharpName": "AaronsIphoneSim1"
+        },
+        {
+          "id": "sensor.aarons_iphone_ssid",
+          "friendlyName": "Aaron\u2019s iPhone SSID",
+          "cSharpName": "AaronsIphoneSsid"
+        },
+        {
           "id": "sensor.accuweather_home_air_quality_0d",
           "friendlyName": "AccuWeather Home Air quality 0d",
           "cSharpName": "AccuweatherHomeAirQuality0d"
@@ -10365,6 +10420,131 @@
           "jsonName": "ice_plus",
           "cSharpName": "IcePlus",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "2024-02-13T22:30:00Z",
+          "cSharpName": "_20240213T223000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T22:00:00Z",
+          "cSharpName": "_20240213T220000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T21:30:00Z",
+          "cSharpName": "_20240213T213000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T21:00:00Z",
+          "cSharpName": "_20240213T210000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T20:30:00Z",
+          "cSharpName": "_20240213T203000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T20:00:00Z",
+          "cSharpName": "_20240213T200000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T19:30:00Z",
+          "cSharpName": "_20240213T193000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T19:00:00Z",
+          "cSharpName": "_20240213T190000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T18:30:00Z",
+          "cSharpName": "_20240213T183000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T18:00:00Z",
+          "cSharpName": "_20240213T180000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T17:30:00Z",
+          "cSharpName": "_20240213T173000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T17:00:00Z",
+          "cSharpName": "_20240213T170000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T16:30:00Z",
+          "cSharpName": "_20240213T163000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T16:00:00Z",
+          "cSharpName": "_20240213T160000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T15:30:00Z",
+          "cSharpName": "_20240213T153000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T15:00:00Z",
+          "cSharpName": "_20240213T150000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T14:30:00Z",
+          "cSharpName": "_20240213T143000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T14:00:00Z",
+          "cSharpName": "_20240213T140000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T13:30:00Z",
+          "cSharpName": "_20240213T133000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T13:00:00Z",
+          "cSharpName": "_20240213T130000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T12:30:00Z",
+          "cSharpName": "_20240213T123000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T12:00:00Z",
+          "cSharpName": "_20240213T120000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T11:30:00Z",
+          "cSharpName": "_20240213T113000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T11:00:00Z",
+          "cSharpName": "_20240213T110000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2024-02-13T10:30:00Z",
+          "cSharpName": "_20240213T103000Z",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -10431,6 +10611,41 @@
           "id": "sensor.aarons_ipad_storage",
           "friendlyName": "Aaron\u2019s iPad Storage",
           "cSharpName": "AaronsIpadStorage"
+        },
+        {
+          "id": "sensor.aarons_iphone_average_active_pace",
+          "friendlyName": "Aaron\u2019s iPhone Average Active Pace",
+          "cSharpName": "AaronsIphoneAverageActivePace"
+        },
+        {
+          "id": "sensor.aarons_iphone_battery_level",
+          "friendlyName": "Aaron\u2019s iPhone Battery Level",
+          "cSharpName": "AaronsIphoneBatteryLevel"
+        },
+        {
+          "id": "sensor.aarons_iphone_distance",
+          "friendlyName": "Aaron\u2019s iPhone Distance",
+          "cSharpName": "AaronsIphoneDistance"
+        },
+        {
+          "id": "sensor.aarons_iphone_floors_ascended",
+          "friendlyName": "Aaron\u2019s iPhone Floors Ascended",
+          "cSharpName": "AaronsIphoneFloorsAscended"
+        },
+        {
+          "id": "sensor.aarons_iphone_floors_descended",
+          "friendlyName": "Aaron\u2019s iPhone Floors Descended",
+          "cSharpName": "AaronsIphoneFloorsDescended"
+        },
+        {
+          "id": "sensor.aarons_iphone_steps",
+          "friendlyName": "Aaron\u2019s iPhone Steps",
+          "cSharpName": "AaronsIphoneSteps"
+        },
+        {
+          "id": "sensor.aarons_iphone_storage",
+          "friendlyName": "Aaron\u2019s iPhone Storage",
+          "cSharpName": "AaronsIphoneStorage"
         },
         {
           "id": "sensor.accuweather_home_cloud_ceiling",
@@ -14834,286 +15049,6 @@
           "cSharpName": "AaronShuffleSwitch"
         },
         {
-          "id": "switch.adaptive_lighting_aaron",
-          "friendlyName": "Adaptive Lighting: Aaron",
-          "cSharpName": "AdaptiveLightingAaron"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_aaron",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Aaron",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessAaron"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_dining",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Dining",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessDining"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_entrance",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Entrance",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessEntrance"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_floor",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Floor ",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessFloor"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_hallway",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Hallway",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessHallway"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_jayden",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Jayden",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessJayden"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_kitchen",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Kitchen",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessKitchen"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_landing",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Landing",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessLanding"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_lounge",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Lounge",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessLounge"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_master",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Master",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessMaster"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_playroom",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Playroom",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessPlayroom"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_study",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Study",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessStudy"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_toilet",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Toilet",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessToilet"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_brightness_utility",
-          "friendlyName": "Adaptive Lighting Adapt Brightness: Utility",
-          "cSharpName": "AdaptiveLightingAdaptBrightnessUtility"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_aaron",
-          "friendlyName": "Adaptive Lighting Adapt Color: Aaron",
-          "cSharpName": "AdaptiveLightingAdaptColorAaron"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_dining",
-          "friendlyName": "Adaptive Lighting Adapt Color: Dining",
-          "cSharpName": "AdaptiveLightingAdaptColorDining"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_entrance",
-          "friendlyName": "Adaptive Lighting Adapt Color: Entrance",
-          "cSharpName": "AdaptiveLightingAdaptColorEntrance"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_floor",
-          "friendlyName": "Adaptive Lighting Adapt Color: Floor ",
-          "cSharpName": "AdaptiveLightingAdaptColorFloor"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_hallway",
-          "friendlyName": "Adaptive Lighting Adapt Color: Hallway",
-          "cSharpName": "AdaptiveLightingAdaptColorHallway"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_jayden",
-          "friendlyName": "Adaptive Lighting Adapt Color: Jayden",
-          "cSharpName": "AdaptiveLightingAdaptColorJayden"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_kitchen",
-          "friendlyName": "Adaptive Lighting Adapt Color: Kitchen",
-          "cSharpName": "AdaptiveLightingAdaptColorKitchen"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_landing",
-          "friendlyName": "Adaptive Lighting Adapt Color: Landing",
-          "cSharpName": "AdaptiveLightingAdaptColorLanding"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_lounge",
-          "friendlyName": "Adaptive Lighting Adapt Color: Lounge",
-          "cSharpName": "AdaptiveLightingAdaptColorLounge"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_master",
-          "friendlyName": "Adaptive Lighting Adapt Color: Master",
-          "cSharpName": "AdaptiveLightingAdaptColorMaster"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_playroom",
-          "friendlyName": "Adaptive Lighting Adapt Color: Playroom",
-          "cSharpName": "AdaptiveLightingAdaptColorPlayroom"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_study",
-          "friendlyName": "Adaptive Lighting Adapt Color: Study",
-          "cSharpName": "AdaptiveLightingAdaptColorStudy"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_toilet",
-          "friendlyName": "Adaptive Lighting Adapt Color: Toilet",
-          "cSharpName": "AdaptiveLightingAdaptColorToilet"
-        },
-        {
-          "id": "switch.adaptive_lighting_adapt_color_utility",
-          "friendlyName": "Adaptive Lighting Adapt Color: Utility",
-          "cSharpName": "AdaptiveLightingAdaptColorUtility"
-        },
-        {
-          "id": "switch.adaptive_lighting_dining",
-          "friendlyName": "Adaptive Lighting: Dining",
-          "cSharpName": "AdaptiveLightingDining"
-        },
-        {
-          "id": "switch.adaptive_lighting_entrance",
-          "friendlyName": "Adaptive Lighting: Entrance",
-          "cSharpName": "AdaptiveLightingEntrance"
-        },
-        {
-          "id": "switch.adaptive_lighting_floor",
-          "friendlyName": "Adaptive Lighting: Floor ",
-          "cSharpName": "AdaptiveLightingFloor"
-        },
-        {
-          "id": "switch.adaptive_lighting_hallway",
-          "friendlyName": "Adaptive Lighting: Hallway",
-          "cSharpName": "AdaptiveLightingHallway"
-        },
-        {
-          "id": "switch.adaptive_lighting_jayden",
-          "friendlyName": "Adaptive Lighting: Jayden",
-          "cSharpName": "AdaptiveLightingJayden"
-        },
-        {
-          "id": "switch.adaptive_lighting_kitchen",
-          "friendlyName": "Adaptive Lighting: Kitchen",
-          "cSharpName": "AdaptiveLightingKitchen"
-        },
-        {
-          "id": "switch.adaptive_lighting_landing",
-          "friendlyName": "Adaptive Lighting: Landing",
-          "cSharpName": "AdaptiveLightingLanding"
-        },
-        {
-          "id": "switch.adaptive_lighting_lounge",
-          "friendlyName": "Adaptive Lighting: Lounge",
-          "cSharpName": "AdaptiveLightingLounge"
-        },
-        {
-          "id": "switch.adaptive_lighting_master",
-          "friendlyName": "Adaptive Lighting: Master",
-          "cSharpName": "AdaptiveLightingMaster"
-        },
-        {
-          "id": "switch.adaptive_lighting_playroom",
-          "friendlyName": "Adaptive Lighting: Playroom",
-          "cSharpName": "AdaptiveLightingPlayroom"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_aaron",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Aaron",
-          "cSharpName": "AdaptiveLightingSleepModeAaron"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_dining",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Dining",
-          "cSharpName": "AdaptiveLightingSleepModeDining"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_entrance",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Entrance",
-          "cSharpName": "AdaptiveLightingSleepModeEntrance"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_floor",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Floor ",
-          "cSharpName": "AdaptiveLightingSleepModeFloor"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_hallway",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Hallway",
-          "cSharpName": "AdaptiveLightingSleepModeHallway"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_jayden",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Jayden",
-          "cSharpName": "AdaptiveLightingSleepModeJayden"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_kitchen",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Kitchen",
-          "cSharpName": "AdaptiveLightingSleepModeKitchen"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_landing",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Landing",
-          "cSharpName": "AdaptiveLightingSleepModeLanding"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_lounge",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Lounge",
-          "cSharpName": "AdaptiveLightingSleepModeLounge"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_master",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Master",
-          "cSharpName": "AdaptiveLightingSleepModeMaster"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_playroom",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Playroom",
-          "cSharpName": "AdaptiveLightingSleepModePlayroom"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_study",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Study",
-          "cSharpName": "AdaptiveLightingSleepModeStudy"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_toilet",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Toilet",
-          "cSharpName": "AdaptiveLightingSleepModeToilet"
-        },
-        {
-          "id": "switch.adaptive_lighting_sleep_mode_utility",
-          "friendlyName": "Adaptive Lighting Sleep Mode: Utility",
-          "cSharpName": "AdaptiveLightingSleepModeUtility"
-        },
-        {
-          "id": "switch.adaptive_lighting_study",
-          "friendlyName": "Adaptive Lighting: Study",
-          "cSharpName": "AdaptiveLightingStudy"
-        },
-        {
-          "id": "switch.adaptive_lighting_toilet",
-          "friendlyName": "Adaptive Lighting: Toilet",
-          "cSharpName": "AdaptiveLightingToilet"
-        },
-        {
-          "id": "switch.adaptive_lighting_utility",
-          "friendlyName": "Adaptive Lighting: Utility",
-          "cSharpName": "AdaptiveLightingUtility"
-        },
-        {
           "id": "switch.alarm_beep_infinate",
           "friendlyName": "Alarm Beep Infinate",
           "cSharpName": "AlarmBeepInfinate"
@@ -15152,11 +15087,6 @@
           "id": "switch.christmas_indoor_sonoff",
           "friendlyName": "Christmas Indoor Sonoff",
           "cSharpName": "ChristmasIndoorSonoff"
-        },
-        {
-          "id": "switch.discipline_manager_enabled",
-          "friendlyName": "Discipline Manager",
-          "cSharpName": "DisciplineManagerEnabled"
         },
         {
           "id": "switch.dishwasher",

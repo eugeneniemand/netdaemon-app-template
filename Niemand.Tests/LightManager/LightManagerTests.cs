@@ -153,7 +153,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
 
         //Act
         state.Change(sut.Config.Room().NightTimeEntity!, "day");
-
+        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
         //Assert
         state.ServiceCalls.Switch().Should().ContainEquivalentOf(
             Events.Switch.TurnOff(entityBuilder.CreateSwitchEntity("switch.adaptive_lighting_sleep_mode_testroom"))
@@ -169,7 +169,8 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
 
         //Act
         state.Change(sut.Config.Room().NightTimeEntity!, "night");
-
+        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
+        
         //Assert
         state.ServiceCalls.Switch().Should().ContainEquivalentOf(
             Events.Switch.TurnOn(entityBuilder.CreateSwitchEntity("switch.adaptive_lighting_sleep_mode_testroom"))

@@ -75,6 +75,7 @@ public class Manager
         SubscribeManualTurnOnOverrideEvent();
         SubscribeManualTurnOffOverrideEvent();
         SubscribeHouseModeEvent();
+        SubscribeTurnOnEvent();
         SubscribeGuard();
 
         if (RandomStates.Any())
@@ -95,6 +96,10 @@ public class Manager
 
     private bool LightTurnedOnManually(StateChange<LightEntity, EntityState<LightAttributes>> e) =>
         !IsNdUserOrHa(e) &&
+        e.Old.IsOff() && e.New.IsOn();
+
+    private bool LightTurnedOnNd(StateChange<LightEntity, EntityState<LightAttributes>> e) =>
+        IsNdUserOrHa(e) &&
         e.Old.IsOff() && e.New.IsOn();
 
     private void ResetOverride()
@@ -159,21 +164,24 @@ public class Manager
         {
             _logger.LogInformation("{room} House Mode Changed", Name);
 
-            if (CircadianSwitchEntity != null)
-            {
-                var sleepModeEntityId = CircadianSwitchEntity.EntityId.Replace("switch.adaptive_lighting_", "switch.adaptive_lighting_sleep_mode_");
-                var sleepModeSwitch   = new SwitchEntity(_haContext, sleepModeEntityId);
-                if (IsNightMode)
-                {
-                    _logger.LogDebug("{room} Turn On Sleep Mode", Name);
-                    sleepModeSwitch.TurnOn();
-                }
-                else
-                {
-                    _logger.LogDebug("{room} Turn Off Sleep Mode", Name);
-                    sleepModeSwitch.TurnOff();
-                }
-            }
+            // if (CircadianSwitchEntity != null)
+            // {
+            //     _scheduler.Schedule(TimeSpan.FromSeconds(2), _ =>
+            //     {
+            //         var sleepModeEntityId = CircadianSwitchEntity.EntityId.Replace("switch.adaptive_lighting_", "switch.adaptive_lighting_sleep_mode_");
+            //         var sleepModeSwitch   = new SwitchEntity(_haContext, sleepModeEntityId);
+            //         if (IsNightMode)
+            //         {
+            //             _logger.LogDebug("{room} Turn On Sleep Mode", Name);
+            //             sleepModeSwitch.TurnOn();
+            //         }
+            //         else
+            //         {
+            //             _logger.LogDebug("{room} Turn Off Sleep Mode", Name);
+            //             sleepModeSwitch.TurnOff();
+            //         }
+            //     });
+            // }
 
             if (AllControlEntitiesAreOff)
             {
@@ -183,14 +191,22 @@ public class Manager
             }
 
             _logger.LogDebug("{room} Control Entities On: {entities}", Name, AllControlEntities.Select(e => e.EntityId));
-
-            TurnOffEntities("House Mode Change", true);
-
-            _scheduler.Schedule(TimeSpan.FromMilliseconds(250), (_, _) =>
+            var controlEntities = GetControlEntities();
+            foreach (var entity in AllControlEntities.Except(controlEntities).Where(e => e.IsOn()))
             {
-                TurnOnEntities("House Mode Change", true);
-                UpdateAttributes();
-            });
+                entity.TurnOff();
+            }
+
+            _scheduler.Sleep(TimeSpan.FromMilliseconds(250)).GetAwaiter().GetResult();
+
+            //TurnOffEntities("House Mode Change", true);
+            foreach (var entity in controlEntities)
+            {
+                entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, ColorTemp = IsNightMode ? 550 : 100 });
+            }
+
+            //TurnOnEntities("House Mode Change", true);
+            UpdateAttributes();
 
             WaitAllTasks();
         });
@@ -231,10 +247,34 @@ public class Manager
                 _logger.LogInformation("{room} Manual Turn On Override for {light} by user", Name, e.New?.EntityId);
                 LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
                 ResetOverride();
+                if (e.Entity.Attributes?.SupportedColorModes == null)
+                    e.Entity.TurnOn();
+                else if (e.Entity.Attributes.SupportedColorModes.Contains("color_temp"))
+                    e.Entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, ColorTemp = IsNightMode ? e.Entity.Attributes.MaxMireds : e.Entity.Attributes.MinMireds });
+                else if (e.Entity.Attributes.SupportedColorModes.Contains("brightness"))
+                    e.Entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100 });
                 UpdateAttributes(true);
 
                 WaitAllTasks();
             });
+    }
+
+    private void SubscribeTurnOnEvent()
+    {
+        // _logger.LogDebug("{room} Subscribed to Manual Turn On Override Events", Name);
+        // AllControlEntities
+        //     .StateAllChanges()
+        //     .Where(LightTurnedOnNd)
+        //     .Subscribe(e =>
+        //     {
+        //         _logger.LogDebug("{room} Nd Turn On for {light}", Name, e.New?.EntityId);
+        //         LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
+        //         
+        //         e.Entity.TurnOn( new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, ColorTemp = IsNightMode ? 550 : 100});
+        //         
+        //         UpdateAttributes(true);
+        //         WaitAllTasks();
+        //     });
     }
 
     private void SubscribeOverrideEvent()
@@ -343,6 +383,7 @@ public class Manager
 
         var triggerMsg = $"Turned off by {trigger ?? "UNKNOWN"}";
         _logger.LogInformation("{room} Turn Off by {trigger}", Name, triggerMsg);
+
         foreach (var e in AllControlEntities.ToList())
         {
             _logger.LogDebug("{room} Turning Off {light} ", Name, e.EntityId);
@@ -385,8 +426,6 @@ public class Manager
 
     private void TurnOnEntities(string? trigger, bool ignoreConditions = false)
     {
-        List<LightEntity> lightEntities;
-
         if (ManagerEnabled.IsOff())
         {
             _logger.LogInformation("{room} Manager Disabled", Name);
@@ -405,6 +444,44 @@ public class Manager
             return;
         }
 
+        var controlEntities = GetControlEntities();
+
+        if (CircadianSwitchEntity != null && CircadianSwitchEntity.IsOff())
+        {
+            _logger.LogDebug("{room} Turn On Circadian Switch", Name);
+            CircadianSwitchEntity.TurnOn();
+        }
+
+        foreach (var e in controlEntities.Where(l => l.IsOff()))
+        {
+            _logger.LogInformation("{room} Turning On {light}", Name, e.EntityId);
+
+            if (e.Attributes != null && e.Attributes.SupportedColorModes != null)
+            {
+                if (e.Attributes.SupportedColorModes.Contains("color_temp"))
+                    e.TurnOn(new LightTurnOnParameters()
+                    {
+                        BrightnessPct = IsNightMode ? 1 : 100,
+                        ColorTemp     = IsNightMode ? e.Attributes.MaxMireds : e.Attributes.MinMireds
+                    });
+                else if (e.Attributes.SupportedColorModes.Contains("brightness"))
+                    e.TurnOn(new LightTurnOnParameters()
+                    {
+                        BrightnessPct = IsNightMode ? 1 : 100
+                    });
+            }
+            else
+                e.TurnOn();
+
+            LogInLogbook(e, $"Turned on by {trigger ?? "UNKNOWN"}");
+        }
+
+        RoomState = "on";
+    }
+
+    private List<LightEntity> GetControlEntities()
+    {
+        List<LightEntity> lightEntities;
         if (IsNightMode)
         {
             _logger.LogDebug("{room} Turn On Night Control Entities", Name);
@@ -416,20 +493,7 @@ public class Manager
             lightEntities = ControlEntities.ToList();
         }
 
-        if (CircadianSwitchEntity != null && CircadianSwitchEntity.IsOff())
-        {
-            _logger.LogDebug("{room} Turn On Circadian Switch", Name);
-            CircadianSwitchEntity.TurnOn();
-        }
-
-        foreach (var e in lightEntities.Where(l => l.IsOff()))
-        {
-            _logger.LogInformation("{room} Turning On {light}", Name, e.EntityId);
-            e.TurnOn();
-            LogInLogbook(e, $"Turned on by {trigger ?? "UNKNOWN"}");
-        }
-
-        RoomState = "on";
+        return lightEntities;
     }
 
     private void UpdateAttributes(bool showTurningOff = false)

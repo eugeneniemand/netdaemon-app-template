@@ -1,11 +1,27 @@
 namespace Niemand;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class Routines
 {
-    public Routines(IEntities entities, IServices services, IScheduler scheduler, People people, ILogger<Routines> logger)
+    public Routines(IHaContext haContext, IEntities entities, IServices services, IScheduler scheduler, People people, ILogger<Routines> logger)
     {
+        
+        // Volume Control
+        // Set volume to 10% at night and 30% during the day
+        entities.InputSelect.HouseMode.StateChanges().Subscribe(s =>
+        {
+            switch (s.New.State)
+            {
+                case "night":
+                    foreach (var mediaPlayer in haContext.GetAllEntities().Where(e => e.EntityId.Contains("media_player."))) new MediaPlayerEntity(haContext, mediaPlayer.EntityId).VolumeSet(0.1);
+                    break;
+                case "day":
+                    foreach (var mediaPlayer in haContext.GetAllEntities().Where(e => e.EntityId.Contains("media_player."))) new MediaPlayerEntity(haContext, mediaPlayer.EntityId).VolumeSet(0.3);
+                    break;
+            }
+        });
+        
         // Arriving Home
         foreach (var person in people.Persons)
             person.Person.StateChanges()

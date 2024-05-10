@@ -5,7 +5,7 @@ using Niemand.Helpers;
 namespace Niemand;
 
 [NetDaemonApp]
-//[Focus]
+// [Focus]
 public class Office : IAsyncInitializable, IAsyncDisposable
 {
     private const    string             EugeneDesktopActive = "binary_sensor.eugene_desktop_active";
@@ -110,7 +110,7 @@ public class Office : IAsyncInitializable, IAsyncDisposable
 
     private void TurnOffAcWhenDoorLeftOpen()
     {
-        if (_entities.Climate.Office.IsOff()) return;
+        if (_entities.Climate.Office.IsUnavailable() || _entities.Climate.Office.IsOff()) return;
 
         _alexa.Announce(_entities.MediaPlayer.Downstairs.EntityId, "The Office AC will be turned off if the door is not closed");
         _acSwitchOffDelaySchedule = _scheduler.Schedule(TimeSpan.FromSeconds(60), () => _entities.Climate.Office.TurnOff());

@@ -55,8 +55,8 @@ public class RoutineTests(RoutinesSut sut, StateChangeManager state, IEntities e
     }
 }
 
-public class RoutinesSut(IEntities entities, IServices services, TestScheduler scheduler, People people, ILogger<Routines> logger)
+public class RoutinesSut(IHaContext haContext, IEntities entities, IServices services, TestScheduler scheduler, People people, ILogger<Routines> logger)
 {
-    public Routines Instance => new(entities, services, scheduler, people, logger);
+    public Routines Instance => new(haContext, entities, services, scheduler, people, logger);
     public TestScheduler Scheduler => scheduler;
 }

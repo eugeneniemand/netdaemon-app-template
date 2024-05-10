@@ -29,6 +29,8 @@ public static class Startup
         services.AddTransient<IAlexa, AlexaMock>();
         services.AddTransient<ILogger<LightsManager>, FakeLogger<LightsManager>>();
         services.AddTransient<IAppConfig<ManagerConfig>>(s => new FakeAppConfig<ManagerConfig>(GetManagerConfig(s.GetRequiredService<StateChangeManager>(), s.GetRequiredService<TestEntityBuilder>())));
+        services.AddTransient<INotificationConfigFactory, NotificationConfigFactory>();
+        services.AddTransient<IApplianceFactory, ApplianceFactory>();
         services.AddTransient<LightManagerSut>();
         services.AddTransient<RoutinesSut>();
         services.AddTransient<NotificationManagerSut>();

@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../netdaemon" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../netdaemon-extentions-testing/NetDaemon.Extensions.Testing" vcs="Git" />
   </component>
 </project>

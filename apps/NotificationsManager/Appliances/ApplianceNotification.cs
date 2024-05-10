@@ -13,11 +13,13 @@ public class ApplianceNotification : IApplianceNotification
     private readonly Dictionary<string, CycleState> _cycleStates;
     private readonly SensorEntity                   _remainingTime;
     private readonly IScheduler                     _scheduler;
+    private readonly ILogger<NotificationsManager>  _logger;
     private readonly SensorEntity                   _status;
 
-    public ApplianceNotification(IScheduler scheduler, IApplianceNotificationConfig config)
+    public ApplianceNotification(IScheduler scheduler, IApplianceNotificationConfig config, ILogger<NotificationsManager> logger)
     {
         _scheduler     = scheduler;
+        _logger   = logger;
         _appliance     = config.Name;
         _status        = config.Status;
         _remainingTime = config.RemainingTime;
@@ -29,54 +31,64 @@ public class ApplianceNotification : IApplianceNotification
 
     public string EventId => $"{_appliance}Tts";
 
+    private const int PromptInterval1 = 15;
+    private const int PromptInterval2 = 10;
+    private const int PromptInterval3 = 5;
+    private const int AcknowledgeInterval = 60;
+
     public Notification? GetNotification(CycleState cycle, TimeSpan lastPrompt)
     {
-        var notification = new Notification
-        {
-            EventId = EventId
-        };
-
         switch (cycle)
         {
             case CycleState.Running:
-                switch (TimeRemaining.TotalMinutes)
-                {
-                    case >= 60 when lastPrompt.TotalMinutes <= 15:
-                    case >= 30 when lastPrompt.TotalMinutes <= 10:
-                    case >= 10 when lastPrompt.TotalMinutes <= 5:
-                        return null;
-                }
-
-                notification.Message = $"The {_appliance} will be done in {TimeRemaining.Humanize(minUnit: TimeUnit.Minute)}";
-                notification.Type    = Alexa.NotificationType.Announcement;
-                break;
+                return GetRunningNotification(lastPrompt);
             case CycleState.Finished:
-                return null;
             case CycleState.Ready:
-                if (_acknowledge.IsOff() && lastPrompt.TotalMinutes <= 15) return null;
-
-                if (_acknowledge.IsOff() && lastPrompt.TotalMinutes > 15)
-                {
-                    notification.Message = $"The {_appliance} finished {TimeFinished.Humanize(minUnit: TimeUnit.Minute)} ago. Has it been unloaded?";
-                    notification.Type    = Alexa.NotificationType.Prompt;
-                }
-                else if (_acknowledge.IsOn() && lastPrompt.TotalMinutes >= 60)
-                {
-                    notification.Message = $"The {_appliance} is ready";
-                    notification.Type    = Alexa.NotificationType.Announcement;
-                }
-
-                break;
+                return GetReadyNotification(lastPrompt);
             case CycleState.Unknown:
-                throw new ArgumentOutOfRangeException();
-                break;
+                _logger.LogError("Unknown cycle state");
+                return null;
             default:
-                throw new ArgumentOutOfRangeException();
+                _logger.LogError("Unexpected cycle state");
+                return null;
         }
-
-        return notification;
     }
 
+    private Notification? GetRunningNotification(TimeSpan lastPrompt)
+    {
+        return TimeRemaining.TotalMinutes switch
+        {
+            >= 60 when lastPrompt.TotalMinutes <= PromptInterval1 => null,
+            >= 30 when lastPrompt.TotalMinutes <= PromptInterval2 => null,
+            >= 10 when lastPrompt.TotalMinutes <= PromptInterval3 => null,
+            _                                                     => CreateNotification($"The {_appliance} will be done in {TimeRemaining.Humanize(minUnit: TimeUnit.Minute)}", Alexa.NotificationType.Announcement)
+        };
+    }
+
+    private Notification? GetReadyNotification(TimeSpan lastPrompt)
+    {
+        if (_acknowledge.IsOff() && lastPrompt.TotalMinutes <= PromptInterval1) 
+            return null;
+
+        if (_acknowledge.IsOff() && lastPrompt.TotalMinutes > PromptInterval1)
+            return CreateNotification($"The {_appliance} finished {TimeFinished.Humanize(minUnit: TimeUnit.Minute)} ago. Has it been unloaded?", Alexa.NotificationType.Prompt);
+        
+        if (_acknowledge.IsOn() && lastPrompt.TotalMinutes >= AcknowledgeInterval)
+            return CreateNotification($"The {_appliance} is ready", Alexa.NotificationType.Announcement);
+
+        return null;
+    }
+
+    private Notification CreateNotification(string message, Alexa.NotificationType type)
+    {
+        return new Notification
+        {
+            EventId = EventId,
+            Message = message,
+            Type = type
+        };
+    }
+    
     public Notification? HandleResponse(PromptResponseType? responseType)
     {
         if (responseType == null) return null;

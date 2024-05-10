@@ -7,8 +7,11 @@ namespace Niemand.TestApp;
 //[Focus]
 public class TestApp
 {
-    public TestApp(IAlexa alexa)
+    public TestApp(IHaContext haContext)
     {
+        //var light = ((Dictionary<string, object>)haContext.Entity("light.office_skylight").Attributes)["color_mode"].ToString();
+        
+        // [supported_color_modes, ["brightness"]] [supported_color_modes, ["color_temp"]] [supported_color_modes, ["onoff"]]
         //alexa.Prompt("media_player.office", "Answer please?", "test_prompt");
 
         //alexa.PromptResponses

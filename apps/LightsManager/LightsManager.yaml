@@ -28,7 +28,7 @@ LightManagerV2.ManagerConfig:
         - light.office
       LuxlimitEntity: input_number.office_lux_limit
       LuxEntity: sensor.office_lux
-      CircadianSwitchEntity: switch.adaptive_lighting_study
+      # CircadianSwitchEntity: switch.adaptive_lighting_study
       RandomStates:
         - armed_home
         - armed_away
@@ -59,7 +59,7 @@ LightManagerV2.ManagerConfig:
         - sleeping
       NightControlEntities:
         - light.dining_1
-      CircadianSwitchEntity: switch.adaptive_lighting_dining
+      # CircadianSwitchEntity: switch.adaptive_lighting_dining
       RandomStates:
         - armed_home
         - armed_away
@@ -89,7 +89,7 @@ LightManagerV2.ManagerConfig:
       Timeout: 90
       LuxEntity: sensor.landing_lux
       LuxlimitEntity: input_number.landing_lux_limit
-      CircadianSwitchEntity: switch.adaptive_lighting_landing
+      # CircadianSwitchEntity: switch.adaptive_lighting_landing
       RandomStates:
         - armed_away
       # debug: true
@@ -178,7 +178,7 @@ LightManagerV2.ManagerConfig:
         - sleeping
       NightControlEntities:
         - light.aaron_4
-      CircadianSwitchEntity: switch.adaptive_lighting_aaron
+      # CircadianSwitchEntity: switch.adaptive_lighting_aaron
       RandomStates:
         - armed_away
 
@@ -202,7 +202,7 @@ LightManagerV2.ManagerConfig:
         - sleeping
       NightControlEntities:
         - light.jayden_1
-      CircadianSwitchEntity: switch.adaptive_lighting_jayden
+      # CircadianSwitchEntity: switch.adaptive_lighting_jayden
       RandomStates:
         - armed_away
 
@@ -223,7 +223,7 @@ LightManagerV2.ManagerConfig:
         - light.landing_7
       LuxlimitEntity: input_number.hallway_lux_limit
       LuxEntity: sensor.entrance_lux
-      CircadianSwitchEntity: switch.adaptive_lighting_hallway
+      # CircadianSwitchEntity: switch.adaptive_lighting_hallway
       RandomStates:
         - armed_home
         - armed_away
@@ -241,7 +241,7 @@ LightManagerV2.ManagerConfig:
         - light.entrance
       LuxlimitEntity: input_number.entrance_lux_limit
       LuxEntity: sensor.entrance_lux
-      CircadianSwitchEntity: switch.adaptive_lighting_entrance
+      # CircadianSwitchEntity: switch.adaptive_lighting_entrance
       NightTimeEntity: input_select.house_mode
       NightTimeEntityStates:
         - night
@@ -272,7 +272,7 @@ LightManagerV2.ManagerConfig:
         - sleeping
       NightControlEntities:
         - light.master_5
-      CircadianSwitchEntity: switch.adaptive_lighting_master
+      # CircadianSwitchEntity: switch.adaptive_lighting_master
       RandomStates:
         - armed_away
 
@@ -298,7 +298,7 @@ LightManagerV2.ManagerConfig:
         - sleeping
       NightControlEntities:
         - light.floor
-      CircadianSwitchEntity: switch.adaptive_lighting_floor
+      # CircadianSwitchEntity: switch.adaptive_lighting_floor
       RandomStates:
         - armed_home
         - armed_away
@@ -319,7 +319,7 @@ LightManagerV2.ManagerConfig:
         - sleeping
       LuxEntity: sensor.playroom_lux
       LuxlimitEntity: input_number.playroom_lux_limit
-      CircadianSwitchEntity: switch.adaptive_lighting_playroom
+      # CircadianSwitchEntity: switch.adaptive_lighting_playroom
       RandomStates:
         - armed_away
       # debug: true
@@ -342,7 +342,7 @@ LightManagerV2.ManagerConfig:
         - light.kitchen_6
       LuxEntity: sensor.kitchen_lux
       LuxlimitEntity: input_number.kitchen_lux_limit
-      CircadianSwitchEntity: switch.adaptive_lighting_kitchen
+      # CircadianSwitchEntity: switch.adaptive_lighting_kitchen
       NightTimeEntity: input_select.house_mode
       NightTimeEntityStates:
         - night
@@ -362,7 +362,7 @@ LightManagerV2.ManagerConfig:
         - light.toilet
       LuxEntity: sensor.toilet_lux
       luxLimitEntity: input_number.toilet_lux_limit
-      CircadianSwitchEntity: switch.adaptive_lighting_toilet
+      # CircadianSwitchEntity: switch.adaptive_lighting_toilet
       NightTimeEntity: input_select.house_mode
       NightTimeEntityStates:
         - night
@@ -382,7 +382,7 @@ LightManagerV2.ManagerConfig:
         - light.utility_3
       LuxEntity: sensor.utility_lux
       LuxLimitEntity: input_number.utility_lux_limit
-      CircadianSwitchEntity: switch.adaptive_lighting_utility
+      # CircadianSwitchEntity: switch.adaptive_lighting_utility
       NightTimeEntity: input_select.house_mode
       NightTimeEntityStates:
         - night

@@ -34,7 +34,16 @@ public class Alexa : IAlexa
         _devices   = config.Value.Devices;
         People     = (Dictionary<string, AlexaPeopleConfig>)config.Value.People;
 
-        _messages.Buffer(TimeSpan.FromMilliseconds(500), scheduler).Where(buffer => buffer.Any()).SubscribeAsync(ProcessNotifications);
+        _messages.Where(msg => msg.NotifyType is "tts" or "announce")
+                 .Buffer(TimeSpan.FromMilliseconds(500), scheduler)
+                 .Where(buffer => buffer.Any())
+                 .SubscribeAsync(ProcessNotifications);
+
+        _messages.Where(msg => msg.NotifyType is "prompt")
+                 .Buffer(TimeSpan.FromMilliseconds(500), scheduler)
+                 .Where(buffer => buffer.Any())
+                 .SubscribeAsync(ProcessPrompts);
+
         SetupResponseHandler(ha);
     }
 
@@ -130,20 +139,47 @@ public class Alexa : IAlexa
             var formatMessage = FormatMessage(message, voice, whisperOverride ?? whisper);
             StoreCurrentVolume(entity, entitiesVolumeLevel);
             SetVolume(entity, volumeOverride ?? volume);
-
-            switch (notificationType)
-            {
-                case "prompt":
-                    _services.Script.ActivateAlexaActionableNotification(formatMessage, eventId, entity);
-                    break;
-                default:
-                    _services.Notify.AlexaMedia(formatMessage, target: entity, data: new { type = notificationType });
-                    break;
-            }
+            _services.Notify.AlexaMedia(formatMessage, target: entity, data: new { type = notificationType });
         }
+        
+        _scheduler.Sleep(TimeSpan.FromSeconds(delayOverride ?? 5)).GetAwaiter().OnCompleted(() => RevertVolume(entitiesVolumeLevel));
+    }
 
-        if (notificationType != "prompt")
-            _scheduler.Sleep(TimeSpan.FromSeconds(delayOverride ?? 5)).GetAwaiter().OnCompleted(() => RevertVolume(entitiesVolumeLevel));
+    private async Task ProcessPrompts(IEnumerable<Config> cfgs)
+    {
+        var          entitiesVolumeLevel = new Dictionary<string, double>();
+        var          voice               = _voice.GetRandomVoice();
+        var          message             = "";
+        List<string> entities            = new();
+        var          notificationType    = "";
+        var          eventId             = "";
+        double?      volumeOverride      = null;
+        int?         delayOverride       = null;
+        bool?        whisperOverride     = null;
+
+        foreach (var cfg in cfgs)
+        {
+            message          = cfg.Message;
+            entities         = cfg.Entities;
+            notificationType = cfg.NotifyType;
+            eventId          = cfg.EventId;
+            volumeOverride   = cfg.VolumeLevel;
+            delayOverride    = cfg.VolumeResetDelay;
+            whisperOverride  = cfg.Whisper;
+
+
+            foreach (var entity in entities)
+            {
+                _devices.TryGetValue(entity, out var deviceConfig);
+
+                var (whisper, volume) = GetVolumeDetails(deviceConfig);
+                var formatMessage = FormatMessage(message, voice, whisperOverride ?? whisper);
+                StoreCurrentVolume(entity, entitiesVolumeLevel);
+                SetVolume(entity, volumeOverride ?? volume);
+                _services.Script.ActivateAlexaActionableNotification(formatMessage, eventId, entity);
+            }
+            _scheduler.Sleep(TimeSpan.FromSeconds(5));
+        }
     }
 
     private void QueueNotification(Config cfg, string type)

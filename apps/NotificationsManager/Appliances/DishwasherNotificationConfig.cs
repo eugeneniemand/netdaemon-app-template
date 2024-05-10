@@ -2,7 +2,7 @@
 
 namespace Niemand.NotificationManager;
 
-public class DishwasherNotificationConfig : IApplianceNotificationConfig
+public class DishwasherNotificationConfig : IApplianceNotificationConfig 
 {
     private readonly IEntities _entities;
 
@@ -12,6 +12,11 @@ public class DishwasherNotificationConfig : IApplianceNotificationConfig
     }
 
     public InputBooleanEntity Acknowledge => _entities.InputBoolean.DishwasherAck;
+    public InputBooleanEntity Reminder => _entities.InputBoolean.DishwasherReminder;
+    public MediaPlayerEntity MediaPlayer => _entities.MediaPlayer.Kitchen;
+    public BinarySensorEntity MotionSensor => _entities.BinarySensor.KitchenMotion;
+    
+    public ICycleStateHandler CycleStateHandler => new DishwasherCycleStateHandler();
 
     public Dictionary<string, CycleState> CycleStates => new()
     {

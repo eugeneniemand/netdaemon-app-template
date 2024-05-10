@@ -9,27 +9,31 @@ namespace NetDaemon;
 public class NotificationsManager
 {
     private readonly IAlexa                        _alexa;
-    private readonly IApplianceNotification        _dishwasherNotification;
-    private readonly ApplianceNotification         _dryerNotification;
     private readonly IEntities                     _entities;
     private readonly IHaContext                    _haContext;
     private readonly IDictionary<string, DateTime> _lastPrompt = new Dictionary<string, DateTime>();
     private readonly IScheduler                    _scheduler;
-    private readonly IApplianceNotification        _washingNotification;
+    private readonly ILogger<NotificationsManager> _logger;
 
-    public NotificationsManager(IHaContext haContext, IEntities entities, IAlexa alexa, IScheduler scheduler)
+    public NotificationsManager(IHaContext haContext, IEntities entities, IAlexa alexa, IScheduler scheduler, ILogger<NotificationsManager> logger, IApplianceFactory applianceFactory)
     {
-        _haContext              = haContext;
-        _entities               = entities;
-        _alexa                  = alexa;
-        _scheduler              = scheduler;
-        _dishwasherNotification = new ApplianceNotification(scheduler, new DishwasherNotificationConfig(entities));
-        _washingNotification    = new ApplianceNotification(scheduler, new WasherNotificationConfig(entities));
-        _dryerNotification      = new ApplianceNotification(scheduler, new DryerNotificationConfig(entities));
+        _haContext  = haContext;
+        _entities   = entities;
+        _alexa      = alexa;
+        _scheduler  = scheduler;
+        _logger     = logger;
+        
+        var appliances = applianceFactory.CreateAppliances(["Dishwasher", "Washer", "Dryer"]);
+        foreach (var appliance in appliances) SubscribeAppliance(appliance);
 
-        MediaPlayerVolume();
         AlarmReminder();
-        Appliances();
+    }
+
+    private void SubscribeAppliance(Appliance appliance)
+    {
+        SubscribeMotion(appliance.MotionSensor, appliance.Notification, appliance.MediaPlayer);
+        SubscribePromptResponse(appliance.Notification, appliance.MediaPlayer);
+        SubscribeApplianceState(appliance.Sensor, appliance.Notification, appliance.Reminder, appliance.Acknowledge, appliance.CycleStateHandler);
     }
 
     private void AlarmReminder()
@@ -55,136 +59,43 @@ public class NotificationsManager
             }
         });
     }
-
-    private void Appliances()
+    
+    private void SubscribeMotion(BinarySensorEntity motionSensor, IApplianceNotification applianceNotification, MediaPlayerEntity mediaPlayer)
     {
-        _entities.Sensor.TumbleDryerDryerMachineState.StateChanges().Subscribe(s =>
-        {
-            switch (_washingNotification.CycleState)
-            {
-                case CycleState.Running:
-                    _entities.InputBoolean.DryerReminder.TurnOff();
-                    break;
-                case CycleState.Finished:
-                    _entities.InputBoolean.DryerAck.TurnOff();
-                    break;
-                case CycleState.Ready:
-                    break;
-                case CycleState.Paused:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        });
+        motionSensor.StateChanges()
+                    .Where(s => s.Old.IsOff() && s.New.IsOn())
+                    .Subscribe(s =>
+                    {
+                        var notification = applianceNotification.GetNotification(applianceNotification.CycleState, LastPrompt(applianceNotification.EventId));
+                        SendNotification(notification, mediaPlayer.EntityId);
+                    });
+    }
 
-        _entities.Sensor.WashingMachineWasherMachineState.StateChanges().Subscribe(s =>
-        {
-            switch (_washingNotification.CycleState)
-            {
-                case CycleState.Running:
-                    _entities.InputBoolean.WashingReminder.TurnOff();
-                    break;
-                case CycleState.Finished:
-                    _entities.InputBoolean.WasherAck.TurnOff();
-                    break;
-                case CycleState.Ready:
-                    break;
-                case CycleState.Paused:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        });
-
-        _entities.Sensor.DishwasherOperationState.StateChanges().Subscribe(s =>
-        {
-            switch (_dishwasherNotification.CycleState)
-            {
-                case CycleState.Running:
-                    _entities.InputBoolean.DishwasherReminder.TurnOff();
-                    break;
-                case CycleState.Finished:
-                    _alexa.Announce(_entities.MediaPlayer.Kitchen.EntityId, "The Dishwasher just finished");
-                    _entities.InputBoolean.DishwasherAck.TurnOff();
-                    break;
-                case CycleState.Ready:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        });
-
-        _entities.BinarySensor.KitchenMotion.StateChanges()
-                 .Where(s => s.Old.IsOff() && s.New.IsOn())
-                 .Subscribe(s =>
-                 {
-                     var notification = _dishwasherNotification.GetNotification(_dishwasherNotification.CycleState, LastPrompt(_dishwasherNotification.EventId));
-                     SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
-                 });
-
-        _entities.BinarySensor.UtilityMotion.StateChanges()
-                 .Where(s => s.Old.IsOff() && s.New.IsOn())
-                 .Subscribe(s =>
-                 {
-                     var notification = _washingNotification.GetNotification(_washingNotification.CycleState, LastPrompt(_washingNotification.EventId));
-                     SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
-                 });
-
-        _entities.BinarySensor.UtilityMotion.StateChanges()
-                 .Where(s => s.Old.IsOff() && s.New.IsOn())
-                 .Subscribe(s =>
-                 {
-                     var notification = _dryerNotification.GetNotification(_dryerNotification.CycleState, LastPrompt(_dryerNotification.EventId));
-                     SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
-                 });
-
+    private void SubscribePromptResponse(IApplianceNotification applianceNotification, MediaPlayerEntity mediaPlayer)
+    {
         _alexa.PromptResponses?
-              .Where(r => r.EventId == _dishwasherNotification.EventId)
+              .Where(r => r.EventId == applianceNotification.EventId)
               .Subscribe(r =>
               {
-                  var notification = _dishwasherNotification.HandleResponse(r.ResponseType);
-                  SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
+                  var notification = applianceNotification.HandleResponse(r.ResponseType);
+                  SendNotification(notification, mediaPlayer.EntityId);
               });
+    }
 
-        _alexa.PromptResponses?
-              .Where(r => r.EventId == _washingNotification.EventId)
-              .Subscribe(r =>
-              {
-                  var notification = _washingNotification.HandleResponse(r.ResponseType);
-                  SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
-              });
-
-        _alexa.PromptResponses?
-              .Where(r => r.EventId == _dryerNotification.EventId)
-              .Subscribe(r =>
-              {
-                  var notification = _dryerNotification.HandleResponse(r.ResponseType);
-                  SendNotification(notification, _entities.MediaPlayer.Kitchen.EntityId);
-              });
+    private void SubscribeApplianceState(SensorEntity sensor, IApplianceNotification applianceNotification, InputBooleanEntity applianceReminder, InputBooleanEntity applianceAcknowledge, ICycleStateHandler cycleStateHandler)
+    {
+        sensor.StateChanges().Subscribe(s => { cycleStateHandler.HandleCycleState(applianceNotification.CycleState, applianceReminder, applianceAcknowledge); });
     }
 
     private TimeSpan LastPrompt(string eventId) => _lastPrompt.ContainsKey(eventId) ? _scheduler.Now.LocalDateTime - _lastPrompt[eventId] : TimeSpan.MaxValue;
 
-    private void MediaPlayerVolume()
-    {
-        _entities.InputSelect.HouseMode.StateChanges().Subscribe(s =>
-        {
-            switch (s.New.State)
-            {
-                case "night":
-                    foreach (var mediaPlayer in _haContext.GetAllEntities().Where(e => e.EntityId.Contains("media_player."))) new MediaPlayerEntity(_haContext, mediaPlayer.EntityId).VolumeSet(0.1);
-                    break;
-                case "day":
-                    foreach (var mediaPlayer in _haContext.GetAllEntities().Where(e => e.EntityId.Contains("media_player."))) new MediaPlayerEntity(_haContext, mediaPlayer.EntityId).VolumeSet(0.3);
-                    break;
-            }
-        });
-    }
 
     private void SendNotification(Notification? notification, string mediaPlayer)
     {
         if (notification == null || string.IsNullOrEmpty(notification.Message)) return;
 
+        _logger.LogDebug("SendNotification: {eventId}:{message} Last Notification: {lastPrompt}", notification.EventId, notification.Message, _lastPrompt.TryGetValue(notification.EventId, out var value) ? value : "NULL");
+        _lastPrompt[notification.EventId] = _scheduler.Now.LocalDateTime;
         switch (notification.Type)
         {
             case Alexa.NotificationType.Prompt:
@@ -199,16 +110,5 @@ public class NotificationsManager
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
-        _lastPrompt[notification.EventId] = _scheduler.Now.LocalDateTime;
     }
-}
-
-public enum CycleState
-{
-    Running,
-    Finished,
-    Ready,
-    Paused,
-    Unknown
 }

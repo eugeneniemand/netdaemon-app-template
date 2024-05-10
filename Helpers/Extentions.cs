@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Niemand;
 using Niemand.Helpers;
@@ -8,13 +9,17 @@ namespace NetDaemon.Helpers;
 public static class Extentions
 {
     private const int MustBeLessThan = 100000000; // 8 decimal digits
-
+    
+    public static bool IsUnavailable(this Entity? entity) => entity?.EntityState.IsUnavailable() ?? true;
+    public static bool IsUnavailable(this EntityState? entityState) => string.Equals(entityState?.State, "unavailable", StringComparison.OrdinalIgnoreCase);
     public static IServiceCollection SetupDependencies(this IServiceCollection serviceCollection)
         => serviceCollection
            .AddTransient<IEntities, Entities>()
            .AddTransient<IServices, Services>()
            .AddTransient<IAlexa, Alexa>()
            .AddSingleton<IVoiceProvider, VoiceProvider>()
+           .AddScoped<INotificationConfigFactory, NotificationConfigFactory>()
+           .AddScoped<IApplianceFactory, ApplianceFactory>()
            .AddScoped<People>()
            .AddSingleton<IServiceProvider>(sp => sp);
         
