@@ -10,18 +10,20 @@ public class NotificationsManager
 {
     private readonly IAlexa                        _alexa;
     private readonly IEntities                     _entities;
+    private readonly IServices                     _services;
     private readonly IHaContext                    _haContext;
     private readonly IDictionary<string, DateTime> _lastPrompt = new Dictionary<string, DateTime>();
     private readonly IScheduler                    _scheduler;
     private readonly ILogger<NotificationsManager> _logger;
 
-    public NotificationsManager(IHaContext haContext, IEntities entities, IAlexa alexa, IScheduler scheduler, ILogger<NotificationsManager> logger, IApplianceFactory applianceFactory)
+    public NotificationsManager(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger<NotificationsManager> logger, IApplianceFactory applianceFactory)
     {
-        _haContext  = haContext;
-        _entities   = entities;
-        _alexa      = alexa;
-        _scheduler  = scheduler;
-        _logger     = logger;
+        _haContext    = haContext;
+        _entities     = entities;
+        _services = services;
+        _alexa        = alexa;
+        _scheduler    = scheduler;
+        _logger       = logger;
         
         var appliances = applianceFactory.CreateAppliances(["Dishwasher", "Washer", "Dryer"]);
         foreach (var appliance in appliances) SubscribeAppliance(appliance);
@@ -33,7 +35,7 @@ public class NotificationsManager
     {
         SubscribeMotion(appliance.MotionSensor, appliance.Notification, appliance.MediaPlayer);
         SubscribePromptResponse(appliance.Notification, appliance.MediaPlayer);
-        SubscribeApplianceState(appliance.Sensor, appliance.Notification, appliance.Reminder, appliance.Acknowledge, appliance.CycleStateHandler);
+        SubscribeApplianceState(appliance.Sensor, appliance.Notification, appliance.Reminder, appliance.Acknowledge, appliance.CycleStateHandler, appliance.MediaPlayer);
     }
 
     private void AlarmReminder()
@@ -82,9 +84,15 @@ public class NotificationsManager
               });
     }
 
-    private void SubscribeApplianceState(SensorEntity sensor, IApplianceNotification applianceNotification, InputBooleanEntity applianceReminder, InputBooleanEntity applianceAcknowledge, ICycleStateHandler cycleStateHandler)
+    private void SubscribeApplianceState(SensorEntity sensor, IApplianceNotification applianceNotification, InputBooleanEntity applianceReminder, InputBooleanEntity applianceAcknowledge, ICycleStateHandler cycleStateHandler, MediaPlayerEntity mediaPlayer)
     {
-        sensor.StateChanges().Subscribe(s => { cycleStateHandler.HandleCycleState(applianceNotification.CycleState, applianceReminder, applianceAcknowledge); });
+        sensor.StateChanges().Subscribe(s =>
+        {
+            cycleStateHandler.HandleCycleState(applianceNotification.CycleState, applianceReminder, applianceAcknowledge);
+            if (applianceNotification.CycleState != CycleState.Ready) return;
+            var notification = applianceNotification.GetNotification(applianceNotification.CycleState, LastPrompt(applianceNotification.EventId));
+            SendNotification(notification, mediaPlayer.EntityId);
+        });
     }
 
     private TimeSpan LastPrompt(string eventId) => _lastPrompt.ContainsKey(eventId) ? _scheduler.Now.LocalDateTime - _lastPrompt[eventId] : TimeSpan.MaxValue;
@@ -96,6 +104,7 @@ public class NotificationsManager
 
         _logger.LogDebug("SendNotification: {eventId}:{message} Last Notification: {lastPrompt}", notification.EventId, notification.Message, _lastPrompt.TryGetValue(notification.EventId, out var value) ? value : "NULL");
         _lastPrompt[notification.EventId] = _scheduler.Now.LocalDateTime;
+        _services.Notify.Twinstead(notification.Message);
         switch (notification.Type)
         {
             case Alexa.NotificationType.Prompt:

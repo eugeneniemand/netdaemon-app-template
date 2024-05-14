@@ -67,8 +67,9 @@ public class ApplianceNotification : IApplianceNotification
 
     private Notification? GetReadyNotification(TimeSpan lastPrompt)
     {
-        if (_acknowledge.IsOff() && lastPrompt.TotalMinutes <= PromptInterval1) 
-            return null;
+        var entityStateLastChanged = (_scheduler.Now.LocalDateTime - _remainingTime.EntityState?.LastChanged) ?? TimeSpan.MaxValue;
+        if (_acknowledge.IsOff() && entityStateLastChanged.TotalMinutes  <= PromptInterval1) 
+            return CreateNotification($"The {_appliance} just finished", Alexa.NotificationType.Announcement);
 
         if (_acknowledge.IsOff() && lastPrompt.TotalMinutes > PromptInterval1)
             return CreateNotification($"The {_appliance} finished {TimeFinished.Humanize(minUnit: TimeUnit.Minute)} ago. Has it been unloaded?", Alexa.NotificationType.Prompt);

@@ -32,6 +32,7 @@ public static class Startup
         services.AddTransient<INotificationConfigFactory, NotificationConfigFactory>();
         services.AddTransient<IApplianceFactory, ApplianceFactory>();
         services.AddTransient<LightManagerSut>();
+        services.AddTransient<RandomManagerSut>();
         services.AddTransient<RoutinesSut>();
         services.AddTransient<NotificationManagerSut>();
         services.AddTransient<People>();
@@ -62,7 +63,8 @@ public static class Startup
                     NightTimeEntityStates = new List<string> { "night" },
                     Timeout               = 90,
                     NightTimeout          = 30,
-                    OverrideTimeout       = 1800
+                    OverrideTimeout       = 1800,
+                    RandomStates          = { "armed_away", "armed_night" }
                 }
             }
         };

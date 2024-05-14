@@ -6,7 +6,7 @@ using NetDaemon.Extensions.MqttEntityManager;
 
 namespace LightManagerV2;
 
-//[Focus]
+// [Focus]
 [NetDaemonApp]
 public class LightsManager : IAsyncInitializable
 {
@@ -16,7 +16,6 @@ public class LightsManager : IAsyncInitializable
     private readonly ILogger<LightsManager> _managerLogger;
     private readonly ILogger<RandomManager> _randomLogger;
     private readonly IScheduler             _scheduler;
-    private          RandomManager          _randomManager;
 
     public LightsManager(IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager, IAppConfig<ManagerConfig> config, ILogger<LightsManager> managerLogger, ILogger<RandomManager> randomLogger)
     {
@@ -30,14 +29,10 @@ public class LightsManager : IAsyncInitializable
 
     public Task InitializeAsync(CancellationToken cancellationToken)
     {
-        _randomManager = new RandomManager(_scheduler, _config.RandomSwitchEntity, _config.MinDuration, _config.MaxDuration, _randomLogger);
         ( _config.Rooms.Any(r => r.Debug)
                 ? _config.Rooms.Where(r => r.Debug).ToList()
                 : _config.Rooms.ToList() )
-            .ForEach(async r =>
-            {
-                await r.Init(_managerLogger, _config.NdUserId, _randomManager, _scheduler, _haContext, _entityManager, _config.GuardTimeout);
-            });
+            .ForEach(async r => await r.Init(_managerLogger, _config.NdUserId, _scheduler, _haContext, _entityManager, _config.GuardTimeout));
         return Task.CompletedTask;
     }
 }

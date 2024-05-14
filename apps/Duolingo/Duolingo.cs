@@ -5,7 +5,7 @@ using System.Text;
 namespace Niemand.Duolingo;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class Duolingo : IAsyncInitializable
 {
     private async Task<Root> LoginAsync(string username, string jwt)

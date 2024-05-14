@@ -15,7 +15,6 @@ public class Manager
     private          ILogger<LightsManager> _logger;
     private          string                 _ndUserId;
     private          bool                   _overrideActive;
-    private          IRandomManager         _randomManager;
     private          IScheduler             _scheduler;
     private          Services               _services;
     private          IDisposable            _overrideSchedule = Disposable.Empty;
@@ -40,7 +39,7 @@ public class Manager
     private List<LightEntity> MonitorEntities { get; } = [];
     public List<LightEntity> NightControlEntities { get; init; } = [];
     public List<string> NightTimeEntityStates { get; init; } = [];
-    private List<string> RandomStates { get; } = [];
+    public List<string> RandomStates { get; } = [];
     public NumericSensorEntity? LuxEntity { get; set; }
     public NumericSensorEntity? LuxLimitEntity { get; set; }
     public string Name { get; init; } = null!;
@@ -56,11 +55,10 @@ public class Manager
 
     private List<Task> Tasks { get; } = [];
 
-    public async Task Init(ILogger<LightsManager> logger, string ndUserId, IRandomManager randomManager, IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager, int guardTimeout)
+    public async Task Init(ILogger<LightsManager> logger, string ndUserId,  IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager, int guardTimeout)
     {
         _logger        = logger;
         _ndUserId      = ndUserId;
-        _randomManager = randomManager;
         _scheduler     = scheduler;
         _haContext     = haContext;
         _entityManager = entityManager;
@@ -77,9 +75,6 @@ public class Manager
         SubscribeHouseModeEvent();
         SubscribeTurnOnEvent();
         SubscribeGuard();
-
-        if (RandomStates.Any())
-            _randomManager.Init(ControlEntities, RandomStates);
     }
 
     private bool IsNdUserOrHa(StateChange stateChange) => stateChange.New?.Context?.UserId == null || stateChange.New?.Context?.UserId == _ndUserId;

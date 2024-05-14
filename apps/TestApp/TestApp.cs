@@ -1,4 +1,5 @@
-﻿using NetDaemon.Helpers;
+﻿using NetDaemon.Client;
+using NetDaemon.Helpers;
 using Niemand.Helpers;
 
 namespace Niemand.TestApp;
@@ -7,10 +8,12 @@ namespace Niemand.TestApp;
 //[Focus]
 public class TestApp
 {
-    public TestApp(IHaContext haContext)
+    public TestApp(IHaContext haContext, IHomeAssistantApiManager api)
     {
+        // var resp = api.GetApiCallAsync<object>("history/period?filter_entity_id=light.kitchen", CancellationToken.None).GetAwaiter().GetResult();
+        // var x    = 1;
         //var light = ((Dictionary<string, object>)haContext.Entity("light.office_skylight").Attributes)["color_mode"].ToString();
-        
+
         // [supported_color_modes, ["brightness"]] [supported_color_modes, ["color_temp"]] [supported_color_modes, ["onoff"]]
         //alexa.Prompt("media_player.office", "Answer please?", "test_prompt");
 
