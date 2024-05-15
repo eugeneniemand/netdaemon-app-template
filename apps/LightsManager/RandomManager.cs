@@ -82,6 +82,8 @@ public class RandomManager : IAsyncInitializable, IRandomManager
                     SetRandomDuration();
                     await HandleEntities(tuple._entities.ToList());
                 }
+
+                await _scheduler.Sleep(TimeSpan.FromSeconds(1), _token);
             }
         }
         catch (Exception ex)
