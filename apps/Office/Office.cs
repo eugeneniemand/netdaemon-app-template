@@ -101,7 +101,8 @@ public class Office : IAsyncInitializable, IAsyncDisposable
 
     private void SleepPcWhenUnoccupied()
     {
-        if (( DateTime.Now - DateTime.Parse(_entities.Sensor.EugeneDesktopLastactive.State) ).TotalMinutes <= 10) return;
+        if (!DateTime.TryParse(_entities.Sensor.EugeneDesktopLastactive.State, out var lastActive)) return;
+        if ((DateTime.Now - lastActive).TotalMinutes <= 10) return;
 
         _alexa.Announce(_entities.MediaPlayer.Office.EntityId, "Your PC is about to sleep");
         _services.Notify.Eugene("Your PC will sleep in 30 seconds");

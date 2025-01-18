@@ -2,7 +2,7 @@ LightManagerV2.ManagerConfig:
   NdUserId: ef606e2918da4355ba036a019cdcc6a0
   GuardTimeout: 300
   MinDuration: "0.00:03:00"
-  MaxDuration: "0.00:15:00"
+  MaxDuration: "0.00:20:00"
   RandomSwitchEntity: alarm_control_panel.alarmo
   Rooms:
     - Name: Study

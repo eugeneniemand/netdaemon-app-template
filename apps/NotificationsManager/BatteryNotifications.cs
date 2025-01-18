@@ -17,7 +17,8 @@ public class BatteryNotifications(IEntities entities, IServices services, IHaCon
 
     public Task InitializeAsync(CancellationToken cancellationToken)
     {
-        scheduler.ScheduleCron("0 8-19 * * *", SendNotifications);
+        scheduler.ScheduleCron("0 16-19 * * 1-5", SendNotifications); // Weekdays
+        scheduler.ScheduleCron("0 9-19 * * 0,6", SendNotifications); // Weekends
         return Task.CompletedTask;
     }
 

@@ -3,7 +3,7 @@
 namespace Niemand.Energy;
 
 [NetDaemonApp]
-// [Focus]
+//[Focus]
 public class EnergyApp
 {
     private readonly IEntities _entities;
@@ -41,6 +41,7 @@ public class EnergyApp
             CacheCheapestWindows();
             NotifyWindowsStarted(_cheapestWindows);
         });
+        Debug();
     }
 
     public SortedDictionary<DateTime, double> Rates

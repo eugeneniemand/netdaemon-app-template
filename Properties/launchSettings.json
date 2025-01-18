@@ -5,7 +5,8 @@
       "workingDirectory": "$(SolutionDir)",
       "environmentVariables": {
         "ASPNET_ENV": "Development",
-        "DOTNET_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development",
+        "some_password": "123456"
       },
       "hotReloadEnabled": true
     }

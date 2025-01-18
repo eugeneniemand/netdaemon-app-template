@@ -44,9 +44,12 @@ public class Routines
                       {
                           logger.LogInformation("Turning on Outside Front Lights");
                           entities.Light.OutsideFront.TurnOn();
-                          entities.Light.Porch.TurnOn();
                           entities.Light.Entrance.TurnOn();
                           entities.Light.Hallway.TurnOn();
+                          scheduler.Schedule(TimeSpan.FromMinutes(10), () =>
+                          {
+                              entities.Light.OutsideFront.TurnOff();
+                          });
                       }
 
                       services.Notify.Twinstead($"{person} is home");
@@ -65,6 +68,7 @@ public class Routines
                   if (string.Equals(entities.AlarmControlPanel.Alarmo.State, "disarmed"))
                   {
                       logger.LogInformation("Arming Alarm");
+                      services.Notify.Twinstead("Arming Alarm");
                       entities.AlarmControlPanel.Alarmo.AlarmArmAway();
                   }
 

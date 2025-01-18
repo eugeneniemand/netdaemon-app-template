@@ -83,7 +83,7 @@ public class Manager
         !IsNdUserOrHa(e) &&
         e.Old.IsOn() && e.New.IsOn()
         && ( !Equals(e.Old?.Attributes?.Brightness, e.New?.Attributes?.Brightness)
-             || !Equals(e.Old?.Attributes?.ColorTemp, e.New?.Attributes?.ColorTemp) );
+             || !Equals(e.Old?.Attributes?.ColorTempKelvin, e.New?.Attributes?.ColorTempKelvin) );
 
     private bool LightTurnedOffManually(StateChange<LightEntity, EntityState<LightAttributes>> e) =>
         !IsNdUserOrHa(e) &&
@@ -145,7 +145,7 @@ public class Manager
 
         _scheduler.ScheduleCron($"*/{totalMinutes} * * * *", () =>
         {
-            if (RoomState == "on" || _overrideActive || AllControlEntities.All(e => e.IsOff())) return;
+            if (RoomState == "on" || _overrideActive || AllControlEntities.All(e => e.IsOff()) || _haContext.Entity("switch.wiser_away_mode").IsOn() ) return;
             _logger.LogDebug("{room} Watchdog turning off entities", Name);
             TurnOffEntities($"Watchdog ({Name})");
             WaitAllTasks();
@@ -197,7 +197,7 @@ public class Manager
             //TurnOffEntities("House Mode Change", true);
             foreach (var entity in controlEntities)
             {
-                entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, ColorTemp = IsNightMode ? 550 : 100 });
+                entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, Kelvin = IsNightMode ? entity.Attributes?.MinColorTempKelvin : entity.Attributes?.MaxColorTempKelvin ?? 5000 });
             }
 
             //TurnOnEntities("House Mode Change", true);
@@ -245,7 +245,7 @@ public class Manager
                 if (e.Entity.Attributes?.SupportedColorModes == null)
                     e.Entity.TurnOn();
                 else if (e.Entity.Attributes.SupportedColorModes.Contains("color_temp"))
-                    e.Entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, ColorTemp = IsNightMode ? e.Entity.Attributes.MaxMireds : e.Entity.Attributes.MinMireds });
+                    e.Entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, Kelvin = IsNightMode ? e.Entity.Attributes.MinColorTempKelvin : e.Entity.Attributes.MaxColorTempKelvin });
                 else if (e.Entity.Attributes.SupportedColorModes.Contains("brightness"))
                     e.Entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100 });
                 UpdateAttributes(true);
@@ -382,9 +382,16 @@ public class Manager
         foreach (var e in AllControlEntities.ToList())
         {
             _logger.LogDebug("{room} Turning Off {light} ", Name, e.EntityId);
-            e.TurnOff();
-
-            LogInLogbook(e, triggerMsg);
+            try
+            {
+                e.TurnOff();
+                LogInLogbook(e, triggerMsg);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogWarning(exception, "{room} Error turning off {light}", Name, e.EntityId);
+                throw;
+            }
         }
 
         if (CircadianSwitchEntity != null && CircadianSwitchEntity.IsOff())
@@ -457,7 +464,7 @@ public class Manager
                     e.TurnOn(new LightTurnOnParameters()
                     {
                         BrightnessPct = IsNightMode ? 1 : 100,
-                        ColorTemp     = IsNightMode ? e.Attributes.MaxMireds : e.Attributes.MinMireds
+                        Kelvin     = IsNightMode ? e.Attributes.MinColorTempKelvin : e.Attributes.MaxColorTempKelvin
                     });
                 else if (e.Attributes.SupportedColorModes.Contains("brightness"))
                     e.TurnOn(new LightTurnOnParameters()

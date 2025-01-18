@@ -8,7 +8,7 @@ namespace Niemand.TestApp;
 //[Focus]
 public class TestApp
 {
-    public TestApp(IHaContext haContext, IHomeAssistantApiManager api)
+    public TestApp(IHaContext haContext, IHomeAssistantApiManager api, ILogger<TestApp> logger)
     {
         // var resp = api.GetApiCallAsync<object>("history/period?filter_entity_id=light.kitchen", CancellationToken.None).GetAwaiter().GetResult();
         // var x    = 1;
@@ -34,5 +34,11 @@ public class TestApp
 
         //alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { "media_player.office", "media_player.kitchen", "media_player.dining" }, Message = "This is a test" });
         //alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { "media_player.office", "media_player.kitchen", "media_player.dining" }, Message = "This is a longer test message to see if volume is set while message is playing" });
+        
+        // var vars = System.Environment.GetEnvironmentVariables();
+        // logger.LogInformation("Environment Vars:{vars}", vars);
+        //
+        // var secret = Environment.GetEnvironmentVariable("some_password");
+        // logger.LogInformation("Secret:{secret}", secret);
     }
 }

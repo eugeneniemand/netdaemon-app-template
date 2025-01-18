@@ -11,7 +11,7 @@ public interface IRandomManager
 }
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class RandomManager : IAsyncInitializable, IRandomManager
 {
     private readonly ILogger<RandomManager>                                                        _logger;
@@ -21,16 +21,18 @@ public class RandomManager : IAsyncInitializable, IRandomManager
     private readonly bool                                                                          _randomizeList;
     private readonly List<(IEnumerable<LightEntity> _entities, IEnumerable<string> _randomStates)> _rooms = new();
     private readonly IScheduler                                                                    _scheduler;
+    private readonly IEntities                                                                     _entities;
     private          CancellationToken                                                             _token;
     private          CancellationTokenSource                                                       _tokenSource;
     private          ManagerConfig                                                                 _config;
 
 
-    public RandomManager(IScheduler scheduler, IAppConfig<ManagerConfig> managerConfig, ILogger<RandomManager> logger, bool randomizeList = true)
+    public RandomManager(IScheduler scheduler, IEntities entities, IAppConfig<ManagerConfig> managerConfig, ILogger<RandomManager> logger, bool randomizeList = true)
     {
         _config            = managerConfig.Value;
         _random            = new Random((int)DateTime.Now.Ticks);
         _scheduler         = scheduler;
+        _entities     = entities;
         _logger            = logger;
         _randomizeList     = randomizeList;
         _min               = TimeSpan.Parse(_config.MinDuration);
@@ -73,18 +75,29 @@ public class RandomManager : IAsyncInitializable, IRandomManager
         {
             while (!_token.IsCancellationRequested)
             {
-                var entities_randomStates = BuildQueue();
-                foreach (var tuple in entities_randomStates)
+                if (_entities.Sun.Sun.State != "below_horizon")
                 {
-                    _token.ThrowIfCancellationRequested();
-                    if (_token.IsCancellationRequested) return;
-                    
-                    SetRandomDuration();
-                    await HandleEntities(tuple._entities.ToList());
+                    _logger.LogDebug("Waiting for Sun.Sun to go below_horizon");
+                    await _scheduler.Sleep(TimeSpan.FromMinutes(15), _token);
                 }
+                else
+                {
+                    foreach (var tuple in BuildQueue())
+                    {
+                        _token.ThrowIfCancellationRequested();
+                        if (_token.IsCancellationRequested) return;
 
-                await _scheduler.Sleep(TimeSpan.FromSeconds(1), _token);
+                        SetRandomDuration();
+                        await HandleEntities(tuple._entities.ToList());
+                    }
+
+                    await _scheduler.Sleep(TimeSpan.FromSeconds(1), _token);
+                }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogWarning("Cancellation requested. Turning off entities immediately.");
         }
         catch (Exception ex)
         {
@@ -103,7 +116,7 @@ public class RandomManager : IAsyncInitializable, IRandomManager
     private List<(IEnumerable<LightEntity> _entities, IEnumerable<string> _randomStates)> BuildQueue()
     {
         // Log the start of the queue building process
-        _logger.LogInformation("Building Queue");
+        _logger.LogDebug("Building Queue");
 
         // Order the rooms list in a random order if _randomizeList is true, otherwise use the rooms list as is
         var orderedRooms = _randomizeList ? _rooms.OrderBy(o => _random.Next()).ToList() : _rooms;
@@ -112,7 +125,7 @@ public class RandomManager : IAsyncInitializable, IRandomManager
         var entitiesWithRandomStates = orderedRooms.Where(t => t._randomStates.Contains(RandomSwitchEntity.State)).ToList();
 
         // Log the enabled random entities
-        _logger.LogInformation("Random entities enabled: {entities}", string.Join("\n", entitiesWithRandomStates.SelectMany(tuple => tuple._entities.Select(e => e.EntityId))));
+        _logger.LogDebug("Random entities enabled: {entities}", string.Join("\n", entitiesWithRandomStates.SelectMany(tuple => tuple._entities.Select(e => e.EntityId))));
 
         // Return the list of entities with their corresponding random states
         return entitiesWithRandomStates;
@@ -124,35 +137,29 @@ public class RandomManager : IAsyncInitializable, IRandomManager
     /// <param name="currentEntities"></param>
     private async Task HandleEntities(List<LightEntity> currentEntities)
     {
-        _logger.LogInformation("Handling Entities '{entities}'", string.Join(",", currentEntities.Select(e => e.EntityId)));
-        foreach (var entity in currentEntities) entity.TurnOn();
-        _logger.LogInformation("Turned On '{entities}' for {randomDuration:T} expiring at {expiry:T}", string.Join(",", currentEntities.Select(e => e.EntityId)), RandomDelay, DateTime.Now + RandomDelay);
-
+       
         try
         {
-            _logger.LogDebug("Waiting for {randomDuration:T}", RandomDelay);
+            _logger.LogDebug("Handling Entities '{entities}'", string.Join(",", currentEntities.Select(e => e.EntityId)));
+            foreach (var entity in currentEntities) entity.TurnOn();
+            _logger.LogInformation("Turned On '{entities}' for {randomDuration:T} expiring at {expiry:T}", string.Join(",", currentEntities.Select(e => e.EntityId)), RandomDelay, DateTime.Now + RandomDelay);
             _token.ThrowIfCancellationRequested();
             await _scheduler.Sleep(RandomDelay, _token);
             _logger.LogDebug("Waited for {randomDuration:T}", RandomDelay);
         }
         catch (OperationCanceledException)
         {
-            _logger.LogInformation("Cancellation requested. Turning off entities immediately.");
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "An error occurred while executing the queue.");
         }
 
         _logger.LogInformation("Turning Off '{entities}'", string.Join(",", currentEntities.Select(e => e.EntityId)));
         foreach (var entity in currentEntities) entity.TurnOff();
-        _logger.LogInformation("Turned Off '{entities}'", string.Join(",", currentEntities.Select(e => e.EntityId)));
     }
 
     public void StopQueue()
     {
         _logger.LogInformation("StopQueue method started.");
         _tokenSource?.Cancel();
+        _logger.LogInformation("StopQueue method ended.");
     }
 
     private void SetRandomDuration() => RandomDelay = TimeSpan.FromMilliseconds(_random.Next((int)_min.TotalMilliseconds, (int)_max.TotalMilliseconds));
@@ -160,11 +167,16 @@ public class RandomManager : IAsyncInitializable, IRandomManager
     private void SubscribeRandomModeEvent()
     {
         _logger.LogInformation("Subscribed to Random Mode Changed Events");
+        if (_rooms.Any(t => t._randomStates.Contains(RandomSwitchEntity.State, StringComparer.OrdinalIgnoreCase))) 
+            StartQueue();
+
         RandomSwitchEntity?.StateChanges().Subscribe(e =>
         {
             _logger.LogInformation("Random Mode Changed");
-            if (_rooms.Any(t => t._randomStates.Contains(RandomSwitchEntity.State, StringComparer.OrdinalIgnoreCase))) StartQueue();
-            else StopQueue();
+            if (_rooms.Any(t => t._randomStates.Contains(RandomSwitchEntity.State, StringComparer.OrdinalIgnoreCase))) 
+                StartQueue();
+            else 
+                StopQueue();
         });
     }
 }
