@@ -34,7 +34,7 @@ public class Routines
 
                       logger.LogInformation("{person} is home", person);
 
-                      if (!string.Equals(entities.AlarmControlPanel.Alarmo.State, "disarmed"))
+                      if (!entities.AlarmControlPanel.Alarmo.IsDisarmed())
                       {
                           logger.LogInformation("Disarming Alarm - {person} is home", person);
                           entities.AlarmControlPanel.Alarmo.AlarmDisarm();
@@ -65,7 +65,7 @@ public class Routines
               {
                   logger.LogInformation("Everyone has left home");
 
-                  if (string.Equals(entities.AlarmControlPanel.Alarmo.State, "disarmed"))
+                  if (entities.AlarmControlPanel.Alarmo.IsDisarmed())
                   {
                       logger.LogInformation("Arming Alarm");
                       services.Notify.Twinstead("Arming Alarm");
@@ -76,19 +76,19 @@ public class Routines
               });
 
         // Coming Down Stairs When Alarm is Armed Night
-        var motionSensors = new[]
+        var staircaseMotionSensors = new[]
         {
             entities.BinarySensor.Hallway.StateChanges(),
             entities.BinarySensor.LandingMotion.StateChanges()
         };
 
-        Observable.Merge(motionSensors)
+        Observable.Merge(staircaseMotionSensors)
                   .Select(e => e.New.State)
                   .Throttle(TimeSpan.FromSeconds(1), scheduler)
                   .Where(s => string.Equals(s, "on", StringComparison.InvariantCultureIgnoreCase))
                   .Subscribe(_ =>
                   {
-                      if (!string.Equals(entities.AlarmControlPanel.Alarmo.State, "armed_night")) return;
+                      if (!entities.AlarmControlPanel.Alarmo.IsArmedNight()) return;
 
                       logger.LogInformation("Disarming Alarm - Motion on stairs");
                       entities.AlarmControlPanel.Alarmo.AlarmDisarm();
@@ -104,6 +104,7 @@ public class People(IEntities entities)
     {
         new PersonDetails(entities.Person.Eugene, "home"),
         new PersonDetails(entities.Person.Hailey, "home"),
-        new PersonDetails(entities.Person.Aubrecia, "mum_home")
+        new PersonDetails(entities.Person.Aubrecia, "mum_home"),
+        new PersonDetails(entities.Person.Malcolm, "mum_home")
     };
 }

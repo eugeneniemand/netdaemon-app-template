@@ -1,24 +1,59 @@
 using Niemand.Helpers;
+using System.Text.Json.Serialization;
+using Cronos;
 
 namespace daemonapp.apps.NotificationsManager;
 
 [NetDaemonApp]
-//[Focus]
-public class BatteryNotifications(IEntities entities, IServices services, IHaContext context, IScheduler scheduler, IAlexa alexa, ILogger<BatteryNotifications> logger) : IAsyncInitializable
+[Focus]
+public class BatteryNotifications(IHaContext ha, IEntities entities, IServices services, IHaContext context, IScheduler scheduler, IAlexa alexa, ILogger<BatteryNotifications> logger) : IAsyncInitializable
 {
     private readonly IList<BatteryNotificationsConfig> _config = new List<BatteryNotificationsConfig>
     {
-        new(entities.Sensor.JaydenSIpadBatteryLevel, entities.Sensor.JaydenSIpadBatteryState, "mobile_app_jayden_s_ipad"),
-        new(entities.Sensor.JaydenSIphoneBatteryLevel, entities.Sensor.JaydenSIphoneBatteryState, "mobile_app_jayden_s_iphone"),
-        new(entities.Sensor.AaronsIpadBatteryLevel, entities.Sensor.AaronsIpadBatteryState, "mobile_app_aarons_ipad"),
-        new(entities.Sensor.AaronsIphoneBatteryLevel, entities.Sensor.AaronsIphoneBatteryState, "mobile_app_aarons_iphone")
+        new(entities.Sensor.JaydensIpadBatteryLevel , entities.Sensor.JaydensIpadBatteryState, entities.Switch.JaydenBlockXbox, "mobile_app_jaydens_ipad"),
+        new(entities.Sensor.JaydenSIphoneBatteryLevel, entities.Sensor.JaydenSIphoneBatteryState, entities.Switch.JaydenBlockXbox, "mobile_app_jayden_s_iphone"),
+        new(entities.Sensor.AaronsIpadBatteryLevel, entities.Sensor.AaronsIpadBatteryState,entities.Switch.AaronBlockXbox, "mobile_app_aarons_ipad"),
+        new(entities.Sensor.AaronsIphoneBatteryLevel, entities.Sensor.AaronsIphoneBatteryState, entities.Switch.AaronBlockXbox,"mobile_app_aarons_iphone"),
+        new(entities.Sensor.GabrielsIpadBatteryLevel, entities.Sensor.GabrielsIpadBatteryState,entities.Switch.GabrielBlockXbox, "mobile_app_gabriels_ipad")
     };
+
+    public class MobileBatteryEvent
+    {
+        [JsonPropertyName("device")] public string? Device { get; init; }
+        [JsonPropertyName("battery_level")] public int? BatteryLevel { get; init; }
+        [JsonPropertyName("charging")] public string? ChargingDescription { get; init; }
+
+        public MobileBatteryEvent()
+        {
+            
+        }
+    }
 
 
     public Task InitializeAsync(CancellationToken cancellationToken)
     {
-        scheduler.ScheduleCron("0 16-19 * * 1-5", SendNotifications); // Weekdays
-        scheduler.ScheduleCron("0 9-19 * * 0,6", SendNotifications); // Weekends
+        CronExpression cron = CronExpression.Parse("0 9-19 * * SAT-SUN");
+        ha.Events.Filter<MobileBatteryEvent>("mobile_battery_event").Subscribe(e => {
+            var data = e.Data;
+
+            // Get the current time in UTC
+            DateTime now = DateTime.UtcNow;
+
+            // Get the previous occurrence before the current time
+            DateTime? previousUtc = cron.GetNextOccurrence(now, false);
+
+            // Get the next occurrence after the current time
+            DateTime? nextUtc = cron.GetNextOccurrence(now, true);
+            
+            // Check if the current time is within the range specified by the cron expression
+            bool isWithinRange = previousUtc.HasValue && nextUtc.HasValue && now >= previousUtc.Value && now < nextUtc.Value;
+    
+            if (isWithinRange) 
+                alexa.Announce(entities.MediaPlayer.Everywhere2.EntityId, $"{e.Data.Device}'s battery is at {e.Data.BatteryLevel}%");
+        });
+
+        //scheduler.ScheduleCron("0 16-19 * * 1-5", SendNotifications); // Weekdays
+        //scheduler.ScheduleCron("0 9-19 * * 0,6", SendNotifications); // Weekends
         return Task.CompletedTask;
     }
 
@@ -33,6 +68,8 @@ public class BatteryNotifications(IEntities entities, IServices services, IHaCon
             switch (config.BatteryLevel.State)
             {
                 case <= 30:
+                    config.XboxBlock.TurnOn();
+                    entities.Switch.LgLounge.TurnOff();
                     deviceNames.Add(deviceName);
                     break;
             }
@@ -47,7 +84,7 @@ public class BatteryNotifications(IEntities entities, IServices services, IHaCon
         foreach (var config in _config)
         {
             var totalHours = ( DateTime.Now - config.BatteryLevel.EntityState.LastUpdated.Value ).TotalHours;
-            if (totalHours < 12)
+            if (totalHours > 12)
             {
                 ForceUpdate(config.MobileApp);
                 return [];

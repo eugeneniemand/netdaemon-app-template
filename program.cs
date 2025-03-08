@@ -20,6 +20,7 @@ try
                       .AddAppsFromAssembly(Assembly.GetExecutingAssembly())
                       .AddNetDaemonStateManager()
                       .AddNetDaemonScheduler()
+                      .AddHomeAssistantGenerated()
                       .SetupDependencies()
               )
               .Build()

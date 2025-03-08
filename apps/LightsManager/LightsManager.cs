@@ -14,17 +14,16 @@ public class LightsManager : IAsyncInitializable
     private readonly IMqttEntityManager     _entityManager;
     private readonly IHaContext             _haContext;
     private readonly ILogger<LightsManager> _managerLogger;
-    private readonly ILogger<RandomManager> _randomLogger;
+    //private readonly ILogger<RandomManager> _randomLogger;
     private readonly IScheduler             _scheduler;
 
-    public LightsManager(IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager, IAppConfig<ManagerConfig> config, ILogger<LightsManager> managerLogger, ILogger<RandomManager> randomLogger)
+    public LightsManager(IScheduler scheduler, IHaContext haContext, IMqttEntityManager entityManager, IAppConfig<ManagerConfig> config, ILogger<LightsManager> managerLogger)
     {
         _scheduler     = scheduler;
         _haContext     = haContext;
         _entityManager = entityManager;
         _config        = config.Value;
         _managerLogger = managerLogger;
-        _randomLogger  = randomLogger;
     }
 
     public Task InitializeAsync(CancellationToken cancellationToken)

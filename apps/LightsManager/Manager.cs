@@ -136,6 +136,7 @@ public class Manager
         if (!Watchdog)
         {
             _logger.LogDebug("{room} Watchdog Disabled", Name);
+
             return;
         }
 

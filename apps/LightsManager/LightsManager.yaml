@@ -124,9 +124,10 @@ LightManagerV2.ManagerConfig:
     - Name: Drive
       PresenceEntities:
         - binary_sensor.niemand_drive_motion
-        - binary_sensor.niemand_drive_motion_2
+        - binary_sensor.niemand_front_door_motion
       ControlEntities:
         - light.lounge
+        - light.office_skylight
       Timeout: 300
       ConditionEntity: alarm_control_panel.alarmo
       ConditionEntityState: armed_night

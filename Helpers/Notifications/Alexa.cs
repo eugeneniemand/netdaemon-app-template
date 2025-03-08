@@ -73,6 +73,14 @@ public class Alexa : IAlexa
     public void TextToSpeech(string mediaPlayer, string message) =>
         QueueNotification(new Config { Entity = mediaPlayer, Message = message }, "tts");
 
+    public void PlaySound(MediaPlayerEntity mediaPlayer, string soundName) => 
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { MediaContentType = MediaType.sound.ToString().ToLower(), MediaContentId = soundName });
+
+    public void PlayMusic(MediaPlayerEntity mediaPlayer, string command) => 
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { MediaContentType = MediaType.AMAZON_MUSIC.ToString(), MediaContentId = command });
+
+    public void SendCommand(MediaPlayerEntity mediaPlayer, string command) =>
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { MediaContentType = MediaType.custom.ToString().ToLower(), MediaContentId = command });
     private string FormatMessage(string message, string voice, bool whisper)
     {
         var messageBreaks  = message.Replace(",", "<break />");
@@ -178,7 +186,8 @@ public class Alexa : IAlexa
                 SetVolume(entity, volumeOverride ?? volume);
                 _services.Script.ActivateAlexaActionableNotification(formatMessage, eventId, entity);
             }
-            _scheduler.Sleep(TimeSpan.FromSeconds(5));
+            var words = message.Split(' ').Count();
+            _scheduler.Sleep(TimeSpan.FromSeconds(words * 0.4));
         }
     }
 
@@ -222,6 +231,9 @@ public class Alexa : IAlexa
     {
         public  bool?        Whisper   = null;
         private List<string> _entities = new();
+        /// <summary>
+        /// Value between 0 and 1
+        /// </summary>
         public double? VolumeLevel { get; set; } = null;
         public int? VolumeResetDelay { get; set; } = null;
 
@@ -240,5 +252,12 @@ public class Alexa : IAlexa
         public string Message { get; set; } = "";
         internal string EventId { get; set; } = "";
         internal string NotifyType { get; set; } = "tts";
+    }
+
+    public enum MediaType
+    {
+        sound,
+        AMAZON_MUSIC,
+        custom
     }
 }

@@ -22,6 +22,7 @@ public class AlexaMock(IServices services) : IAlexa
 
     public virtual void Prompt(string mediaPlayer, string message, string eventId)
     {
+        throw new NotImplementedException();
     }
 
     public IObservable<PromptResponse> PromptResponses => _promptResponses;
@@ -39,5 +40,20 @@ public class AlexaMock(IServices services) : IAlexa
     public void QueueResponse(PromptResponse response)
     {
         _promptResponses.OnNext(response);
+    }
+
+    void IAlexa.PlaySound(MediaPlayerEntity mediaPlayer, string soundName)
+    {
+        throw new NotImplementedException();
+    }
+
+    void IAlexa.PlayMusic(MediaPlayerEntity mediaPlayer, string command)
+    {
+        throw new NotImplementedException();
+    }
+
+    void IAlexa.SendCommand(MediaPlayerEntity mediaPlayer, string command)
+    {
+        throw new NotImplementedException();
     }
 }

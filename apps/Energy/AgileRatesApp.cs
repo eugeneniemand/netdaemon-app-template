@@ -7,7 +7,7 @@ using NetDaemon.Extensions.MqttEntityManager;
 namespace Niemand.Energy;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class AgileRatesApp : IAsyncInitializable, IDisposable
 {
     private readonly IMqttEntityManager _entityManager;

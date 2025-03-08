@@ -82,10 +82,10 @@ public class EnergyApp
         }
 
         _cheapestWindows = Rates.CheapestWindows();
-
-        _entities.InputDatetime.Energy1HourWindow.SetDatetime(time: $"{_cheapestWindows.Single(r => r.hours == 1).startDate:T}");
-        _entities.InputDatetime.Energy2HourWindow.SetDatetime(time: $"{_cheapestWindows.Single(r => r.hours == 2).startDate:T}");
-        _entities.InputDatetime.Energy3HourWindow.SetDatetime(time: $"{_cheapestWindows.Single(r => r.hours == 3).startDate:T}");
+        
+        _entities.InputDatetime.Energy1HourWindow.SetDatetime(time: TimeOnly.FromDateTime(_cheapestWindows.Single(r => r.hours == 1).startDate));
+        _entities.InputDatetime.Energy2HourWindow.SetDatetime(time: TimeOnly.FromDateTime(_cheapestWindows.Single(r => r.hours == 2).startDate));
+        _entities.InputDatetime.Energy3HourWindow.SetDatetime(time: TimeOnly.FromDateTime(_cheapestWindows.Single(r => r.hours == 3).startDate));
 
         _logger.LogInformation(GetRatesMessageText(_cheapestWindows));
     }

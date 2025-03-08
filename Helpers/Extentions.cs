@@ -1,28 +1,56 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using HomeAssistantGenerated;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using Niemand;
 using Niemand.Helpers;
+using Niemand.Helpers.Notifications;
 
 namespace NetDaemon.Helpers;
 
 public static class Extentions
 {
     private const int MustBeLessThan = 100000000; // 8 decimal digits
-    
+
     public static bool IsUnavailable(this Entity? entity) => entity?.EntityState.IsUnavailable() ?? true;
     public static bool IsUnavailable(this EntityState? entityState) => string.Equals(entityState?.State, "unavailable", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Armed away or Armed Night
+    /// </summary>
+    /// <param name="alarmControlPanel"></param>
+    /// <returns></returns>
+    public static bool IsArmed(this AlarmControlPanelEntity alarmControlPanel) => alarmControlPanel.IsArmedAway() || alarmControlPanel.IsArmedNight() ;
+    public static bool IsArmedNight(this AlarmControlPanelEntity alarmControlPanel) => string.Equals(alarmControlPanel?.State, "armed_night", StringComparison.OrdinalIgnoreCase);
+    public static bool IsArmedAway(this AlarmControlPanelEntity alarmControlPanel) => string.Equals(alarmControlPanel?.State, "armed_away", StringComparison.OrdinalIgnoreCase);
+    public static bool IsDisarmed(this AlarmControlPanelEntity alarmControlPanel) => string.Equals(alarmControlPanel?.State, "disarmed", StringComparison.OrdinalIgnoreCase);
+    public static bool IsTriggered(this AlarmControlPanelEntity alarmControlPanel) => string.Equals(alarmControlPanel?.State, "triggered", StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsArmed(this EntityState<AlarmControlPanelAttributes> alarmControlPanel) => alarmControlPanel.IsArmedAway() || alarmControlPanel.IsArmedNight();
+    public static bool IsArmedNight(this EntityState<AlarmControlPanelAttributes> alarmControlPanel) => string.Equals(alarmControlPanel?.State, "armed_night", StringComparison.OrdinalIgnoreCase);
+    public static bool IsArmedAway(this EntityState<AlarmControlPanelAttributes> alarmControlPanel) => string.Equals(alarmControlPanel?.State, "armed_away", StringComparison.OrdinalIgnoreCase);
+    public static bool IsDisarmed(this EntityState<AlarmControlPanelAttributes> alarmControlPanel) => string.Equals(alarmControlPanel?.State, "disarmed", StringComparison.OrdinalIgnoreCase);
+    public static bool IsTriggered(this EntityState<AlarmControlPanelAttributes> alarmControlPanel) => string.Equals(alarmControlPanel?.State, "triggered", StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsAboveHorizon(this SunEntity sun) => string.Equals(sun.State, "above_horizon", StringComparison.OrdinalIgnoreCase);
+    public static bool IsBelowHorizon(this SunEntity sun) => string.Equals(sun.State, "below_horizon", StringComparison.OrdinalIgnoreCase);
+    
+    
+    
     public static IServiceCollection SetupDependencies(this IServiceCollection serviceCollection)
         => serviceCollection
            .AddTransient<IEntities, Entities>()
            .AddTransient<IServices, Services>()
            .AddTransient<IAlexa, Alexa>()
            .AddSingleton<IVoiceProvider, VoiceProvider>()
+           .AddTransient<Common>()
            .AddScoped<INotificationConfigFactory, NotificationConfigFactory>()
            .AddScoped<IApplianceFactory, ApplianceFactory>()
            .AddScoped<People>()
+           .AddScoped<PushNotifier>()
            .AddSingleton<IServiceProvider>(sp => sp);
-        
+
 
     public static string GetFixedHash(this string s)
     {
@@ -42,7 +70,7 @@ public static class Extentions
         hash += hash << 15;
         // helpfully we only want positive integer < MUST_BE_LESS_THAN
         // so simple truncate cast is ok if not perfect
-        return ( (int)( hash % MustBeLessThan ) ).ToString();
+        return ((int)(hash % MustBeLessThan)).ToString();
     }
 
 
@@ -55,14 +83,14 @@ public static class Extentions
     {
         var dates = existing.Keys.ToList();
         var rates = existing.Values.ToList();
-        var min   = rates.Min();
-        var key   = dates[rates.IndexOf(min)];
+        var min = rates.Min();
+        var key = dates[rates.IndexOf(min)];
         return new KeyValuePair<DateTime, double>(key, min);
     }
 
     public static Dictionary<string, object>? ToDictionary(this object obj)
     {
-        var json       = JsonSerializer.Serialize(obj);
+        var json = JsonSerializer.Serialize(obj);
         var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
         return dictionary;
     }
@@ -78,8 +106,8 @@ public static class Extentions
     /// <returns></returns>
     public static SortedDictionary<DateTime, double> WindowedAverageLeft(this SortedDictionary<DateTime, double> existing, int size)
     {
-        var dict   = new SortedDictionary<DateTime, double>();
-        var keys   = existing.Keys.ToList();
+        var dict = new SortedDictionary<DateTime, double>();
+        var keys = existing.Keys.ToList();
         var values = existing.Values.ToList();
         for (var i = 0; i < existing.Count - size + 1; i++) dict.Add(keys[i], values.Skip(i).Take(size).Average());
 
@@ -87,14 +115,5 @@ public static class Extentions
     }
 
 
-    ///// <summary>
-    /////     Convert N3 to int 0.3 or W10 to in 1.0
-    ///// </summary>
-    ///// <param name="volume"></param>
-    ///// <returns></returns>
-    //public static double ToVolumeLevel(this Volume volume)
-    //{
-    //    var intVol = int.Parse(Enum.GetName(volume)![1..]);
-    //    return intVol / 10d;
-    //}
+    public static bool LastChangedOlderThan(this Entity entityState, TimeSpan timeSpan) => DateTime.Now - (entityState.EntityState?.LastChanged ?? DateTime.Today) > timeSpan;
 }

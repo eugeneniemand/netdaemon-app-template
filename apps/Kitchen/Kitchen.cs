@@ -1,5 +1,7 @@
 ﻿using Niemand.Helpers;
+using Niemand.Helpers.Notifications;
 using Polly;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Niemand;
 
@@ -14,6 +16,7 @@ public class KitchenConfiguration
 [NetDaemonApp]
 public class Kitchen
 {
+    
     private readonly KitchenConfiguration _config;
     private readonly IScheduler _scheduler;
     private readonly ILogger<Kitchen> _logger;
@@ -21,7 +24,7 @@ public class Kitchen
     private readonly IAlexa _alexa;
     private readonly IServices _services;
 
-    public Kitchen(IHaContext ha, IScheduler scheduler, IAppConfig<KitchenConfiguration> config, ILogger<Kitchen> logger, IServices services, IEntities entities, IAlexa alexa)
+    public Kitchen(IHaContext ha, IScheduler scheduler, IAppConfig<KitchenConfiguration> config, ILogger<Kitchen> logger, IServices services, IEntities entities, IAlexa alexa, PushNotifier pushNotifier)
     {
         _scheduler = scheduler;
         _logger = logger;
@@ -44,7 +47,21 @@ public class Kitchen
                 .Where(e => e.Old.IsOff() && e.New.IsOn())
                 .SubscribeAsync(async e =>
                 {
-                    if (entities.BinarySensor.DishwasherDoor.IsOn() || entities.InputBoolean.DishwasherReminder.IsOff()) return;
+                    if (entities.InputBoolean.DishwasherReminder.IsOff()) return;
+
+                    _logger.LogInformation("Dishwasher triggered");
+
+                    if (entities.BinarySensor.DishwasherDoor.IsOn())
+                    {
+                        var message = "The dishwasher cant start door is open";
+                        alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = message });
+                        alexa.Announce(new Alexa.Config { Entity = "media_player.master", Message = message });
+                        services.Notify.Twinstead(message);
+                        pushNotifier.Notify(PushNotifier.Recipient.All, "Dishwasher Failure", message, 0.5, true, "shake.caf");
+                        _logger.LogError("Failed to start DishwasherProgramEco50 after retries");
+                        return;
+                    }
+
                     _logger.LogInformation("Dishwasher starting");
                     entities.Switch.DishwasherPower.TurnOn();
                     entities.InputBoolean.DishwasherReminder.TurnOff();
@@ -59,9 +76,11 @@ public class Kitchen
                     }
                     else
                     {
-                        alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = "The dishwasher failed to start" });
-                        alexa.Announce(new Alexa.Config { Entity = "media_player.master", Message = "The dishwasher failed to start" });
-                        services.Notify.Twinstead("The dishwasher failed to start");
+                        var message = "The dishwasher failed to start";
+                        alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = message });
+                        alexa.Announce(new Alexa.Config { Entity = "media_player.master", Message = message });
+                        services.Notify.Twinstead(message);
+                        pushNotifier.Notify(PushNotifier.Recipient.All, "Dishwasher Failure", message, 0.5, true, "shake.caf");
                         _logger.LogError("Failed to start DishwasherProgramEco50 after retries");
                     }
                 });
