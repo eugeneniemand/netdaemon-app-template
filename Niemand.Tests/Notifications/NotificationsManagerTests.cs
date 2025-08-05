@@ -9,7 +9,7 @@ public class NotificationsManagerTests(NotificationManagerSut sut, IEntities ent
     [Fact]
     public void AcknowledgePromptAndResetWhenPromptResponseIsYes()
     {
-        var ack         = entityBuilder.CreateInputBooleanEntity(entities.InputBoolean.DishwasherAck.EntityId, "off");
+        var ack = entityBuilder.CreateInputBooleanEntity(entities.InputBoolean.DishwasherAck.EntityId, "off");
         var mediaPlayer = entityBuilder.CreateMediaPlayerEntity("media_player.kitchen");
         sut.Init();
 
@@ -36,8 +36,8 @@ public class NotificationsManagerTests(NotificationManagerSut sut, IEntities ent
     {
         entityBuilder.CreateInputBooleanEntity(entities.InputBoolean.DishwasherAck.EntityId, "on");
         var mediaPlayer = entityBuilder.CreateMediaPlayerEntity("media_player.kitchen");
-        var motion      = entityBuilder.CreateBinarySensorEntity(entities.BinarySensor.KitchenMotion.EntityId, "off");
-        var status      = new DishwasherNotificationConfig(entities).Status;
+        var motion = entityBuilder.CreateBinarySensorEntity(entities.BinarySensor.KitchenMotion.EntityId, "off");
+        var status = new DishwasherNotificationConfig(entities).Status;
         state.Change(status, "ready");
         sut.Init();
 
@@ -47,11 +47,13 @@ public class NotificationsManagerTests(NotificationManagerSut sut, IEntities ent
 
         state.Change(motion, "off");
         state.Change(motion, "on");
-        
-        state.ServiceCalls.Filter(Domain.Notify).Should().BeEquivalentTo(new[]  {
-                Events.Notify.AlexaMedia(mediaPlayer, "The Dishwasher is ready", "announce"),
-                Events.Notify.AlexaMedia(mediaPlayer, "The Dishwasher is ready", "announce")
-            });
+
+        state.ServiceCalls.Filter(Domain.Notify).Should().BeEquivalentTo([
+            Events.Notify.AlexaMedia(mediaPlayer, "The Dishwasher is ready", "announce"),
+            Events.Notify.Twinstead("The Dishwasher is ready"),
+            Events.Notify.AlexaMedia(mediaPlayer, "The Dishwasher is ready", "announce"),
+            Events.Notify.Twinstead("The Dishwasher is ready")
+        ]);
     }
 
     [Fact]
@@ -59,8 +61,8 @@ public class NotificationsManagerTests(NotificationManagerSut sut, IEntities ent
     {
         entityBuilder.CreateInputBooleanEntity(entities.InputBoolean.DishwasherAck.EntityId, "on");
         var mediaPlayer = entityBuilder.CreateMediaPlayerEntity("media_player.kitchen");
-        var motion      = entityBuilder.CreateBinarySensorEntity(entities.BinarySensor.KitchenMotion.EntityId, "off");
-        var status      = new DishwasherNotificationConfig(entities).Status;
+        var motion = entityBuilder.CreateBinarySensorEntity(entities.BinarySensor.KitchenMotion.EntityId, "off");
+        var status = new DishwasherNotificationConfig(entities).Status;
         state.Change(status, "ready");
         sut.Init();
 
@@ -70,10 +72,11 @@ public class NotificationsManagerTests(NotificationManagerSut sut, IEntities ent
 
         state.Change(motion, "off");
         state.Change(motion, "on");
-        
-        state.ServiceCalls.Filter(Domain.Notify).Should().BeEquivalentTo(new[]  {
+
+        state.ServiceCalls.Filter(Domain.Notify).Should().BeEquivalentTo([
+            Events.Notify.Twinstead("The Dishwasher is ready"),
             Events.Notify.AlexaMedia(mediaPlayer, "The Dishwasher is ready", "announce")
-        });
+        ]);
     }
 
     [Fact]

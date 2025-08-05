@@ -5,13 +5,13 @@ using NetDaemon.Extensions.MqttEntityManager;
 
 namespace Niemand.Tests.LightManager;
 
-public class LightManagerSut(IHaContext ha, TestScheduler scheduler, StateChangeManager state, IMqttEntityManager entityManager, IAppConfig<ManagerConfig> config, ILogger<LightsManager> managerLogger)
+public class LightManagerSut(IHaContext ha, IServices services, TestScheduler scheduler, StateChangeManager state, IMqttEntityManager entityManager, IAppConfig<ManagerConfig> config, ILogger<LightsManager> managerLogger)
 {
     
     public void Init(ManagerConfig? configOverride = null)
     {
         var cfg      =  configOverride == null ? config : new FakeAppConfig<ManagerConfig>(configOverride);
-        var instance = new LightsManager(scheduler, ha, entityManager, cfg, managerLogger);
+        var instance = new LightsManager(scheduler, ha, services, entityManager, cfg, managerLogger);
         instance.InitializeAsync(new CancellationToken());
         state.Change(config.Value.ManagerEnabled(), "on");
         // AssertionOptions.FormattingOptions.MaxLines = 1000;

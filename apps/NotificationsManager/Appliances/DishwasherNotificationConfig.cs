@@ -27,5 +27,5 @@ public class DishwasherNotificationConfig : IApplianceNotificationConfig
 
     public string Name => "Dishwasher";
     public SensorEntity RemainingTime => _entities.Sensor.DishwasherRemainingProgramTime;
-    public SensorEntity Status => _entities.Sensor.DishwasherOperationState;
+    public SensorEntity Status => _entities.Sensor.DishwasherRemainingProgramTime;
 }

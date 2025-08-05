@@ -1,3 +1,7 @@
+using System.Text.Json;
+using HomeAssistantGenerated;
+
+
 namespace Niemand;
 
 [NetDaemonApp]
@@ -7,6 +11,9 @@ public class Routines
     public Routines(IHaContext haContext, IEntities entities, IServices services, IScheduler scheduler, People people, ILogger<Routines> logger)
     {
         
+        entities.Sensor.TrainsToHome.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainshomemarkdown, entities.Sensor.TrainsToHome));
+        entities.Sensor.TrainsToHome.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainsworkmarkdown, entities.Sensor.TrainsToWork));
+
         // Volume Control
         // Set volume to 10% at night and 30% during the day
         entities.InputSelect.HouseMode.StateChanges().Subscribe(s =>
@@ -78,8 +85,7 @@ public class Routines
         // Coming Down Stairs When Alarm is Armed Night
         var staircaseMotionSensors = new[]
         {
-            entities.BinarySensor.Hallway.StateChanges(),
-            entities.BinarySensor.LandingMotion.StateChanges()
+            entities.BinarySensor.KonnectedHallway.StateChanges(),
         };
 
         Observable.Merge(staircaseMotionSensors)
@@ -93,18 +99,19 @@ public class Routines
                       logger.LogInformation("Disarming Alarm - Motion on stairs");
                       entities.AlarmControlPanel.Alarmo.AlarmDisarm();
                   });
+        
     }
 }
 
-public record PersonDetails(PersonEntity Person, string Home);
+public record PersonDetails(PersonEntity Person, string Home, SensorEntity DirectionSensor = null);
 
 public class People(IEntities entities)
 {
     public IEnumerable<PersonDetails> Persons { get; } = new[]
     {
-        new PersonDetails(entities.Person.Eugene, "home"),
-        new PersonDetails(entities.Person.Hailey, "home"),
-        new PersonDetails(entities.Person.Aubrecia, "mum_home"),
+        new PersonDetails(entities.Person.Eugene, "home", entities.Sensor.HomeEugeneDirectionOfTravel),
+        new PersonDetails(entities.Person.Hailey, "home", entities.Sensor.HomeHaileyDirectionOfTravel),
+        new PersonDetails(entities.Person.Aubrecia, "home", entities.Sensor.HomeAubreciaDirectionOfTravel),
         new PersonDetails(entities.Person.Malcolm, "mum_home")
     };
 }

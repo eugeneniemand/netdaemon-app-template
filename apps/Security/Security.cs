@@ -1,38 +1,82 @@
-﻿using HomeAssistantGenerated;
-using Microsoft.Win32;
-using NetDaemon.Extensions.Observables;
-using NetDaemon.Extensions.Scheduler;
+﻿using NetDaemon.Extensions.Observables;
 using NetDaemon.HassModel.Integration;
-using NetDaemon.Helpers;
 using Niemand.Helpers;
 using Niemand.Helpers.Notifications;
 using Reactive.Boolean;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive.Concurrency;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Niemand.SecurityApps;
 
 [NetDaemonApp]
 [Focus]
-public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, IServices services, ILogger<Security> logger, IAlexa alexa, IScheduler scheduler, Common common, PushNotifier pushNotifier) : IAsyncInitializable
+public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, IServices services, ILogger<Security> logger, IAlexa alexa, IScheduler scheduler, Common common, PushNotifier pushNotifier, TelegramBotServices bot) : IAsyncInitializable
 {
     private readonly List<BinarySensorEntity> DoorsOpened = new();
+    private readonly Dictionary<string, TelegramChatMessage> DoorsMessagesSent = new();
     record AlarmArmFailedData(string? message);
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
         scheduler.ScheduleCron("0/5 19-23,0-6 * * *", () => ArmAlarm());
+        AlarmStateChanged();
         AlarmFailure();
         AlarmTriggered();
 
         SimulateNightLights();
         DrivewayMotionAlarm();
         DoorBeep();
-        DoorWatchdog();
+        //DoorWatchdog();
+        //await DebugMethod();        
+    }
 
-        //var x = new DoorWatchdogService();
+    public void Beep(int beeps = 1, int delay = 100)
+    {
+        BeepAsync(beeps, delay).GetAwaiter().GetResult(); 
+    }
+
+
+    private async Task BeepAsync(int beeps=1, int delay = 100)
+    {
+        for (int i = 0; i < beeps; i++)
+        {
+            entities.Switch.KonnectedMainSiren.TurnOn();
+            await Task.Delay(delay);
+            entities.Switch.KonnectedMainSiren.TurnOff();
+            await Task.Delay(delay);
+        }
+    }
+
+    private async Task DebugMethod()
+    {
+        var door = new
+        {
+            Attributes = new { FriendlyName = "DebugDoor" },
+            EntityId = "binary_sensor.debug_door"
+        };
+
+        var serviceData = new
+        {
+            target = 1431752361, // Replace with your Telegram chat ID
+            message = $"Is the {door.Attributes.FriendlyName} locked?",
+            inline_keyboard = new List<string> {
+                        $"🔒Locked:/locked {door.EntityId}, 🙈Ignore:/ignore {door.EntityId}" ,
+                        $"⏳Defer 5 min:/defer {door.EntityId} 5, ⏳Defer 30 min:/defer {door.EntityId} 30",
+                        $"⏳Defer 1 hour:/defer {door.EntityId} 60, ⏳Defer 6 hours:/defer {door.EntityId} 360"
+                    }
+            
+        };
+
+        var jsonResult = await ha.CallServiceWithResponseAsync("telegram_bot", "send_message", null, serviceData);        
+        var chatMessages = JsonSerializer.Deserialize<TelegramChats>(jsonResult.ToString());
+
+        DoorsMessagesSent.Add(door.EntityId, chatMessages.Chats[0]);
+
+        if (DoorsMessagesSent.ContainsKey(door.EntityId))
+        {
+            var chat = DoorsMessagesSent[door.EntityId];
+            bot.DeleteMessage(new TelegramBotDeleteMessageParameters() { ChatId = chat.ChatId.ToString(), MessageId =chat.MessageId.ToString() });
+            
+            await ha.CallServiceWithResponseAsync("telegram_bot", "send_message", null, serviceData);
+        }
     }
 
     private void DoorWatchdog()
@@ -40,9 +84,9 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         var doors = new[]
         {
             entities.BinarySensor.BackDoor,
-            entities.BinarySensor.DiningDoor,
-            entities.BinarySensor.GarageBackDoor,
-            entities.BinarySensor.LoungeDoor
+            entities.BinarySensor.KonnectedFrontDoor,
+            entities.BinarySensor.KonnectedUtilityDoor,
+            entities.BinarySensor.BackOfficeDoor
         };
 
         doors.StateChanges()
@@ -61,7 +105,8 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
             foreach (var door in DoorsOpened)
             {
                 logger.LogInformation("Notifying door check: {door}", door.EntityId);
-                services.Notify.Eugene(new NotifyEugeneParameters()
+
+                NotifyEugeneParameters data = new NotifyEugeneParameters()
                 {
                     Message = $"Is the {door.Attributes.FriendlyName} locked?",
                     Data = new
@@ -72,7 +117,9 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                             $"⏳Defer 1 hour:/defer {door.EntityId} 60, ⏳Defer 6 hours:/defer {door.EntityId} 360"
                         }
                     }
-                });
+                };
+                services.Notify.Eugene(data);
+                var result = ha.CallServiceWithResponseAsync("notify", "eugene", null, data);
             }
         }
 
@@ -85,8 +132,9 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                     .Where(e => e.Entity.IsArmed())
                     .Subscribe(e => NotifyUncheckedDoors());
 
-        bool DoorInList(TelegramCallback e, out BinarySensorEntity? door)
+        bool DoorInList(TelegramCallback e, out BinarySensorEntity? door, out string entityId)
         {
+            entityId = e?.Args[0] ?? "UNKNOWN";
             door = DoorsOpened.FirstOrDefault(d => d.EntityId == e?.Args[0]);
             return door != null;
 
@@ -95,21 +143,33 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         ha.Events.HandleTelegramCallback(services.TelegramBot, logger)
             .On("/locked", (e, handler) =>
             {
-                if (!DoorInList(e, out var door)) return;
+                if (!DoorInList(e, out var door, out var entityId))
+                {
+                    handler.EditMessage(e, $"{entityId} has expired🤦‍");
+                    return;
+                }
 
                 DoorsOpened.Remove(door);
 
                 handler.EditMessage(e, $"Acknowledged {door.Attributes?.FriendlyName} is locked");
             }).On("/defer", (e, handler) =>
             {
-                if (!DoorInList(e, out var door) || !int.TryParse(e.Args[1], out int minutes)) return;
+                if (!DoorInList(e, out var door, out var entityId) || !int.TryParse(e.Args[1], out int minutes))
+                {
+                    handler.EditMessage(e, $"{entityId} has expired🤦‍");
+                    return;
+                }
 
                 handler.EditMessage(e, $"I'll remind you in {minutes} minutes to check {door.Attributes?.FriendlyName}");
 
                 scheduler.Schedule(TimeSpan.FromMinutes(minutes), () => NotifyUncheckedDoors());
             }).On("/ignore", (e, handler) =>
             {
-                if (!DoorInList(e, out var door)) return;
+                if (!DoorInList(e, out var door, out var entityId))
+                {
+                    handler.EditMessage(e, $"{entityId} has expired🤦‍");
+                    return;
+                }
 
                 DoorsOpened.Remove(door);
 
@@ -124,17 +184,36 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                     .Subscribe(ha =>
                     {
                         logger.LogInformation("Alarm Triggered");
-                        pushNotifier.Notify(PushNotifier.Recipient.All, "🚨 Alarm Triggered 🚨", "Alarm triggered", 1, true, "Anticipate.caf");
+                        pushNotifier.Notify(PushNotifier.Recipient.All, "🚨 Alarm Triggered 🚨", "Alarm triggered", 1, true, "Anticipate.caf");                        
                     });
+
+        
     }
+
+    private void AlarmStateChanged()
+    {
+        entities.AlarmControlPanel.Alarmo
+                    .StateChanges()                    
+                    .Subscribe(ha =>
+                    {
+                        if (ha.New.IsArmed())
+                            Beep(2);
+                        if (ha.New.IsDisarmed())
+                            Beep(3);
+                    });
+
+
+    }
+
+
 
     private void AlarmFailure()
     {
         ha.RegisterServiceCallBack<AlarmArmFailedData>("alarm_arm_failed", (data) =>
         {
             logger.LogDebug("Alarm Arm Failed: {data}", data.message);
-
-            pushNotifier.Notify(PushNotifier.Recipient.All, "Alarm Failed", data.message ?? "Alarm failed to arm", 0.5, true, "shake.caf");            
+            Beep(3, 300);
+            pushNotifier.Notify(PushNotifier.Recipient.All, "Alarm Failed", data.message ?? "Alarm failed to arm", 0.5, true, "shake.caf");
             alexa.Announce(new Alexa.Config() { Entity = entities.MediaPlayer.Master.EntityId, Message = "Alarm failed to arm", NotifyType = "tts" });
         });
     }
@@ -146,8 +225,8 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         var doors = new[]
         {
             entities.BinarySensor.BackDoor,
-            entities.BinarySensor.FrontDoor,
-            entities.BinarySensor.DiningDoor,
+            entities.BinarySensor.KonnectedFrontDoor,
+            entities.BinarySensor.KonnectedUtilityDoor,
             entities.BinarySensor.GarageBackDoor,
             entities.BinarySensor.LoungeDoor
         };
@@ -157,7 +236,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
             .Subscribe(change =>
             {
                 logger.LogDebug("Door Opened: {door}", change.Entity.EntityId);
-                entities.Switch.AlarmBeepTwo.TurnOn();
+                Beep(1);
             });
     }
 
@@ -207,7 +286,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
              .Where(change => change.New.IsOn())
              .SubscribeAsync(async change =>
              {
-                 if (entities.AlarmControlPanel.Alarmo.IsDisarmed())
+                 if (entities.AlarmControlPanel.Alarmo.IsDisarmed() || DateTime.Now.Hour is >= 7 and < 19)
                      return;
 
                  pushNotifier.Notify(PushNotifier.Recipient.All, "🚨 Person On Drive 🚨", "There is a person on the drive", 1, true, "Anticipate.caf");
@@ -283,6 +362,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
           && LastDownstairsWasLanding(entities, common)) || (DateTime.Now.Hour > 1 && DateTime.Now.Hour < 6)))
         {
             entities.AlarmControlPanel.Alarmo.AlarmArmNight();
+            Beep(2);
 
             foreach (var light in entities.Light.EnumerateAll().Where(e => e.Registration?.Labels?.Any(label => string.Equals(label.Id, "Downstairs", StringComparison.OrdinalIgnoreCase)) == true))
             {
@@ -294,8 +374,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         {
             return new[]
                       {
-            entities.BinarySensor.Landing.EntityId,
-            entities.BinarySensor.LandingMotion.EntityId
+            entities.BinarySensor.KonnectedHallway.EntityId,
           }.Contains(common.MotionSensors.LastDownstairs.EntityId);
         }
     }

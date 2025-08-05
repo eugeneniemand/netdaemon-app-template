@@ -42,3 +42,14 @@ public class History
     public DateTime last_updated { get; set; }
     public Context context { get; set; }
 }
+
+public class MediaPlayerHistory
+{
+    public string entity_id { get; set; }
+    public string state { get; set; }
+    public MediaPlayerAttributes attributes { get; set; }
+    public DateTime last_changed { get; set; }
+    public DateTime last_updated { get; set; }
+    public Context context { get; set; }
+}
+

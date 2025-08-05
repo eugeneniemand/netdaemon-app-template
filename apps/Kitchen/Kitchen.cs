@@ -1,6 +1,8 @@
-﻿using Niemand.Helpers;
+﻿using NetDaemon.Extensions.Observables;
+using Niemand.Helpers;
 using Niemand.Helpers.Notifications;
 using Polly;
+using Reactive.Boolean;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Niemand;
@@ -41,49 +43,52 @@ public class Kitchen
                 _logger.LogWarning($"Retry {retryCount} for turning on DishwasherProgramEco50");
             });
 
-        entities.BinarySensor
-                .OctopusEnergyTargetThreeHour
-                .StateChanges()
-                .Where(e => e.Old.IsOff() && e.New.IsOn())
-                .SubscribeAsync(async e =>
-                {
-                    if (entities.InputBoolean.DishwasherReminder.IsOff()) return;
+        //var cheapEnergyActive = entities.BinarySensor.OctopusEnergyTargetThreeHour.ToBooleanObservable()
+        //    .Or(entities.BinarySensor.OctopusEnergyTargetThreeHourDay.ToBooleanObservable());
 
-                    _logger.LogInformation("Dishwasher triggered");
+        //cheapEnergyActive.SubscribeTrue(
+        //    async () =>
+        //    {
+        //        var avgRate = entities.BinarySensor.OctopusEnergyTargetThreeHourDay.Attributes?.OverallAverageCost?.ToString();
+        //        services.Notify.Twinstead($"3 Hour Cheap Energy Started: {avgRate}p/kwh");
 
-                    if (entities.BinarySensor.DishwasherDoor.IsOn())
-                    {
-                        var message = "The dishwasher cant start door is open";
-                        alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = message });
-                        alexa.Announce(new Alexa.Config { Entity = "media_player.master", Message = message });
-                        services.Notify.Twinstead(message);
-                        pushNotifier.Notify(PushNotifier.Recipient.All, "Dishwasher Failure", message, 0.5, true, "shake.caf");
-                        _logger.LogError("Failed to start DishwasherProgramEco50 after retries");
-                        return;
-                    }
+        //        if (entities.InputBoolean.DishwasherReminder.IsOff()) return;
 
-                    _logger.LogInformation("Dishwasher starting");
-                    entities.Switch.DishwasherPower.TurnOn();
-                    entities.InputBoolean.DishwasherReminder.TurnOff();
-                    _logger.LogInformation("Dishwasher waiting for power on");
-                    await _scheduler.Sleep(TimeSpan.FromMinutes(1));
-                    var success = await retryPolicy.ExecuteAsync(() => TurnOnDishwasherProgramEco50Async());
-                    if (success)
-                    {
-                        alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = "The dishwasher started" });
-                        services.Notify.Twinstead("The dishwasher has started");
-                        _logger.LogInformation("DishwasherProgramEco50 Started");
-                    }
-                    else
-                    {
-                        var message = "The dishwasher failed to start";
-                        alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = message });
-                        alexa.Announce(new Alexa.Config { Entity = "media_player.master", Message = message });
-                        services.Notify.Twinstead(message);
-                        pushNotifier.Notify(PushNotifier.Recipient.All, "Dishwasher Failure", message, 0.5, true, "shake.caf");
-                        _logger.LogError("Failed to start DishwasherProgramEco50 after retries");
-                    }
-                });
+        //        _logger.LogInformation("Dishwasher triggered");
+
+        //        if (entities.BinarySensor.DishwasherDoor.IsOn())
+        //        {
+        //            var message = "The dishwasher cant start door is open";
+        //            alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = message });
+        //            alexa.Announce(new Alexa.Config { Entity = "media_player.master", Message = message });
+        //            services.Notify.Twinstead(message);
+        //            pushNotifier.Notify(PushNotifier.Recipient.All, "Dishwasher Failure", message, 0.5, true, "shake.caf");
+        //            _logger.LogError("Failed to start DishwasherProgramEco50 after retries");
+        //            return;
+        //        }
+
+        //        _logger.LogInformation("Dishwasher starting");
+        //        entities.Switch.DishwasherPower.TurnOn();
+        //        entities.InputBoolean.DishwasherReminder.TurnOff();
+        //        _logger.LogInformation("Dishwasher waiting for power on");
+        //        await _scheduler.Sleep(TimeSpan.FromMinutes(1));
+        //        var success = await retryPolicy.ExecuteAsync(() => TurnOnDishwasherProgramEco50Async());
+        //        if (success)
+        //        {
+        //            alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = "The dishwasher started" });
+        //            services.Notify.Twinstead("The dishwasher has started");
+        //            _logger.LogInformation("DishwasherProgramEco50 Started");
+        //        }
+        //        else
+        //        {
+        //            var message = "The dishwasher failed to start";
+        //            alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = message });
+        //            alexa.Announce(new Alexa.Config { Entity = "media_player.master", Message = message });
+        //            services.Notify.Twinstead(message);
+        //            pushNotifier.Notify(PushNotifier.Recipient.All, "Dishwasher Failure", message, 0.5, true, "shake.caf");
+        //            _logger.LogError("Failed to start DishwasherProgramEco50 after retries");
+        //        }
+        //    });
 
         _config.CoffeeMachinePower!.StateChanges().Subscribe(e =>
         {
@@ -103,11 +108,11 @@ public class Kitchen
         });
     }
 
-    private async Task<bool> TurnOnDishwasherProgramEco50Async()
-    {
-        _logger.LogInformation("Dishwasher waiting for program to start");
-        _entities.Switch.DishwasherProgramEco50.TurnOn();
-        await _scheduler.Sleep(TimeSpan.FromSeconds(30)); // Wait for a short period to allow the state to change
-        return _entities.Sensor.DishwasherOperationState.State?.Equals("run", StringComparison.OrdinalIgnoreCase) ?? false;
-    }
+    //private async Task<bool> TurnOnDishwasherProgramEco50Async()
+    //{
+    //    _logger.LogInformation("Dishwasher waiting for program to start");
+    //    _entities.Switch.DishwasherProgramEco50.TurnOn();
+    //    await _scheduler.Sleep(TimeSpan.FromSeconds(30)); // Wait for a short period to allow the state to change
+    //    return _entities.Sensor.DishwasherOperationState.State?.Equals("run", StringComparison.OrdinalIgnoreCase) ?? false;
+    //}
 }

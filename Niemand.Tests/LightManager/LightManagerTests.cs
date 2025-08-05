@@ -1,4 +1,5 @@
 ﻿using NetDaemon.HassModel.Entities;
+using System.Text.Json;
 
 namespace Niemand.Tests.LightManager;
 
@@ -45,7 +46,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
     public void ControlEntitiesDontTurnOffWhenConditionIsNotMet()
     {
         // Arrange
-        sut.Config.Room().ConditionEntity      = entityBuilder.CreateEntity<SensorEntity>("sensor.sun", "above_horizon");
+        sut.Config.Room().ConditionEntity = entityBuilder.CreateEntity<SensorEntity>("sensor.sun", "above_horizon");
         sut.Config.Room().ConditionEntityState = "below_horizon";
         state.Change(sut.Config.Light(), "on");
         state.Change(sut.Config.Pir1(), "on");
@@ -121,7 +122,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
     }
 
     [Fact]
-    public void HouseModeSetToDayTurnsOffAllEntitiesAndTurnOnControlEntities()
+    public void HouseModeSetToDayTurnsOffAllNightEntitiesAndTurnOnControlEntities()
     {
         //Arrange
         state.Change(sut.Config.Light(), "off");
@@ -131,134 +132,20 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         sut.Init();
 
         //Act
-        state.Change(sut.Config.Room().NightTimeEntity!, "night");
+        state.Change(sut.Config.Room().NightTimeEntity!, "day");
 
         //Assert
-        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(new[]
-            {
-                Events.Light.TurnOff(sut.Config.Light()),
-                Events.Light.TurnOff(sut.Config.Light(2)),
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
+            [
+                Events.Light.TurnOn(sut.Config.Light()),
+                Events.Light.TurnOn(sut.Config.Light(2)),
                 Events.Light.TurnOff(sut.Config.NightLight()),
                 Events.Light.TurnOff(sut.Config.NightLight(2))
-            }
+            ]
         );
     }
 
-    [Fact]
-    public void HouseModeSetToDayTurnsOffCircadianSleepMode()
-    {
-        //Arrange
-        sut.Config.Room().CircadianSwitchEntity = entityBuilder.CreateEntity<SwitchEntity>("switch.adaptive_lighting_testroom", "on");
-        sut.Init();
 
-        //Act
-        state.Change(sut.Config.Room().NightTimeEntity!, "day");
-        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
-        //Assert
-        state.ServiceCalls.Switch().Should().ContainEquivalentOf(
-            Events.Switch.TurnOff(entityBuilder.CreateSwitchEntity("switch.adaptive_lighting_sleep_mode_testroom"))
-        );
-    }
-
-    [Fact]
-    public void HouseModeSetToNightTurnsOnCircadianSleepMode()
-    {
-        //Arrange
-        sut.Config.Room().CircadianSwitchEntity = entityBuilder.CreateEntity<SwitchEntity>("switch.adaptive_lighting_testroom", "on");
-        sut.Init();
-
-        //Act
-        state.Change(sut.Config.Room().NightTimeEntity!, "night");
-        sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
-        
-        //Assert
-        state.ServiceCalls.Switch().Should().ContainEquivalentOf(
-            Events.Switch.TurnOn(entityBuilder.CreateSwitchEntity("switch.adaptive_lighting_sleep_mode_testroom"))
-        );
-    }
-
-    [Fact]
-    public void OverrideEventTurnsOffCircadianSwitch()
-    {
-        //Arrange
-        sut.Config.Room().CircadianSwitchEntity = entityBuilder.CreateEntity<SwitchEntity>("switch.adaptive_lighting_testroom", "on");
-        sut.Init();
-
-        //Act
-        var oldState = new EntityState
-        {
-            State = "on",
-            Context = new Context
-            {
-                UserId = "EUGENE"
-            },
-            AttributesJson = new LightTurnOnParameters
-            {
-                Brightness = 0
-            }.AsJsonElement()
-        };
-
-        var newState = new EntityState
-        {
-            State = "on",
-            Context = new Context
-            {
-                UserId = "EUGENE"
-            },
-            AttributesJson = new LightTurnOnParameters
-            {
-                Brightness = 100
-            }.AsJsonElement()
-        };
-
-        state.Change(sut.Config.Light(), oldState, newState);
-
-        //Assert
-        state.ServiceCalls.Switch().Should().ContainEquivalentOf(
-            Events.Switch.TurnOff(sut.Config.Room().CircadianSwitchEntity!)
-        );
-    }
-
-    [Fact]
-    public void OverrideEventTurnsDoesNotAttemptToTurnOffCircadianSwitchIfItDoesNotExist()
-    {
-        //Arrange
-        sut.Init();
-
-        //Act
-        var oldState = new EntityState
-        {
-            State = "on",
-            Context = new Context
-            {
-                UserId = "EUGENE"
-            },
-            AttributesJson = new LightTurnOnParameters
-            {
-                Brightness = 0
-            }.AsJsonElement()
-        };
-
-        var newState = new EntityState
-        {
-            State = "on",
-            Context = new Context
-            {
-                UserId = "EUGENE"
-            },
-            AttributesJson = new LightTurnOnParameters
-            {
-                Brightness = 100
-            }.AsJsonElement()
-        };
-
-        state.Change(sut.Config.Light(), oldState, newState);
-
-        //Assert
-        state.ServiceCalls.Switch().Should().BeEquivalentTo(new[]
-            { Events.Switch.TurnOn(sut.Config.Room().ManagerEnabled) }
-        );
-    }
 
     [Fact]
     public void HouseModeSetToNightTurnsOffAllNonNightControlEntitiesAndTurnsOnNightControlEntities()
@@ -274,14 +161,117 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
 
         //Assert
-        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(new[]
-            {
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
+            [
                 Events.Light.TurnOff(sut.Config.Light()),
-                Events.Light.TurnOff(sut.Config.Light(2)),
-                Events.Light.TurnOff(sut.Config.NightLight()),
-                Events.Light.TurnOff(sut.Config.NightLight(2)),
+                Events.Light.TurnOn(sut.Config.NightLight()),
                 Events.Light.TurnOn(sut.Config.NightLight(2))
-            }
+            ]
+        );
+    }
+
+    [Fact]
+    public void SetBrightnessWhenOnDayModeIfCapable()
+    {
+        // Arrange
+        state.Change(sut.Config.Light(), new
+        {
+            brightness = 0,
+            supported_color_modes = new[] { "brightness" }
+        });
+        state.Change(sut.Config.Room().NightTimeEntity!, "day");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Pir1(), "on");
+
+
+        //Assert
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
+            [
+                Events.Light.TurnOn(sut.Config.Light(), new LightTurnOnParameters() { BrightnessPct = 100} ),
+                Events.Light.TurnOn(sut.Config.Light(2) ),
+            ]
+        );
+    }
+
+    [Fact]
+    public void SetBrightnessWhenOnNightModeIfCapable()
+    {
+        // Arrange
+        state.Change(sut.Config.NightLight(), new
+        {
+            brightness = 0,
+            supported_color_modes = new[] { "brightness" }
+        });
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Pir1(), "on");
+
+
+        //Assert
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
+            [
+                Events.Light.TurnOn(sut.Config.NightLight(), new LightTurnOnParameters() { BrightnessPct = 1} ),
+                Events.Light.TurnOn(sut.Config.NightLight(2) ),
+            ]
+        );
+    }
+
+
+    [Fact]
+    public void SetColorTempWhenOnDayModeIfCapable()
+    {
+        // Arrange
+        state.Change(sut.Config.Light(), new
+        {
+            brightness = 0,
+            max_color_temp_kelvin = 4000,
+            supported_color_modes = new[] { "color_temp" }
+        });
+        state.Change(sut.Config.Room().NightTimeEntity!, "day");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Pir1(), "on");
+
+
+        //Assert
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
+            [
+                Events.Light.TurnOn(sut.Config.Light(), new LightTurnOnParameters() { BrightnessPct = 100, Kelvin = 4000} ),
+                Events.Light.TurnOn(sut.Config.Light(2) ),
+            ]
+        );
+    }
+
+
+
+    [Fact]
+    public void SetColorTempWhenOnNightModeIfCapable()
+    {
+        // Arrange
+        state.Change(sut.Config.NightLight(), new
+        {
+            brightness = 0,
+            min_color_temp_kelvin = 2000,
+            supported_color_modes = new[] { "color_temp" }
+        });
+        state.Change(sut.Config.Room().NightTimeEntity!, "night");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Pir1(), "on");
+
+
+        //Assert
+        state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
+            [
+                Events.Light.TurnOn(sut.Config.NightLight(), new LightTurnOnParameters() { BrightnessPct = 1, Kelvin = 2000} ),
+                Events.Light.TurnOn(sut.Config.NightLight(2) ),
+            ]
         );
     }
 
@@ -332,7 +322,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
     public void LightDontTurnOnIfOffAndConditionEntityStateIsNotMet()
     {
         // Arrange
-        sut.Config.Room().ConditionEntity      = entityBuilder.CreateSensorEntity("sensor.condition_entity");
+        sut.Config.Room().ConditionEntity = entityBuilder.CreateSensorEntity("sensor.condition_entity");
         sut.Config.Room().ConditionEntityState = "under";
         sut.Init();
 
@@ -476,7 +466,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
             },
             State = "on"
         });
-
+        sut.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(150).Ticks);
         state.Change(sut.Config.Light(), new EntityState
         {
             Context = new Context
@@ -509,12 +499,92 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
             },
             State = "on"
         });
+        sut.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(150).Ticks);
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(sut.Config.Room().OverrideTimeout).Ticks);
 
         // Assert
         state.ServiceCalls.Should().ContainEquivalentOf(
             Events.Light.TurnOff(sut.Config.Light())
         );
+    }
+
+    [Fact]
+    public void LightTurnedOnManuallyWithoutSpecifiedBrightnessDuringDayMode()
+    {
+        // Arrange
+        state.Change(sut.Config.Room().NightTimeEntity!, "day");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Light(), new EntityState
+        {
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on",
+            AttributesJson = StateChangeManager.ToAttributeJson(
+                new
+                {
+                    supported_color_modes = new[] { "brightness" }
+                })
+        });
+        sut.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(150).Ticks);
+
+        // Assert
+        state.ServiceCalls.Should().ContainEquivalentOf(
+            Events.Light.TurnOn(sut.Config.Light(), new LightTurnOnParameters() { BrightnessPct = 100 })
+        );
+    }
+
+    [Fact]
+    public void LightTurnedOnManuallyWithSpecifiedBrightnessIsNotOverridenByLightManger()
+    {
+        // Arrange
+        // state.Change(sut.Config.Room().NightTimeEntity!, "day");
+        sut.Init();
+
+        // Act
+        state.Change(sut.Config.Light(), new EntityState
+        {
+            EntityId = sut.Config.Light().EntityId,
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on",
+            AttributesJson = StateChangeManager.ToAttributeJson(
+                new
+                {
+                    brightness = 0,
+                    supported_color_modes = new[] { "brightness" }
+                })
+        });
+        sut.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(50).Ticks);
+        state.Change(sut.Config.Light(), new EntityState
+        {
+            EntityId = sut.Config.Light().EntityId,
+            Context = new Context
+            {
+                UserId = "EUGENE"
+            },
+            State = "on",
+            AttributesJson = StateChangeManager.ToAttributeJson(
+                new
+                {
+                    brightness = 50,
+                    supported_color_modes = new[] { "brightness" }
+                })
+        });
+        sut.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(150).Ticks);
+
+        // Assert
+        state.ServiceCalls.Filter(Domain.Light).Should().NotContainEquivalentOf(
+            Events.Light.TurnOn(sut.Config.Light(), new LightTurnOnParameters() { BrightnessPct = 100 })
+        );
+        //state.ServiceCalls.Filter(Domain.Logbook).Should().ContainEquivalentOf(
+        //    Events.Logbook.Log("Override attributes supplied", domain: "light", entityId: sut.Config.Light().EntityId, name: sut.Config.Light().EntityId)
+        //);
     }
 
 
@@ -707,10 +777,10 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
             },
             State = "on"
         });
+        sut.Scheduler.AdvanceBy(TimeSpan.FromMilliseconds(150).Ticks);
         state.Change(sut.Config.Pir1(), "on");
-
         // Assert
-        state.ServiceCalls.Should().NotContainEquivalentOf(
+        state.ServiceCalls.Filter(Domain.Light).Should().NotContainEquivalentOf(
             Events.Light.TurnOn(sut.Config.Light(2))
         );
     }

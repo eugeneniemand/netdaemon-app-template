@@ -18,7 +18,7 @@ public class AlexaMock(IServices services) : IAlexa
         services.Notify.AlexaMedia(message, target: mediaPlayer, data: new { type = "announce" });
     }
 
-    public Dictionary<string, AlexaPeopleConfig> People { get; } = new();
+    public Dictionary<string, AlexaPeopleConfig> People { get; } = [];
 
     public virtual void Prompt(string mediaPlayer, string message, string eventId)
     {

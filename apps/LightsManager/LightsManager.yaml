@@ -10,13 +10,12 @@ LightManagerV2.ManagerConfig:
       OverrideTimeout: 1800
       PresenceEntities:
         - binary_sensor.office_motion
-        - binary_sensor.study
       KeepAliveEntities:
         - binary_sensor.eugenes_macbook_active
         - binary_sensor.haileys_macbook_air_active
         - binary_sensor.eugene_desktop_active
       ControlEntities:
-        - switch.office_skylight
+        - light.office
       MonitorEntities:
         - light.office_1
         - light.office_2
@@ -40,15 +39,8 @@ LightManagerV2.ManagerConfig:
         - binary_sensor.dining
       ControlEntities:
         - light.dining
-        - light.dining_wall
       MonitorEntities:
-        - light.dining_1
-        - light.dining_2
-        - light.dining_3
-        - light.dining_4
-        - light.dining_5
-        - light.dining_wall_1
-        - light.dining_wall_2
+        - light.dining        
       Timeout: 300
       NightTimeout: 90
       LuxEntity: sensor.dining_lux
@@ -58,7 +50,7 @@ LightManagerV2.ManagerConfig:
         - night
         - sleeping
       NightControlEntities:
-        - light.dining_1
+        - light.dining
       # CircadianSwitchEntity: switch.adaptive_lighting_dining
       RandomStates:
         - armed_home
@@ -85,7 +77,7 @@ LightManagerV2.ManagerConfig:
         - night
         - sleeping
       NightControlEntities:
-        - light.landing_7
+        - light.landing
       Timeout: 90
       LuxEntity: sensor.landing_lux
       LuxlimitEntity: input_number.landing_lux_limit
@@ -277,22 +269,15 @@ LightManagerV2.ManagerConfig:
       RandomStates:
         - armed_away
 
-    - Name: Lounge
+    - Name: Sitting Room
       Timeout: 300
       NightTimeout: 300
       PresenceEntities:
-        - binary_sensor.lounge_motion
-        - binary_sensor.lounge
+        - binary_sensor.sitting_room_motion
       ControlEntities:
-        - light.lounge
-      MonitorEntities:
-        - light.lounge_front
-        - light.lounge_back
-      LuxEntity: sensor.lounge_lux
-      LuxlimitEntity: input_number.lounge_lux_limit
-      KeepAliveEntities:
-        - media_player.lounge
-        - media_player.lounge_tv
+        - light.floor
+      LuxEntity: sensor.sitting_room_lux
+      LuxlimitEntity: input_number.sitting_room_lux_limit
       NightTimeEntity: input_select.house_mode
       NightTimeEntityStates:
         - night

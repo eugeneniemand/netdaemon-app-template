@@ -39,8 +39,8 @@ public static class Startup
 
     private static ManagerConfig GetManagerConfig(StateChangeManager state, TestEntityBuilder entityBuilder)
     {
-#pragma warning disable CS8604
-#pragma warning disable CS8601
+//#pragma warning disable CS8604
+//#pragma warning disable CS8601
         var cfg = new ManagerConfig
         {
             NdUserId           = "ND_USER_ID_1234",
@@ -48,24 +48,24 @@ public static class Startup
             MaxDuration        = "00:15:00",
             GuardTimeout       = 301,
             RandomSwitchEntity = entityBuilder.CreateSwitchEntity("switch.random"),
-            Rooms = new List<Manager>
-            {
+            Rooms =
+            [
                 new()
                 {
                     Name = "TestRoom",
 
-                    PresenceEntities      = new List<BinarySensorEntity> { entityBuilder.CreateBinarySensorEntity("binary_sensor.pir") },
-                    ControlEntities       = new List<LightEntity> { entityBuilder.CreateLightEntity("light.bulb_1"), entityBuilder.CreateLightEntity("light.bulb_2") },
-                    KeepAliveEntities     = new List<BinarySensorEntity> { entityBuilder.CreateBinarySensorEntity("binary_sensor.keep_alive") },
-                    NightControlEntities  = new List<LightEntity> { entityBuilder.CreateLightEntity("light.bulb_3"), entityBuilder.CreateLightEntity("light.bulb_4") },
+                    PresenceEntities      = [entityBuilder.CreateBinarySensorEntity("binary_sensor.pir")],
+                    ControlEntities       = [entityBuilder.CreateLightEntity("light.bulb_1"), entityBuilder.CreateLightEntity("light.bulb_2")],
+                    KeepAliveEntities     = [entityBuilder.CreateBinarySensorEntity("binary_sensor.keep_alive")],
+                    NightControlEntities  = [entityBuilder.CreateLightEntity("light.bulb_3"), entityBuilder.CreateLightEntity("light.bulb_4")],
                     NightTimeEntity       = entityBuilder.CreateInputSelectEntity("input_select.house_mode"),
-                    NightTimeEntityStates = new List<string> { "night" },
+                    NightTimeEntityStates = ["night"],
                     Timeout               = 90,
                     NightTimeout          = 30,
                     OverrideTimeout       = 1800,
                     RandomStates          = { "armed_away", "armed_night" }
                 }
-            }
+            ]
         };
 
         foreach (var entity in cfg.Room().PresenceEntities) state.Change(entity, "off");
@@ -74,7 +74,7 @@ public static class Startup
         foreach (var entity in cfg.Room().KeepAliveEntities) state.Change(entity, "off");
         cfg.Room().ManagerEnabled = entityBuilder.CreateSwitchEntity("switch.light_manager_test");
         return cfg;
-#pragma warning restore CS8601
-#pragma warning restore CS8604
+//#pragma warning restore CS8601
+//#pragma warning restore CS8604
     }
 }

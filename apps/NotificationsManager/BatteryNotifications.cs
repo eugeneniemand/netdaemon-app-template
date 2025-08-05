@@ -5,8 +5,8 @@ using Cronos;
 namespace daemonapp.apps.NotificationsManager;
 
 [NetDaemonApp]
-[Focus]
-public class BatteryNotifications(IHaContext ha, IEntities entities, IServices services, IHaContext context, IScheduler scheduler, IAlexa alexa, ILogger<BatteryNotifications> logger) : IAsyncInitializable
+//[Focus]
+public class BatteryNotifications(IHaContext ha, IEntities entities, IServices services, IHaContext context, IAlexa alexa, ILogger<BatteryNotifications> logger) : IAsyncInitializable
 {
     private readonly IList<BatteryNotificationsConfig> _config = new List<BatteryNotificationsConfig>
     {

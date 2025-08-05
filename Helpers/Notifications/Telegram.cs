@@ -119,3 +119,13 @@ public record Context(
     [property: JsonPropertyName("parent_id")] string? ParentId,
     [property: JsonPropertyName("user_id")] string? UserId
 );
+
+
+public record TelegramChats(
+    [property: JsonPropertyName("chats")] List<TelegramChatMessage> Chats
+);
+
+public record TelegramChatMessage(
+    [property: JsonPropertyName("chat_id")] long ChatId,
+    [property: JsonPropertyName("message_id")] long MessageId
+);

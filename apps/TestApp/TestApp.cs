@@ -6,7 +6,7 @@ using Niemand.Helpers;
 namespace Niemand.TestApp;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class TestApp
 {
     public TestApp(IHaContext haContext, IEntities entities, IHomeAssistantApiManager api, ILogger<TestApp> logger, IAlexa alexa)

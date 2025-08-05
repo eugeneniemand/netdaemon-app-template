@@ -74,20 +74,14 @@ public class Office : IAsyncInitializable, IAsyncDisposable
             _sleepDelaySchedule?.Dispose();
             _acSwitchOffDelaySchedule?.Dispose();
         });
-
-        _entities.BinarySensor.Study.StateChanges().Where(s => s.New.IsOn()).Subscribe(_ =>
-        {
-            _sleepDelaySchedule?.Dispose();
-            _acSwitchOffDelaySchedule?.Dispose();
-        });
-
+       
         // Door Sensor
-        _entities.BinarySensor.LumiLumiSensorMagnetAq2OnOff.StateChanges()
-                 .WhenStateIsFor(s => s.IsOn(), TimeSpan.FromMinutes(2), _scheduler)
-                 .Subscribe(_ => TurnOffAcWhenDoorLeftOpen());
-        _entities.BinarySensor.LumiLumiSensorMagnetAq2OnOff.StateChanges()
-                 .Where(s => s.New.IsOff())
-                 .Subscribe(_ => _acSwitchOffDelaySchedule?.Dispose());
+        //_entities.BinarySensor.OfficeDoor.StateChanges()
+        //         .WhenStateIsFor(s => s.IsOn(), TimeSpan.FromMinutes(2), _scheduler)
+        //         .Subscribe(_ => TurnOffAcWhenDoorLeftOpen());
+        //_entities.BinarySensor.OfficeDoor.StateChanges()
+        //         .Where(s => s.New.IsOff())
+        //         .Subscribe(_ => _acSwitchOffDelaySchedule?.Dispose());
     }
 
     private async Task SetupEugeneDesktopActiveSensor()
@@ -104,16 +98,21 @@ public class Office : IAsyncInitializable, IAsyncDisposable
         if (!DateTime.TryParse(_entities.Sensor.EugeneDesktopLastactive.State, out var lastActive)) return;
         if ((DateTime.Now - lastActive).TotalMinutes <= 10) return;
 
-        _alexa.Announce(_entities.MediaPlayer.Office.EntityId, "Your PC is about to sleep");
+        //_alexa.Announce(_entities.MediaPlayer.Office.EntityId, "Your PC is about to sleep");
         _services.Notify.Eugene("Your PC will sleep in 30 seconds");
         _sleepDelaySchedule = _scheduler.Schedule(TimeSpan.FromSeconds(30), () => _entities.Button.EugeneDesktopSleep.Press());
     }
 
     private void TurnOffAcWhenDoorLeftOpen()
     {
-        if (_entities.Climate.Office.IsUnavailable() || _entities.Climate.Office.IsOff()) return;
+        //if (_entities.Climate.Office.IsUnavailable() || _entities.Climate.Office.IsOff()) return;
 
-        _alexa.Announce(_entities.MediaPlayer.Downstairs.EntityId, "The Office AC will be turned off if the door is not closed");
-        _acSwitchOffDelaySchedule = _scheduler.Schedule(TimeSpan.FromSeconds(60), () => _entities.Climate.Office.TurnOff());
+        //// More than one AC is on and all doors are closed so most likely cooling the whole house
+        //if (_entities.Climate.EnumerateAll().Any(c => c.Registration.Labels.Any(l => string.Equals(l.Name, "ac", StringComparison.OrdinalIgnoreCase)) && c.IsOn()) &&
+        //   !_entities.BinarySensor.EnumerateAll().Any(e => e.EntityId.Contains("door", StringComparison.OrdinalIgnoreCase) && e.IsOn()))
+        //    return;
+
+        //_alexa.Announce(_entities.MediaPlayer.Downstairs.EntityId, "The Office AC will be turned off if the door is not closed");
+        //_acSwitchOffDelaySchedule = _scheduler.Schedule(TimeSpan.FromSeconds(60), () => _entities.Climate.Office.TurnOff());
     }
 }

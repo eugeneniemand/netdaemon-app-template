@@ -1,4 +1,5 @@
 using System.Reflection;
+//using AutomationPipelines.Extensions;
 using HomeAssistantGenerated.Logging;
 using Microsoft.Extensions.Hosting;
 using NetDaemon.Extensions.MqttEntityManager;
@@ -9,7 +10,7 @@ using NetDaemon.Runtime;
 try
 {
     Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
+    
     await Host.CreateDefaultBuilder(args)
               .UseNetDaemonAppSettings()
               .UseCustomLogging()
@@ -20,9 +21,10 @@ try
                       .AddAppsFromAssembly(Assembly.GetExecutingAssembly())
                       .AddNetDaemonStateManager()
                       .AddNetDaemonScheduler()
+                      //.AddAutomationPipelines()
                       .AddHomeAssistantGenerated()
                       .SetupDependencies()
-              )
+              ) 
               .Build()
               .RunAsync()
               .ConfigureAwait(false);

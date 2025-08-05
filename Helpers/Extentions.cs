@@ -115,5 +115,6 @@ public static class Extentions
     }
 
 
-    public static bool LastChangedOlderThan(this Entity entityState, TimeSpan timeSpan) => DateTime.Now - (entityState.EntityState?.LastChanged ?? DateTime.Today) > timeSpan;
+    public static bool LastChangedOlderThan(this Entity entityState, TimeSpan timeSpan) => DateTime.Now - (entityState.EntityState?.LastChanged ?? DateTime.Today) >= timeSpan;
+    public static bool LastChangedNewerThan(this Entity entityState, TimeSpan timeSpan) => DateTime.Now - (entityState.EntityState?.LastChanged ?? DateTime.Today) <= timeSpan;
 }

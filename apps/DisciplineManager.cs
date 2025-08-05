@@ -27,23 +27,23 @@ public class DisciplineManager : IAsyncInitializable, IDisposable
     {
         await CreateSwitch();
 
-        DisciplineManagerSwitch.StateAllChanges()
-                               .Where(s => s.New.IsOn())
-                               .Subscribe(_ =>
-                               {
-                                   _entities.Switch.JaydenRaspberrypi.TurnOff();
-                                   _entities.Switch.JaydenAppletv.TurnOff();
-                                   _entities.Switch.JaydenIpad.TurnOff();
-                               });
+        //DisciplineManagerSwitch.StateAllChanges()
+        //                       .Where(s => s.New.IsOn())
+        //                       .Subscribe(_ =>
+        //                       {
+        //                           _entities.Switch.JaydenRaspberrypi.TurnOff();
+        //                           _entities.Switch.JaydenAppletv.TurnOff();
+        //                           _entities.Switch.JaydenIpad.TurnOff();
+        //                       });
 
-        DisciplineManagerSwitch.StateAllChanges()
-                               .Where(s => s.New.IsOff())
-                               .Subscribe(_ =>
-                               {
-                                   _entities.Switch.JaydenRaspberrypi.TurnOn();
-                                   _entities.Switch.JaydenAppletv.TurnOn();
-                                   _entities.Switch.JaydenIpad.TurnOn();
-                               });
+        //DisciplineManagerSwitch.StateAllChanges()
+        //                       .Where(s => s.New.IsOff())
+        //                       .Subscribe(_ =>
+        //                       {
+        //                           _entities.Switch.JaydenRaspberrypi.TurnOn();
+        //                           _entities.Switch.JaydenAppletv.TurnOn();
+        //                           _entities.Switch.JaydenIpad.TurnOn();
+        //                       });
 
         _entities.MediaPlayer.LoungeTv.StateChanges()
                  .Where(s => s.New.IsOn())
