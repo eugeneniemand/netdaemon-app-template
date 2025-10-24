@@ -46,7 +46,7 @@ public class RoutineTests(RoutinesSut sut, StateChangeManager state, IEntities e
 
         // Act
         var _ = sut.Instance;
-        state.Change(entities.BinarySensor.Hallway, "on");
+        state.Change(entities.BinarySensor.KonnectedHallway, "on");
         state.Change(entities.BinarySensor.LandingMotion, "on");
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
 

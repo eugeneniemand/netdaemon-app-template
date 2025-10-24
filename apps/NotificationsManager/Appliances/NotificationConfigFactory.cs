@@ -4,16 +4,16 @@ namespace NetDaemon;
 
 public class NotificationConfigFactory : INotificationConfigFactory
 {
-    public IApplianceNotificationConfig CreateConfig(string applianceType, IEntities entities)
+    public IApplianceNotificationConfig CreateConfig(string applianceType, IHaContext ha, IEntities entities)
     {
         switch (applianceType)
         {
             case "Dishwasher":
                 return new DishwasherNotificationConfig(entities);
             case "Washer":
-                return new WasherNotificationConfig(entities);
+                return new WasherNotificationConfig(ha, entities);
             case "Dryer":
-                return new DryerNotificationConfig(entities);
+                return new DryerNotificationConfig(ha, entities);
             default:
                 throw new ArgumentException($"Invalid appliance type: {applianceType}");
         }

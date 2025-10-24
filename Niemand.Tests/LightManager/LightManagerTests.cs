@@ -214,7 +214,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         //Assert
         state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
             [
-                Events.Light.TurnOn(sut.Config.NightLight(), new LightTurnOnParameters() { BrightnessPct = 1} ),
+                Events.Light.TurnOn(sut.Config.NightLight(), new LightTurnOnParameters() { BrightnessPct = 2} ),
                 Events.Light.TurnOn(sut.Config.NightLight(2) ),
             ]
         );
@@ -241,7 +241,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         //Assert
         state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
             [
-                Events.Light.TurnOn(sut.Config.Light(), new LightTurnOnParameters() { BrightnessPct = 100, Kelvin = 4000} ),
+                Events.Light.TurnOn(sut.Config.Light(), new LightTurnOnParameters() { BrightnessPct = 100, ColorTempKelvin = 4000, Transition = 0 }),
                 Events.Light.TurnOn(sut.Config.Light(2) ),
             ]
         );
@@ -269,7 +269,7 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
         //Assert
         state.ServiceCalls.Filter(Domain.Light).Should().BeEquivalentTo(
             [
-                Events.Light.TurnOn(sut.Config.NightLight(), new LightTurnOnParameters() { BrightnessPct = 1, Kelvin = 2000} ),
+                Events.Light.TurnOn(sut.Config.NightLight(), new LightTurnOnParameters() { BrightnessPct = 2, ColorTempKelvin = 2000, Transition = 0 }),
                 Events.Light.TurnOn(sut.Config.NightLight(2) ),
             ]
         );

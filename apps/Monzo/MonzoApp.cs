@@ -1,6 +1,8 @@
 ﻿// NetDaemon App
 using NetDaemon.HassModel.Integration;
+using System;
 using System.IO;
+using System.Threading;
 using System.Reactive.Concurrency;
 
 [NetDaemonApp]
@@ -36,7 +38,22 @@ public class MonzoApp : IAsyncInitializable
         // This is a one-time setup step
         _ha.Events.Filter<MonzoOAuthCallback>("monzo_oauth_redirect_received").SubscribeAsync(async e => await HandleOAuthRedirect(e.Data));
 
-        await _monzoClient.WhoAmIAsync();
+        _monzoClient.GetAuthorizeUrl();
+
+        try
+        {
+            await _monzoClient.WhoAmIAsync(cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Unable to reach Monzo during initialization; will retry on the next scheduled run.");
+        }
+
+        await ReplensihBalance();
 
         _scheduler.SchedulePeriodic(TimeSpan.FromMinutes(5), async () => await ReplensihBalance());
     }

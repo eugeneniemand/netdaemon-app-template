@@ -17,11 +17,15 @@ public class Travel(IHaContext haContext, IEntities entities, IServices services
 
     public Task InitializeAsync(CancellationToken cancellationToken)
     {
-        StoreTrains(_trainsHome, entities.Sensor.TrainsToHome);
-        StoreTrains(_trainsWork, entities.Sensor.TrainsToWork);
 
-        entities.Sensor.TrainsToHome.StateChanges().Subscribe(state => StoreTrains(_trainsHome, entities.Sensor.TrainsToHome));
-        entities.Sensor.TrainsToWork.StateChanges().Subscribe(state => StoreTrains(_trainsWork, entities.Sensor.TrainsToWork));
+        NumericSensorEntity paddingtonToHeathrowCentral = entities.Sensor.PaddingtonToHeathrowCentral;
+        NumericSensorEntity heathrowT5ToPaddington = entities.Sensor.HeathrowT5ToPaddington;
+
+        StoreTrains(_trainsHome, paddingtonToHeathrowCentral);
+        StoreTrains(_trainsWork, heathrowT5ToPaddington);
+
+        paddingtonToHeathrowCentral.StateChanges().Subscribe(state => StoreTrains(_trainsHome, paddingtonToHeathrowCentral));
+        heathrowT5ToPaddington.StateChanges().Subscribe(state => StoreTrains(_trainsWork, heathrowT5ToPaddington));
 
         foreach (var person in people.Persons)
         {
@@ -33,8 +37,8 @@ public class Travel(IHaContext haContext, IEntities entities, IServices services
             if (_personDirection.ContainsKey(person.Person.Attributes.FriendlyName))
                 person.DirectionSensor.StateChanges().Subscribe(state =>
                 {
-                    StoreTrains(_trainsHome, entities.Sensor.TrainsToHome);
-                    StoreTrains(_trainsWork, entities.Sensor.TrainsToWork);
+                    StoreTrains(_trainsHome, paddingtonToHeathrowCentral);
+                    StoreTrains(_trainsWork, heathrowT5ToPaddington);
                     
                     _personDirection[person.Person.Attributes.FriendlyName] = DirectionOfTravelMapper.Map(state.New?.State);
                 });

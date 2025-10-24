@@ -4,10 +4,12 @@ namespace Niemand.NotificationManager;
 
 public class WasherNotificationConfig : IApplianceNotificationConfig
 {
+    private readonly IHaContext _ha;
     private readonly IEntities _entities;
 
-    public WasherNotificationConfig(IEntities entities)
+    public WasherNotificationConfig(IHaContext ha, IEntities entities)
     {
+        _ha = ha;
         _entities = entities;
     }
 
@@ -25,6 +27,6 @@ public class WasherNotificationConfig : IApplianceNotificationConfig
     };
 
     public string Name => "Washer";
-    public SensorEntity RemainingTime => _entities.Sensor.WashingMachineWasherCompletionTime;
+    public NumericSensorEntity RemainingTime => new NumericSensorEntity(_ha, _entities.Sensor.WashingMachineWasherCompletionTime.EntityId);
     public SensorEntity Status => _entities.Sensor.WashingMachineWasherMachineState;
 }

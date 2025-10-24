@@ -17,7 +17,7 @@ public class ApplianceNotification : IApplianceNotification
     private readonly Dictionary<string, CycleState> _cycleStates;
 
     // Sensor for remaining time until the appliance finishes
-    private readonly SensorEntity _remainingTime;
+    private readonly NumericSensorEntity _remainingTime;
 
     // Scheduler for timing-related operations
     private readonly IScheduler _scheduler;
@@ -163,10 +163,10 @@ public class ApplianceNotification : IApplianceNotification
     {
         get
         {
-            if (string.IsNullOrEmpty(_remainingTime.State))
+            if (string.IsNullOrEmpty(_remainingTime.State.ToString()))
                 return TimeSpan.Zero;
 
-            if (DateTime.TryParse(_remainingTime.State, out var finishTime))
+            if (DateTime.TryParse(_remainingTime.State.ToString(), out var finishTime))
                 return finishTime > _scheduler.Now.LocalDateTime ? finishTime - _scheduler.Now.LocalDateTime : TimeSpan.Zero; // if the state is stuck and finsih time is in the past then return zero i.e. invalid
 
             _logger.LogWarning("Invalid remaining time state for {_appliance}: {_remainingTime.State}", _appliance, _remainingTime.State);

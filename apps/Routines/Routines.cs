@@ -10,9 +10,9 @@ public class Routines
 {
     public Routines(IHaContext haContext, IEntities entities, IServices services, IScheduler scheduler, People people, ILogger<Routines> logger)
     {
-        
-        entities.Sensor.TrainsToHome.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainshomemarkdown, entities.Sensor.TrainsToHome));
-        entities.Sensor.TrainsToHome.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainsworkmarkdown, entities.Sensor.TrainsToWork));
+
+        entities.Sensor.PaddingtonToHeathrowCentral.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainshomemarkdown, entities.Sensor.PaddingtonToHeathrowCentral));
+        entities.Sensor.HeathrowT5ToPaddington.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainsworkmarkdown, entities.Sensor.HeathrowT5ToPaddington));
 
         // Volume Control
         // Set volume to 10% at night and 30% during the day
@@ -28,7 +28,7 @@ public class Routines
                     break;
             }
         });
-        
+
         // Arriving Home
         foreach (var person in people.Persons)
             person.Person.StateChanges()
@@ -49,13 +49,18 @@ public class Routines
 
                       if (string.Equals(entities.Sun.Sun.State, "below_horizon", StringComparison.InvariantCultureIgnoreCase))
                       {
-                          logger.LogInformation("Turning on Outside Front Lights");
-                          entities.Light.OutsideFront.TurnOn();
+                          logger.LogInformation("Turning on arriving home lights for {person}", person);
+                          entities.Light.Sofit.TurnOn();
+                          entities.Light.Gate.TurnOn();
                           entities.Light.Entrance.TurnOn();
-                          entities.Light.Hallway.TurnOn();
+                          entities.Light.Hallway2.TurnOn();
                           scheduler.Schedule(TimeSpan.FromMinutes(10), () =>
                           {
-                              entities.Light.OutsideFront.TurnOff();
+                                logger.LogInformation("Turning off arriving home lights for {person}", person);
+                                entities.Light.Sofit.TurnOff();
+                                entities.Light.Gate.TurnOff();
+                                entities.Light.Entrance.TurnOff();
+                                entities.Light.Hallway2.TurnOff();
                           });
                       }
 
@@ -99,7 +104,7 @@ public class Routines
                       logger.LogInformation("Disarming Alarm - Motion on stairs");
                       entities.AlarmControlPanel.Alarmo.AlarmDisarm();
                   });
-        
+
     }
 }
 

@@ -32,6 +32,7 @@ public static class Startup
         services.AddTransient<INotificationConfigFactory, NotificationConfigFactory>();
         services.AddTransient<IApplianceFactory, ApplianceFactory>();
         services.AddTransient<LightManagerSut>();
+        services.AddTransient<KitchenSut>();
         services.AddTransient<RoutinesSut>();
         services.AddTransient<NotificationManagerSut>();
         services.AddTransient<People>();

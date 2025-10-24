@@ -1,33 +1,34 @@
 ﻿using NetDaemon.Extensions.MqttEntityManager;
 using NetDaemon.Helpers;
 using Niemand.Helpers;
+using NetDaemon.Extensions.Observables;
 
 namespace Niemand;
 
 [NetDaemonApp]
-// [Focus]
+//[Focus]
 public class Office : IAsyncInitializable, IAsyncDisposable
 {
-    private const    string             EugeneDesktopActive = "binary_sensor.eugene_desktop_active";
-    private readonly IAlexa             _alexa;
-    private readonly IEntities          _entities;
+    private const string EugeneDesktopActive = "binary_sensor.eugene_desktop_active";
+    private readonly IAlexa _alexa;
+    private readonly IEntities _entities;
     private readonly IMqttEntityManager _entityManager;
-    private readonly IHaContext         _haContext;
-    private readonly ILogger<Office>    _logger;
-    private readonly IScheduler         _scheduler;
-    private readonly IServices          _services;
-    private          IDisposable        _acSwitchOffDelaySchedule;
-    private          IDisposable        _sleepDelaySchedule;
+    private readonly IHaContext _haContext;
+    private readonly ILogger<Office> _logger;
+    private readonly IScheduler _scheduler;
+    private readonly IServices _services;
+    private IDisposable _acSwitchOffDelaySchedule;
+    private IDisposable _sleepDelaySchedule;
 
     public Office(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, IMqttEntityManager entityManager, ILogger<Office> logger)
     {
-        _haContext     = haContext;
-        _entities      = entities;
-        _services      = services;
-        _alexa         = alexa;
-        _scheduler     = scheduler;
+        _haContext = haContext;
+        _entities = entities;
+        _services = services;
+        _alexa = alexa;
+        _scheduler = scheduler;
         _entityManager = entityManager;
-        _logger        = logger;
+        _logger = logger;
 
         _logger.LogDebug("Office Started");
     }
@@ -60,6 +61,32 @@ public class Office : IAsyncInitializable, IAsyncDisposable
                      _sleepDelaySchedule?.Dispose();
                  });
 
+        _entities.Light.Office.SubscribeOn(
+            () =>
+            {
+                if (_entities.Light.Office.IsOn())
+                {
+                    _entities.Light.Office.TurnOn(brightnessPct: 71);
+                }
+            });
+
+        _haContext.Entity(EugeneDesktopActive).SubscribeOnOff(() =>
+        {
+            if (_entities.Light.Office.IsOn())
+            {
+                _entities.Light.Office.TurnOn(brightnessPct: 71);
+            }
+        },
+        () =>
+        {
+            if (_entities.Light.Office.IsOn())
+            {
+                _entities.Light.Office.TurnOn(brightnessPct: 100, transition: 5);
+            }
+
+        });
+
+
         // Motion Sensors
         _entities.BinarySensor.OfficeMotionOccupancy.StateChanges()
                  .WhenStateIsFor(s => s.IsOff(), TimeSpan.FromMinutes(5), _scheduler)
@@ -74,7 +101,7 @@ public class Office : IAsyncInitializable, IAsyncDisposable
             _sleepDelaySchedule?.Dispose();
             _acSwitchOffDelaySchedule?.Dispose();
         });
-       
+
         // Door Sensor
         //_entities.BinarySensor.OfficeDoor.StateChanges()
         //         .WhenStateIsFor(s => s.IsOn(), TimeSpan.FromMinutes(2), _scheduler)

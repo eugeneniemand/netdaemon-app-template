@@ -4,5 +4,5 @@ namespace NetDaemon;
 
 public interface INotificationConfigFactory
 {
-    IApplianceNotificationConfig CreateConfig(string applianceType, IEntities entities);
+    IApplianceNotificationConfig CreateConfig(string applianceType, IHaContext ha, IEntities entities);
 }

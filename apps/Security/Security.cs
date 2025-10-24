@@ -7,7 +7,7 @@ using Reactive.Boolean;
 namespace Niemand.SecurityApps;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, IServices services, ILogger<Security> logger, IAlexa alexa, IScheduler scheduler, Common common, PushNotifier pushNotifier, TelegramBotServices bot) : IAsyncInitializable
 {
     private readonly List<BinarySensorEntity> DoorsOpened = new();
@@ -25,12 +25,12 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         DrivewayMotionAlarm();
         DoorBeep();
         //DoorWatchdog();
-        //await DebugMethod();        
+        //await DebugMethod();
     }
 
     public void Beep(int beeps = 1, int delay = 100)
     {
-        BeepAsync(beeps, delay).GetAwaiter().GetResult(); 
+        BeepAsync(beeps, delay).GetAwaiter().GetResult();
     }
 
 
@@ -62,10 +62,10 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                         $"⏳Defer 5 min:/defer {door.EntityId} 5, ⏳Defer 30 min:/defer {door.EntityId} 30",
                         $"⏳Defer 1 hour:/defer {door.EntityId} 60, ⏳Defer 6 hours:/defer {door.EntityId} 360"
                     }
-            
+
         };
 
-        var jsonResult = await ha.CallServiceWithResponseAsync("telegram_bot", "send_message", null, serviceData);        
+        var jsonResult = await ha.CallServiceWithResponseAsync("telegram_bot", "send_message", null, serviceData);
         var chatMessages = JsonSerializer.Deserialize<TelegramChats>(jsonResult.ToString());
 
         DoorsMessagesSent.Add(door.EntityId, chatMessages.Chats[0]);
@@ -74,7 +74,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         {
             var chat = DoorsMessagesSent[door.EntityId];
             bot.DeleteMessage(new TelegramBotDeleteMessageParameters() { ChatId = chat.ChatId.ToString(), MessageId =chat.MessageId.ToString() });
-            
+
             await ha.CallServiceWithResponseAsync("telegram_bot", "send_message", null, serviceData);
         }
     }
@@ -184,16 +184,16 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                     .Subscribe(ha =>
                     {
                         logger.LogInformation("Alarm Triggered");
-                        pushNotifier.Notify(PushNotifier.Recipient.All, "🚨 Alarm Triggered 🚨", "Alarm triggered", 1, true, "Anticipate.caf");                        
+                        pushNotifier.Notify(PushNotifier.Recipient.All, "🚨 Alarm Triggered 🚨", "Alarm triggered", 1, true, "Anticipate.caf");
                     });
 
-        
+
     }
 
     private void AlarmStateChanged()
     {
         entities.AlarmControlPanel.Alarmo
-                    .StateChanges()                    
+                    .StateChanges()
                     .Subscribe(ha =>
                     {
                         if (ha.New.IsArmed())
@@ -312,7 +312,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                      Whisper = false
                  });
                  await scheduler.Sleep(TimeSpan.FromSeconds(30));
-                 entities.Light.OutsideGarage.TurnOn();
+                 entities.Light.Sofit.TurnOn();
                  alexa.TextToSpeech(new Alexa.Config()
                  {
                      Entity = entities.MediaPlayer.Master.EntityId,
@@ -323,7 +323,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                      Whisper = false
                  });
                  await scheduler.Sleep(TimeSpan.FromSeconds(300));
-                 entities.Light.OutsideGarage.TurnOff();
+                 entities.Light.Sofit.TurnOff();
              });
     }
 

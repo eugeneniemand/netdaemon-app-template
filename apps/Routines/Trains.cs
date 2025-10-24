@@ -6,7 +6,10 @@ public static class Trains
     {
         var start = trainSensor.Attributes?.JourneyStart;
         var end = trainSensor.Attributes?.JourneyEnd;
-        var nextTrains = trainSensor.Attributes?.NextTrains?.Select(n => JsonSerializer.Deserialize<TrainDetails>(n.ToString())).ToList();
+        var nextTrains = trainSensor.Attributes?.NextTrains?
+            .Select(n => JsonSerializer.Deserialize<TrainDetails>(n.ToString()))
+            .Where(t => string.Equals(t.OperatorName, "Elizabeth line", StringComparison.OrdinalIgnoreCase))
+            .ToList();
 
         if (nextTrains?.Count != 0 && trainSensor.EntityState != null)
         {

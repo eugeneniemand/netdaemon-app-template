@@ -10,7 +10,7 @@ public interface IApplianceNotificationConfig
     InputBooleanEntity Reminder { get; }
     MediaPlayerEntity MediaPlayer { get; }
     BinarySensorEntity MotionSensor { get; }
-    SensorEntity RemainingTime { get; }
+    NumericSensorEntity RemainingTime { get; }
     SensorEntity Status { get; }
     string Name { get; }
 }

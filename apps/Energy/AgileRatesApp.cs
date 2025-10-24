@@ -44,8 +44,8 @@ public class AgileRatesApp : IAsyncInitializable, IDisposable
     private static async Task<Dictionary<string, double>> GetRatesForToday()
     {
         var client  = new HttpClient();
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://api.octopus.energy/v1/products/AGILE-24-10-01/electricity-tariffs/E-1R-AGILE-24-10-01-A/standard-unit-rates/");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "sk_live_am45F158HgvTnJzEtj02EeQx:");
+        var request = new HttpRequestMessage(HttpMethod.Get, "https://api.octopus.energy/v1/products/AGILE-24-10-01/electricity-tariffs/E-1R-AGILE-24-10-01-H/standard-unit-rates/");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "sk_live_XgxpyECpM2lBhdGjDPXNgcP6s3Zhydf2");
         var response = client.SendAsync(request);
         if (response.Result.StatusCode != HttpStatusCode.OK) throw new Exception("Couldn't Get Rates");
 

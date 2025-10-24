@@ -4,10 +4,12 @@ namespace Niemand.NotificationManager;
 
 public class DryerNotificationConfig : IApplianceNotificationConfig
 {
+    private readonly IHaContext _ha;
     private readonly IEntities _entities;
 
-    public DryerNotificationConfig(IEntities entities)
+    public DryerNotificationConfig(IHaContext ha, IEntities entities)
     {
+        _ha = ha;
         _entities = entities;
     }
 
@@ -26,6 +28,6 @@ public class DryerNotificationConfig : IApplianceNotificationConfig
     };
 
     public string Name => "Dryer";
-    public SensorEntity RemainingTime => _entities.Sensor.TumbleDryerDryerCompletionTime;
+    public NumericSensorEntity RemainingTime => new NumericSensorEntity(_ha, _entities.Sensor.TumbleDryerDryerCompletionTime.EntityId); 
     public SensorEntity Status => _entities.Sensor.TumbleDryerDryerMachineState;
 }

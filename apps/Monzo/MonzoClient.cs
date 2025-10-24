@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using Polly;
+using Polly.Retry;
+using System.Threading;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -12,8 +15,9 @@ using NetDaemon.HassModel.Entities;
 public class MonzoClient
 {
     private readonly HttpClient _httpClient;
-    private string _accessToken;
-    private string _refreshToken;
+    private readonly Polly.Retry.AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
+    private string? _accessToken;
+    private string? _refreshToken;
     private DateTime _tokenExpiry;
     private readonly string _clientId = "oauth2client_0000Arzoy9ucGWjr2v2KmH"; // From Monzo developer portal
     private readonly string _clientSecret = "mnzconf.ryPjukkjk63R0AQxTYBSW1pwpVHOxEFjITbNK2PxfNtgev21U+q1X6Y7RbVdXSIPNZrHKLRCt/yYbIz4d0PPPg=="; // From Monzo developer portal
@@ -31,7 +35,18 @@ public class MonzoClient
         {
             BaseAddress = new Uri("https://api.monzo.com/")
         };
-        LoadTokens();        
+        _retryPolicy = Polly.Policy<HttpResponseMessage>
+            .Handle<HttpRequestException>()
+            .Or<TaskCanceledException>()
+            .OrResult(r => !r.IsSuccessStatusCode)
+            .WaitAndRetryAsync(
+                retryCount: 3,
+                sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+                onRetry: (outcome, timespan, retryAttempt, context) =>
+                {
+                    _logger.LogWarning($"MonzoClient HTTP retry {retryAttempt} after {timespan.TotalSeconds}s due to: {outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString()}");
+                });
+        LoadTokens();
     }
 
     private void LoadTokens()
@@ -44,9 +59,9 @@ public class MonzoClient
                 var tokens = JsonSerializer.Deserialize<TokenStorage>(json);
                 if (tokens != null)
                 {
-                    _accessToken = tokens.AccessToken;
-                    _refreshToken = tokens.RefreshToken;
-                    _tokenExpiry = tokens.Expiry;
+                    _accessToken = tokens?.MonzoAccessToken;
+                    _refreshToken = tokens?.MonzoRefreshToken;
+                    _tokenExpiry = tokens?.MonzoExpiry ?? DateTime.MinValue;
                     _logger.LogInformation("Monzo tokens loaded");
                 }
             }
@@ -63,9 +78,9 @@ public class MonzoClient
         {
             var tokens = new TokenStorage
             {
-                AccessToken = _accessToken,
-                RefreshToken = _refreshToken,
-                Expiry = _tokenExpiry
+                MonzoAccessToken = _accessToken,
+                MonzoRefreshToken = _refreshToken,
+                MonzoExpiry = _tokenExpiry
             };
             string json = JsonSerializer.Serialize(tokens, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_tokenFilePath, json);
@@ -78,7 +93,7 @@ public class MonzoClient
     }
 
     // Acquire initial access token (you'd need to handle OAuth flow first)
-    public async Task<bool> AcquireTokenAsync(string authCode)
+    public async Task<bool> AcquireTokenAsync(string authCode, CancellationToken cancellationToken = default)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, "oauth2/token")
         {
@@ -92,15 +107,18 @@ public class MonzoClient
             })
         };
 
-        var response = await _httpClient.SendAsync(request);
+    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode) return false;
 
         var json = await response.Content.ReadAsStringAsync();
         var tokenData = JsonSerializer.Deserialize<TokenResponse>(json);
 
-        _accessToken = tokenData.access_token;
-        _refreshToken = tokenData.refresh_token;
-        _tokenExpiry = DateTime.UtcNow.AddSeconds(tokenData.expires_in);
+        if (tokenData != null)
+        {
+            _accessToken = tokenData.access_token;
+            _refreshToken = tokenData.refresh_token;
+            _tokenExpiry = DateTime.UtcNow.AddSeconds(tokenData.expires_in);
+        }
 
         SaveTokens();
 
@@ -108,7 +126,7 @@ public class MonzoClient
     }
 
     // Refresh token when expired
-    public async Task<bool> RefreshTokenAsync()
+    public async Task<bool> RefreshTokenAsync(CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(_refreshToken)) return false;
 
@@ -123,15 +141,18 @@ public class MonzoClient
             })
         };
 
-        var response = await _httpClient.SendAsync(request);
+    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode) return false;
 
         var json = await response.Content.ReadAsStringAsync();
         var tokenData = JsonSerializer.Deserialize<TokenResponse>(json);
 
-        _accessToken = tokenData.access_token;
-        _refreshToken = tokenData.refresh_token;
-        _tokenExpiry = DateTime.UtcNow.AddSeconds(tokenData.expires_in);
+        if (tokenData != null)
+        {
+            _accessToken = tokenData.access_token;
+            _refreshToken = tokenData.refresh_token;
+            _tokenExpiry = DateTime.UtcNow.AddSeconds(tokenData.expires_in);
+        }
 
         SaveTokens(); // Save after refreshing
 
@@ -139,7 +160,7 @@ public class MonzoClient
     }
 
     // Move money between pots
-    public async Task<bool> MoveToPotAsync(string accountId, string potId, decimal amount)
+    public async Task<bool> MoveToPotAsync(string accountId, string potId, decimal amount, CancellationToken cancellationToken = default)
     {
         // Check and refresh token if expired
         if (DateTime.UtcNow >= _tokenExpiry)
@@ -158,7 +179,7 @@ public class MonzoClient
         };
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
 
-        var response = await _httpClient.SendAsync(request);
+    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"Failed to move money: {response.StatusCode}");
@@ -168,7 +189,7 @@ public class MonzoClient
     }
 
     // Withdraw from pots
-    public async Task<bool> WithdrawPotAsync(string accountId, string potId, decimal amount)
+    public async Task<bool> WithdrawPotAsync(string accountId, string potId, decimal amount, CancellationToken cancellationToken = default)
     {
         // Check and refresh token if expired
         if (DateTime.UtcNow >= _tokenExpiry)
@@ -187,7 +208,7 @@ public class MonzoClient
         };
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
 
-        var response = await _httpClient.SendAsync(request);
+    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"Failed to withdraw money: {response.StatusCode}");
@@ -196,7 +217,7 @@ public class MonzoClient
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<MonzoBalanceResponse?> GetBalanceAsync(string accountId)
+    public async Task<MonzoBalanceResponse?> GetBalanceAsync(string accountId, CancellationToken cancellationToken = default)
     {
         //Check and refresh token if expired
         if (DateTime.UtcNow >= _tokenExpiry)
@@ -207,7 +228,7 @@ public class MonzoClient
         var request = new HttpRequestMessage(HttpMethod.Get, $"balance?account_id={accountId}");
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
 
-        var response = await _httpClient.SendAsync(request);
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"Failed to get balance: {response.StatusCode}");
@@ -217,7 +238,28 @@ public class MonzoClient
         return JsonSerializer.Deserialize<MonzoBalanceResponse>(json) ?? null;
     }
 
-    public async Task WhoAmIAsync()
+    // Return raw balance JSON (useful for callers that prefer to parse locally)
+    public async Task<string?> GetBalanceJsonAsync(string accountId, CancellationToken cancellationToken = default)
+    {
+        //Check and refresh token if expired
+        if (DateTime.UtcNow >= _tokenExpiry)
+        {
+            await RefreshTokenAsync(cancellationToken);
+        }
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"balance?account_id={accountId}");
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
+
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Failed to get balance: {response.StatusCode}");
+        }
+
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    public async Task WhoAmIAsync(CancellationToken cancellationToken = default)
     {
         //Check and refresh token if expired
         if (DateTime.UtcNow >= _tokenExpiry)
@@ -228,7 +270,7 @@ public class MonzoClient
         var request = new HttpRequestMessage(HttpMethod.Get, $"ping/whoami");
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
 
-        var response = await _httpClient.SendAsync(request);
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"Failed to get whoami: {response.StatusCode}");
@@ -236,6 +278,12 @@ public class MonzoClient
 
         var json = await response.Content.ReadAsStringAsync();
         _logger.LogDebug("Monzo WhoAmI {whoAmI}", json);
+    }
+
+    public string GetAuthorizeUrl()
+    {
+        // Simple helper to build authorize url - state should be generated for real flows
+        return $"https://auth.monzo.com/?client_id={_clientId}&redirect_uri={Uri.EscapeDataString(_redirectUri)}&response_type=code&scope=accounts:read transactions:read balance:read";
     }
 
     private record TokenResponse
@@ -257,13 +305,13 @@ public class MonzoOAuthCallback
 public class TokenStorage
 {
     [JsonPropertyName("access_token")]
-    public string AccessToken { get; set; }
+    public string? MonzoAccessToken { get; set; }
 
     [JsonPropertyName("refresh_token")]
-    public string RefreshToken { get; set; }
+    public string? MonzoRefreshToken { get; set; }
 
     [JsonPropertyName("expiry")]
-    public DateTime Expiry { get; set; }
+    public DateTime MonzoExpiry { get; set; }
 }
 
 public class MonzoWebhookPayload

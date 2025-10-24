@@ -9,7 +9,7 @@ using Niemand.HistoryReader;
 namespace Niemand;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class KidsChores(IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, IHomeAssistantApiManager apiManager) : IAsyncInitializable
 {
     //private readonly IAlexa _alexa;

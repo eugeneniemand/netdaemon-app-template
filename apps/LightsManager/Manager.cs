@@ -24,7 +24,7 @@ public class Manager
     private bool AllControlEntitiesAreOff => AllControlEntities.All(e => e.IsOff());
     private bool IsNightMode => NightTimeEntity != null && NightTimeEntityStates.Contains(NightTimeEntity.State!);
     private bool IsOccupied => PresenceEntities.Union(KeepAliveEntities).Any(entity => entity.IsOn() || _onStates.Contains(entity.State!));
-    private bool IsTooBright => LuxEntity != null && (LuxLimitEntity != null ? LuxEntity.State >= LuxLimitEntity.State : LuxEntity.State >= LuxLimit);
+    private bool IsTooBright => LuxEntity != null && (LuxLimitEntity != null ? (LuxEntity.State ?? 0d) >= LuxLimitEntity.State : (LuxEntity.State ?? 0d) >= LuxLimit);
     public bool Watchdog { get; set; } = true;
     public Entity? ConditionEntity { get; set; }
     public InputSelectEntity? NightTimeEntity { get; init; }
@@ -32,6 +32,7 @@ public class Manager
     public int OverrideTimeout { get; init; }
     public int Timeout { get; init; }
     public int? LuxLimit { get; set; }
+    public int? DefaultBrightness { get; set; }
     public List<BinarySensorEntity> KeepAliveEntities { get; init; } = [];
     public List<BinarySensorEntity> PresenceEntities { get; init; } = [];
     private IEnumerable<LightEntity> AllControlEntities => ControlEntities.Union(NightControlEntities).Union(MonitorEntities).ToList();
@@ -52,7 +53,7 @@ public class Manager
     private int NightTimeoutParsed => NightTimeout == 0 ? 90 : NightTimeout;
     private int OverrideTimeoutParsed => OverrideTimeout == 0 ? 1800 : OverrideTimeout;
     private int TimeoutParsed => IsNightMode ? NightTimeoutParsed : Timeout;
-    private int DynamicBrightness => IsNightMode ? 2 : 100;
+    private int DynamicBrightness => IsNightMode ? 2 : DefaultBrightness ?? 100;
 
 
     private List<Task> Tasks { get; } = [];
@@ -275,12 +276,12 @@ public class Manager
                 _logger.LogInformation("{room} Attribute Override by user", Name);
                 LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
 
-                if (LightAttributesOverride(e))                    
+                if (LightAttributesOverride(e))
                     LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override attributes supplied");
                 else
                     TurnOnLightWithColorAndBrightness(e.Entity);
 
-                ResetOverride();                
+                ResetOverride();
             });
     }
 
@@ -356,11 +357,11 @@ public class Manager
             return;
         }
 
-        if (!ignoreConditions && ConditionEntityStateNotMet)
-        {
-            _logger.LogInformation("{room} Cant turn off - Condition not met {conditionEntity}!={state}", Name, ConditionEntity?.EntityId, ConditionEntityState);
-            return;
-        }
+        //if (!ignoreConditions && ConditionEntityStateNotMet)
+        //{
+        //    _logger.LogInformation("{room} Cant turn off - Condition not met {conditionEntity}!={state}", Name, ConditionEntity?.EntityId, ConditionEntityState);
+        //    return;
+        //}
 
         var triggerMsg = $"Turned off by {trigger ?? "UNKNOWN"}";
         _logger.LogInformation("{room} Turn Off by {trigger}", Name, triggerMsg);
@@ -459,6 +460,13 @@ public class Manager
                 {
                     BrightnessPct = DynamicBrightness
                 });
+            else if (e.Attributes.SupportedColorModes.Contains("onoff"))
+
+            {
+                e.TurnOn();                
+            }
+            else
+                _logger.LogWarning("{room} Unsupported Attributes when tunring on {light}: {colorModes}", Name, e.EntityId, e.Attributes.SupportedColorModes);
         }
         else
             e.TurnOn();

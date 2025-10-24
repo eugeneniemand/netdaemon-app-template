@@ -74,13 +74,13 @@ public class Alexa : IAlexa
         QueueNotification(new Config { Entity = mediaPlayer, Message = message }, "tts");
 
     public void PlaySound(MediaPlayerEntity mediaPlayer, string soundName) => 
-        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { MediaContentType = MediaType.sound.ToString().ToLower(), MediaContentId = soundName });
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.sound.ToString().ToLower(), MediaContentId = soundName } });
 
     public void PlayMusic(MediaPlayerEntity mediaPlayer, string command) => 
-        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { MediaContentType = MediaType.AMAZON_MUSIC.ToString(), MediaContentId = command });
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.AMAZON_MUSIC.ToString(), MediaContentId = command } });
 
     public void SendCommand(MediaPlayerEntity mediaPlayer, string command) =>
-        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { MediaContentType = MediaType.custom.ToString().ToLower(), MediaContentId = command });
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.custom.ToString().ToLower(), MediaContentId = command } });
     private string FormatMessage(string message, string voice, bool whisper)
     {
         var messageBreaks  = message.Replace(",", "<break />");
