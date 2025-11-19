@@ -10,5 +10,6 @@ public enum PromptResponseType
     ResponseNone,
     ResponseSelect,
     ResponseNumeric,
-    ResponseDuration
+    ResponseDuration,
+    ResponseUnknown
 }

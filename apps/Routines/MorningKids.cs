@@ -1,6 +1,7 @@
 
 
 using HomeAssistantGenerated;
+using Niemand.Helpers;
 using Polly.Caching;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Text.Json;
 namespace Niemand;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class MorningKids
 {
     private readonly IEntities _entities;
@@ -19,7 +20,7 @@ public class MorningKids
     private readonly ILogger<MorningKids> _logger;
     private readonly RgbwFrameBuilder fb;
 
-    public MorningKids(IEntities entities, IServices services, IScheduler scheduler, ILogger<MorningKids> logger)
+    public MorningKids(IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger<MorningKids> logger)
     {
         _entities = entities;
         _services = services;
@@ -27,6 +28,26 @@ public class MorningKids
         _logger = logger;
         fb = new RgbwFrameBuilder(numLeds: 30);
         _scheduler.SchedulePeriodic(TimeSpan.FromMinutes(1), () => Update());
+
+        _scheduler.ScheduleCron("0 7 * * MON-FRI", () =>
+        {
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.3, Message = "We are leaving in 45 minutes", Whisper = false });
+        });
+
+        _scheduler.ScheduleCron("15 7 * * MON-FRI", () =>
+        {
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.4, Message = "You have 30 minutes left", Whisper = false });
+        });
+
+        _scheduler.ScheduleCron("30 7 * * MON-FRI", () =>
+        {
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.5, Message = "Get done! Leaving in 15 minutes", Whisper = false });
+        });
+
+        _scheduler.ScheduleCron("45 7 * * MON-FRI", () =>
+        {
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.6, Message = "Let's go. Get in the car.", Whisper = false });
+        });
     }
 
     void Update()

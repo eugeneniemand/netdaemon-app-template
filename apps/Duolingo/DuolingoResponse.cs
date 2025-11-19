@@ -309,7 +309,7 @@ public class CompletedLevels
         public string type { get; set; }
         public int completedUnits { get; set; }
         public int totalUnits { get; set; }
-        public List<Unit> units { get; set; }
+        public List<DuoUnit> units { get; set; }
         public object cefr { get; set; }
         public Summary summary { get; set; }
         public object exampleSentence { get; set; }
@@ -783,7 +783,7 @@ public class CompletedLevels
         public string destiny { get; set; }
     }
 
-    public class Unit
+    public class DuoUnit
     {
         public int unitIndex { get; set; }
         public List<Level> levels { get; set; }

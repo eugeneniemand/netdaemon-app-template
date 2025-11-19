@@ -23,6 +23,32 @@ public class Common(IHaContext haContext, IEntities entities)
         public MotionEntities( IEntities entities)
         {
             _entities = entities;
+
+            // Initialize LastUpstairs/LastDownstairs from current states
+            LastDownstairs = Downstairs
+                .OrderByDescending(sensor => sensor.EntityState?.LastChanged)
+                .FirstOrDefault();
+
+            LastUpstairs = Upstairs
+                .OrderByDescending(sensor => sensor.EntityState?.LastChanged)
+                .FirstOrDefault();
+
+            // Subscribe to state changes so we keep LastDownstairs/LastUpstairs up-to-date
+            foreach (var sensor in Downstairs)
+            {
+                // When a downstairs sensor turns on, record it as the last downstairs motion
+                sensor.StateChanges()
+                      .Where(e => e.New?.IsOn() ?? false)
+                      .Subscribe(_ => LastDownstairs = sensor);
+            }
+
+            foreach (var sensor in Upstairs)
+            {
+                // When an upstairs sensor turns on, record it as the last upstairs motion
+                sensor.StateChanges()
+                      .Where(e => e.New?.IsOn() ?? false)
+                      .Subscribe(_ => LastUpstairs = sensor);
+            }
         }
 
         public BinarySensorEntity[] Downstairs =>
@@ -52,13 +78,15 @@ public class Common(IHaContext haContext, IEntities entities)
 
         public BinarySensorEntity[] All => Downstairs.Union(Upstairs).ToArray();
 
-        public BinarySensorEntity LastUpstairs => Upstairs
-            .OrderByDescending(sensor => sensor.EntityState?.LastChanged)
-            .First();
-
-        public BinarySensorEntity LastDownstairs => Downstairs
-            .OrderByDescending(sensor => sensor.EntityState?.LastChanged)
-            .First();
+        public BinarySensorEntity LastUpstairs { get; set; }
+        //public BinarySensorEntity LastUpstairs => Upstairs
+        //    .OrderByDescending(sensor => sensor.EntityState?.LastChanged)
+        //    .First();
+        
+        public BinarySensorEntity LastDownstairs { get; set; }
+        //public BinarySensorEntity LastDownstairs => Downstairs
+        //    .OrderByDescending(sensor => sensor.EntityState?.LastChanged)
+        //    .First();
 
         public bool UpstairsClear => Upstairs.All(e => e.IsOff());
         public bool DownstairsClear => Downstairs.All(e => e.IsOff());
@@ -66,12 +94,12 @@ public class Common(IHaContext haContext, IEntities entities)
         public bool LastWasUpstairs =>
             UpstairsClear &&
             DownstairsClear &&
-            LastUpstairs.EntityState?.LastChanged > LastDownstairs.EntityState?.LastChanged;
+            (LastUpstairs?.EntityState?.LastChanged ?? DateTime.MinValue) > (LastDownstairs?.EntityState?.LastChanged ?? DateTime.MinValue);
 
         public bool LastWasDownstairs =>
             UpstairsClear &&
             DownstairsClear &&
-            LastDownstairs.EntityState?.LastChanged > LastUpstairs.EntityState?.LastChanged;
+            (LastDownstairs?.EntityState?.LastChanged ?? DateTime.MinValue) > (LastUpstairs?.EntityState?.LastChanged ?? DateTime.MinValue);
     }
 
 }

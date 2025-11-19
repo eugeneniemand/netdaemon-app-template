@@ -1,9 +1,11 @@
-﻿using NetDaemon.Extensions.Observables;
+﻿using HomeAssistantGenerated;
+using NetDaemon.Extensions.Observables;
+using NetDaemon.HassModel.Entities;
 using Niemand.Helpers;
 using Niemand.Helpers.Notifications;
 using Polly;
 using Reactive.Boolean;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Reactive.Subjects;
 
 namespace Niemand;
 
@@ -26,6 +28,9 @@ public class Kitchen
     private readonly IAlexa _alexa;
     private readonly IServices _services;
 
+    private bool DishwasherDoorOpen => _entities.BinarySensor.NeffDishwasherDoor.IsOn();
+    private bool DishwasherScheduled => _entities.InputBoolean.DishwasherReminder.IsOn();
+
     public Kitchen(IHaContext ha, IScheduler scheduler, IAppConfig<KitchenConfiguration> config, ILogger<Kitchen> logger, IServices services, IEntities entities, IAlexa alexa, PushNotifier pushNotifier)
     {
         _scheduler = scheduler;
@@ -46,13 +51,24 @@ public class Kitchen
         var cheapEnergyActive = entities.BinarySensor.OctopusEnergyTargetThreeHour.ToBooleanObservable()
             .Or(entities.BinarySensor.OctopusEnergyTargetThreeHourDay.ToBooleanObservable());
 
-        _entities.InputButton.TestRoutine.StateAllChanges().SubscribeAsync(async state => await RunDishwasherAsync(services, entities, alexa, pushNotifier, retryPolicy));
-
         cheapEnergyActive.SubscribeTrue(
             async () =>
             {
-                 await RunDishwasherAsync(services, entities, alexa, pushNotifier, retryPolicy);                
+                await RunDishwasherAsync(services, entities, alexa, pushNotifier, retryPolicy);
             });
+
+        entities.InputBoolean.DishwasherReminder.ToChangesOnlyBooleanObservable().SubscribeOn(() =>
+        {
+            if (DishwasherDoorOpen)
+                DishwasherNotification("Dishwasher cant be scheduled, door is open");
+            else
+                DishwasherNotification("Dishwasher scheduled and ready");
+        });
+
+        entities.BinarySensor.NeffDishwasherDoor.ToChangesOnlyBooleanObservable().SubscribeOpenClosed (
+            () => { if (DishwasherScheduled) DishwasherNotification("Dishwasher scheduled. Please close the door"); },
+            () => { if (DishwasherScheduled) DishwasherNotification("Dishwasher scheduled and ready"); }
+        );
 
         if (_config.CoffeeMachinePower != null)
         {
@@ -102,6 +118,11 @@ public class Kitchen
                 }
             });
         }
+    }
+
+    private void DishwasherNotification(string message)
+    {
+        _alexa.TextToSpeech(new Alexa.Config() { Entity = "media_player.dining", Message = message, Whisper = false, VolumeLevel = 0.3 });
     }
 
     private async Task<bool> RunDishwasherAsync(IServices services, IEntities entities, IAlexa alexa, PushNotifier pushNotifier, Polly.Retry.AsyncRetryPolicy<bool> retryPolicy)
@@ -170,10 +191,10 @@ public class Kitchen
     {
         _logger.LogInformation("Dishwasher waiting for program to start");
         await _scheduler.Sleep(TimeSpan.FromSeconds(10)); // Wait for a short period to allow the state to change
-        _entities.Select.DishwasherSelectedProgramme.SelectOption(new SelectSelectOptionParameters() { Option = "dishcare_dishwasher_program_eco_50" });
+        _entities.Select.NeffDishwasherSelectedProgram.SelectOption(new SelectSelectOptionParameters() { Option = "dishcare_dishwasher_program_eco_50" });
         await _scheduler.Sleep(TimeSpan.FromSeconds(10)); // Wait for a short period to allow the state to change
         _entities.Button.NeffDishwasherStart.Press();
         await _scheduler.Sleep(TimeSpan.FromSeconds(10)); // Wait for a short period to allow the state to change
-        return _entities.Sensor.DishwasherOperationState.State?.Equals("run", StringComparison.OrdinalIgnoreCase) ?? false;
+        return _entities.Sensor.NeffDishwasherOperationState.State?.Equals("run", StringComparison.OrdinalIgnoreCase) ?? false;
     }
 }

@@ -1,8 +1,10 @@
-﻿using NetDaemon.Extensions.Observables;
+﻿using Microsoft.Reactive.Testing;
+using NetDaemon.Extensions.Observables;
 using NetDaemon.HassModel.Integration;
 using Niemand.Helpers;
 using Niemand.Helpers.Notifications;
 using Reactive.Boolean;
+using System.Reactive.Linq;
 
 namespace Niemand.SecurityApps;
 
@@ -16,7 +18,8 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
-        scheduler.ScheduleCron("0/5 19-23,0-6 * * *", () => ArmAlarm());
+        //scheduler.ScheduleCron("0/5 19-23,0-6 * * *", () => ArmAlarm());
+        ArmAlarm();
         AlarmStateChanged();
         AlarmFailure();
         AlarmTriggered();
@@ -24,6 +27,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         SimulateNightLights();
         DrivewayMotionAlarm();
         DoorBeep();
+        // LastMotionSensorWatchdog removed - Common.MotionEntities now tracks last sensors reactively
         //DoorWatchdog();
         //await DebugMethod();
     }
@@ -34,7 +38,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
     }
 
 
-    private async Task BeepAsync(int beeps=1, int delay = 100)
+    private async Task BeepAsync(int beeps = 1, int delay = 100)
     {
         for (int i = 0; i < beeps; i++)
         {
@@ -73,7 +77,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         if (DoorsMessagesSent.ContainsKey(door.EntityId))
         {
             var chat = DoorsMessagesSent[door.EntityId];
-            bot.DeleteMessage(new TelegramBotDeleteMessageParameters() { ChatId = chat.ChatId.ToString(), MessageId =chat.MessageId.ToString() });
+            bot.DeleteMessage(new TelegramBotDeleteMessageParameters() { ChatId = chat.ChatId.ToString(), MessageId = chat.MessageId.ToString() });
 
             await ha.CallServiceWithResponseAsync("telegram_bot", "send_message", null, serviceData);
         }
@@ -176,6 +180,8 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                 handler.EditMessage(e, $"{door.Attributes?.FriendlyName} check ignored🤦‍");
             });
     }
+
+
     private void AlarmTriggered()
     {
         entities.AlarmControlPanel.Alarmo
@@ -344,38 +350,102 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
 
     private void ArmAlarm()
     {
-        if (entities.AlarmControlPanel.Alarmo.IsArmed())
-            return;
 
-        logger.LogDebug("MotionSensors.LastWasUpstairs: {bool}", common.MotionSensors.LastWasUpstairs);
-        logger.LogDebug("MotionSensors.DownstairsClear: {bool}", common.MotionSensors.DownstairsClear);
-        logger.LogDebug("MotionSensors.LastDownstairs.LastChangedOlderThan: {bool}", common.MotionSensors.LastDownstairs.LastChangedOlderThan(TimeSpan.FromMinutes(5)));
-        logger.LogDebug("MotionSensors.EugeneDesktopLastactive.LastChangedOlderThan: {bool}", entities.Sensor.EugeneDesktopLastactive.LastChangedOlderThan(TimeSpan.FromMinutes(5)));
-        logger.LogDebug("MotionSensors.LastDownstairs: {EntityId}", common.MotionSensors.LastDownstairs.EntityId);
+        // ---- Select the state observable from each sensor then merge and select the string "downstairs" for each event ----
+        var downstairsMotion = common.MotionSensors.Downstairs
+            .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
+            .Merge()
+            .Do(_ => logger.LogDebug("Downstairs motion detected"))
+            .Select(_ => "downstairs");
 
-        // If everyone is upstairs and the last motion and not in the office and desktop is inactive, arm the alarm
-        if (common.MotionSensors.LastWasUpstairs
-          && common.MotionSensors.DownstairsClear
-          && ((common.MotionSensors.LastDownstairs.LastChangedOlderThan(TimeSpan.FromMinutes(5)) // Last downstairs motion was more than 5 minutes ago
-          && entities.Sensor.EugeneDesktopLastactive.LastChangedOlderThan(TimeSpan.FromMinutes(5)) // Eugene Desktop is idle
-          && entities.MediaPlayer.LoungeTv.IsOff() // Tv is off
-          && LastDownstairsWasLanding(entities, common)) || (DateTime.Now.Hour > 1 && DateTime.Now.Hour < 6)))
-        {
-            entities.AlarmControlPanel.Alarmo.AlarmArmNight();
-            Beep(2);
+        // ---- Select the state observable from each sensor then merge and select the string "upstairs" for each event ----
+        var upstairsMotion = common.MotionSensors.Upstairs
+            .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
+            .Merge()
+            .Do(_ => logger.LogDebug("Upstairs motion detected"))
+            .Select(_ => "upstairs");
 
-            foreach (var light in entities.Light.EnumerateAll().Where(e => e.Registration?.Labels?.Any(label => string.Equals(label.Id, "Downstairs", StringComparison.OrdinalIgnoreCase)) == true))
-            {
-                light.TurnOff();
-            }
-        }
+        // ---- Track any motion ----
+        var anyMotion = upstairsMotion.Merge(downstairsMotion);
 
-        static bool LastDownstairsWasLanding(IEntities entities, Common common)
-        {
-            return new[]
-                      {
-            entities.BinarySensor.KonnectedHallway.EntityId,
-          }.Contains(common.MotionSensors.LastDownstairs.EntityId);
-        }
+        // ---- Track LAST motion zone ----
+        var lastMotionZone =
+            anyMotion
+                .StartWith("unknown")
+                .Replay(1)
+                .RefCount();
+
+        // ---- "No motion for 5 minutes" signal ----
+        var noMotionForFiveMin =
+            anyMotion
+                .Select(_ =>
+                    // Inner observable: immediately not idle, then idle after 5 minutes
+                    Observable.Return(false) // false = NOT idle right now, we just saw motion
+                        .Concat(
+                            Observable
+                                .Timer(TimeSpan.FromMinutes(5))
+                                .Select(__ => true) // true = idle after 5 minutes with no motion
+                        )
+                )
+                .Switch()                 // cancel previous timer when new motion happens
+                .StartWith(false)         // start as not idle
+                .DistinctUntilChanged();  // only fire on changes
+
+        // ---- PC idle observable (replace with your entity) ----
+        var pcIdle =
+            entities.Sensor.EugeneDesktopLastactive
+                .StateAllChanges()
+                .Select(_ =>
+                    // Inner observable: immediately "active" then "idle" after timeout
+                    Observable.Return(false) // false = active now
+                        .Concat(
+                            Observable
+                                .Timer(TimeSpan.FromMinutes(1))
+                                .Select(__ => true) // true = idle after 1 minute
+                        )
+                )
+                .Switch() // cancel previous timer when new activity happens
+                .StartWith(true) // or false, depending how you want to start
+                .DistinctUntilChanged() // only fire on actual changes
+                .Do(idle =>
+                {
+                    logger.LogDebug("PC is now {State}", idle ? "IDLE" : "ACTIVE");
+                })
+                .Replay(1)
+                .RefCount();
+
+        // ---- TV off ----
+        var tvOff =
+            entities.MediaPlayer.LoungeTv
+                .StateChanges()
+                .Select(e => e.New.IsOff())
+                .StartWith(entities.MediaPlayer.LoungeTv.IsOff());
+
+        var state =
+            Observable.CombineLatest(
+                lastMotionZone,
+                pcIdle,
+                tvOff,
+                (lastZone, isPcIdle, isTvOff) =>
+                    new { lastZone, isPcIdle, isTvOff }
+            );
+
+        // ---- Combine everything ----
+        var subscription =
+            noMotionForFiveMin
+                .WithLatestFrom(state, (noMotion, s) => s) // we don't care about noMotion's value, only the timing
+                .Where(x => x.lastZone == "upstairs")
+                .Where(x => x.isPcIdle)
+                .Where(x => x.isTvOff)
+                .Subscribe(_ =>
+                {
+                    entities.AlarmControlPanel.Alarmo.AlarmArmNight();
+                    Beep(2);
+
+                    foreach (var light in entities.Light.EnumerateAll().Where(e => e.Registration?.Labels?.Any(label => string.Equals(label.Id, "Downstairs", StringComparison.OrdinalIgnoreCase)) == true))
+                    {
+                        light.TurnOff();
+                    }
+                });
     }
 }

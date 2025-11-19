@@ -23,7 +23,7 @@ public class DiningApp
                 logger.LogInformation("Button Pressed");
                 GetSeatingArrangement();
                 logger.LogInformation("Making Announcement");
-                alexa.Announce(new Alexa.Config { Entity = "media_player.downstairs", Message = $"It is {_selectedPerson}'s turn to sit next to mummy" });
+                alexa.Announce(new Alexa.Config { Entity = "media_player.downstairs_2", Message = $"It is {_selectedPerson}'s turn to sit next to mummy" });
             }
         );
     }

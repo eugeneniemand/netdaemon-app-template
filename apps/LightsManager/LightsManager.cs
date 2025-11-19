@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace LightManagerV2;
 
-[Focus]
+//[Focus]
 [NetDaemonApp]
 public class LightsManager(IScheduler scheduler, IHaContext haContext, IServices services, IMqttEntityManager entityManager, IAppConfig<ManagerConfig> config, ILogger<LightsManager> managerLogger) : IAsyncInitializable
 {

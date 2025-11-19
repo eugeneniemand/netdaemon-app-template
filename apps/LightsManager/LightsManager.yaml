@@ -98,19 +98,18 @@ LightManagerV2.ManagerConfig:
       ConditionEntityState: below_horizon
       # debug: true
 
-    # - Name: Backdoor
-    #   PresenceEntities:
-    #     - binary_sensor.back_door
-    #     - binary_sensor.niemand_garage_motion
-    #     - binary_sensor.niemand_garage_motion_2
-    #   KeepAliveEntities:
-    #     - binary_sensor.back_door
-    #   ControlEntities:
-    #     - light.backdoor
-    #   Timeout: 90
-    #   ConditionEntity: sun.sun
-    #   ConditionEntityState: below_horizon
-    #   # debug: true
+    - Name: Backdoor
+      PresenceEntities:
+        - binary_sensor.back_door        
+      KeepAliveEntities:
+        - binary_sensor.back_door
+      ControlEntities:
+        - light.outside_back_flood
+        - light.outside_back_wall
+      Timeout: 90
+      ConditionEntity: sun.sun
+      ConditionEntityState: below_horizon
+      # debug: true
 
     - Name: Drive
       PresenceEntities:
@@ -173,7 +172,7 @@ LightManagerV2.ManagerConfig:
       PresenceEntities:
         - binary_sensor.jayden_motion
       ControlEntities:
-        - light.jayden_nightlight
+        - light.jayden_floor
       LuxEntity: sensor.jayden_lux
       LuxlimitEntity: input_number.jayden_lux_limit
       NightTimeEntity: input_select.house_mode
@@ -181,7 +180,7 @@ LightManagerV2.ManagerConfig:
         - night
         - sleeping
       NightControlEntities:
-        - light.jayden_nightlight
+        - light.jayden_floor
       # CircadianSwitchEntity: switch.adaptive_lighting_jayden
       RandomStates:
         - armed_away
@@ -227,32 +226,26 @@ LightManagerV2.ManagerConfig:
         - armed_away
       # debug: true
 
-    # - Name: Master
-    #   Timeout: 300
-    #   NightTimeout: 90
-    #   PresenceEntities:
-    #     - binary_sensor.master_motion
-    #   ControlEntities:
-    #     - light.master
-    #   MonitorEntities:
-    #     - light.master_1
-    #     - light.master_2
-    #     - light.master_3
-    #     - light.master_4
-    #     - light.master_5
-    #   LuxEntity: sensor.master_lux
-    #   LuxlimitEntity: input_number.master_lux_limit
-    #   NightTimeEntity: input_select.house_mode
-    #   NightTimeEntityStates:
-    #     - night
-    #     - sleeping
-    #   NightControlEntities:
-    #     - light.master_5
-    #   # CircadianSwitchEntity: switch.adaptive_lighting_master
-    #   RandomStates:
-    #     - armed_away
+    - Name: Master
+      Timeout: 300
+      NightTimeout: 90
+      PresenceEntities:
+        - binary_sensor.master_motion
+      ControlEntities:
+        - light.master_main                      
+      LuxEntity: sensor.master_lux
+      LuxlimitEntity: input_number.master_lux_limit
+      NightTimeEntity: input_select.house_mode
+      NightTimeEntityStates:
+        - night
+        - sleeping
+      NightControlEntities:
+        - light.master_floor
+      # CircadianSwitchEntity: switch.adaptive_lighting_master
+      RandomStates:
+        - armed_away
 
-    - Name: Sitting Room
+    - Name: SittingRoom
       Timeout: 300
       NightTimeout: 300
       PresenceEntities:
@@ -274,25 +267,26 @@ LightManagerV2.ManagerConfig:
         - armed_away
       # debug: true 
 
-    # - Name: Playroom
-    #   Timeout: 300
-    #   PresenceEntities:
-    #     - binary_sensor.playroom_motion
-    #   ControlEntities:
-    #     - light.playroom
-    #     - light.playroom_main
-    #   NightControlEntities:
-    #     - light.playroom_4
-    #   NightTimeEntity: input_select.house_mode
-    #   NightTimeEntityStates:
-    #     - night
-    #     - sleeping
-    #   LuxEntity: sensor.playroom_lux
-    #   LuxlimitEntity: input_number.playroom_lux_limit
-    #   # CircadianSwitchEntity: switch.adaptive_lighting_playroom
-    #   RandomStates:
-    #     - armed_away
-    #   # debug: true
+    - Name: Lounge
+      Timeout: 300
+      NightTimeout: 300
+      PresenceEntities:
+        - binary_sensor.lounge_motion
+      ControlEntities:
+        - light.lounge_floor
+      LuxEntity: sensor.lounge_lux
+      LuxlimitEntity: input_number.lounge_lux_limit
+      NightTimeEntity: input_select.house_mode
+      NightTimeEntityStates:
+        - night
+        - sleeping
+      NightControlEntities:
+        - light.lounge_floor
+      # CircadianSwitchEntity: switch.adaptive_lighting_floor
+      RandomStates:
+        - armed_home
+        - armed_away
+      # debug: true 
 
     - Name: Kitchen
       Timeout: 300

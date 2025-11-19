@@ -37,7 +37,7 @@ public class TestApp
         //alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { "media_player.office", "media_player.kitchen", "media_player.dining" }, Message = "This is a longer test message to see if volume is set while message is playing" });
 
         //alexa.PlaySound( entities.MediaPlayer.Office, "amzn_sfx_scifi_alarm_04");
-        
+
         // var vars = System.Environment.GetEnvironmentVariables();
         // logger.LogInformation("Environment Vars:{vars}", vars);
         //

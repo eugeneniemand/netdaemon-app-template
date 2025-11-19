@@ -27,12 +27,15 @@ public static class Startup
         services.AddTransient<TestEntityBuilder>();
         services.AddTransient<IMqttEntityManager, MqttEntityManagerMock>();
         services.AddTransient<IAlexa, AlexaMock>();
-        services.AddTransient<ILogger<LightsManager>, FakeLogger<LightsManager>>();
+        // Register a single FakeLogCollector and use FakeLogger<T> as the ILogger<T> implementation so tests can inspect logs
+        services.AddSingleton<FakeLogCollector>();
+        services.AddSingleton(typeof(ILogger<>), typeof(FakeLogger<>));        
         services.AddTransient<IAppConfig<ManagerConfig>>(s => new FakeAppConfig<ManagerConfig>(GetManagerConfig(s.GetRequiredService<StateChangeManager>(), s.GetRequiredService<TestEntityBuilder>())));
         services.AddTransient<INotificationConfigFactory, NotificationConfigFactory>();
         services.AddTransient<IApplianceFactory, ApplianceFactory>();
         services.AddTransient<LightManagerSut>();
         services.AddTransient<KitchenSut>();
+        services.AddTransient<MorningKidsSut>();
         services.AddTransient<RoutinesSut>();
         services.AddTransient<NotificationManagerSut>();
         services.AddTransient<People>();

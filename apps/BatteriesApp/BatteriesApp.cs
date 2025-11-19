@@ -49,7 +49,7 @@ public class BatteriesApp
             flat.Sort();
             var message = $"The following Radiator batteries are flat, {string.Join(", ", flat)}";
             services.Notify.Twinstead(message);
-            _alexa.Announce(new Alexa.Config { Entity = "media_player.downstairs", Message = message });
+            _alexa.Announce(new Alexa.Config { Entity = "media_player.downstairs_2s", Message = message });
         }
 
         if (low.Count > 0)
@@ -57,7 +57,7 @@ public class BatteriesApp
             low.Sort();
             var message = $"The following Radiator batteries are low, {string.Join(", ", low)}";
             services.Notify.Twinstead(message);
-            _alexa.Announce(new Alexa.Config { Entity = "media_player.downstairs", Message = message });
+            _alexa.Announce(new Alexa.Config { Entity = "media_player.downstairs_2", Message = message });
         }
     }
 

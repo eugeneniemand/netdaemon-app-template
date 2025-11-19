@@ -1,4 +1,5 @@
-﻿using System.Reactive.Subjects;
+﻿using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Niemand.Helpers;
 
@@ -12,27 +13,28 @@ public class Alexa : IAlexa
     }
 
     private readonly IDictionary<string, AlexaDeviceConfig> _devices;
-    private readonly IEntities                              _entities;
-    private readonly IHaContext                             _ha;
-    private readonly ILogger<Alexa>                         _logger;
-    private readonly Subject<Config>                        _messages = new();
+    private readonly IEntities _entities;
+    private readonly IHaContext _ha;
+    private readonly ILogger<Alexa> _logger;
+    private readonly Subject<Config> _messages = new();
 
     private readonly Subject<PromptResponse> _promptResponses = new();
-    private readonly IScheduler              _scheduler;
-    private readonly IServices               _services;
-    private readonly IVoiceProvider          _voice;
+    private readonly IScheduler _scheduler;
+    private readonly IServices _services;
+    private readonly IVoiceProvider _voice;
+    private readonly double _wordDelay = 0.485d;
 
 
     public Alexa(IHaContext ha, IEntities entities, IServices services, IScheduler scheduler, IVoiceProvider voice, IAppConfig<AlexaConfig> config, ILogger<Alexa> logger)
     {
-        _ha        = ha;
-        _entities  = entities;
-        _services  = services;
+        _ha = ha;
+        _entities = entities;
+        _services = services;
         _scheduler = scheduler;
-        _voice     = voice;
-        _logger    = logger;
-        _devices   = config.Value.Devices;
-        People     = (Dictionary<string, AlexaPeopleConfig>)config.Value.People;
+        _voice = voice;
+        _logger = logger;
+        _devices = config.Value.Devices;
+        People = (Dictionary<string, AlexaPeopleConfig>)config.Value.People;
 
         _messages.Where(msg => msg.NotifyType is "tts" or "announce")
                  .Buffer(TimeSpan.FromMilliseconds(500), scheduler)
@@ -73,18 +75,18 @@ public class Alexa : IAlexa
     public void TextToSpeech(string mediaPlayer, string message) =>
         QueueNotification(new Config { Entity = mediaPlayer, Message = message }, "tts");
 
-    public void PlaySound(MediaPlayerEntity mediaPlayer, string soundName) => 
+    public void PlaySound(MediaPlayerEntity mediaPlayer, string soundName) =>
         _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.sound.ToString().ToLower(), MediaContentId = soundName } });
 
-    public void PlayMusic(MediaPlayerEntity mediaPlayer, string command) => 
+    public void PlayMusic(MediaPlayerEntity mediaPlayer, string command) =>
         _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.AMAZON_MUSIC.ToString(), MediaContentId = command } });
 
     public void SendCommand(MediaPlayerEntity mediaPlayer, string command) =>
         _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.custom.ToString().ToLower(), MediaContentId = command } });
     private string FormatMessage(string message, string voice, bool whisper)
     {
-        var messageBreaks  = message.Replace(",", "<break />");
-        var normalMessage  = $"<voice name='{voice}'>{messageBreaks}</voice>";
+        var messageBreaks = message.Replace(",", "<break />");
+        var normalMessage = $"<voice name='{voice}'>{messageBreaks}</voice>";
         var whisperMessage = $"<amazon:effect name='whispered'>{messageBreaks}</amazon:effect>";
         return whisper ? whisperMessage : normalMessage;
     }
@@ -99,43 +101,43 @@ public class Alexa : IAlexa
     private (bool whisper, double volume) GetVolumeDetails(AlexaDeviceConfig? deviceConfig)
     {
         var whisper = false;
-        var volume  = 0d;
+        var volume = 0d;
         switch (_entities.InputSelect.HouseMode.State)
         {
             case "night":
                 whisper = deviceConfig?.NightWhisper ?? true;
-                volume  = deviceConfig?.NightVolume ?? 0.2d;
+                volume = deviceConfig?.NightVolume ?? 0.2d;
                 break;
             case "day":
                 whisper = false;
-                volume  = deviceConfig?.DayVolume ?? 0.4d;
+                volume = deviceConfig?.DayVolume ?? 0.4d;
                 break;
         }
 
-        return ( whisper, volume );
+        return (whisper, volume);
     }
 
     private async Task ProcessNotifications(IEnumerable<Config> cfgs)
     {
-        var          entitiesVolumeLevel = new Dictionary<string, double>();
-        var          voice               = _voice.GetRandomVoice();
-        var          message             = "";
-        List<string> entities            = new();
-        var          notificationType    = "";
-        var          eventId             = "";
-        double?      volumeOverride      = null;
-        int?         delayOverride       = null;
-        bool?        whisperOverride     = null;
+        var entitiesVolumeLevel = new Dictionary<string, double>();
+        var voice = _voice.GetRandomVoice();
+        var message = "";
+        List<string> entities = new();
+        var notificationType = "";
+        var eventId = "";
+        double? volumeOverride = null;
+        int? delayOverride = null;
+        bool? whisperOverride = null;
 
         foreach (var cfg in cfgs)
         {
-            message          += ( message != "" ? ",,,and," : "" ) + cfg.Message;
-            entities         =  cfg.Entities;
-            notificationType =  cfg.NotifyType;
-            eventId          =  cfg.EventId;
-            volumeOverride   =  cfg.VolumeLevel;
-            delayOverride    =  cfg.VolumeResetDelay;
-            whisperOverride  =  cfg.Whisper;
+            message += (message != "" ? ",,,and," : "") + cfg.Message;
+            entities = cfg.Entities;
+            notificationType = cfg.NotifyType;
+            eventId = cfg.EventId;
+            volumeOverride = cfg.VolumeLevel;
+            delayOverride = cfg.VolumeResetDelay;
+            whisperOverride = cfg.Whisper;
         }
 
 
@@ -149,31 +151,32 @@ public class Alexa : IAlexa
             SetVolume(entity, volumeOverride ?? volume);
             _services.Notify.AlexaMedia(formatMessage, target: entity, data: new { type = notificationType });
         }
-        
-        _scheduler.Sleep(TimeSpan.FromSeconds(delayOverride ?? 5)).GetAwaiter().OnCompleted(() => RevertVolume(entitiesVolumeLevel));
+
+        var words = message.Split([' ', '.', '-', '—', ',']).Count();
+        _scheduler.Sleep(TimeSpan.FromSeconds(delayOverride ?? words * _wordDelay)).GetAwaiter().OnCompleted(() => RevertVolume(entitiesVolumeLevel));
     }
 
     private async Task ProcessPrompts(IEnumerable<Config> cfgs)
     {
-        var          entitiesVolumeLevel = new Dictionary<string, double>();
-        var          voice               = _voice.GetRandomVoice();
-        var          message             = "";
-        List<string> entities            = new();
-        var          notificationType    = "";
-        var          eventId             = "";
-        double?      volumeOverride      = null;
-        int?         delayOverride       = null;
-        bool?        whisperOverride     = null;
+        var entitiesVolumeLevel = new Dictionary<string, double>();
+        var voice = _voice.GetRandomVoice();
+        var message = "";
+        List<string> entities = new();
+        var notificationType = "";
+        var eventId = "";
+        double? volumeOverride = null;
+        int? delayOverride = null;
+        bool? whisperOverride = null;
 
         foreach (var cfg in cfgs)
         {
-            message          = cfg.Message;
-            entities         = cfg.Entities;
+            message = cfg.Message;
+            entities = cfg.Entities;
             notificationType = cfg.NotifyType;
-            eventId          = cfg.EventId;
-            volumeOverride   = cfg.VolumeLevel;
-            delayOverride    = cfg.VolumeResetDelay;
-            whisperOverride  = cfg.Whisper;
+            eventId = cfg.EventId;
+            volumeOverride = cfg.VolumeLevel;
+            delayOverride = cfg.VolumeResetDelay;
+            whisperOverride = cfg.Whisper;
 
 
             foreach (var entity in entities)
@@ -186,8 +189,8 @@ public class Alexa : IAlexa
                 SetVolume(entity, volumeOverride ?? volume);
                 _services.Script.ActivateAlexaActionableNotification(formatMessage, eventId, entity);
             }
-            var words = message.Split(' ').Count();
-            _scheduler.Sleep(TimeSpan.FromSeconds(words * 0.4));
+            var words = message.Split([' ', '.', '-', '—', ',']).Count();
+            await _scheduler.Sleep(TimeSpan.FromSeconds(words * _wordDelay));
         }
     }
 
@@ -203,17 +206,32 @@ public class Alexa : IAlexa
             SetVolume(entity, volume);
     }
 
+    private PromptResponse PromtResponseEventToDto(PromptResponseEvent? eventData)
+    {        
+        return new PromptResponse
+        {
+            EventId = eventData?.EventId ?? "",
+            Response = eventData?.Response!,
+            ResponsePersonId = eventData?.ResponsePersonId ?? "",
+            ResponsePersonName = eventData?.ResponsePersonId == null ? "UNKNOWN" : People[eventData.ResponsePersonId].Name,
+            ResponseType = eventData?.ResponseType ?? PromptResponseType.ResponseUnknown
+        };
+    }
+
     private void SetupResponseHandler(IHaContext haContext)
     {
-        haContext.Events.Filter<PromptResponse>("alexa_actionable_notification").Subscribe(responseEvent =>
-        {
-            _logger.LogInformation("Event(alexa_actionable_notification): {EventId} - {Response} - {ResponseType} by {ResponsePersonId}", responseEvent.Data?.EventId, responseEvent.Data?.Response?.ToString(), responseEvent.Data?.ResponseType, responseEvent?.Data?.ResponsePersonId);
+        haContext.Events.Filter<PromptResponseEvent>("alexa_actionable_notification")
+            .Do(e => _logger.LogDebug("Received alexa_actionable_notification event {eventData}", e))
+            .Select(e => PromtResponseEventToDto(e.Data))
+            .DistinctUntilChanged(e => e)
+            .Do(e => _logger.LogDebug("Distinct PromptResponse {PromptResponse}", e))
+            .Subscribe(responseEvent =>
+                {
+                    _logger.LogInformation("Event(alexa_actionable_notification): {EventId} - {Response} - {ResponseType} by {ResponsePersonId}", responseEvent.EventId, responseEvent.Response?.ToString(), responseEvent.ResponseType, responseEvent?.ResponsePersonId);
 
-            if (responseEvent?.Data == null) return;
-            if (responseEvent?.Data?.ResponsePersonId != null)
-                responseEvent.Data.ResponsePersonName = People[responseEvent.Data.ResponsePersonId].Name;
-            _promptResponses.OnNext(responseEvent.Data);
-        });
+                    if (responseEvent == null) return;
+                    _promptResponses.OnNext(responseEvent);
+                });
     }
 
     private void SetVolume(string entityId, double volumeLevel)
@@ -229,7 +247,7 @@ public class Alexa : IAlexa
 
     public class Config
     {
-        public  bool?        Whisper   = null;
+        public bool? Whisper = null;
         private List<string> _entities = new();
         /// <summary>
         /// Value between 0 and 1
