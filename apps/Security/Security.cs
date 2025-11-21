@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 namespace Niemand.SecurityApps;
 
 [NetDaemonApp]
-//[Focus]
+[Focus]
 public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, IServices services, ILogger<Security> logger, IAlexa alexa, IScheduler scheduler, Common common, PushNotifier pushNotifier, TelegramBotServices bot) : IAsyncInitializable
 {
     private readonly List<BinarySensorEntity> DoorsOpened = new();
@@ -355,14 +355,12 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
         var downstairsMotion = common.MotionSensors.Downstairs
             .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
             .Merge()
-            .Do(_ => logger.LogDebug("Downstairs motion detected"))
             .Select(_ => "downstairs");
 
         // ---- Select the state observable from each sensor then merge and select the string "upstairs" for each event ----
         var upstairsMotion = common.MotionSensors.Upstairs
             .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
-            .Merge()
-            .Do(_ => logger.LogDebug("Upstairs motion detected"))
+            .Merge()            
             .Select(_ => "upstairs");
 
         // ---- Track any motion ----
@@ -406,11 +404,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                 )
                 .Switch() // cancel previous timer when new activity happens
                 .StartWith(true) // or false, depending how you want to start
-                .DistinctUntilChanged() // only fire on actual changes
-                .Do(idle =>
-                {
-                    logger.LogDebug("PC is now {State}", idle ? "IDLE" : "ACTIVE");
-                })
+                .DistinctUntilChanged() // only fire on actual changes                
                 .Replay(1)
                 .RefCount();
 
@@ -421,22 +415,32 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                 .Select(e => e.New.IsOff())
                 .StartWith(entities.MediaPlayer.LoungeTv.IsOff());
 
+        // ---- Alarm Armed ----
+        var alarmNotArmed =
+            entities.AlarmControlPanel.Alarmo
+                .StateChanges()
+                .Select(e => !e.New.IsArmedNight())
+                .StartWith(!entities.AlarmControlPanel.Alarmo.IsArmedNight());
+
         var state =
             Observable.CombineLatest(
                 lastMotionZone,
                 pcIdle,
                 tvOff,
-                (lastZone, isPcIdle, isTvOff) =>
-                    new { lastZone, isPcIdle, isTvOff }
+                alarmNotArmed,
+                (lastZone, isPcIdle, isTvOff,isAlarmNotArmed) =>
+                    new { lastZone, isPcIdle, isTvOff, isAlarmNotArmed }
             );
 
         // ---- Combine everything ----
         var subscription =
             noMotionForFiveMin
                 .WithLatestFrom(state, (noMotion, s) => s) // we don't care about noMotion's value, only the timing
+                .Do(observer => logger.LogDebug("Evaluating alarm arm conditions {state}", observer))
                 .Where(x => x.lastZone == "upstairs")
                 .Where(x => x.isPcIdle)
                 .Where(x => x.isTvOff)
+                .Where(x => x.isAlarmNotArmed)
                 .Subscribe(_ =>
                 {
                     entities.AlarmControlPanel.Alarmo.AlarmArmNight();
