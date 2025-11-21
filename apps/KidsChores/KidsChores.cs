@@ -1,6 +1,4 @@
 ﻿using HomeAssistantGenerated;
-using Humanizer;
-using Humanizer.Localisation;
 using NetDaemon.Client;
 using NetDaemon.Helpers;
 using Niemand.Helpers;

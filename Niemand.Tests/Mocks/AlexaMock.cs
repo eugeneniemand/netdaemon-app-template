@@ -27,6 +27,8 @@ public class AlexaMock(IServices services) : IAlexa
 
     public IObservable<PromptResponseEvent> PromptResponses => _promptResponses;
 
+    IObservable<PromptResponse> IAlexa.PromptResponses => throw new NotImplementedException();
+
     public virtual void TextToSpeech(Alexa.Config config)
     {
         services.Notify.AlexaMedia(config.Entity, target: config.Entity, data: new { type = "tts" });
