@@ -634,12 +634,12 @@
         },
         {
           "id": "binary_sensor.hob_connectivity",
-          "friendlyName": "Hob Connectivity",
+          "friendlyName": "Connectivity",
           "cSharpName": "HobConnectivity"
         },
         {
           "id": "binary_sensor.hob_local_control",
-          "friendlyName": "Hob Local control",
+          "friendlyName": "Local control",
           "cSharpName": "HobLocalControl"
         },
         {
@@ -936,6 +936,11 @@
           "id": "binary_sensor.ping_konnected_main",
           "friendlyName": "Ping Konnected Main",
           "cSharpName": "PingKonnectedMain"
+        },
+        {
+          "id": "binary_sensor.postbox",
+          "friendlyName": "PostBox",
+          "cSharpName": "Postbox"
         },
         {
           "id": "binary_sensor.refrigerator_door_open",
@@ -3170,6 +3175,11 @@
           "cSharpName": "Playroom4Identify2"
         },
         {
+          "id": "button.postbox_identify",
+          "friendlyName": "PostBox Identify",
+          "cSharpName": "PostboxIdentify"
+        },
+        {
           "id": "button.sonoff_zbm5_3c_80_86_identify",
           "friendlyName": "Kitchen Identify",
           "cSharpName": "SonoffZbm53c8086Identify"
@@ -3676,24 +3686,9 @@
           "cSharpName": "WiserBack"
         },
         {
-          "id": "climate.wiser_back_office",
-          "friendlyName": "Wiser Back office",
-          "cSharpName": "WiserBackOffice"
-        },
-        {
           "id": "climate.wiser_boys",
           "friendlyName": "Wiser Boys",
           "cSharpName": "WiserBoys"
-        },
-        {
-          "id": "climate.wiser_dining",
-          "friendlyName": "Wiser Dining",
-          "cSharpName": "WiserDining"
-        },
-        {
-          "id": "climate.wiser_front_office",
-          "friendlyName": "Wiser Front office",
-          "cSharpName": "WiserFrontOffice"
         },
         {
           "id": "climate.wiser_hallway",
@@ -3704,11 +3699,6 @@
           "id": "climate.wiser_jayden",
           "friendlyName": "Wiser Jayden",
           "cSharpName": "WiserJayden"
-        },
-        {
-          "id": "climate.wiser_kitchen",
-          "friendlyName": "Wiser Kitchen",
-          "cSharpName": "WiserKitchen"
         },
         {
           "id": "climate.wiser_landing",
@@ -4240,6 +4230,16 @@
           "cSharpName": "Ipad12"
         },
         {
+          "id": "device_tracker.ipad_13",
+          "friendlyName": "iPad",
+          "cSharpName": "Ipad13"
+        },
+        {
+          "id": "device_tracker.ipad_14",
+          "friendlyName": "iPad",
+          "cSharpName": "Ipad14"
+        },
+        {
           "id": "device_tracker.ipad_2",
           "friendlyName": "iPad",
           "cSharpName": "Ipad2"
@@ -4313,6 +4313,11 @@
           "id": "device_tracker.iphone_14",
           "friendlyName": "iPhone",
           "cSharpName": "Iphone14"
+        },
+        {
+          "id": "device_tracker.iphone_15",
+          "friendlyName": "iPhone",
+          "cSharpName": "Iphone15"
         },
         {
           "id": "device_tracker.iphone_2",
@@ -4421,7 +4426,7 @@
         },
         {
           "id": "device_tracker.macbook_air",
-          "friendlyName": "MacBook-Air",
+          "friendlyName": "G3061WM904",
           "cSharpName": "MacbookAir"
         },
         {
@@ -4648,6 +4653,11 @@
           "id": "device_tracker.unifi_default_9a_68_d3_6e_ba_6d",
           "friendlyName": "",
           "cSharpName": "UnifiDefault9a68D36eBa6d"
+        },
+        {
+          "id": "device_tracker.unifi_default_a6_18_58_4a_14_90",
+          "friendlyName": "",
+          "cSharpName": "UnifiDefaultA618584a1490"
         },
         {
           "id": "device_tracker.unifi_default_b2_12_21_22_ef_25",
@@ -5084,11 +5094,6 @@
           "cSharpName": "NetdaemonNiemandEnergyEnergyApp"
         },
         {
-          "id": "input_boolean.netdaemon_niemand_evening",
-          "friendlyName": "netdaemon_niemand_evening",
-          "cSharpName": "NetdaemonNiemandEvening"
-        },
-        {
           "id": "input_boolean.netdaemon_niemand_health_health_app",
           "friendlyName": "netdaemon_niemand_health_health_app",
           "cSharpName": "NetdaemonNiemandHealthHealthApp"
@@ -5104,6 +5109,16 @@
           "cSharpName": "NetdaemonNiemandInternetApp"
         },
         {
+          "id": "input_boolean.netdaemon_niemand_jayden_light",
+          "friendlyName": "netdaemon_niemand_jayden_light",
+          "cSharpName": "NetdaemonNiemandJaydenLight"
+        },
+        {
+          "id": "input_boolean.netdaemon_niemand_jayden_tablet",
+          "friendlyName": "netdaemon_niemand_jayden_tablet",
+          "cSharpName": "NetdaemonNiemandJaydenTablet"
+        },
+        {
           "id": "input_boolean.netdaemon_niemand_kids_chores",
           "friendlyName": "netdaemon_niemand_kids_chores",
           "cSharpName": "NetdaemonNiemandKidsChores"
@@ -5112,11 +5127,6 @@
           "id": "input_boolean.netdaemon_niemand_kitchen",
           "friendlyName": "netdaemon_niemand_kitchen",
           "cSharpName": "NetdaemonNiemandKitchen"
-        },
-        {
-          "id": "input_boolean.netdaemon_niemand_morning",
-          "friendlyName": "netdaemon_niemand_morning",
-          "cSharpName": "NetdaemonNiemandMorning"
         },
         {
           "id": "input_boolean.netdaemon_niemand_morning_kids",
@@ -5142,6 +5152,11 @@
           "id": "input_boolean.netdaemon_niemand_security_apps_security",
           "friendlyName": "netdaemon_niemand_security_apps_security",
           "cSharpName": "NetdaemonNiemandSecurityAppsSecurity"
+        },
+        {
+          "id": "input_boolean.netdaemon_niemand_summary_routine",
+          "friendlyName": "netdaemon_niemand_summary_routine",
+          "cSharpName": "NetdaemonNiemandSummaryRoutine"
         },
         {
           "id": "input_boolean.netdaemon_niemand_test_app_test_app",
@@ -6197,6 +6212,11 @@
           "cSharpName": "Playroom"
         },
         {
+          "id": "media_player.shirley",
+          "friendlyName": "Shirley",
+          "cSharpName": "Shirley"
+        },
+        {
           "id": "media_player.this_device",
           "friendlyName": "This Device",
           "cSharpName": "ThisDevice"
@@ -6626,7 +6646,7 @@
         },
         {
           "id": "number.hob_alarm_clock",
-          "friendlyName": "Hob Alarm clock",
+          "friendlyName": "Alarm clock",
           "cSharpName": "HobAlarmClock"
         },
         {
@@ -7727,6 +7747,11 @@
           "id": "scene.new_scene_2",
           "friendlyName": "Day mode scene",
           "cSharpName": "NewScene2"
+        },
+        {
+          "id": "scene.switch_simulate_all_lights_scene",
+          "friendlyName": "switch_simulate_all_lights_scene",
+          "cSharpName": "SwitchSimulateAllLightsScene"
         }
       ],
       "attributes": [
@@ -8925,6 +8950,31 @@
           "cSharpName": "DockerHaHouseTour1UpTime"
         },
         {
+          "id": "sensor.docker_ha_tika_1_health",
+          "friendlyName": "ha-tika-1 Health",
+          "cSharpName": "DockerHaTika1Health"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_image",
+          "friendlyName": "ha-tika-1 Image",
+          "cSharpName": "DockerHaTika1Image"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_state",
+          "friendlyName": "ha-tika-1 State",
+          "cSharpName": "DockerHaTika1State"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_status",
+          "friendlyName": "ha-tika-1 Status",
+          "cSharpName": "DockerHaTika1Status"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_up_time",
+          "friendlyName": "ha-tika-1 Up Time",
+          "cSharpName": "DockerHaTika1UpTime"
+        },
+        {
           "id": "sensor.docker_home_assistant_health",
           "friendlyName": "home-assistant Health",
           "cSharpName": "DockerHomeAssistantHealth"
@@ -10051,7 +10101,7 @@
         },
         {
           "id": "sensor.hob_operation_state",
-          "friendlyName": "Hob Operation state",
+          "friendlyName": "Operation state",
           "cSharpName": "HobOperationState"
         },
         {
@@ -11275,6 +11325,11 @@
           "cSharpName": "KitchenNextTimer"
         },
         {
+          "id": "sensor.kitchen_uplink_mac",
+          "friendlyName": "Annex  Uplink MAC",
+          "cSharpName": "KitchenUplinkMac"
+        },
+        {
           "id": "sensor.konnected_add_on_device_id",
           "friendlyName": "Konnected Add-On Device ID",
           "cSharpName": "KonnectedAddOnDeviceId"
@@ -11808,6 +11863,21 @@
           "id": "sensor.shell_ss6_7sl",
           "friendlyName": "SHELL SS6 7SL",
           "cSharpName": "ShellSs67sl"
+        },
+        {
+          "id": "sensor.shirley_next_alarm",
+          "friendlyName": "Shirley next Alarm",
+          "cSharpName": "ShirleyNextAlarm"
+        },
+        {
+          "id": "sensor.shirley_next_reminder",
+          "friendlyName": "Shirley next Reminder",
+          "cSharpName": "ShirleyNextReminder"
+        },
+        {
+          "id": "sensor.shirley_next_timer",
+          "friendlyName": "Shirley next Timer",
+          "cSharpName": "ShirleyNextTimer"
         },
         {
           "id": "sensor.sirens",
@@ -18190,6 +18260,236 @@
           "jsonName": "2025-11-06T16:00:00Z",
           "cSharpName": "_20251106T160000Z",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T22:30:00Z",
+          "cSharpName": "_20251121T223000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T22:00:00Z",
+          "cSharpName": "_20251121T220000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T21:30:00Z",
+          "cSharpName": "_20251121T213000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T21:00:00Z",
+          "cSharpName": "_20251121T210000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T20:30:00Z",
+          "cSharpName": "_20251121T203000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T20:00:00Z",
+          "cSharpName": "_20251121T200000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T19:30:00Z",
+          "cSharpName": "_20251121T193000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T19:00:00Z",
+          "cSharpName": "_20251121T190000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T18:30:00Z",
+          "cSharpName": "_20251121T183000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T18:00:00Z",
+          "cSharpName": "_20251121T180000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T17:30:00Z",
+          "cSharpName": "_20251121T173000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T17:00:00Z",
+          "cSharpName": "_20251121T170000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T16:30:00Z",
+          "cSharpName": "_20251121T163000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T16:00:00Z",
+          "cSharpName": "_20251121T160000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T15:30:00Z",
+          "cSharpName": "_20251121T153000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T15:00:00Z",
+          "cSharpName": "_20251121T150000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T14:30:00Z",
+          "cSharpName": "_20251121T143000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T14:00:00Z",
+          "cSharpName": "_20251121T140000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T13:30:00Z",
+          "cSharpName": "_20251121T133000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-21T13:00:00Z",
+          "cSharpName": "_20251121T130000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T22:30:00Z",
+          "cSharpName": "_20251124T223000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T22:00:00Z",
+          "cSharpName": "_20251124T220000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T21:30:00Z",
+          "cSharpName": "_20251124T213000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T21:00:00Z",
+          "cSharpName": "_20251124T210000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T20:30:00Z",
+          "cSharpName": "_20251124T203000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T20:00:00Z",
+          "cSharpName": "_20251124T200000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T19:30:00Z",
+          "cSharpName": "_20251124T193000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T19:00:00Z",
+          "cSharpName": "_20251124T190000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T18:30:00Z",
+          "cSharpName": "_20251124T183000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T18:00:00Z",
+          "cSharpName": "_20251124T180000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T17:30:00Z",
+          "cSharpName": "_20251124T173000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T17:00:00Z",
+          "cSharpName": "_20251124T170000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T16:30:00Z",
+          "cSharpName": "_20251124T163000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T16:00:00Z",
+          "cSharpName": "_20251124T160000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T15:30:00Z",
+          "cSharpName": "_20251124T153000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T15:00:00Z",
+          "cSharpName": "_20251124T150000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T14:30:00Z",
+          "cSharpName": "_20251124T143000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T14:00:00Z",
+          "cSharpName": "_20251124T140000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T13:30:00Z",
+          "cSharpName": "_20251124T133000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T13:00:00Z",
+          "cSharpName": "_20251124T130000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T12:30:00Z",
+          "cSharpName": "_20251124T123000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T12:00:00Z",
+          "cSharpName": "_20251124T120000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T11:30:00Z",
+          "cSharpName": "_20251124T113000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T11:00:00Z",
+          "cSharpName": "_20251124T110000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T10:30:00Z",
+          "cSharpName": "_20251124T103000Z",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "2025-11-24T10:00:00Z",
+          "cSharpName": "_20251124T100000Z",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -18359,12 +18659,12 @@
         },
         {
           "id": "sensor.apk_b431_02l_rx",
-          "friendlyName": "apk-b431-02L RX",
+          "friendlyName": "RX",
           "cSharpName": "ApkB43102lRx"
         },
         {
           "id": "sensor.apk_b431_02l_tx",
-          "friendlyName": "apk-b431-02L TX",
+          "friendlyName": "TX",
           "cSharpName": "ApkB43102lTx"
         },
         {
@@ -18736,6 +19036,46 @@
           "id": "sensor.docker_ha_house_tour_1_network_total_up",
           "friendlyName": "ha-house_tour-1 Network total Up",
           "cSharpName": "DockerHaHouseTour1NetworkTotalUp"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_1cpu",
+          "friendlyName": "ha-tika-1 1CPU",
+          "cSharpName": "DockerHaTika11cpu"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_cpu",
+          "friendlyName": "ha-tika-1 CPU",
+          "cSharpName": "DockerHaTika1Cpu"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_memory",
+          "friendlyName": "ha-tika-1 Memory",
+          "cSharpName": "DockerHaTika1Memory"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_memory_percent",
+          "friendlyName": "ha-tika-1 Memory (percent)",
+          "cSharpName": "DockerHaTika1MemoryPercent"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_network_speed_down",
+          "friendlyName": "ha-tika-1 Network speed Down",
+          "cSharpName": "DockerHaTika1NetworkSpeedDown"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_network_speed_up",
+          "friendlyName": "ha-tika-1 Network speed Up",
+          "cSharpName": "DockerHaTika1NetworkSpeedUp"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_network_total_down",
+          "friendlyName": "ha-tika-1 Network total Down",
+          "cSharpName": "DockerHaTika1NetworkTotalDown"
+        },
+        {
+          "id": "sensor.docker_ha_tika_1_network_total_up",
+          "friendlyName": "ha-tika-1 Network total Up",
+          "cSharpName": "DockerHaTika1NetworkTotalUp"
         },
         {
           "id": "sensor.docker_home_assistant_1cpu",
@@ -19389,12 +19729,12 @@
         },
         {
           "id": "sensor.geoffrey_s_s23_rx",
-          "friendlyName": "Geoffrey-s-S23 RX",
+          "friendlyName": "RX",
           "cSharpName": "GeoffreySS23Rx"
         },
         {
           "id": "sensor.geoffrey_s_s23_tx",
-          "friendlyName": "Geoffrey-s-S23 TX",
+          "friendlyName": "TX",
           "cSharpName": "GeoffreySS23Tx"
         },
         {
@@ -19568,6 +19908,16 @@
           "cSharpName": "IpadRx12"
         },
         {
+          "id": "sensor.ipad_rx_13",
+          "friendlyName": "iPad RX",
+          "cSharpName": "IpadRx13"
+        },
+        {
+          "id": "sensor.ipad_rx_14",
+          "friendlyName": "iPad RX",
+          "cSharpName": "IpadRx14"
+        },
+        {
           "id": "sensor.ipad_rx_2",
           "friendlyName": "RX",
           "cSharpName": "IpadRx2"
@@ -19589,7 +19939,7 @@
         },
         {
           "id": "sensor.ipad_rx_6",
-          "friendlyName": "iPad RX",
+          "friendlyName": "RX",
           "cSharpName": "IpadRx6"
         },
         {
@@ -19628,6 +19978,16 @@
           "cSharpName": "IpadTx12"
         },
         {
+          "id": "sensor.ipad_tx_13",
+          "friendlyName": "iPad TX",
+          "cSharpName": "IpadTx13"
+        },
+        {
+          "id": "sensor.ipad_tx_14",
+          "friendlyName": "iPad TX",
+          "cSharpName": "IpadTx14"
+        },
+        {
           "id": "sensor.ipad_tx_2",
           "friendlyName": "TX",
           "cSharpName": "IpadTx2"
@@ -19649,7 +20009,7 @@
         },
         {
           "id": "sensor.ipad_tx_6",
-          "friendlyName": "iPad TX",
+          "friendlyName": "TX",
           "cSharpName": "IpadTx6"
         },
         {
@@ -19698,6 +20058,11 @@
           "cSharpName": "IphoneRx14"
         },
         {
+          "id": "sensor.iphone_rx_15",
+          "friendlyName": "iPhone RX",
+          "cSharpName": "IphoneRx15"
+        },
+        {
           "id": "sensor.iphone_rx_2",
           "friendlyName": "iPhone RX",
           "cSharpName": "IphoneRx2"
@@ -19709,12 +20074,12 @@
         },
         {
           "id": "sensor.iphone_rx_4",
-          "friendlyName": "iPhone RX",
+          "friendlyName": "RX",
           "cSharpName": "IphoneRx4"
         },
         {
           "id": "sensor.iphone_rx_5",
-          "friendlyName": "iPhone RX",
+          "friendlyName": "RX",
           "cSharpName": "IphoneRx5"
         },
         {
@@ -19768,6 +20133,11 @@
           "cSharpName": "IphoneTx14"
         },
         {
+          "id": "sensor.iphone_tx_15",
+          "friendlyName": "iPhone TX",
+          "cSharpName": "IphoneTx15"
+        },
+        {
           "id": "sensor.iphone_tx_2",
           "friendlyName": "iPhone TX",
           "cSharpName": "IphoneTx2"
@@ -19779,12 +20149,12 @@
         },
         {
           "id": "sensor.iphone_tx_4",
-          "friendlyName": "iPhone TX",
+          "friendlyName": "TX",
           "cSharpName": "IphoneTx4"
         },
         {
           "id": "sensor.iphone_tx_5",
-          "friendlyName": "iPhone TX",
+          "friendlyName": "TX",
           "cSharpName": "IphoneTx5"
         },
         {
@@ -20324,7 +20694,7 @@
         },
         {
           "id": "sensor.kitchen_cpu_utilization",
-          "friendlyName": "Annex  CPU utilization",
+          "friendlyName": "CPU utilization",
           "cSharpName": "KitchenCpuUtilization"
         },
         {
@@ -20344,7 +20714,7 @@
         },
         {
           "id": "sensor.kitchen_memory_utilization",
-          "friendlyName": "Annex  Memory utilization",
+          "friendlyName": "Memory utilization",
           "cSharpName": "KitchenMemoryUtilization"
         },
         {
@@ -21173,6 +21543,16 @@
           "cSharpName": "PorchTx"
         },
         {
+          "id": "sensor.postbox_battery",
+          "friendlyName": "PostBox Battery",
+          "cSharpName": "PostboxBattery"
+        },
+        {
+          "id": "sensor.postbox_device_temperature",
+          "friendlyName": "PostBox Device temperature",
+          "cSharpName": "PostboxDeviceTemperature"
+        },
+        {
           "id": "sensor.power_meter_multiplug",
           "friendlyName": "Power Meter Multiplug",
           "cSharpName": "PowerMeterMultiplug"
@@ -21386,6 +21766,11 @@
           "id": "sensor.rx_3",
           "friendlyName": "RX",
           "cSharpName": "Rx3"
+        },
+        {
+          "id": "sensor.rx_30",
+          "friendlyName": "RX",
+          "cSharpName": "Rx30"
         },
         {
           "id": "sensor.rx_4",
@@ -21943,6 +22328,11 @@
           "cSharpName": "Tx3"
         },
         {
+          "id": "sensor.tx_30",
+          "friendlyName": "TX",
+          "cSharpName": "Tx30"
+        },
+        {
           "id": "sensor.tx_4",
           "friendlyName": "TX",
           "cSharpName": "Tx4"
@@ -22163,11 +22553,6 @@
           "cSharpName": "WiserLtsHeatingDemandBack"
         },
         {
-          "id": "sensor.wiser_lts_heating_demand_back_office",
-          "friendlyName": "Wiser LTS Heating Demand Back office",
-          "cSharpName": "WiserLtsHeatingDemandBackOffice"
-        },
-        {
           "id": "sensor.wiser_lts_heating_demand_boys",
           "friendlyName": "Wiser LTS Heating Demand Boys",
           "cSharpName": "WiserLtsHeatingDemandBoys"
@@ -22178,16 +22563,6 @@
           "cSharpName": "WiserLtsHeatingDemandChannel1"
         },
         {
-          "id": "sensor.wiser_lts_heating_demand_dining",
-          "friendlyName": "Wiser LTS Heating Demand Dining",
-          "cSharpName": "WiserLtsHeatingDemandDining"
-        },
-        {
-          "id": "sensor.wiser_lts_heating_demand_front_office",
-          "friendlyName": "Wiser LTS Heating Demand Front office",
-          "cSharpName": "WiserLtsHeatingDemandFrontOffice"
-        },
-        {
           "id": "sensor.wiser_lts_heating_demand_hallway",
           "friendlyName": "Wiser LTS Heating Demand Hallway",
           "cSharpName": "WiserLtsHeatingDemandHallway"
@@ -22196,11 +22571,6 @@
           "id": "sensor.wiser_lts_heating_demand_jayden",
           "friendlyName": "Wiser LTS Heating Demand Jayden",
           "cSharpName": "WiserLtsHeatingDemandJayden"
-        },
-        {
-          "id": "sensor.wiser_lts_heating_demand_kitchen",
-          "friendlyName": "Wiser LTS Heating Demand Kitchen",
-          "cSharpName": "WiserLtsHeatingDemandKitchen"
         },
         {
           "id": "sensor.wiser_lts_heating_demand_landing",
@@ -22243,24 +22613,9 @@
           "cSharpName": "WiserLtsTargetTemperatureBack"
         },
         {
-          "id": "sensor.wiser_lts_target_temperature_back_office",
-          "friendlyName": "Wiser LTS Target Temperature Back office",
-          "cSharpName": "WiserLtsTargetTemperatureBackOffice"
-        },
-        {
           "id": "sensor.wiser_lts_target_temperature_boys",
           "friendlyName": "Wiser LTS Target Temperature Boys",
           "cSharpName": "WiserLtsTargetTemperatureBoys"
-        },
-        {
-          "id": "sensor.wiser_lts_target_temperature_dining",
-          "friendlyName": "Wiser LTS Target Temperature Dining",
-          "cSharpName": "WiserLtsTargetTemperatureDining"
-        },
-        {
-          "id": "sensor.wiser_lts_target_temperature_front_office",
-          "friendlyName": "Wiser LTS Target Temperature Front office",
-          "cSharpName": "WiserLtsTargetTemperatureFrontOffice"
         },
         {
           "id": "sensor.wiser_lts_target_temperature_hallway",
@@ -22271,11 +22626,6 @@
           "id": "sensor.wiser_lts_target_temperature_jayden",
           "friendlyName": "Wiser LTS Target Temperature Jayden",
           "cSharpName": "WiserLtsTargetTemperatureJayden"
-        },
-        {
-          "id": "sensor.wiser_lts_target_temperature_kitchen",
-          "friendlyName": "Wiser LTS Target Temperature Kitchen",
-          "cSharpName": "WiserLtsTargetTemperatureKitchen"
         },
         {
           "id": "sensor.wiser_lts_target_temperature_landing",
@@ -22308,24 +22658,9 @@
           "cSharpName": "WiserLtsTemperatureBack"
         },
         {
-          "id": "sensor.wiser_lts_temperature_back_office",
-          "friendlyName": "Wiser LTS Temperature Back office",
-          "cSharpName": "WiserLtsTemperatureBackOffice"
-        },
-        {
           "id": "sensor.wiser_lts_temperature_boys",
           "friendlyName": "Wiser LTS Temperature Boys",
           "cSharpName": "WiserLtsTemperatureBoys"
-        },
-        {
-          "id": "sensor.wiser_lts_temperature_dining",
-          "friendlyName": "Wiser LTS Temperature Dining",
-          "cSharpName": "WiserLtsTemperatureDining"
-        },
-        {
-          "id": "sensor.wiser_lts_temperature_front_office",
-          "friendlyName": "Wiser LTS Temperature Front office",
-          "cSharpName": "WiserLtsTemperatureFrontOffice"
         },
         {
           "id": "sensor.wiser_lts_temperature_hallway",
@@ -22336,11 +22671,6 @@
           "id": "sensor.wiser_lts_temperature_jayden",
           "friendlyName": "Wiser LTS Temperature Jayden",
           "cSharpName": "WiserLtsTemperatureJayden"
-        },
-        {
-          "id": "sensor.wiser_lts_temperature_kitchen",
-          "friendlyName": "Wiser LTS Temperature Kitchen",
-          "cSharpName": "WiserLtsTemperatureKitchen"
         },
         {
           "id": "sensor.wiser_lts_temperature_landing",
@@ -23709,6 +24039,11 @@
           "cSharpName": "DockerHaHouseTour1"
         },
         {
+          "id": "switch.docker_ha_tika_1",
+          "friendlyName": "ha-tika-1",
+          "cSharpName": "DockerHaTika1"
+        },
+        {
           "id": "switch.docker_home_assistant",
           "friendlyName": "home-assistant",
           "cSharpName": "DockerHomeAssistant"
@@ -23960,12 +24295,12 @@
         },
         {
           "id": "switch.hob_child_lock",
-          "friendlyName": "Hob Child lock",
+          "friendlyName": "Child lock",
           "cSharpName": "HobChildLock"
         },
         {
           "id": "switch.hob_power",
-          "friendlyName": "Hob Power",
+          "friendlyName": "Power",
           "cSharpName": "HobPower"
         },
         {
@@ -24214,6 +24549,11 @@
           "cSharpName": "LightManagerLanding"
         },
         {
+          "id": "switch.light_manager_lounge",
+          "friendlyName": "Light Manager Lounge",
+          "cSharpName": "LightManagerLounge"
+        },
+        {
           "id": "switch.light_manager_master",
           "friendlyName": "Light Manager Master",
           "cSharpName": "LightManagerMaster"
@@ -24227,6 +24567,11 @@
           "id": "switch.light_manager_porch",
           "friendlyName": "Light Manager Porch",
           "cSharpName": "LightManagerPorch"
+        },
+        {
+          "id": "switch.light_manager_sittingroom",
+          "friendlyName": "Light Manager SittingRoom",
+          "cSharpName": "LightManagerSittingroom"
         },
         {
           "id": "switch.light_manager_study",
@@ -24654,6 +24999,21 @@
           "cSharpName": "ScheduleF32f8d"
         },
         {
+          "id": "switch.shirley_do_not_disturb_switch",
+          "friendlyName": "Shirley do not disturb switch",
+          "cSharpName": "ShirleyDoNotDisturbSwitch"
+        },
+        {
+          "id": "switch.shirley_repeat_switch",
+          "friendlyName": "Shirley repeat switch",
+          "cSharpName": "ShirleyRepeatSwitch"
+        },
+        {
+          "id": "switch.shirley_shuffle_switch",
+          "friendlyName": "Shirley shuffle switch",
+          "cSharpName": "ShirleyShuffleSwitch"
+        },
+        {
           "id": "switch.simulate_all_lights",
           "friendlyName": "Simulate All Lights",
           "cSharpName": "SimulateAllLights"
@@ -24804,11 +25164,6 @@
           "cSharpName": "WiserAwayModeAffectsHotWater"
         },
         {
-          "id": "switch.wiser_back_office_window_detection",
-          "friendlyName": "Wiser Back office Window Detection",
-          "cSharpName": "WiserBackOfficeWindowDetection"
-        },
-        {
           "id": "switch.wiser_back_window_detection",
           "friendlyName": "Wiser Back Window Detection",
           "cSharpName": "WiserBackWindowDetection"
@@ -24827,16 +25182,6 @@
           "id": "switch.wiser_daylight_saving",
           "friendlyName": "Wiser Daylight Saving",
           "cSharpName": "WiserDaylightSaving"
-        },
-        {
-          "id": "switch.wiser_dining_window_detection",
-          "friendlyName": "Wiser Dining Window Detection",
-          "cSharpName": "WiserDiningWindowDetection"
-        },
-        {
-          "id": "switch.wiser_front_office_window_detection",
-          "friendlyName": "Wiser Front office Window Detection",
-          "cSharpName": "WiserFrontOfficeWindowDetection"
         },
         {
           "id": "switch.wiser_hallway_window_detection",
@@ -24957,11 +25302,6 @@
           "id": "switch.wiser_jayden_window_detection",
           "friendlyName": "Wiser Jayden Window Detection",
           "cSharpName": "WiserJaydenWindowDetection"
-        },
-        {
-          "id": "switch.wiser_kitchen_window_detection",
-          "friendlyName": "Wiser Kitchen Window Detection",
-          "cSharpName": "WiserKitchenWindowDetection"
         },
         {
           "id": "switch.wiser_landing_window_detection",
@@ -25444,7 +25784,7 @@
         },
         {
           "id": "update.dad_jokes_update",
-          "friendlyName": "Dad Jokes update",
+          "friendlyName": "Jokes update",
           "cSharpName": "DadJokesUpdate"
         },
         {
@@ -25931,6 +26271,11 @@
           "id": "update.plotly_graph_card_update",
           "friendlyName": "Plotly Graph Card update",
           "cSharpName": "PlotlyGraphCardUpdate"
+        },
+        {
+          "id": "update.postbox_firmware",
+          "friendlyName": "PostBox Firmware",
+          "cSharpName": "PostboxFirmware"
         },
         {
           "id": "update.powercalc_update",
@@ -26836,6 +27181,33 @@
           "jsonName": "supported_features",
           "cSharpName": "SupportedFeatures",
           "clrType": "System.Double"
+        }
+      ]
+    },
+    {
+      "domain": "image",
+      "entities": [
+        {
+          "id": "image.niemand_qr_code",
+          "friendlyName": "Niemand QR Code",
+          "cSharpName": "NiemandQrCode"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "access_token",
+          "cSharpName": "AccessToken",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "entity_picture",
+          "cSharpName": "EntityPicture",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
         }
       ]
     }

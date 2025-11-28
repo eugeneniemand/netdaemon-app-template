@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 namespace Niemand.SecurityApps;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, IServices services, ILogger<Security> logger, IAlexa alexa, IScheduler scheduler, Common common, PushNotifier pushNotifier, TelegramBotServices bot) : IAsyncInitializable
 {
     private readonly List<BinarySensorEntity> DoorsOpened = new();

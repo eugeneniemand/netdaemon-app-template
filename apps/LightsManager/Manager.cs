@@ -161,7 +161,7 @@ public class Manager
         _logger.LogDebug("{room} Subscribed to House Mode Changed Events", Name);
         NightTimeEntity?.StateChanges().Subscribe(_ =>
         {
-            _logger.LogInformation("{room} House Mode Changed", Name);
+            _logger.LogDebug("{room} House Mode Changed", Name);
 
             if (AllControlEntitiesAreOff)
             {
@@ -200,14 +200,14 @@ public class Manager
             .Where(LightTurnedOffManually)
             .Subscribe(_ =>
             {
-                _logger.LogInformation("{room} Manual Turn Off Override by user", Name);
+                _logger.LogDebug("{room} Manual Turn Off Override by user", Name);
                 if (AllControlEntities.Any(e => e.IsOn()))
                 {
-                    _logger.LogInformation("{room} Override active as some control entities are on", Name);
+                    _logger.LogDebug("{room} Override active as some control entities are on", Name);
                     return;
                 }
 
-                _logger.LogInformation("{room} Override reset as all control entities are off", Name);
+                _logger.LogDebug("{room} Override reset as all control entities are off", Name);
                 _overrideActive = false;
                 _overrideSchedule.Dispose();
                 UpdateAttributes();
@@ -224,7 +224,7 @@ public class Manager
     //        .Where(LightTurnedOnManually)
     //        .Subscribe(e =>
     //        {
-    //            _logger.LogInformation("{room} Manual Turn On Override for {light} by user", Name, e.New?.EntityId);
+    //            _logger.LogDebug("{room} Manual Turn On Override for {light} by user", Name, e.New?.EntityId);
     //            LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
     //            ResetOverride();                
     //            TurnOnLightWithColorAndBrightness(e.Entity);
@@ -271,9 +271,9 @@ public class Manager
             })
             .Subscribe(e =>
             {
-                _logger.LogInformation("OLD:" + JsonSerializer.Serialize(e.Old));
-                _logger.LogInformation("NEW:" + JsonSerializer.Serialize(e.New));
-                _logger.LogInformation("{room} Attribute Override by user", Name);
+                _logger.LogDebug("OLD:" + JsonSerializer.Serialize(e.Old));
+                _logger.LogDebug("NEW:" + JsonSerializer.Serialize(e.New));
+                _logger.LogDebug("{room} Attribute Override by user", Name);
                 LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
 
                 if (LightAttributesOverride(e))
@@ -294,10 +294,10 @@ public class Manager
                         .Where(e => e.New.IsOff())
                         .Subscribe(e =>
                         {
-                            _logger.LogInformation("{room} No Motion Timeout '{entity}'", Name, e.New?.EntityId);
+                            _logger.LogDebug("{room} No Motion Timeout '{entity}'", Name, e.New?.EntityId);
                             if (_overrideActive)
                             {
-                                _logger.LogInformation("{room} Not turning off - Override active ", Name);
+                                _logger.LogDebug("{room} Not turning off - Override active ", Name);
                                 return;
                             }
 
@@ -312,7 +312,7 @@ public class Manager
                         .Where(e => e.New.IsOff())
                         .Subscribe(e =>
                         {
-                            _logger.LogInformation("{room} No Motion '{entity}'", Name, e.New?.EntityId);
+                            _logger.LogDebug("{room} No Motion '{entity}'", Name, e.New?.EntityId);
                             UpdateAttributes(true);
 
                             WaitAllTasks();
@@ -326,11 +326,11 @@ public class Manager
                         .Where(e => e.New.IsOn())
                         .Subscribe(e =>
                         {
-                            _logger.LogInformation("{room} Motion '{entity}'", Name, e.New?.EntityId);
+                            _logger.LogDebug("{room} Motion '{entity}'", Name, e.New?.EntityId);
 
                             if (_overrideActive)
                             {
-                                _logger.LogInformation("{room} Not turning on - resetting Override timeout", Name);
+                                _logger.LogDebug("{room} Not turning on - resetting Override timeout", Name);
                                 ResetOverride();
                                 WaitAllTasks();
                                 return;
@@ -353,18 +353,18 @@ public class Manager
 
         if (!ignoreConditions && IsOccupied)
         {
-            _logger.LogInformation("{room} Cant turn off - Occupied", Name);
+            _logger.LogDebug("{room} Cant turn off - Occupied", Name);
             return;
         }
 
         //if (!ignoreConditions && ConditionEntityStateNotMet)
         //{
-        //    _logger.LogInformation("{room} Cant turn off - Condition not met {conditionEntity}!={state}", Name, ConditionEntity?.EntityId, ConditionEntityState);
+        //    _logger.LogDebug("{room} Cant turn off - Condition not met {conditionEntity}!={state}", Name, ConditionEntity?.EntityId, ConditionEntityState);
         //    return;
         //}
 
         var triggerMsg = $"Turned off by {trigger ?? "UNKNOWN"}";
-        _logger.LogInformation("{room} Turn Off by {trigger}", Name, triggerMsg);
+        _logger.LogDebug("{room} Turn Off by {trigger}", Name, triggerMsg);
 
         foreach (var e in AllControlEntities.ToList())
         {
@@ -421,7 +421,7 @@ public class Manager
 
         if (!ignoreConditions && IsTooBright)
         {
-            _logger.LogInformation("{room} Too Bright", Name);
+            _logger.LogDebug("{room} Too Bright", Name);
             return;
         }
 
@@ -435,7 +435,7 @@ public class Manager
 
         foreach (var e in controlEntities.Where(l => l.IsOff()))
         {
-            _logger.LogInformation("{room} Turning On {light}", Name, e.EntityId);
+            _logger.LogDebug("{room} Turning On {light}", Name, e.EntityId);
             TurnOnLightWithColorAndBrightness(e);
 
             LogInLogbook(e, $"Turned on by {trigger ?? "UNKNOWN"}");

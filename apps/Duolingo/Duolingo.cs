@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Niemand.Duolingo;
 
-[NetDaemonApp]
+//[NetDaemonApp]
 //[Focus]
 public class Duolingo : IAsyncInitializable
 {

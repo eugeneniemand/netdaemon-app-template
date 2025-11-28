@@ -34,6 +34,7 @@ public interface IAlexa
     /// <param name="command">what time is it</param>
     void SendCommand(MediaPlayerEntity mediaPlayer, string command);
     void Prompt(string mediaPlayer, string message, string eventId);
+    void Prompt(Alexa.Config config);
     void TextToSpeech(Alexa.Config config);
     void TextToSpeech(string mediaPlayer, string message);
 }

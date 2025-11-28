@@ -6,7 +6,7 @@ namespace Niemand.Tests.Mocks;
 
 public class AlexaMock(IServices services) : IAlexa
 {
-    private readonly Subject<PromptResponseEvent> _promptResponses = new();
+    private readonly Subject<PromptResponse> _promptResponses = new();
 
     public virtual void Announce(Alexa.Config config)
     {
@@ -22,12 +22,17 @@ public class AlexaMock(IServices services) : IAlexa
 
     public virtual void Prompt(string mediaPlayer, string message, string eventId)
     {
-        throw new NotImplementedException();
+        
     }
 
-    public IObservable<PromptResponseEvent> PromptResponses => _promptResponses;
+    public virtual void Prompt(Alexa.Config config)
+    {
 
-    IObservable<PromptResponse> IAlexa.PromptResponses => throw new NotImplementedException();
+    }
+
+    public IObservable<PromptResponse> PromptResponses => _promptResponses;
+
+    IObservable<PromptResponse> IAlexa.PromptResponses => _promptResponses;
 
     public virtual void TextToSpeech(Alexa.Config config)
     {
@@ -39,7 +44,7 @@ public class AlexaMock(IServices services) : IAlexa
         services.Notify.AlexaMedia(message, target: mediaPlayer, data: new { type = "tts" });
     }
 
-    public void QueueResponse(PromptResponseEvent response)
+    public void QueueResponse(PromptResponse response)
     {
         _promptResponses.OnNext(response);
     }

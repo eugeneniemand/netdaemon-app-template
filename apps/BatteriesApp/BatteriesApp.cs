@@ -38,7 +38,7 @@ public class BatteriesApp
                 case 0:
                     flat.Add(CleanEntityId(entity, prefix, suffix));
                     break;
-                case <= 10:
+                case <= 5:
                     low.Add(CleanEntityId(entity, prefix, suffix));
                     break;
             }

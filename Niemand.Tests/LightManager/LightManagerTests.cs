@@ -45,6 +45,12 @@ public class LightManagerFacts(LightManagerSut sut, StateChangeManager state, Te
     [Fact]
     public void ControlEntitiesDontTurnOffWhenConditionIsNotMet()
     {
+        // I removed the code that turns off lights when condition is not met.
+        // The Condition was intended to prevent lights turning on when not needed, not to turn them off once on.
+        // For example, if the sun is below horizon, i.e. its dark then turn on the light when triggered,
+        // however the lights could turn on just before sun goes above horizon and
+        // the when the need to turn off they stay on.
+
         // Arrange
         sut.Config.Room().ConditionEntity = entityBuilder.CreateEntity<SensorEntity>("sensor.sun", "above_horizon");
         sut.Config.Room().ConditionEntityState = "below_horizon";

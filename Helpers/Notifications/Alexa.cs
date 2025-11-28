@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using Niemand.Helpers.Notifications;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Niemand.Helpers;
@@ -66,6 +67,11 @@ public class Alexa : IAlexa
 
     public void Prompt(string mediaPlayer, string message, string eventId) =>
         QueueNotification(new Config { Entity = mediaPlayer, Message = message, EventId = eventId }, "prompt");
+
+    public void Prompt(Config config)
+    {
+        QueueNotification(config, "prompt");
+    }
 
     public IObservable<PromptResponse> PromptResponses => _promptResponses;
 
@@ -207,7 +213,7 @@ public class Alexa : IAlexa
     }
 
     private PromptResponse PromtResponseEventToDto(PromptResponseEvent? eventData)
-    {        
+    {
         return new PromptResponse
         {
             EventId = eventData?.EventId ?? "",
@@ -223,13 +229,13 @@ public class Alexa : IAlexa
         haContext.Events.Filter<PromptResponseEvent>("alexa_actionable_notification")
             .Do(e => _logger.LogDebug("Received alexa_actionable_notification event {eventData}", e))
             .Select(e => PromtResponseEventToDto(e.Data))
-            .DistinctUntilChanged(e => e)
+            .DistinctUntilChanged(e => new { e.EventId, e.ResponseType })
             .Do(e => _logger.LogDebug("Distinct PromptResponse {PromptResponse}", e))
             .Subscribe(responseEvent =>
                 {
                     _logger.LogInformation("Event(alexa_actionable_notification): {EventId} - {Response} - {ResponseType} by {ResponsePersonId}", responseEvent.EventId, responseEvent.Response?.ToString(), responseEvent.ResponseType, responseEvent?.ResponsePersonId);
-
                     if (responseEvent == null) return;
+
                     _promptResponses.OnNext(responseEvent);
                 });
     }

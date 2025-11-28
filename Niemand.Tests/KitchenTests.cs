@@ -61,8 +61,7 @@ public class KitchenFacts(KitchenSut sut)
         // Act
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
         // Assert
-        sut.State.ServiceCalls.Should().ContainEquivalentOf(
-            NetDaemon.Extensions.Testing.Events.Notify.Twinstead("3 Hour Cheap Energy Started: "));
+        sut.State.ServiceCalls.Should().ContainEquivalentOf(Events.Notify.Twinstead("3 Hour Cheap Energy Started: "));
     }
 
     [Fact]
@@ -129,6 +128,6 @@ public class KitchenFacts(KitchenSut sut)
         sut.Scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
         // Assert
         sut.State.ServiceCalls.Should().ContainEquivalentOf(
-            NetDaemon.Extensions.Testing.Events.Notify.Twinstead("Coffee machine is ready"));
+            Events.Notify.Twinstead("Coffee machine is ready"));
     }
 }

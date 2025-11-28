@@ -25,20 +25,24 @@ public class AlexaPromptPoller
     private readonly ILogger _logger;
 
     private readonly List<IObservable<Unit>> _triggers = new();
+    private Alexa.Config _alexaconfig;
     private string _mediaPlayer = "";
     private string _promptMessage = "";
     private string _eventId = "";
     private TimeSpan _cooldown = TimeSpan.FromMinutes(1);
-    
+
     private readonly Dictionary<PromptResponseType, Action<PromptResponse>> _responseHandlers = new();
     private Action<PromptResponse>? _defaultResponseHandler;
-    
+
     private IObservable<Unit>? _dailyResetTrigger;
     private Subject<Unit>? _externalResetTrigger;
-    private Subject<Unit>? _acknowledgmentStream;
     private DateTimeOffset _lastPromptTime = DateTimeOffset.MinValue;
     private bool _isWaitingForResponse = false;
     private bool _isAcknowledged = false;
+    
+    // For stateful trigger management
+    private readonly List<IObservable<bool>> _statefulTriggers = new();
+    private readonly Subject<Unit> _statefulResetTrigger = new();
 
     // For managing disposables
     private readonly List<IDisposable> _subscriptions = new();
@@ -135,6 +139,44 @@ public class AlexaPromptPoller
     }
 
     /// <summary>
+    /// Add a stateful trigger that maintains state from a boolean observable.
+    /// 
+    /// The trigger will fire when:
+    /// 1. The boolean observable emits true (sets the flag)
+    /// 2. Another motion/event trigger fires while the flag is set
+    /// 
+    /// The flag is automatically reset when the poller is acknowledged.
+    /// 
+    /// Example:
+    /// .AddStatefulTrigger(entities.BinarySensor.Postbox.StateChanges(), s => s.New.IsOn())
+    /// .AddTrigger(entities.BinarySensor.KonnectedHallway.StateChanges())
+    /// 
+    /// This allows: "Prompt me when motion is detected AND postbox has been opened in the past (before acknowledged)"
+    /// </summary>
+    public AlexaPromptPoller AddStatefulTrigger<T>(IObservable<T> stateObservable, Func<T, bool> stateSelector)
+    {
+        if (stateObservable == null) throw new ArgumentNullException(nameof(stateObservable));
+        if (stateSelector == null) throw new ArgumentNullException(nameof(stateSelector));
+        
+        // Track the boolean state as a sticky flag:
+        // - Once true, stays true until explicitly reset
+        // - Reset when acknowledged via _statefulResetTrigger
+        var statefulFlag = stateObservable
+            .Select(value => stateSelector(value))
+            .Scan(false, (previousFlag, currentValue) =>
+            {
+                // Sticky logic: once true, stay true until reset
+                return previousFlag || currentValue;
+            })
+            .StartWith(false)
+            .Merge(_statefulResetTrigger.Select(_ => false)); // Reset to false when acknowledged
+        
+        _statefulTriggers.Add(statefulFlag);
+        _logger.LogDebug("Added stateful trigger of type {TriggerType} to AlexaPromptPoller", typeof(T).Name);
+        return this;
+    }
+
+    /// <summary>
     /// Set the media player entity ID (e.g., "media_player.dining").
     /// </summary>
     public AlexaPromptPoller SetMediaPlayer(string mediaPlayer)
@@ -151,6 +193,16 @@ public class AlexaPromptPoller
     {
         _promptMessage = message ?? throw new ArgumentNullException(nameof(message));
         _eventId = eventId ?? throw new ArgumentNullException(nameof(eventId));
+        _logger.LogDebug("AlexaPromptPoller prompt set: {EventId} - {Message}", _eventId, _promptMessage);
+        return this;
+    }
+
+    /// <summary>
+    /// Set the prompt message and unique event ID.
+    /// </summary>
+    public AlexaPromptPoller SetPrompt(Alexa.Config config)
+    {
+        _alexaconfig = config ?? throw new ArgumentNullException(nameof(config));
         _logger.LogDebug("AlexaPromptPoller prompt set: {EventId} - {Message}", _eventId, _promptMessage);
         return this;
     }
@@ -331,24 +383,46 @@ public class AlexaPromptPoller
         if (_triggers.Count == 0)
             throw new InvalidOperationException("At least one trigger must be added via AddTrigger()");
 
-        // Merge all triggers
+        // Merge all regular triggers
         var mergedTriggers = _triggers[0];
         for (int i = 1; i < _triggers.Count; i++)
         {
             mergedTriggers = mergedTriggers.Merge(_triggers[i]);
         }
 
-        // Create acknowledgment stream if not already created
-        _acknowledgmentStream ??= new Subject<Unit>();
+        // If there are stateful triggers, filter regular triggers based on stateful state
+        if (_statefulTriggers.Count > 0)
+        {
+            // Combine all stateful flags with OR logic - fire if ANY flag is true
+            var combinedStatefulFlags = _statefulTriggers[0];
+            for (int i = 1; i < _statefulTriggers.Count; i++)
+            {
+                combinedStatefulFlags = combinedStatefulFlags
+                    .CombineLatest(_statefulTriggers[i], (flag1, flag2) => flag1 || flag2);
+            }
 
-        // Apply cooldown logic using throttling, stop when acknowledged
+            // Regular trigger only fires if at least one stateful flag is true
+            mergedTriggers = mergedTriggers
+                .WithLatestFrom(combinedStatefulFlags, (trigger, flagState) => (trigger, flagState))
+                .Where(x => x.flagState)
+                .Select(x => x.trigger)
+                .Do(_ => _logger.LogDebug("Trigger accepted: stateful condition met"));
+        }
+
+        // Apply cooldown logic using state-based checking
         var throttledTriggers = mergedTriggers
-            .TakeUntil(_acknowledgmentStream)
             .Where(_ =>
             {
+                // If acknowledged, don't process triggers
+                if (_isAcknowledged)
+                {
+                    _logger.LogDebug("Trigger ignored: poller has been acknowledged");
+                    return false;
+                }
+
                 var elapsed = _scheduler.Now - _lastPromptTime;
-                bool canPrompt = elapsed >= _cooldown;
-                
+                bool canPrompt = elapsed >= _cooldown || _lastPromptTime == DateTimeOffset.MinValue;
+
                 if (!canPrompt)
                 {
                     _logger.LogDebug(
@@ -357,22 +431,30 @@ public class AlexaPromptPoller
                         _cooldown.TotalMilliseconds
                     );
                 }
-                
+                else
+                {
+                    _lastPromptTime = _scheduler.Now;
+                    _isWaitingForResponse = true;
+                    _logger.LogDebug("Cooldown elapsed, sending prompt");
+                }
+
                 return canPrompt;
-            })
-            .Do(_ =>
-            {
-                _lastPromptTime = _scheduler.Now;
-                _isWaitingForResponse = true;
-                _logger.LogDebug("Cooldown elapsed, sending prompt");
             });
 
         // Subscribe to triggers
         var triggerSubscription = throttledTriggers
             .Subscribe(_ =>
             {
-                _logger.LogDebug("Sending prompt: {EventId} to {MediaPlayer}", _eventId, _mediaPlayer);
-                _alexa.Prompt(_mediaPlayer, _promptMessage, _eventId);
+                if (_alexaconfig != null)
+                {                
+                    _logger.LogDebug("Sending prompt: {EventId} to {MediaPlayer}", _alexaconfig.EventId, _alexaconfig.Entity);
+                    _alexa.Prompt(_alexaconfig);
+                }
+                else
+                {
+                    _logger.LogDebug("Sending prompt: {EventId} to {MediaPlayer}", _eventId, _mediaPlayer);
+                    _alexa.Prompt(_mediaPlayer, _promptMessage, _eventId);
+                }
             });
 
         // Subscribe to responses
@@ -399,7 +481,7 @@ public class AlexaPromptPoller
             var resetSubscription = _dailyResetTrigger
                 .Do(_ => _logger.LogDebug("Daily reset triggered for {EventId}", _eventId))
                 .Subscribe(_ => ResetState());
-            
+
             _subscriptions.Add(resetSubscription);
         }
 
@@ -412,17 +494,19 @@ public class AlexaPromptPoller
                     _lastPromptTime = DateTimeOffset.MinValue;
                     _isWaitingForResponse = false;
                     _isAcknowledged = false;
+                    _statefulResetTrigger.OnNext(Unit.Default);
                 });
-            
+
             _subscriptions.Add(externalResetSubscription);
         }
 
         _logger.LogInformation(
-            "AlexaPromptPoller initialized: EventId={EventId}, MediaPlayer={MediaPlayer}, Cooldown={Cooldown}ms, Triggers={TriggerCount}",
+            "AlexaPromptPoller initialized: EventId={EventId}, MediaPlayer={MediaPlayer}, Cooldown={Cooldown}ms, Triggers={TriggerCount}, StatefulTriggers={StatefulCount}",
             _eventId,
             _mediaPlayer,
             _cooldown.TotalMilliseconds,
-            _triggers.Count
+            _triggers.Count,
+            _statefulTriggers.Count
         );
 
         return new CompositeDisposable(_subscriptions);
@@ -430,26 +514,39 @@ public class AlexaPromptPoller
 
     private void ValidateConfiguration()
     {
-        if (string.IsNullOrWhiteSpace(_mediaPlayer))
-            throw new InvalidOperationException("MediaPlayer must be set via SetMediaPlayer()");
-        
-        if (string.IsNullOrWhiteSpace(_promptMessage))
-            throw new InvalidOperationException("Prompt message must be set via SetPrompt()");
-        
-        if (string.IsNullOrWhiteSpace(_eventId))
-            throw new InvalidOperationException("Event ID must be set via SetPrompt()");
+        if (_alexaconfig == null)
+        {
+            if (string.IsNullOrWhiteSpace(_mediaPlayer))
+                throw new InvalidOperationException("MediaPlayer must be set via SetMediaPlayer()");
+
+            if (string.IsNullOrWhiteSpace(_promptMessage))
+                throw new InvalidOperationException("Prompt message must be set via SetPrompt()");
+
+            if (string.IsNullOrWhiteSpace(_eventId))
+                throw new InvalidOperationException("Event ID must be set via SetPrompt()");
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(_alexaconfig.Entity))
+                throw new InvalidOperationException("Alexa.Config.Entity must be set");
+            if (string.IsNullOrWhiteSpace(_alexaconfig.Message))
+                throw new InvalidOperationException("Alexa.Config.Message must be set");
+            if (string.IsNullOrWhiteSpace(_alexaconfig.EventId))
+                throw new InvalidOperationException("Alexa.Config.EventId must be set");
+        }
     }
 
     /// <summary>
     /// Acknowledge the prompt and stop all further prompting.
     /// Once called, triggers will no longer fire until ResetState() is called.
+    /// Also resets any stateful flags set by AddStatefulTrigger().
     /// </summary>
     public void Acknowledge()
     {
-        _acknowledgmentStream ??= new Subject<Unit>();
         _isAcknowledged = true;
+        _isWaitingForResponse = false;
+        _statefulResetTrigger.OnNext(Unit.Default);
         _logger.LogDebug("AlexaPromptPoller acknowledged - no further prompts will be sent until reset");
-        _acknowledgmentStream.OnNext(Unit.Default);
     }
 
     /// <summary>

@@ -24,13 +24,19 @@ public class JaydenTablet
 
         // Create the poller (don't subscribe yet)
         _alexaPoller = new AlexaPromptPoller(scheduler, alexa, logger)
-            .AddTrigger(entities.BinarySensor.KonnectedKitchen.StateChanges())
-            .AddTrigger(entities.BinarySensor.KitchenMotion.StateChanges())
-            .SetPrompt("Has Jayden taken his tablet?", "jayden_tablet")
-            .SetMediaPlayer(_mediaPlayer)
-            .WithCooldown(TimeSpan.FromMinutes(1))
+            .AddTrigger(entities.BinarySensor.KonnectedKitchen.StateChanges().Where(e => e.New.IsOn()))
+            .AddTrigger(entities.BinarySensor.KitchenMotion.StateChanges().Where(e => e.New.IsOn()))
+            .SetPrompt(new Alexa.Config()
+            {
+                Message = "Has Jayden taken his tablet?",
+                Entity = _mediaPlayer,
+                Whisper = false,
+                VolumeLevel = 0.5,
+                EventId = "jayden_tablet"
+            })
+            .WithCooldown(TimeSpan.FromMinutes(3))
             .WithDailyReset(Observable.Timer(
-                Next6am(_scheduler.Now), 
+                Next6am(_scheduler.Now),
                 TimeSpan.FromDays(1)
                 , _scheduler
                 ).StartWith(0L))

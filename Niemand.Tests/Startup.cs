@@ -26,7 +26,8 @@ public static class Startup
         services.AddTransient<StateChangeManager>();
         services.AddTransient<TestEntityBuilder>();
         services.AddTransient<IMqttEntityManager, MqttEntityManagerMock>();
-        services.AddTransient<IAlexa, AlexaMock>();
+        services.AddTransient<AlexaMock>();
+        services.AddTransient<IAlexa>(s => s.GetRequiredService<AlexaMock>());
         // Register a single FakeLogCollector and use FakeLogger<T> as the ILogger<T> implementation so tests can inspect logs
         services.AddSingleton<FakeLogCollector>();
         services.AddSingleton(typeof(ILogger<>), typeof(FakeLogger<>));        
