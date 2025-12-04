@@ -35,7 +35,7 @@ public class AlexaPromptPoller
     private Action<PromptResponse>? _defaultResponseHandler;
 
     private IObservable<Unit>? _dailyResetTrigger;
-    private Subject<Unit>? _externalResetTrigger;
+    private IObservable<Unit>? _externalResetTrigger;
     private DateTimeOffset _lastPromptTime = DateTimeOffset.MinValue;
     private bool _isWaitingForResponse = false;
     private bool _isAcknowledged = false;
@@ -203,6 +203,7 @@ public class AlexaPromptPoller
     public AlexaPromptPoller SetPrompt(Alexa.Config config)
     {
         _alexaconfig = config ?? throw new ArgumentNullException(nameof(config));
+        _eventId = config.EventId ?? throw new ArgumentNullException(nameof(config.EventId));
         _logger.LogDebug("AlexaPromptPoller prompt set: {EventId} - {Message}", _eventId, _promptMessage);
         return this;
     }
@@ -354,10 +355,13 @@ public class AlexaPromptPoller
     /// Get an observable that can be used to externally trigger a reset.
     /// Call .ResetState() to send a reset signal.
     /// </summary>
-    public IObservable<Unit> GetExternalResetTrigger()
+    public AlexaPromptPoller AddExternalResetTrigger<T>(IObservable<Unit> externalResetTrigger)
     {
-        _externalResetTrigger ??= new Subject<Unit>();
-        return _externalResetTrigger;
+        if (externalResetTrigger == null) throw new ArgumentNullException(nameof(externalResetTrigger));
+        // Convert to Unit
+        _externalResetTrigger = externalResetTrigger.Select(_ => Unit.Default);
+        _logger.LogDebug("External reset trigger configured with type {TriggerType}", typeof(T).Name);
+        return this;
     }
 
     /// <summary>
@@ -365,12 +369,11 @@ public class AlexaPromptPoller
     /// </summary>
     public void ResetState()
     {
-        _externalResetTrigger ??= new Subject<Unit>();
         _lastPromptTime = DateTimeOffset.MinValue;
         _isWaitingForResponse = false;
         _isAcknowledged = false;
+        _statefulResetTrigger.OnNext(Unit.Default);
         _logger.LogDebug("AlexaPromptPoller state reset externally");
-        _externalResetTrigger.OnNext(Unit.Default);
     }
 
     /// <summary>
@@ -459,13 +462,13 @@ public class AlexaPromptPoller
 
         // Subscribe to responses
         var responseSubscription = _alexa.PromptResponses
-            .Where(r => r.EventId == _eventId)
             .Do(r => _logger.LogDebug(
                 "Received response for {EventId}: Type={ResponseType}, Person={ResponsePersonName}",
                 r.EventId,
                 r.ResponseType,
                 r.ResponsePersonName
             ))
+            .Where(r => r.EventId == _eventId)
             .Subscribe(response =>
             {
                 HandleResponse(response);
@@ -489,13 +492,7 @@ public class AlexaPromptPoller
         {
             var externalResetSubscription = _externalResetTrigger
                 .Do(_ => _logger.LogDebug("External reset triggered for {EventId}", _eventId))
-                .Subscribe(_ =>
-                {
-                    _lastPromptTime = DateTimeOffset.MinValue;
-                    _isWaitingForResponse = false;
-                    _isAcknowledged = false;
-                    _statefulResetTrigger.OnNext(Unit.Default);
-                });
+                .Subscribe(_ => ResetState());
 
             _subscriptions.Add(externalResetSubscription);
         }

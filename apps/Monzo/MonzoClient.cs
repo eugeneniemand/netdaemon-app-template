@@ -107,7 +107,7 @@ public class MonzoClient
             })
         };
 
-    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode) return false;
 
         var json = await response.Content.ReadAsStringAsync();
@@ -141,7 +141,7 @@ public class MonzoClient
             })
         };
 
-    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode) return false;
 
         var json = await response.Content.ReadAsStringAsync();
@@ -179,7 +179,7 @@ public class MonzoClient
         };
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
 
-    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"Failed to move money: {response.StatusCode}");
@@ -208,7 +208,7 @@ public class MonzoClient
         };
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
 
-    var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"Failed to withdraw money: {response.StatusCode}");
@@ -225,13 +225,19 @@ public class MonzoClient
             await RefreshTokenAsync();
         }
 
-        var request = new HttpRequestMessage(HttpMethod.Get, $"balance?account_id={accountId}");
-        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
 
-        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        var response = await _retryPolicy.ExecuteAsync(async ct =>
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"balance?account_id={accountId}");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
+            return await _httpClient.SendAsync(request, ct);
+        }, cancellationToken);
+
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException($"Failed to get balance: {response.StatusCode}");
+            var body = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException(
+                $"Failed to get balance: {response.StatusCode}. Response: {body}");
         }
 
         var json = await response.Content.ReadAsStringAsync();
@@ -283,7 +289,7 @@ public class MonzoClient
     public string GetAuthorizeUrl()
     {
         // Simple helper to build authorize url - state should be generated for real flows
-        return $"https://auth.monzo.com/?client_id={_clientId}&redirect_uri={Uri.EscapeDataString(_redirectUri)}&response_type=code&scope=accounts:read transactions:read balance:read";
+        return $"https://auth.monzo.com/?client_id={_clientId}&redirect_uri={Uri.EscapeDataString(_redirectUri)}&response_type=code&scope=accounts:read transactions:read balance:read&state=hass";
     }
 
     private record TokenResponse

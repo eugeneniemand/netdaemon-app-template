@@ -4,7 +4,7 @@ using Niemand.Helpers;
 namespace Niemand;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class Postbox
 {
     private const string MediaPlayer = "media_player.playroom";

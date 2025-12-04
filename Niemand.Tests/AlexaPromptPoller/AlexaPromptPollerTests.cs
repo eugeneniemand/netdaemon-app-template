@@ -14,7 +14,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Arrange
         var trigger = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1");
@@ -25,6 +25,11 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Assert
         // Verify Alexa.Prompt was called with correct parameters
+        alexa.PromptCallCount.Should().Be(1, "One prompt should be sent");
+        alexa.PromptHistory.Should().Contain(
+            ("media_player.dining", "Should I turn on the lights?", "test_event_1")
+        );
+
         trigger.OnCompleted();
     }
 
@@ -34,7 +39,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Arrange
         var trigger = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -43,18 +48,24 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var subscription = poller.Subscribe();
 
         // Act - First trigger should go through
+        scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
         trigger.OnNext(Unit.Default);
         var state1 = poller.GetState();
+        var promptCountAfterFirst = alexa.PromptCallCount;
 
         // Act - Second trigger within cooldown should be ignored
         scheduler.AdvanceBy(TimeSpan.FromSeconds(30).Ticks);
         trigger.OnNext(Unit.Default);
         var state2 = poller.GetState();
+        var promptCountAfterSecond = alexa.PromptCallCount;
 
         // Assert
         state1.IsWaitingForResponse.Should().BeTrue();
+        promptCountAfterFirst.Should().Be(1, "First trigger should send a prompt");
+        
         state2.IsWaitingForResponse.Should().BeTrue(); // Still waiting, not a new prompt
         state2.CooldownRemaining.Should().BeGreaterThan(TimeSpan.Zero);
+        promptCountAfterSecond.Should().Be(1, "Second trigger within cooldown should not send a prompt");
 
         subscription.Dispose();
         trigger.OnCompleted();
@@ -67,7 +78,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var trigger = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
         var cooldownMs = 60;
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -78,6 +89,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Act - First trigger
         trigger.OnNext(Unit.Default);
         var initialTime = scheduler.Now;
+        var promptCountAfterFirst = alexa.PromptCallCount;
 
         // Advance past cooldown
         scheduler.AdvanceBy(TimeSpan.FromSeconds(cooldownMs + 1).Ticks);
@@ -85,9 +97,12 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Second trigger should be accepted
         trigger.OnNext(Unit.Default);
         var state = poller.GetState();
+        var promptCountAfterSecond = alexa.PromptCallCount;
 
         // Assert - Last prompt time should have advanced
         state.LastPromptTime.Should().Be(scheduler.Now);
+        promptCountAfterFirst.Should().Be(1, "First trigger should send a prompt");
+        promptCountAfterSecond.Should().Be(2, "Second trigger after cooldown should send a prompt");
 
         subscription.Dispose();
         trigger.OnCompleted();
@@ -98,11 +113,10 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     {
         // Arrange
         var trigger = new Subject<Unit>();
-        var responses = new Subject<PromptResponse>();
         var handlerCalled = false;
         PromptResponse? capturedResponse = null;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -116,7 +130,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseYes,
@@ -130,7 +144,43 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         subscription.Dispose();
         trigger.OnCompleted();
-        responses.OnCompleted();
+    }
+
+    [Fact]
+    public void ResponseHandlerIsCalledForYesResponseForPromptConfig()
+    {
+        // Arrange
+        var trigger = new Subject<Unit>();
+        var handlerCalled = false;
+        PromptResponse? capturedResponse = null;
+
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
+            .AddTrigger(trigger)            
+            .SetPrompt(new Alexa.Config() { Message = "Should I turn on the lights?", Entity = "media_player.dining", EventId = "test_event_1" })
+            .OnResponseYes(response =>
+            {
+                handlerCalled = true;
+                capturedResponse = response;
+            });
+
+        var subscription = poller.Subscribe();
+
+        // Act
+        trigger.OnNext(Unit.Default);
+        alexa.QueueResponse(new PromptResponse
+        {
+            EventId = "test_event_1",
+            ResponseType = PromptResponseType.ResponseYes,
+            ResponsePersonName = "Eugene"
+        });
+
+        // Assert
+        handlerCalled.Should().BeTrue();
+        capturedResponse?.ResponseType.Should().Be(PromptResponseType.ResponseYes);
+        capturedResponse?.ResponsePersonName.Should().Be("Eugene");
+
+        subscription.Dispose();
+        trigger.OnCompleted();
     }
 
     [Fact]
@@ -138,10 +188,9 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     {
         // Arrange
         var trigger = new Subject<Unit>();
-        var responses = new Subject<PromptResponse>();
         var handlerCalled = false;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -151,7 +200,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseNo,
@@ -163,7 +212,6 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         subscription.Dispose();
         trigger.OnCompleted();
-        responses.OnCompleted();
     }
 
     [Fact]
@@ -171,10 +219,9 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     {
         // Arrange
         var trigger = new Subject<Unit>();
-        var responses = new Subject<PromptResponse>();
         var handlerCalled = false;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -184,7 +231,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseSelect,
@@ -196,7 +243,6 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         subscription.Dispose();
         trigger.OnCompleted();
-        responses.OnCompleted();
     }
 
     [Fact]
@@ -204,11 +250,10 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     {
         // Arrange
         var trigger = new Subject<Unit>();
-        var responses = new Subject<PromptResponse>();
         var specificHandlerCalled = false;
         var defaultHandlerCalled = false;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -219,7 +264,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseYes,
@@ -232,7 +277,6 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         subscription.Dispose();
         trigger.OnCompleted();
-        responses.OnCompleted();
     }
 
     [Fact]
@@ -244,7 +288,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var responses = new Subject<PromptResponse>();
         var promptsSent = 0;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger1)
             .AddTrigger(trigger2)
             .SetMediaPlayer("media_player.dining")
@@ -280,7 +324,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var trigger = new Subject<long>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1");
@@ -308,7 +352,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var trigger = new Subject<bool>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger, value => value == true)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1");
@@ -333,7 +377,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         subscription.Dispose();
         trigger.OnCompleted();
         responses.OnCompleted();
-    }
+    }   
 
     [Fact]
     public void DailyResetTriggersResetOfState()
@@ -343,7 +387,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var dailyReset = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(mainTrigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -378,7 +422,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var trigger = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1");
@@ -405,13 +449,49 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     }
 
     [Fact]
+    public void ExternalResetObservableTriggersResetOfState()
+    {
+        // Arrange
+        var trigger = new Subject<Unit>();
+        var externalResetTrigger = new Subject<Unit>();
+        var responses = new Subject<PromptResponse>();
+
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
+            .AddTrigger(trigger)
+            .AddExternalResetTrigger<Unit>(externalResetTrigger)
+            .SetMediaPlayer("media_player.dining")
+            .SetPrompt("Should I turn on the lights?", "test_event_1");
+
+        var subscription = poller.Subscribe();
+
+        // Act - First trigger
+        trigger.OnNext(Unit.Default);
+        var stateBeforeReset = poller.GetState();
+
+        // Externally reset
+        
+        externalResetTrigger.OnNext(Unit.Default);
+        var stateAfterReset = poller.GetState();
+
+        // Assert
+        stateBeforeReset.IsWaitingForResponse.Should().BeTrue();
+        stateAfterReset.LastPromptTime.Should().Be(DateTimeOffset.MinValue);
+        stateAfterReset.IsWaitingForResponse.Should().BeFalse();
+        stateAfterReset.IsAcknowledged.Should().BeFalse();
+
+        subscription.Dispose();
+        trigger.OnCompleted();
+        responses.OnCompleted();
+    }
+
+    [Fact]
     public void AcknowledgementStopsAllFurtherPrompts()
     {
         // Arrange
         var trigger = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -447,10 +527,9 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     {
         // Arrange
         var trigger = new Subject<Unit>();
-        var responses = new Subject<PromptResponse>();
         var handledResponses = new List<PromptResponseType>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -460,7 +539,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseNo,
@@ -470,7 +549,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Trigger again for different response
         scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseNone,
@@ -483,7 +562,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         subscription.Dispose();
         trigger.OnCompleted();
-        responses.OnCompleted();
+
     }
 
     [Fact]
@@ -494,7 +573,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var responses = new Subject<PromptResponse>();
         var handledResponses = new List<PromptResponseType>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -504,7 +583,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseYes,
@@ -514,7 +593,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Trigger again for different response
         scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseNone,
@@ -535,10 +614,9 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     {
         // Arrange
         var trigger = new Subject<Unit>();
-        var responses = new Subject<PromptResponse>();
         var handledResponses = new List<PromptResponseType>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -548,7 +626,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act - Fire ResponseYes (should not be handled)
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseYes,
@@ -558,7 +636,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Trigger again for different response (should be handled)
         scheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "test_event_1",
             ResponseType = PromptResponseType.ResponseNo,
@@ -571,7 +649,6 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         subscription.Dispose();
         trigger.OnCompleted();
-        responses.OnCompleted();
     }
 
     [Fact]
@@ -579,10 +656,9 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     {
         // Arrange
         var trigger = new Subject<Unit>();
-        var responses = new Subject<PromptResponse>();
         var handlerCalled = false;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -592,7 +668,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         // Act
         trigger.OnNext(Unit.Default);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "different_event_id",
             ResponseType = PromptResponseType.ResponseYes,
@@ -604,7 +680,6 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
 
         subscription.Dispose();
         trigger.OnCompleted();
-        responses.OnCompleted();
     }
 
     [Fact]
@@ -615,7 +690,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var responses = new Subject<PromptResponse>();
         var cooldownSeconds = 60;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -650,7 +725,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var trigger = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetPrompt("Should I turn on the lights?", "test_event_1");
 
@@ -670,7 +745,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var trigger = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining");
 
@@ -689,7 +764,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Arrange
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1");
 
@@ -709,7 +784,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var dailyReset = new Subject<Unit>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(trigger)
             .SetMediaPlayer("media_player.dining")
             .SetPrompt("Should I turn on the lights?", "test_event_1")
@@ -762,7 +837,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var postboxState = new Subject<bool>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(motionTrigger)
             .AddStatefulTrigger(postboxState, state => state)
             .SetMediaPlayer("media_player.dining")
@@ -801,7 +876,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var postboxState = new Subject<bool>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(motionTrigger)
             .AddStatefulTrigger(postboxState, state => state)
             .SetMediaPlayer("media_player.dining")
@@ -858,7 +933,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var postboxState = new Subject<bool>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(motionTrigger)
             .AddStatefulTrigger(postboxState, state => state)
             .SetMediaPlayer("media_player.dining")
@@ -899,7 +974,7 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         var doorState = new Subject<bool>();
         var responses = new Subject<PromptResponse>();
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(motionTrigger)
             .AddStatefulTrigger(postboxState, state => state)
             .AddStatefulTrigger(doorState, state => state)
@@ -937,14 +1012,37 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
     [Fact]
     public void StatefulTriggerFiresAgainAfterCooldownWithResponseNone()
     {
+        // Gherkin Syntax:
+        // Feature: Stateful Trigger Re-fires After Cooldown with Timeout Response
+        // Scenario: Post-box reopens and motion triggers new prompt after cooldown expires
+        //
+        // Given: A poller with motion trigger, post-box state trigger, and 30-second cooldown
+        // And: OnResponseNotYes handler configured (non-acknowledgement)
+        //
+        // When: Post-box opens and motion is detected
+        // Then: First prompt is sent at t=0
+        //
+        // When: Response times out at t=20s (ResponseNone received, no user acknowledgement)
+        // Then: IsWaitingForResponse becomes false
+        // And: IsAcknowledged remains false (timeout != acknowledgement)
+        //
+        // When: Post-box closes at t=25s
+        // Then: The state flag remains sticky (true) from the initial trigger
+        //
+        // When: Motion occurs at t=26s (still in cooldown period)
+        // Then: No new prompt is sent (cooldown blocks it)
+        //
+        // When: Motion occurs at t=31s (past 30-second cooldown)
+        // Then: Second prompt is sent (cooldown expired, state flag still sticky)
+        // And: Two prompts total should have been queued
+        //
         // Arrange - Simulates postbox scenario: postbox opened, motion detected -> prompt
         // -> timeout/ResponseNone -> more motion after cooldown should re-prompt if postbox was opened
         var motionTrigger = new Subject<Unit>();
         var postboxState = new Subject<bool>();
-        var responses = new Subject<PromptResponse>();
         var cooldownSeconds = 30;
 
-        var poller = new Helpers.AlexaPromptPoller(scheduler, new AlexaMockWrapper(alexa, responses), logger)
+        var poller = new Helpers.AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(motionTrigger)
             .AddStatefulTrigger(postboxState, state => state)
             .SetMediaPlayer("media_player.dining")
@@ -961,10 +1059,11 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // Motion detected -> prompt sent at t=0
         motionTrigger.OnNext(Unit.Default);
         var stateAfterPrompt = poller.GetState();
+        var promptCountAfterMotion = alexa.PromptCallCount;
 
         // Response comes back at t=20s (timeout)
         scheduler.AdvanceBy(TimeSpan.FromSeconds(20).Ticks);
-        responses.OnNext(new PromptResponse
+        alexa.QueueResponse(new PromptResponse
         {
             EventId = "postbox_mail",
             ResponseType = PromptResponseType.ResponseNone,
@@ -980,76 +1079,34 @@ public class AlexaPromptPollerFacts(TestScheduler scheduler, AlexaMock alexa, IL
         // More motion at t=26s (still in cooldown)
         motionTrigger.OnNext(Unit.Default);
         var stateAt26s = poller.GetState();
+        var promptCountAt26s = alexa.PromptCallCount;
 
         // More motion at t=31s (past cooldown - should trigger again because flag is sticky)
         scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
         motionTrigger.OnNext(Unit.Default);
         var stateAt31s = poller.GetState();
+        var promptCountAt31s = alexa.PromptCallCount;
 
         // Assert
         stateAfterPrompt.IsWaitingForResponse.Should().BeTrue("Prompt should be sent after motion");
+        promptCountAfterMotion.Should().Be(1, "First motion should trigger one prompt");
+        
         stateAfterResponse.IsWaitingForResponse.Should().BeFalse("ResponseNone should clear waiting flag");
         stateAfterResponse.IsAcknowledged.Should().BeFalse("ResponseNone should NOT acknowledge (user didn't confirm)");
+        
         stateAt26s.IsWaitingForResponse.Should().BeFalse("Motion at t=26s (in cooldown) should be blocked by cooldown, not by missing flag");
+        promptCountAt26s.Should().Be(1, "Motion at t=26s should NOT send a prompt (still in cooldown)");
+        
         stateAt31s.IsWaitingForResponse.Should().BeTrue("Motion at t=31s (past cooldown) should trigger new prompt even though postbox closed");
+        promptCountAt31s.Should().Be(2, "Motion at t=31s should send a second prompt (past cooldown)");
+
+        // Verify the prompt content
+        alexa.PromptHistory.Should().HaveCount(2);
+        alexa.PromptHistory[0].Should().Be(("media_player.dining", "You have mail. Have you collected it?", "postbox_mail"));
+        alexa.PromptHistory[1].Should().Be(("media_player.dining", "You have mail. Have you collected it?", "postbox_mail"));
 
         subscription.Dispose();
         motionTrigger.OnCompleted();
         postboxState.OnCompleted();
-        responses.OnCompleted();
-    }
-}
-
-// Wrapper to adapt the mock to the IAlexa interface with PromptResponse
-internal class AlexaMockWrapper(AlexaMock alexa, IObservable<PromptResponse> responses) : IAlexa
-{
-    public IObservable<PromptResponse> PromptResponses => responses;
-    public IObservable<PromptResponseEvent> PromptResponseEvents => throw new NotImplementedException();
-
-    public void Announce(string mediaPlayer, string message)
-    {
-        alexa.Announce(mediaPlayer, message);
-    }
-
-    public void Announce(Alexa.Config config)
-    {
-        alexa.Announce(config);
-    }
-
-    public void Prompt(string mediaPlayer, string message, string eventId)
-    {
-        alexa.Prompt(mediaPlayer, message, eventId);
-    }
-
-    public Dictionary<string, AlexaPeopleConfig> People => alexa.People;
-
-    public void TextToSpeech(string mediaPlayer, string message)
-    {
-        alexa.TextToSpeech(mediaPlayer, message);
-    }
-
-    public void TextToSpeech(Alexa.Config config)
-    {
-        alexa.TextToSpeech(config);
-    }
-
-    public void PlaySound(MediaPlayerEntity mediaPlayer, string soundName)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void PlayMusic(MediaPlayerEntity mediaPlayer, string command)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SendCommand(MediaPlayerEntity mediaPlayer, string command)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Prompt(Alexa.Config config)
-    {
-        alexa.Prompt(config);
     }
 }

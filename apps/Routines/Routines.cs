@@ -56,11 +56,11 @@ public class Routines
                           entities.Light.Hallway2.TurnOn();
                           scheduler.Schedule(TimeSpan.FromMinutes(10), () =>
                           {
-                                logger.LogInformation("Turning off arriving home lights for {person}", person);
-                                entities.Light.Sofit.TurnOff();
-                                entities.Light.Gate.TurnOff();
-                                entities.Light.Entrance.TurnOff();
-                                entities.Light.Hallway2.TurnOff();
+                              logger.LogInformation("Turning off arriving home lights for {person}", person);
+                              entities.Light.Sofit.TurnOff();
+                              entities.Light.Gate.TurnOff();
+                              entities.Light.Entrance.TurnOff();
+                              entities.Light.Hallway2.TurnOff();
                           });
                       }
 
@@ -71,20 +71,20 @@ public class Routines
         people.Persons.Select(p => p.Person.StateChanges()
                                     .StartWith(new StateChange(p.Person, p.Person.EntityState, p.Person.EntityState)))
               .CombineLatest()
-              .Do(list => logger.LogDebug("Leaving Home: {states}", list.Select( p => new {p.Entity.EntityId , p.Entity.State} )))
+              .Do(list => logger.LogDebug("Leaving Home: {states}", list.Select(p => new { p.Entity.EntityId, p.Entity.State })))
               .Where(change => change.All(c => !string.Equals(c.New?.State, "home", StringComparison.InvariantCultureIgnoreCase)))
               .Subscribe(change =>
               {
+                  if (entities.AlarmControlPanel.Alarmo.IsArmed())
+                      return;
+
                   logger.LogInformation("Everyone has left home");
-
-                  if (entities.AlarmControlPanel.Alarmo.IsDisarmed())
-                  {
-                      logger.LogInformation("Arming Alarm");
-                      services.Notify.Twinstead("Arming Alarm");
-                      entities.AlarmControlPanel.Alarmo.AlarmArmAway();
-                  }
-
+                  
+                  services.Notify.Twinstead("Arming Alarm");
+                  entities.AlarmControlPanel.Alarmo.AlarmArmAway();
                   services.Notify.Twinstead("Good bye, alarm armed");
+
+                  logger.LogInformation("Alarm armed");
               });
 
         // Coming Down Stairs When Alarm is Armed Night

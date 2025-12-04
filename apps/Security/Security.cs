@@ -10,7 +10,7 @@ namespace Niemand.SecurityApps;
 
 [NetDaemonApp]
 //[Focus]
-public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, IServices services, ILogger<Security> logger, IAlexa alexa, IScheduler scheduler, Common common, PushNotifier pushNotifier, TelegramBotServices bot) : IAsyncInitializable
+public class Security(IHaContext ha, IEntities entities, IServices services, ILogger<Security> logger, IAlexa alexa, IScheduler scheduler, Common common, PushNotifier pushNotifier, TelegramBotServices bot) : IAsyncInitializable
 {
     private readonly List<BinarySensorEntity> DoorsOpened = new();
     private readonly Dictionary<string, TelegramChatMessage> DoorsMessagesSent = new();
@@ -208,7 +208,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                             Beep(3);
                     });
 
-
+         
     }
 
 
@@ -357,6 +357,12 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
             .Merge()
             .Select(_ => "downstairs");
 
+        // ---- Select the state observable from each sensor then merge and select the string "downstairs" for each event ----
+        var lastDownstairsMotionWasHallway = common.MotionSensors.Downstairs
+            .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
+            .Merge()
+            .Select(sensor => string.Equals( sensor.Entity.EntityId, entities.BinarySensor.KonnectedHallway.EntityId, StringComparison.OrdinalIgnoreCase)  );
+
         // ---- Select the state observable from each sensor then merge and select the string "upstairs" for each event ----
         var upstairsMotion = common.MotionSensors.Upstairs
             .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
@@ -381,7 +387,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                     Observable.Return(false) // false = NOT idle right now, we just saw motion
                         .Concat(
                             Observable
-                                .Timer(TimeSpan.FromMinutes(5))
+                                .Timer(TimeSpan.FromMinutes(5), scheduler)
                                 .Select(__ => true) // true = idle after 5 minutes with no motion
                         )
                 )
@@ -398,7 +404,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                     Observable.Return(false) // false = active now
                         .Concat(
                             Observable
-                                .Timer(TimeSpan.FromMinutes(1))
+                                .Timer(TimeSpan.FromMinutes(1), scheduler)
                                 .Select(__ => true) // true = idle after 1 minute
                         )
                 )
@@ -427,9 +433,9 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                 lastMotionZone,
                 pcIdle,
                 tvOff,
-                alarmNotArmed,
-                (lastZone, isPcIdle, isTvOff,isAlarmNotArmed) =>
-                    new { lastZone, isPcIdle, isTvOff, isAlarmNotArmed }
+                alarmNotArmed, lastDownstairsMotionWasHallway,
+                (lastZone, isPcIdle, isTvOff,isAlarmNotArmed, isLastDownstairsMotionHallway) =>
+                    new { lastZone, isPcIdle, isTvOff, isAlarmNotArmed, isLastDownstairsMotionHallway }
             );
 
         // ---- Combine everything ----
@@ -441,6 +447,7 @@ public class Security(IHaContext ha, IHaRegistry registry, IEntities entities, I
                 .Where(x => x.isPcIdle)
                 .Where(x => x.isTvOff)
                 .Where(x => x.isAlarmNotArmed)
+                .Where(x => x.isLastDownstairsMotionHallway)
                 .Subscribe(_ =>
                 {
                     entities.AlarmControlPanel.Alarmo.AlarmArmNight();

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Reactive.Concurrency;
 
 [NetDaemonApp]
-//[Focus]
+[Focus]
 public class MonzoApp : IAsyncInitializable
 {
     private readonly IHaContext _ha;
@@ -38,7 +38,8 @@ public class MonzoApp : IAsyncInitializable
         // This is a one-time setup step
         _ha.Events.Filter<MonzoOAuthCallback>("monzo_oauth_redirect_received").SubscribeAsync(async e => await HandleOAuthRedirect(e.Data));
 
-        _monzoClient.GetAuthorizeUrl();
+        var autUrl = _monzoClient.GetAuthorizeUrl();
+        _logger.LogDebug("Please authorize the app by visiting: {url}", autUrl);
 
         try
         {

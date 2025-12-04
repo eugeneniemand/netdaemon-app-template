@@ -25,6 +25,8 @@ public class Alexa : IAlexa
     private readonly IVoiceProvider _voice;
     private readonly double _wordDelay = 0.485d;
 
+    public IObservable<PromptResponse> PromptResponses => _promptResponses;
+
 
     public Alexa(IHaContext ha, IEntities entities, IServices services, IScheduler scheduler, IVoiceProvider voice, IAppConfig<AlexaConfig> config, ILogger<Alexa> logger)
     {
@@ -50,12 +52,13 @@ public class Alexa : IAlexa
         SetupResponseHandler(ha);
     }
 
+    
+
     private MediaPlayerEntity? LastCalledMediaPlayerEntity => _ha
                                                               .GetAllEntities()
                                                               .Where(e => e != null && e.EntityId.StartsWith("media_player."))
                                                               .Select(e => new MediaPlayerEntity(_ha, e!.EntityId))
                                                               .FirstOrDefault(e => e.Attributes?.LastCalled != null && (bool)e.Attributes.LastCalled);
-
 
     public void Announce(Config config) =>
         QueueNotification(config, "announce");
@@ -73,7 +76,7 @@ public class Alexa : IAlexa
         QueueNotification(config, "prompt");
     }
 
-    public IObservable<PromptResponse> PromptResponses => _promptResponses;
+    
 
     public void TextToSpeech(Config config) =>
         QueueNotification(config, "tts");
@@ -274,8 +277,8 @@ public class Alexa : IAlexa
 
         public string Entity { get; set; } = "";
         public string Message { get; set; } = "";
-        internal string EventId { get; set; } = "";
-        internal string NotifyType { get; set; } = "tts";
+        public string EventId { get; set; } = "";
+        public string NotifyType { get; set; } = "tts";
     }
 
     public enum MediaType

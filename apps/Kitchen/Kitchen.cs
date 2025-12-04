@@ -129,20 +129,8 @@ public class Kitchen
     {
         try
         {
-            var avgRate = entities.BinarySensor.OctopusEnergyTargetThreeHourDay.Attributes?.OverallAverageCost?.ToString();
-            // Ensure notify service and entities exist before calling them
-            try
-            {
-                services.Notify.Twinstead($"3 Hour Cheap Energy Started: {avgRate}p/kwh");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Notify service call failed in CheapEnergy handler");
-            }
-
+            
             if (entities.InputBoolean?.DishwasherReminder?.IsOff() ?? true) return false;
-
-            _logger.LogInformation("Dishwasher triggered");
 
             _logger.LogInformation("Dishwasher starting");
             entities.Switch.NeffDishwasherPower.TurnOn();
@@ -163,13 +151,7 @@ public class Kitchen
             _logger.LogInformation("Dishwasher waiting for power on");
             await _scheduler.Sleep(TimeSpan.FromMinutes(1));
             var success = await retryPolicy.ExecuteAsync(() => TurnOnDishwasherProgramEco50Async());
-            if (success)
-            {
-                alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = "The dishwasher started" });
-                services.Notify.Twinstead("The dishwasher has started");
-                _logger.LogInformation("DishwasherProgramEco50 Started");
-            }
-            else
+            if (!success)           
             {
                 var message = "The dishwasher failed to start";
                 alexa.Announce(new Alexa.Config { Entity = "media_player.kitchen", Message = message });

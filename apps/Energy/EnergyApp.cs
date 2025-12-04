@@ -41,7 +41,20 @@ public class EnergyApp
             CacheCheapestWindows();
             NotifyWindowsStarted(_cheapestWindows);
         });
-        Debug();
+
+        entities.BinarySensor.OctopusEnergyTargetThreeHourDay.StateChanges()
+                .Where(e => e.New.IsOn())
+                .Subscribe(_ => {
+                    var avgRate = entities.BinarySensor.OctopusEnergyTargetThreeHourDay.Attributes?.OverallAverageCost?.ToString();
+                    services.Notify.Twinstead($"3 Hour Cheap Energy Started: {avgRate}p/kwh");
+                });
+        
+        entities.BinarySensor.OctopusEnergyTargetThreeHour.StateChanges()
+                .Where(e => e.New.IsOn())
+                .Subscribe(_ => {
+                    var avgRate = entities.BinarySensor.OctopusEnergyTargetThreeHour.Attributes?.OverallAverageCost?.ToString();
+                    services.Notify.Twinstead($"3 Hour Cheap Energy Started: {avgRate}p/kwh");
+                });
     }
 
     public SortedDictionary<DateTime, double> Rates

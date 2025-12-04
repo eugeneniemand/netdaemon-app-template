@@ -6,3 +6,4 @@ appsettings.json
 /netdaemon-app-template.sln.DotSettings.user
 *.log
 *.orig
+/TestResults/**

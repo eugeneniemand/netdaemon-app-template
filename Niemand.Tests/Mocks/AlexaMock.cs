@@ -7,6 +7,8 @@ namespace Niemand.Tests.Mocks;
 public class AlexaMock(IServices services) : IAlexa
 {
     private readonly Subject<PromptResponse> _promptResponses = new();
+    private readonly List<(string mediaPlayer, string message, string eventId)> _promptHistory = new();
+    private readonly List<Alexa.Config> _promptConfigHistory = new();
 
     public virtual void Announce(Alexa.Config config)
     {
@@ -22,13 +24,17 @@ public class AlexaMock(IServices services) : IAlexa
 
     public virtual void Prompt(string mediaPlayer, string message, string eventId)
     {
-        
+        _promptHistory.Add((mediaPlayer, message, eventId));
     }
 
     public virtual void Prompt(Alexa.Config config)
     {
-
+        _promptConfigHistory.Add(config);
     }
+
+    public int PromptCallCount => _promptHistory.Count + _promptConfigHistory.Count;
+    public IReadOnlyList<(string mediaPlayer, string message, string eventId)> PromptHistory => _promptHistory.AsReadOnly();
+    public IReadOnlyList<Alexa.Config> PromptConfigHistory => _promptConfigHistory.AsReadOnly();
 
     public IObservable<PromptResponse> PromptResponses => _promptResponses;
 

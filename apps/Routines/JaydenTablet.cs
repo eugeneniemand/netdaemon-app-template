@@ -5,7 +5,7 @@ using System.Reactive.Subjects;
 namespace Niemand;
 
 [NetDaemonApp]
-//[Focus]
+[Focus]
 public class JaydenTablet
 {
     private const string _mediaPlayer = "media_player.dining";
@@ -26,12 +26,14 @@ public class JaydenTablet
         _alexaPoller = new AlexaPromptPoller(scheduler, alexa, logger)
             .AddTrigger(entities.BinarySensor.KonnectedKitchen.StateChanges().Where(e => e.New.IsOn()))
             .AddTrigger(entities.BinarySensor.KitchenMotion.StateChanges().Where(e => e.New.IsOn()))
+            .AddTrigger(entities.BinarySensor.UtilityMotion.StateChanges().Where(e => e.New.IsOn()))
+            .AddTrigger(entities.BinarySensor.BackDoor.StateChanges().Where(e => e.New.IsOn()))
             .SetPrompt(new Alexa.Config()
             {
-                Message = "Has Jayden taken his tablet?",
+                Message = "Jayden, have you taken your tablet?",
                 Entity = _mediaPlayer,
                 Whisper = false,
-                VolumeLevel = 0.5,
+                VolumeLevel = 0.6,
                 EventId = "jayden_tablet"
             })
             .WithCooldown(TimeSpan.FromMinutes(3))
@@ -50,7 +52,7 @@ public class JaydenTablet
             .OnResponseNotYes(response =>
             {
                 _logger.LogDebug("Not acknowledged: {ResponseType} from {Person}", response.ResponseType, response.ResponsePersonName);
-                alexa.TextToSpeech(_mediaPlayer, $"Please ensure he takes it");
+                alexa.TextToSpeech(_mediaPlayer, $"Please ensure you take it");
             });
 
         // Now subscribe
