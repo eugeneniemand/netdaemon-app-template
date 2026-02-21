@@ -8,7 +8,7 @@ namespace Niemand;
 [Focus]
 public class JaydenTablet
 {
-    private const string _mediaPlayer = "media_player.dining";
+    private const string _mediaPlayer = "media_player.office";
     private readonly IEntities _entities;
     private readonly IServices _services;
     private readonly IScheduler _scheduler;
@@ -24,6 +24,7 @@ public class JaydenTablet
 
         // Create the poller (don't subscribe yet)
         _alexaPoller = new AlexaPromptPoller(scheduler, alexa, logger)
+            .AddTrigger(entities.InputButton.TestRoutine.StateChanges())
             .AddTrigger(entities.BinarySensor.KonnectedKitchen.StateChanges().Where(e => e.New.IsOn()))
             .AddTrigger(entities.BinarySensor.KitchenMotion.StateChanges().Where(e => e.New.IsOn()))
             .AddTrigger(entities.BinarySensor.UtilityMotion.StateChanges().Where(e => e.New.IsOn()))
@@ -33,7 +34,7 @@ public class JaydenTablet
                 Message = "Jayden, have you taken your tablet?",
                 Entity = _mediaPlayer,
                 Whisper = false,
-                VolumeLevel = 0.6,
+                VolumeLevel = GetVolumeLevel(),
                 EventId = "jayden_tablet"
             })
             .WithCooldown(TimeSpan.FromMinutes(3))
@@ -47,16 +48,50 @@ public class JaydenTablet
                 var person = string.Equals(response.ResponsePersonName, "UNKNOWN", StringComparison.OrdinalIgnoreCase) ? "" : response.ResponsePersonName;
                 _logger.LogDebug("Tablet acknowledged by {Person}", person);
                 _alexaPoller?.Acknowledge();
-                alexa.TextToSpeech(_mediaPlayer, $"Thank you {person}");
+                alexa.TextToSpeech(new Alexa.Config()
+                {
+                    Message = $"Thank you {person}",
+                    Entity = _mediaPlayer,
+                    Whisper = false,
+                    VolumeLevel = GetVolumeLevel(),
+                    EventId = "jayden_tablet"
+                });
             })
             .OnResponseNotYes(response =>
             {
                 _logger.LogDebug("Not acknowledged: {ResponseType} from {Person}", response.ResponseType, response.ResponsePersonName);
-                alexa.TextToSpeech(_mediaPlayer, $"Please ensure you take it");
+                alexa.TextToSpeech(new Alexa.Config()
+                {
+                    Message = "Please ensure you take it",
+                    Entity = _mediaPlayer,
+                    Whisper = false,
+                    VolumeLevel = GetVolumeLevel(),
+                    EventId = "jayden_tablet"
+                });
             });
 
         // Now subscribe
         _alexaPoller.Subscribe();
+    }
+
+    private double GetVolumeLevel()
+    {
+        if (DateTime.Now.Hour <= 5)
+            return 0.2;
+
+        if (DateTime.Now.Hour == 6 && DateTime.Now.Minute <= 30)
+            return 0.3;
+
+        if (DateTime.Now.Hour == 6 && DateTime.Now.Minute > 30)
+            return 0.4;
+
+        if (DateTime.Now.Hour == 7 && DateTime.Now.Minute <= 30)
+            return 0.6;
+
+        if (DateTime.Now.Hour >= 7 && DateTime.Now.Minute >= 30)
+            return 0.7;
+
+        return 0.5;
     }
 
     private DateTimeOffset Next6am(DateTimeOffset now)

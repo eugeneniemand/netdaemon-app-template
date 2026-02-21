@@ -11,8 +11,8 @@ public class Routines
     public Routines(IHaContext haContext, IEntities entities, IServices services, IScheduler scheduler, People people, ILogger<Routines> logger)
     {
 
-        entities.Sensor.PaddingtonToHeathrowCentral.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainshomemarkdown, entities.Sensor.PaddingtonToHeathrowCentral));
-        entities.Sensor.HeathrowT5ToPaddington.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainsworkmarkdown, entities.Sensor.HeathrowT5ToPaddington));
+        //entities.Sensor.PaddingtonToHeathrowCentral.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainshomemarkdown, entities.Sensor.PaddingtonToHeathrowCentral));
+        //entities.Sensor.HeathrowT5ToPaddington.StateChanges().Subscribe(state => Trains.SetInputTextForTrain(entities.InputText.Trainsworkmarkdown, entities.Sensor.HeathrowT5ToPaddington));
 
         // Volume Control
         // Set volume to 10% at night and 30% during the day

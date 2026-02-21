@@ -1,61 +1,284 @@
-# This is the dev setup for NetDaemon
+# NetDaemon Home Automation Apps
 
-Use this repository as template when developing apps for NetDaemon. This template is a good starting point for your development environment. It has pre-built structure both for building apps and unit test them. Unit tests fake objects are alpha and the fake API can be changed.
+A comprehensive C# / .NET 10 home automation application built with [NetDaemon](https://netdaemon.xyz) for Home Assistant, featuring intelligent lighting management, energy monitoring, notifications, routines, and more.
 
-## Getting started
+## Overview
 
-1. Make new repository with this repo as template
-2. RENAME `src/_appsettings.json` to `src/appsettings.json`. Edit the appsettings.json file to provide details about how to connect to Home Assistant. Token, Host is mandatory. Rest is optional. 
-3. Run dotnet restore in the terminal
-4. Add and edit your apps in the `/src/apps` folder. There are a few code-snippets you can use.
-5. Copy the edited `/src/apps` to the folder `netdaemon/apps` under your Hass.io config folder. See advanced deployment for alternatives.
-6. Install NetDaemon runtime using add-on or run a docker container. Please see [https://netdaemon.xyz/docs/started/installation](https://netdaemon.xyz/docs/started/installation) for details how to run the daemon.
+This repository contains a collection of production-ready home automation applications that integrate with Home Assistant via NetDaemon. It provides intelligent automation for lights, energy management, security, notifications, appliance monitoring, and household routines.
 
-For detailed information about using netdaemon please see [https://netdaemon.xyz](https://netdaemon.xyz).
+### Key Features
 
-## Setup the environment vars
-You can also setup environment varables for your Home Assistant instance. In that case you just need to rename `src/_appsettings.json` to `src/appsettings.json` and set corresponding environment vars in your host and rebuild container. The mandantory settings is `HOMEASSISTANT__TOKEN` and `HOMEASSISTANT__HOST`. All other is optional.
+- **Intelligent Lighting Management** - Motion-triggered lights with brightness/color adaptation, night mode support, and occupancy awareness
+- **Energy Cost Optimization** - Real-time energy rate monitoring with cost-aware scheduling and notifications
+- **Smart Notifications** - Multi-channel notifications (Telegram, Alexa, push) for appliances, batteries, and events
+- **Household Routines** - Morning routines, evening summaries, train schedules, and custom automations
+- **Security & Monitoring** - Motion alerts, door monitoring, security system integration, and watchdog functions
+- **Appliance Management** - Automatic notifications for appliance cycles (dishwasher, dryer, washer)
+- **Kids Features** - Screen time management, chores tracking, and kid-friendly routines
 
-| Environment variable | Description |
-| ------ | ------ |
-| HOMEASSISTANT__TOKEN   |  Token secret to access the HA instance
-  |
-| HOMEASSISTANT__HOST | The ip or hostname of HA
-| HOMEASSISTANT__PORT | The port of home assistant (defaults to 8123 if not specified) |
-| NETDAEMON__GENERATEENTITIES | Generate entities, recommed set false unless debugging|
-| NETDAEMON__APPSOURCE | The folder where it will find the NetDaemon runtime and source. If you set a `folder`, the deafult dynamically compiled sourc in this folder, if `daemonapp.csproj` it will run that project and `daemonapp.dll` for published project. These settings only apply in addon/container. For developmen just do not not set or empty `""`. 
+## Quick Start
 
-## What about my existing apps?
-The recommended way to use this template is to clone new fresh version when you upgrade and copy all .cs and .yaml files from your apps into the ./src/apps folder. 
+### Prerequisites
 
-## Advanced deployment
-The default behavour of NetDaemon is do dynamically compile all apps in apps folder. If you need to deploy dependencies like custom nuget packages you have two choices, project or publish.
-### Docker users
-The docs assume you map volyme like:
-`-v ~/netdaemon:/data`
-- Project deployment: Copy everything under `./src/*` -> `~/netdaemon`. The csproj file should be in root of `~/netdaemon` . Set the `NETDAEMON__APPSOURCE="daemonapp.csproj"`
-- Published deployment: publish the project by `dotnet publish -c Release ./src.` Copy everything under `src/bin/Release/net5.0/publish/*` to `~/netdaemon` and set `NETDAEMON__APPSOURCE="daemonapp.dll"` 
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [Home Assistant](https://www.home-assistant.io/) instance
+- Home Assistant Long-Lived Access Token
+- Git
 
-### Addon users
-- Project deployment: Copy everything under `./src/*` -> `/config/netdaemon`. The csproj file should be in root of `~/netdaemon` . Set the `AppSource=daemonapp.csproj` in addon settings.
-- Published deployment: publish the project by `dotnet publish -c Release ./src.` Copy everything under `src/bin/Release/net5.0/publish/*` to `/config/netdaemon` and set `AppSource=daemonapp.dll` in addon settings.
+### Installation
 
-**Make sure you take security meassures using custom deployments!** 
-## Read this if you are going to deploy apps through HACS
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/eugeneniemand/netdaemon-app-template.git
+   cd netdaemon-app-template
+   ```
 
-Each app should have it´s own subfolder under the `apps` folder. So rename the `HelloWorld` folder and `HelloWorld.cs` and `HelloWorld.yaml` according to your app. The class name should also be renamed to the same unique app name. We also recommend using namespaces and fully qualified names like the sample included in the template.
+2. **Configure Home Assistant connection**
+   
+   Edit `appsettings.json`:
+   ```json
+   {
+     "HomeAssistant": {
+       "Host": "your-ha-instance.local",
+       "Port": 8123,
+       "Ssl": false,
+       "Token": "your-long-lived-access-token"
+     },
+     "Mqtt": {
+       "Host": "your-mqtt-broker.local"
+     }
+   }
+   ```
 
-[![buymeacoffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ij1qXRM6E)
+3. **Restore dependencies and build**
+   ```bash
+   dotnet restore
+   dotnet build
+   ```
 
-## Issues
+4. **Run the application**
+   ```bash
+   dotnet run
+   ```
 
-- If you have issues or suggestions of improvements to this template, please [add an issue](https://github.com/net-daemon/netdaemon-app-template)
-- If you have issues or suggestions of improvements to NetDaemon, please [add an issue](https://github.com/net-daemon/netdaemon/issues)
+> **Security Note**: Never commit sensitive information like tokens or IP addresses. Use environment variables for production deployment.
 
-## Discuss the NetDaemon
+## Project Structure
 
-Please [join the Discord server](https://discord.gg/K3xwfcX) to get support or if you want to contribute and help others.
+```
+.
+├── apps/
+│   ├── LightsManager/          # Motion-triggered lighting with color/brightness control
+│   ├── Energy/                 # Energy rate monitoring and cost optimization
+│   ├── NotificationsManager/   # Multi-channel notification system
+│   ├── Security/               # Security monitoring and door watchdog
+│   ├── Routines/               # Morning, evening, and custom routines
+│   ├── Monzo/                  # Financial transaction monitoring
+│   ├── Kids/                   # Screen time and chores management
+│   └── [Other apps]/           # Additional automation apps
+├── Helpers/                    # Shared utilities and extensions
+├── daemonapp.csproj           # Main project file
+├── program.cs                 # Application entry point
+├── appsettings.json           # Configuration
+└── Niemand.Tests/             # Unit tests
+```
 
-## Attribution
+## Apps Overview
 
-ICON: Attribution: [chris](https://commons.wikimedia.org/wiki/User:Chrkl) 論
+### LightsManager
+Sophisticated motion-triggered lighting system with:
+- Per-room configuration via YAML
+- Automatic brightness and color temperature adjustment
+- Night mode support
+- Lux-based activation thresholds
+- Manual override with automatic reset
+- Circadian rhythm integration
+
+### Energy App
+Monitors Octopus Energy rates and:
+- Identifies cheapest energy windows (1h, 2h, 3h)
+- Sends notifications and Alexa announcements
+- Schedules automations during cheap periods
+- Supports appliance automation
+
+### NotificationsManager
+Handles notifications across multiple channels:
+- Telegram messaging
+- Alexa announcements and prompts
+- Push notifications
+- Appliance cycle notifications (dishwasher, dryer, washer)
+- Battery status monitoring
+
+### Security
+Provides:
+- Motion detection alerts
+- Door monitoring and logging
+- Security system integration
+- Watchdog functionality
+
+### Routines
+Scheduled automations including:
+- Morning routines for families
+- Evening summaries and notifications
+- Train schedule announcements
+- Discipline management for kids
+- Travel planning assistance
+
+## Configuration
+
+### LightsManager Configuration
+
+Configure rooms in `apps/LightsManager/LightsManager.yaml`:
+
+```yaml
+LightManagerV2.ManagerConfig:
+  NdUserId: your-user-id
+  GuardTimeout: 300
+  Rooms:
+    - Name: Study
+      Timeout: 300                          # Auto-off timeout (seconds)
+      NightTimeout: 90                      # Night mode timeout
+      PresenceEntities:
+        - binary_sensor.office_motion
+      ControlEntities:
+        - light.office
+      NightControlEntities:
+        - light.office
+      LuxEntity: sensor.office_lux
+      LuxlimitEntity: input_number.office_lux_limit
+      NightTimeEntity: input_select.house_mode
+      NightTimeEntityStates:
+        - night
+        - sleeping
+```
+
+### Logging Configuration
+
+Control log levels in `appsettings.json`:
+```json
+{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "System": "Information",
+        "Microsoft": "Information"
+      }
+    }
+  }
+}
+```
+
+## Deployment
+
+### Local Development
+
+```bash
+dotnet run
+```
+
+### Docker
+
+Build and run using Docker:
+```bash
+docker build -t netdaemon-apps .
+docker run -v ~/netdaemon:/data netdaemon-apps
+```
+
+### Home Assistant Add-on
+
+Follow the [NetDaemon installation guide](https://netdaemon.xyz/docs/started/installation) to deploy as a Home Assistant add-on.
+
+### Publish for Production
+
+```bash
+dotnet publish -c Release -o ./publish
+```
+
+Copy the contents of the `publish` folder to your deployment target.
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `HOMEASSISTANT__HOST` | Home Assistant hostname/IP | Required |
+| `HOMEASSISTANT__PORT` | Home Assistant port | 8123 |
+| `HOMEASSISTANT__TOKEN` | Long-lived access token | Required |
+| `HOMEASSISTANT__SSL` | Use HTTPS | false |
+| `MQTT__HOST` | MQTT broker hostname/IP | Optional |
+| `NETDAEMON__GENERATEENTITIES` | Auto-generate entity stubs | false |
+
+## Development
+
+### Running Tests
+
+```bash
+dotnet test
+```
+
+### Code Structure
+
+- **Apps** inherit from `NetDaemonApp` attribute
+- **Services** injected via dependency injection
+- **Reactive subscriptions** for entity state changes
+- **YAML configuration** for per-app settings
+
+### Example App Structure
+
+```csharp
+[NetDaemonApp]
+public class MyApp
+{
+    private readonly IHaContext _haContext;
+    private readonly IScheduler _scheduler;
+    private readonly ILogger<MyApp> _logger;
+
+    public MyApp(IHaContext haContext, IScheduler scheduler, ILogger<MyApp> logger)
+    {
+        _haContext = haContext;
+        _scheduler = scheduler;
+        _logger = logger;
+
+        // Subscribe to state changes
+        _haContext.Entity("sensor.temperature")
+            .StateChanges()
+            .Subscribe(change => Handle(change));
+    }
+}
+```
+
+## Technologies Used
+
+- **NetDaemon** - Home Assistant automation framework
+- **.NET 10** - Runtime and framework
+- **C# 12** - Language
+- **Reactive Extensions (Rx.NET)** - Event handling
+- **YAML** - Configuration
+- **Serilog** - Logging
+- **Polly** - Resilience patterns
+- **Stateless** - State machine management
+
+## Support & Resources
+
+- [NetDaemon Documentation](https://netdaemon.xyz)
+- [Home Assistant Docs](https://www.home-assistant.io/docs/)
+- [NetDaemon Discord Community](https://discord.gg/K3xwfcX)
+
+## Known Limitations
+
+- Requires persistent Home Assistant instance
+- MQTT integration is optional but recommended for reliability
+- Some features depend on specific Home Assistant integrations (Octopus Energy, etc.)
+
+## Related Repositories
+
+- [NetDaemon](https://github.com/net-daemon/netdaemon) - Main framework
+- [NetDaemon Extensions Testing](https://github.com/eugeneniemand/NetDaemon.Extensions.Testing) - Testing utilities
+- [NetDaemon App Template](https://github.com/net-daemon/netdaemon-app-template) - Official template
+
+---
+
+**Last Updated**: January 2025  
+**Target Framework**: .NET 10.0  
+**Language Version**: C# 12
+

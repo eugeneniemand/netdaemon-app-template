@@ -31,12 +31,13 @@ public class SummaryRoutine : IAsyncInitializable
 
     public Task InitializeAsync(CancellationToken cancellationToken)
     {
-        _entities.InputButton.MorningSummary.StateChanges().Subscribe(state => {
+        _entities.InputButton.MorningSummary.StateChanges().Subscribe(state =>
+        {
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    await Run("http://192.168.1.3:5678/webhook/morning_summary").ConfigureAwait(false);
+                    await Run("http://10.10.40.14:5678/webhook/morning_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -45,12 +46,13 @@ public class SummaryRoutine : IAsyncInitializable
             });
         });
 
-        _entities.InputButton.EveningSummary.StateChanges().Subscribe(state => {
+        _entities.InputButton.EveningSummary.StateChanges().Subscribe(state =>
+        {
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    await Run("http://192.168.1.3:5678/webhook/evening_summary").ConfigureAwait(false);
+                    await Run("http://10.10.40.14:5678/webhook/evening_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -66,7 +68,7 @@ public class SummaryRoutine : IAsyncInitializable
             {
                 try
                 {
-                    await Run("http://192.168.1.3:5678/webhook/morning_summary").ConfigureAwait(false);
+                    await Run("http://10.10.40.14:5678/webhook/morning_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -82,7 +84,7 @@ public class SummaryRoutine : IAsyncInitializable
             {
                 try
                 {
-                    await Run("http://192.168.1.3:5678/webhook/evening_summary").ConfigureAwait(false);
+                    await Run("http://10.10.40.14:5678/webhook/evening_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -99,8 +101,9 @@ public class SummaryRoutine : IAsyncInitializable
         var summary = await FetchAndHandleAsync(url);
         if (!string.IsNullOrWhiteSpace(summary))
         {
-            _alexa.Announce(new Alexa.Config() { Entity = "media_player.everywhere_2", Message = summary, VolumeLevel = 0.4, Whisper = false });
-            _services.Notify.Twinstead(new NotifyTwinsteadParameters() { Title = "Summary", Message=summary });
+            var msg = summary + ",,Todays Joke,," + _entities.Sensor.Joke.Attributes?.Joke;
+            _alexa.Announce(new Alexa.Config() { Entity = "media_player.everywhere_2", Message = msg, VolumeLevel = 0.4, Whisper = false });
+            _services.Notify.Twinstead(new NotifyTwinsteadParameters() { Title = "Summary", Message = msg });
         }
         else
         {
@@ -139,14 +142,14 @@ public class SummaryRoutine : IAsyncInitializable
     {
         using var http = new HttpClient
         {
-            Timeout = TimeSpan.FromSeconds(60)
+            Timeout = TimeSpan.FromSeconds(180)
         };
 
         using var response = await http.GetAsync(url).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-    }   
+    }
 
-    
+
 }

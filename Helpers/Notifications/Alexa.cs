@@ -1,6 +1,8 @@
-﻿using Niemand.Helpers.Notifications;
+using NetDaemon.HassModel.Entities;
+using Niemand.Helpers.Notifications;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using YamlDotNet.Core.Tokens;
 
 namespace Niemand.Helpers;
 
@@ -23,12 +25,27 @@ public class Alexa : IAlexa
     private readonly IScheduler _scheduler;
     private readonly IServices _services;
     private readonly IVoiceProvider _voice;
-    private readonly double _wordDelay = 0.485d;
+    private readonly VolumeManager _volumeManager;
+    private readonly MessageFormatter _messageFormatter;
+    private readonly NotificationProcessor _notificationProcessor;
+    private readonly PromptResponseHandler _responseHandler;
 
     public IObservable<PromptResponse> PromptResponses => _promptResponses;
 
 
-    public Alexa(IHaContext ha, IEntities entities, IServices services, IScheduler scheduler, IVoiceProvider voice, IAppConfig<AlexaConfig> config, ILogger<Alexa> logger)
+    public Alexa(
+        IHaContext ha,
+        IEntities entities,
+        IServices services,
+        IScheduler scheduler,
+        IVoiceProvider voice,
+        IAppConfig<AlexaConfig> config,
+        ILogger<Alexa> logger,
+        Subject<PromptResponse> promptResponses,
+        VolumeManager volumeManager,
+        MessageFormatter messageFormatter,
+        NotificationProcessor notificationProcessor,
+        PromptResponseHandler responseHandler)
     {
         _ha = ha;
         _entities = entities;
@@ -38,21 +55,29 @@ public class Alexa : IAlexa
         _logger = logger;
         _devices = config.Value.Devices;
         People = (Dictionary<string, AlexaPeopleConfig>)config.Value.People;
+        _promptResponses = promptResponses;
+        _volumeManager = volumeManager;
+        _messageFormatter = messageFormatter;
+        _notificationProcessor = notificationProcessor;
+        _responseHandler = responseHandler;
+
+        // Set up Home Assistant event subscription (only happens once due to lock in SetupEventSubscription)
+        // Pass the people config here since we have access to it in this scoped context
+        _responseHandler.SetupEventSubscription(ha, People);
 
         _messages.Where(msg => msg.NotifyType is "tts" or "announce")
-                 .Buffer(TimeSpan.FromMilliseconds(500), scheduler)
+                 .Buffer(AlexaProcessingConfig.MessageBufferDelay, scheduler)
                  .Where(buffer => buffer.Any())
                  .SubscribeAsync(ProcessNotifications);
 
         _messages.Where(msg => msg.NotifyType is "prompt")
-                 .Buffer(TimeSpan.FromMilliseconds(500), scheduler)
+                 .Buffer(AlexaProcessingConfig.MessageBufferDelay, scheduler)
                  .Where(buffer => buffer.Any())
                  .SubscribeAsync(ProcessPrompts);
-
-        SetupResponseHandler(ha);
     }
 
-    
+    public List<MediaPlayerEntity> MediaPlayersWithLabel(string label) => [.. _entities.MediaPlayer.WithLabel(label)];
+    public List<string> MediaPlayerEntityIdsForLabel(string label) => [.. _entities.MediaPlayer.WithLabel(label).Select(e => e.EntityId)];
 
     private MediaPlayerEntity? LastCalledMediaPlayerEntity => _ha
                                                               .GetAllEntities()
@@ -76,7 +101,7 @@ public class Alexa : IAlexa
         QueueNotification(config, "prompt");
     }
 
-    
+
 
     public void TextToSpeech(Config config) =>
         QueueNotification(config, "tts");
@@ -85,122 +110,80 @@ public class Alexa : IAlexa
         QueueNotification(new Config { Entity = mediaPlayer, Message = message }, "tts");
 
     public void PlaySound(MediaPlayerEntity mediaPlayer, string soundName) =>
-        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.sound.ToString().ToLower(), MediaContentId = soundName } });
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { media_content_type = MediaType.sound.ToString().ToLower(), media_content_id = soundName } });
 
     public void PlayMusic(MediaPlayerEntity mediaPlayer, string command) =>
-        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.AMAZON_MUSIC.ToString(), MediaContentId = command } });
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { media_content_type = MediaType.AMAZON_MUSIC.ToString(), media_content_id = command } });
 
     public void SendCommand(MediaPlayerEntity mediaPlayer, string command) =>
-        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { MediaContentType = MediaType.custom.ToString().ToLower(), MediaContentId = command } });
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { media_content_type = MediaType.custom.ToString().ToLower(), media_content_id = command } });
+
     private string FormatMessage(string message, string voice, bool whisper)
     {
-        var messageBreaks = message.Replace(",", "<break />");
-        var normalMessage = $"<voice name='{voice}'>{messageBreaks}</voice>";
-        var whisperMessage = $"<amazon:effect name='whispered'>{messageBreaks}</amazon:effect>";
-        return whisper ? whisperMessage : normalMessage;
-    }
-
-    private double GetVolume(string entityId)
-    {
-        object? vol = null;
-        _ha.Entity(entityId).Attributes?.ToDictionary()?.TryGetValue("volume_level", out vol);
-        return double.Parse(vol?.ToString() ?? "-1");
-    }
-
-    private (bool whisper, double volume) GetVolumeDetails(AlexaDeviceConfig? deviceConfig)
-    {
-        var whisper = false;
-        var volume = 0d;
-        switch (_entities.InputSelect.HouseMode.State)
-        {
-            case "night":
-                whisper = deviceConfig?.NightWhisper ?? true;
-                volume = deviceConfig?.NightVolume ?? 0.2d;
-                break;
-            case "day":
-                whisper = false;
-                volume = deviceConfig?.DayVolume ?? 0.4d;
-                break;
-        }
-
-        return (whisper, volume);
+        return _messageFormatter.FormatMessage(message, voice, whisper);
     }
 
     private async Task ProcessNotifications(IEnumerable<Config> cfgs)
     {
-        var entitiesVolumeLevel = new Dictionary<string, double>();
+        // Group configs by the *set of entities* they target (order-independent)
+        var groups = cfgs.GroupBy(cfg => MakeEntitySetKey(cfg.Entities));
+
+        foreach (var group in groups)
+        {
+            await ProcessNotificationGroup(group);
+        }
+    }
+
+    private static string MakeEntitySetKey(IEnumerable<string> entities)
+    {
+        // Normalise order + nulls/spaces so [a,b] == [b,a]
+        return string.Join("|",
+            (entities ?? Enumerable.Empty<string>())
+                .Where(e => !string.IsNullOrWhiteSpace(e))
+                .Select(e => e.Trim())
+                .OrderBy(e => e, StringComparer.OrdinalIgnoreCase));
+    }
+
+    private async Task ProcessNotificationGroup(IEnumerable<Config> cfgs)
+    {
         var voice = _voice.GetRandomVoice();
-        var message = "";
-        List<string> entities = new();
-        var notificationType = "";
-        var eventId = "";
-        double? volumeOverride = null;
-        int? delayOverride = null;
-        bool? whisperOverride = null;
-
-        foreach (var cfg in cfgs)
-        {
-            message += (message != "" ? ",,,and," : "") + cfg.Message;
-            entities = cfg.Entities;
-            notificationType = cfg.NotifyType;
-            eventId = cfg.EventId;
-            volumeOverride = cfg.VolumeLevel;
-            delayOverride = cfg.VolumeResetDelay;
-            whisperOverride = cfg.Whisper;
-        }
-
-
-        foreach (var entity in entities)
-        {
-            _devices.TryGetValue(entity, out var deviceConfig);
-
-            var (whisper, volume) = GetVolumeDetails(deviceConfig);
-            var formatMessage = FormatMessage(message, voice, whisperOverride ?? whisper);
-            StoreCurrentVolume(entity, entitiesVolumeLevel);
-            SetVolume(entity, volumeOverride ?? volume);
-            _services.Notify.AlexaMedia(formatMessage, target: entity, data: new { type = notificationType });
-        }
-
-        var words = message.Split([' ', '.', '-', '—', ',']).Count();
-        _scheduler.Sleep(TimeSpan.FromSeconds(delayOverride ?? words * _wordDelay)).GetAwaiter().OnCompleted(() => RevertVolume(entitiesVolumeLevel));
+        var strategy = new AlexaMediaDeliveryStrategy(_services);
+        await _notificationProcessor.ProcessAsync(cfgs, voice, strategy);
     }
 
     private async Task ProcessPrompts(IEnumerable<Config> cfgs)
     {
-        var entitiesVolumeLevel = new Dictionary<string, double>();
         var voice = _voice.GetRandomVoice();
-        var message = "";
-        List<string> entities = new();
-        var notificationType = "";
-        var eventId = "";
-        double? volumeOverride = null;
-        int? delayOverride = null;
-        bool? whisperOverride = null;
+        var strategy = new AlexaActionableNotificationDeliveryStrategy(_services);
+        
+        // For prompts, we need special handling: volume revert is triggered by a response event
+        var entities = cfgs.First().Entities;
+        var message = _messageFormatter.ConcatenateMessages(cfgs.Select(c => c.Message));
+        var last = cfgs.Last();
+        var eventId = last.EventId;
 
-        foreach (var cfg in cfgs)
+        var entitiesVolumeLevel = new Dictionary<string, double>();
+
+        // Store volumes before processing
+        foreach (var entity in entities)
         {
-            message = cfg.Message;
-            entities = cfg.Entities;
-            notificationType = cfg.NotifyType;
-            eventId = cfg.EventId;
-            volumeOverride = cfg.VolumeLevel;
-            delayOverride = cfg.VolumeResetDelay;
-            whisperOverride = cfg.Whisper;
-
-
-            foreach (var entity in entities)
-            {
-                _devices.TryGetValue(entity, out var deviceConfig);
-
-                var (whisper, volume) = GetVolumeDetails(deviceConfig);
-                var formatMessage = FormatMessage(message, voice, whisperOverride ?? whisper);
-                StoreCurrentVolume(entity, entitiesVolumeLevel);
-                SetVolume(entity, volumeOverride ?? volume);
-                _services.Script.ActivateAlexaActionableNotification(formatMessage, eventId, entity);
-            }
-            var words = message.Split([' ', '.', '-', '—', ',']).Count();
-            await _scheduler.Sleep(TimeSpan.FromSeconds(words * _wordDelay));
+            _volumeManager.TryGetDeviceConfig(entity, out var deviceConfig);
+            var (whisper, volume) = _volumeManager.GetVolumeDetailsForDevice(deviceConfig);
+            _volumeManager.StoreCurrentVolume(entity, entitiesVolumeLevel);
         }
+
+        // Send prompts
+        await _notificationProcessor.ProcessAsync(cfgs, voice, strategy);
+
+        // For prompts: wait for a response event, then revert volume
+        _promptResponses
+            .Where(r => r.EventId == eventId)
+            .Take(1)
+            .SelectMany(_ => Observable.FromAsync(() => _volumeManager.RestoreVolumesAsync(entitiesVolumeLevel)))
+            .Subscribe(
+                _ => { },
+                e => _logger.LogError(e, "Error reverting volume after prompt")
+            );
     }
 
     private void QueueNotification(Config cfg, string type)
@@ -209,76 +192,9 @@ public class Alexa : IAlexa
         _messages.OnNext(cfg);
     }
 
-    private void RevertVolume(Dictionary<string, double> entitiesVolumeLevel)
+    public class Config : AlexaNotificationConfig
     {
-        foreach (var (entity, volume) in entitiesVolumeLevel)
-            SetVolume(entity, volume);
-    }
-
-    private PromptResponse PromtResponseEventToDto(PromptResponseEvent? eventData)
-    {
-        return new PromptResponse
-        {
-            EventId = eventData?.EventId ?? "",
-            Response = eventData?.Response!,
-            ResponsePersonId = eventData?.ResponsePersonId ?? "",
-            ResponsePersonName = eventData?.ResponsePersonId == null ? "UNKNOWN" : People[eventData.ResponsePersonId].Name,
-            ResponseType = eventData?.ResponseType ?? PromptResponseType.ResponseUnknown
-        };
-    }
-
-    private void SetupResponseHandler(IHaContext haContext)
-    {
-        haContext.Events.Filter<PromptResponseEvent>("alexa_actionable_notification")
-            .Do(e => _logger.LogDebug("Received alexa_actionable_notification event {eventData}", e))
-            .Select(e => PromtResponseEventToDto(e.Data))
-            .DistinctUntilChanged(e => new { e.EventId, e.ResponseType })
-            .Do(e => _logger.LogDebug("Distinct PromptResponse {PromptResponse}", e))
-            .Subscribe(responseEvent =>
-                {
-                    _logger.LogInformation("Event(alexa_actionable_notification): {EventId} - {Response} - {ResponseType} by {ResponsePersonId}", responseEvent.EventId, responseEvent.Response?.ToString(), responseEvent.ResponseType, responseEvent?.ResponsePersonId);
-                    if (responseEvent == null) return;
-
-                    _promptResponses.OnNext(responseEvent);
-                });
-    }
-
-    private void SetVolume(string entityId, double volumeLevel)
-    {
-        _services.MediaPlayer.VolumeSet(ServiceTarget.FromEntity(entityId), new MediaPlayerVolumeSetParameters { VolumeLevel = volumeLevel });
-    }
-
-    private void StoreCurrentVolume(string entityId, IDictionary<string, double> entitiesVolumeLevel)
-    {
-        entitiesVolumeLevel.Add(entityId, GetVolume(entityId));
-    }
-
-
-    public class Config
-    {
-        public bool? Whisper = null;
-        private List<string> _entities = new();
-        /// <summary>
-        /// Value between 0 and 1
-        /// </summary>
-        public double? VolumeLevel { get; set; } = null;
-        public int? VolumeResetDelay { get; set; } = null;
-
-        public List<string> Entities
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(Entity) && !_entities.Contains(Entity))
-                    _entities.Add(Entity);
-                return _entities;
-            }
-            set => _entities = value;
-        }
-
-        public string Entity { get; set; } = "";
-        public string Message { get; set; } = "";
-        public string EventId { get; set; } = "";
-        public string NotifyType { get; set; } = "tts";
+        // Alias for backwards compatibility with existing code
     }
 
     public enum MediaType

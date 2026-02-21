@@ -1,3 +1,5 @@
+using daemonapp.apps.NotificationsManager.Appliances;
+
 namespace NetDaemon;
 
 public class DryerCycleStateHandler : ICycleStateHandler

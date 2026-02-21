@@ -1,4 +1,6 @@
-namespace NetDaemon;
+using NetDaemon;
+
+namespace daemonapp.apps.NotificationsManager.Appliances;
 
 public interface ICycleStateHandler
 {

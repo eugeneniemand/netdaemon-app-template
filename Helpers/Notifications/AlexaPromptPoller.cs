@@ -419,7 +419,7 @@ public class AlexaPromptPoller
                 // If acknowledged, don't process triggers
                 if (_isAcknowledged)
                 {
-                    _logger.LogDebug("Trigger ignored: poller has been acknowledged");
+                    //_logger.LogDebug("Trigger ignored: poller has been acknowledged");
                     return false;
                 }
 
@@ -428,11 +428,11 @@ public class AlexaPromptPoller
 
                 if (!canPrompt)
                 {
-                    _logger.LogDebug(
-                        "Trigger ignored: cooldown active. Elapsed: {Elapsed}ms, Cooldown: {Cooldown}ms",
-                        elapsed.TotalMilliseconds,
-                        _cooldown.TotalMilliseconds
-                    );
+                    //_logger.LogDebug(
+                    //    "Trigger ignored: cooldown active. Elapsed: {Elapsed}ms, Cooldown: {Cooldown}ms",
+                    //    elapsed.TotalMilliseconds,
+                    //    _cooldown.TotalMilliseconds
+                    //);
                 }
                 else
                 {

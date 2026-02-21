@@ -4,17 +4,20 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Reactive.Concurrency;
+using NetDaemon;
+using Niemand.Helpers.Notifications;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class MonzoApp : IAsyncInitializable
 {
     private readonly IHaContext _ha;
     private readonly ILogger<MonzoApp> _logger;
     private readonly IScheduler _scheduler;
     private readonly MonzoClient _monzoClient;
+    private readonly PushNotifier _pushNotifier;
     private readonly string _accountId = "acc_0000AJeEzK6iaxm13KsTGz"; // From Monzo API
-    private readonly string _sourcePotId = "pot_0000AO5mGcxSUSc0QAKauX"; // Source pot ID
+    private readonly string _billsPotId = "pot_0000AO5mGcxSUSc0QAKauX"; // Source pot ID
     private readonly string _targetPotId = "pot_target_id"; // Target pot ID
 
 
@@ -22,12 +25,15 @@ public class MonzoApp : IAsyncInitializable
     private decimal PenceToPounds(decimal amount) => (amount / 100);
 
 
-    public MonzoApp(IHaContext ha, ILogger<MonzoApp> logger, IScheduler scheduler)
+    public MonzoApp(IHaContext ha, ILogger<MonzoApp> logger, IScheduler scheduler, PushNotifier pushNotifier)
     {
         _ha = ha;
         _logger = logger;
         _scheduler = scheduler;
         _monzoClient = new MonzoClient(_logger);
+        _pushNotifier = pushNotifier;
+
+
     }
 
     // Initialize with initial token (you'd need to store this securely)
@@ -57,6 +63,7 @@ public class MonzoApp : IAsyncInitializable
         await ReplensihBalance();
 
         _scheduler.SchedulePeriodic(TimeSpan.FromMinutes(5), async () => await ReplensihBalance());
+        _scheduler.SchedulePeriodic(TimeSpan.FromMinutes(60), async () => await _monzoClient.RefreshTokenAsync());
     }
 
     private async Task HandleOAuthRedirect(MonzoOAuthCallback data)
@@ -86,12 +93,19 @@ public class MonzoApp : IAsyncInitializable
     {
         try
         {
-            var balanceResponse = await _monzoClient.GetBalanceAsync(_accountId);
-            if (balanceResponse != null && PenceToPounds(balanceResponse.Balance) < 100)
+            var billsBalance = await _monzoClient.GetBalanceAsync(_billsPotId);
+            var accountBalance = await _monzoClient.GetBalanceAsync(_accountId);
+            if (billsBalance != null && PenceToPounds(billsBalance.Balance) < 100)
+            {
+                _pushNotifier.Notify(PushNotifier.Recipient.All, "Bills Balance Depleted", "Pot does not have enough to replensih main account");
+                return;
+            }
+
+            if (accountBalance != null && PenceToPounds(accountBalance.Balance) < 100)
             {
                 _logger.LogInformation("Account balance below threshhold of £100 moving money");
 
-                await _monzoClient.WithdrawPotAsync(_accountId, _sourcePotId, PoundsToPence(100) - balanceResponse.Balance);
+                await _monzoClient.WithdrawPotAsync(_accountId, _billsPotId, PoundsToPence(100) - accountBalance.Balance);
             }
         }
         catch (Exception ex)

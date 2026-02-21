@@ -49,6 +49,7 @@ public static class Extentions
            .AddScoped<IApplianceFactory, ApplianceFactory>()
            .AddScoped<People>()
            .AddScoped<PushNotifier>()
+           .AddScoped<TimerManager>()
            .AddSingleton<IServiceProvider>(sp => sp);
 
 
@@ -114,6 +115,37 @@ public static class Extentions
         return dict;
     }
 
+    public static bool HasLabel(this Entity entity, string labelName)
+    {
+        if (entity == null || string.IsNullOrWhiteSpace(labelName))
+            return false;
+
+        return entity.Registration?
+            .Labels?
+            .Any(label => string.Equals(
+                label.Id,
+                labelName,
+                StringComparison.OrdinalIgnoreCase)) == true;
+    }
+
+    public static IEnumerable<MediaPlayerEntity> WithLabel(
+        this MediaPlayerEntities mediaPlayers,
+        string labelName)
+    {
+        return mediaPlayers?
+            .EnumerateAll()?
+            .WithLabel(labelName)
+            ?? Enumerable.Empty<MediaPlayerEntity>();
+    }
+
+    public static IEnumerable<T> WithLabel<T>(this IEnumerable<T> entities, string labelName)
+        where T : Entity
+    {
+        if (entities == null || string.IsNullOrWhiteSpace(labelName))
+            return Enumerable.Empty<T>();
+
+        return entities.Where(e => e.HasLabel(labelName));
+    }
 
     public static bool LastChangedOlderThan(this Entity entityState, TimeSpan timeSpan) => DateTime.Now - (entityState.EntityState?.LastChanged ?? DateTime.Today) >= timeSpan;
     public static bool LastChangedNewerThan(this Entity entityState, TimeSpan timeSpan) => DateTime.Now - (entityState.EntityState?.LastChanged ?? DateTime.Today) <= timeSpan;

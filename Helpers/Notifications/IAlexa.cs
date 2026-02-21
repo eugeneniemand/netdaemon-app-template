@@ -37,4 +37,6 @@ public interface IAlexa
     void Prompt(Alexa.Config config);
     void TextToSpeech(Alexa.Config config);
     void TextToSpeech(string mediaPlayer, string message);
+    List<MediaPlayerEntity> MediaPlayersWithLabel(string label);
+    List<string> MediaPlayerEntityIdsForLabel(string label);
 }

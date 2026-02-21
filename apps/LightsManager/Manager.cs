@@ -29,7 +29,7 @@ public class Manager
     public Entity? ConditionEntity { get; set; }
     public InputSelectEntity? NightTimeEntity { get; init; }
     public int NightTimeout { get; init; }
-    public int OverrideTimeout { get; init; }
+    public int OverrideTimeout { get; init; } 
     public int Timeout { get; init; }
     public int? LuxLimit { get; set; }
     public int? DefaultBrightness { get; set; }

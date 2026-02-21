@@ -1,3 +1,4 @@
+using daemonapp.apps.NotificationsManager.Appliances;
 using Niemand.NotificationManager;
 
 namespace NetDaemon;

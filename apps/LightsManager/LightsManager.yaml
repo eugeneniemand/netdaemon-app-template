@@ -241,6 +241,8 @@ LightManagerV2.ManagerConfig:
         - sleeping
       NightControlEntities:
         - light.master_floor
+      KeepAliveEntities:
+        - media_player.master_tv_2
       # CircadianSwitchEntity: switch.adaptive_lighting_master
       RandomStates:
         - armed_away

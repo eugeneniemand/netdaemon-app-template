@@ -26,8 +26,8 @@ public class MorningKids
         _services = services;
         _scheduler = scheduler;
         _logger = logger;
-        fb = new RgbwFrameBuilder(numLeds: 30);
-        _scheduler.SchedulePeriodic(TimeSpan.FromMinutes(1), () => Update());
+        //fb = new RgbwFrameBuilder(numLeds: 30);
+        //_scheduler.SchedulePeriodic(TimeSpan.FromMinutes(1), () => Update());
 
         _scheduler.ScheduleCron("0 7 * * MON-FRI", () =>
         {
@@ -36,17 +36,27 @@ public class MorningKids
 
         _scheduler.ScheduleCron("15 7 * * MON-FRI", () =>
         {
-            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.4, Message = "You have 30 minutes left", Whisper = false });
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.5, Message = "You have 30 minutes left, are you dressed", Whisper = false });
         });
 
         _scheduler.ScheduleCron("30 7 * * MON-FRI", () =>
         {
-            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.5, Message = "Get done! Leaving in 15 minutes", Whisper = false });
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.6, Message = "Leaving in 15 minutes, hope you had breakfast", Whisper = false });
+        });
+
+        _scheduler.ScheduleCron("35 7 * * MON-FRI", () =>
+        {
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.7, Message = "Only 10 Minutes left, get ready to leave", Whisper = false });
+        });
+
+        _scheduler.ScheduleCron("40 7 * * MON-FRI", () =>
+        {
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.7, Message = "5 Minutes to go, please get your shoes, water bottles and bags", Whisper = false });
         });
 
         _scheduler.ScheduleCron("45 7 * * MON-FRI", () =>
         {
-            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.6, Message = "Let's go. Get in the car.", Whisper = false });
+            alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = 0.7, Message = "Let's go. Get in the car.", Whisper = false });
         });
     }
 

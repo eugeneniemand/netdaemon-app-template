@@ -1,4 +1,5 @@
 ﻿using NetDaemon.Helpers;
+using Niemand.Helpers;
 
 namespace Niemand.Energy;
 
@@ -7,7 +8,7 @@ namespace Niemand.Energy;
 public class EnergyApp
 {
     private readonly IEntities _entities;
-    //private readonly Alexa      _alexa;
+    private readonly IAlexa      _alexa;
 
     private readonly IHaContext                                         _haContext;
     private readonly ILogger<EnergyApp>                                 _logger;
@@ -15,12 +16,12 @@ public class EnergyApp
     private readonly IServices                                          _services;
     private          List<(DateTime startDate, double rate, int hours)> _cheapestWindows;
 
-    public EnergyApp(IHaContext haContext, IScheduler scheduler, ILogger<EnergyApp> logger, IServices services, IEntities entities) //, Alexa alexa)
+    public EnergyApp(IHaContext haContext, IScheduler scheduler, ILogger<EnergyApp> logger, IServices services, IEntities entities, IAlexa alexa)
     {
         _haContext = haContext;
         _scheduler = scheduler;
         _logger    = logger;
-        //_alexa     = alexa;
+        _alexa     = alexa;
 
         _services = services;
         _entities = entities;
@@ -47,6 +48,11 @@ public class EnergyApp
                 .Subscribe(_ => {
                     var avgRate = entities.BinarySensor.OctopusEnergyTargetThreeHourDay.Attributes?.OverallAverageCost?.ToString();
                     services.Notify.Twinstead($"3 Hour Cheap Energy Started: {avgRate}p/kwh");
+                    var volume = 0.1;
+                    if (_scheduler.Now.Hour <= 18) volume = 0.5;
+                    if (_scheduler.Now.Hour <= 8) volume = 0.4;
+                    if (_scheduler.Now.Hour <= 7 ) volume = 0.2;                                      
+                    _alexa.Announce(new Alexa.Config { Entity = "media_player.everywhere_2", VolumeLevel = volume, Message = "The cheapest three-hour energy window is starting.", Whisper = false });
                 });
         
         entities.BinarySensor.OctopusEnergyTargetThreeHour.StateChanges()

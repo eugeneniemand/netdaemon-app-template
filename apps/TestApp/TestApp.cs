@@ -6,7 +6,7 @@ using Niemand.Helpers;
 namespace Niemand.TestApp;
 
 [NetDaemonApp]
-//[Focus]
+[Focus]
 public class TestApp
 {
     public TestApp(IHaContext haContext, IEntities entities, IHomeAssistantApiManager api, ILogger<TestApp> logger, IAlexa alexa)
@@ -34,9 +34,9 @@ public class TestApp
         //alexa.TextToSpeech("media_player.office", "3");
 
         //alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { "media_player.office", "media_player.kitchen", "media_player.dining" }, Message = "This is a test" });
-        //alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { "media_player.office", "media_player.kitchen", "media_player.dining" }, Message = "This is a longer test message to see if volume is set while message is playing" });
+        //alexa.TextToSpeech(new Alexa.Config { Entities = new List<string> { entities.MediaPlayer.EugeneDesktop.EntityId }, Message = "<audio src=\"soundbank://soundlibrary/ui/gameshow/amzn_ui_sfx_gameshow_negative_response_02\"/>" });
 
-        //alexa.PlaySound( entities.MediaPlayer.Office, "amzn_sfx_scifi_alarm_04");
+        //alexa.PlaySound( entities.MediaPlayer.EugeneDesktop, "amzn_ui_sfx_gameshow_negative_response_02");
 
         // var vars = System.Environment.GetEnvironmentVariables();
         // logger.LogInformation("Environment Vars:{vars}", vars);
