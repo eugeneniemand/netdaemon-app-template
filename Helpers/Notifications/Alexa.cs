@@ -118,9 +118,9 @@ public class Alexa : IAlexa
     public void SendCommand(MediaPlayerEntity mediaPlayer, string command) =>
         _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(mediaPlayer.EntityId), new MediaPlayerPlayMediaParameters() { Media = new { media_content_type = MediaType.custom.ToString().ToLower(), media_content_id = command } });
 
-    private string FormatMessage(string message, string voice, bool whisper)
+    private string FormatMessage(string message, string voice, bool whisper, bool useDefaultVoice)
     {
-        return _messageFormatter.FormatMessage(message, voice, whisper);
+        return _messageFormatter.FormatMessage(message, voice, whisper, useDefaultVoice);
     }
 
     private async Task ProcessNotifications(IEnumerable<Config> cfgs)

@@ -37,7 +37,7 @@ public class SummaryRoutine : IAsyncInitializable
             {
                 try
                 {
-                    await Run("http://10.10.40.14:5678/webhook/morning_summary").ConfigureAwait(false);
+                    await Run("https://n8n.niemand.uk/webhook/morning_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -52,11 +52,11 @@ public class SummaryRoutine : IAsyncInitializable
             {
                 try
                 {
-                    await Run("http://10.10.40.14:5678/webhook/evening_summary").ConfigureAwait(false);
+                    await Run("https://n8n.niemand.uk/webhook/evening_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error executing scheduled run for morning");
+                    _logger.LogError(ex, "Error executing scheduled run for evening");
                 }
             });
         });
@@ -68,7 +68,7 @@ public class SummaryRoutine : IAsyncInitializable
             {
                 try
                 {
-                    await Run("http://10.10.40.14:5678/webhook/morning_summary").ConfigureAwait(false);
+                    await Run("https://n8n.niemand.uk/webhook/morning_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -84,7 +84,7 @@ public class SummaryRoutine : IAsyncInitializable
             {
                 try
                 {
-                    await Run("http://10.10.40.14:5678/webhook/evening_summary").ConfigureAwait(false);
+                    await Run("https://n8n.niemand.uk/webhook/evening_summary").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

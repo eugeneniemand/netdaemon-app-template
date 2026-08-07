@@ -41,7 +41,7 @@ public class ApplianceNotification : IApplianceNotification
     // Gets the current cycle state based on the status sensor
     public CycleState CycleState => _status.State != null && _cycleStates.TryGetValue(_status.State.ToLower(), out var state)
         ? state
-        : CycleState.Unknown;
+        : default;
 
     // Unique event ID for notifications
     public string EventId => $"{_appliance}Tts";
@@ -61,10 +61,7 @@ public class ApplianceNotification : IApplianceNotification
                 return TimeRemaining != TimeSpan.Zero ? GetRunningNotification(lastPrompt) : null;
             case CycleState.Finished:
             case CycleState.Ready:
-                return GetReadyNotification(lastPrompt);
-            case CycleState.Unknown:
-                _logger.LogWarning("Unknown cycle state for {_appliance}", _appliance);
-                return null;
+                return GetReadyNotification(lastPrompt);            
             default:
                 _logger.LogError("Unexpected cycle state for {_appliance}: {Cycle}", _appliance, cycle);
                 return null;

@@ -5,6 +5,5 @@ public enum CycleState
     Running,
     Finished,
     Ready,
-    Paused,
-    Unknown
+    Paused
 }

@@ -87,7 +87,7 @@ public class SecurityArmAlarmTests(
         var common = new NetDaemon.Helpers.Common(ha, new Entities(ha));
 
         // Create Security instance with mocks
-        var alexaMock = new Niemand.Tests.Mocks.AlexaMock(services);
+        var alexaMock = new Niemand.Tests.Mocks.AlexaMock();
         var pushNotifier = new PushNotifier(ha, services);
         var telegramBotServicesMock = new TelegramBotServicesMock(ha);
 

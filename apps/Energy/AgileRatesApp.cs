@@ -110,13 +110,13 @@ public class AgileRatesApp : IAsyncInitializable, IDisposable
         [JsonPropertyName("value_inc_vat")] public double Value { get; set; }
         [JsonPropertyName("value_exc_vat")] public double ValueExVat { get; set; }
         [JsonPropertyName("payment_method")] public object? PaymentMethod { get; set; }
-        
+
         // "value_exc_vat": 14.22,
         // "value_inc_vat": 14.931,
         // "valid_from": "2024-01-17T22:30:00Z",
         // "valid_to": "2024-01-17T23:00:00Z",
-        // "payment_method": null
+        // "payment_method": null 
     }
-    
-   
+
+
 }

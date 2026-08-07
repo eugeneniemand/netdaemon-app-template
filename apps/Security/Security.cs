@@ -1,5 +1,5 @@
 ﻿using Microsoft.Reactive.Testing;
-using NetDaemon.Extensions.Observables;
+using CodeCasa.NetDaemon.Extensions.Observables;
 using NetDaemon.HassModel.Integration;
 using Niemand.Helpers;
 using Niemand.Helpers.Notifications;
@@ -77,7 +77,7 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
         if (DoorsMessagesSent.ContainsKey(door.EntityId))
         {
             var chat = DoorsMessagesSent[door.EntityId];
-            bot.DeleteMessage(new TelegramBotDeleteMessageParameters() { ChatId = chat.ChatId.ToString(), MessageId = chat.MessageId.ToString() });
+            bot.DeleteMessage(new TelegramBotDeleteMessageParameters() {  MessageId = chat.MessageId.ToString() });
 
             await ha.CallServiceWithResponseAsync("telegram_bot", "send_message", null, serviceData);
         }
@@ -203,15 +203,29 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
                     .Subscribe(ha =>
                     {
                         if (ha.New.IsArmed())
-                            Beep(2);
+                            NotifyArmed();
                         if (ha.New.IsDisarmed())
-                            Beep(3);
+                            NotifyDisarmed();
                     });
 
-         
+
     }
 
+    private void NotifyDisarmed()
+    {
+        if (entities.InputSelect.HouseMode.State == "night")
+            alexa.TextToSpeech(new Alexa.Config() { Entity = entities.MediaPlayer.Playroom.EntityId, Message = "Alarm disarmed", VolumeLevel = 0.3, Whisper = false });
+        else
+            Beep(3);
+    }
 
+    private void NotifyArmed()
+    {
+        if (entities.InputSelect.HouseMode.State == "night")
+            alexa.TextToSpeech(new Alexa.Config() { Entity = entities.MediaPlayer.Playroom.EntityId, Message = "Alarm armed", VolumeLevel = 0.3, Whisper = false });
+        else
+            Beep(2);
+    }
 
     private void AlarmFailure()
     {
@@ -233,7 +247,6 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
             entities.BinarySensor.BackDoor,
             entities.BinarySensor.KonnectedFrontDoor,
             entities.BinarySensor.KonnectedUtilityDoor,
-            entities.BinarySensor.GarageBackDoor,
             entities.BinarySensor.LoungeDoor
         };
 
@@ -249,8 +262,7 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
     private void DrivewayMotionAlarm()
     {
         var cameras_person = new[]
-                {
-            entities.BinarySensor.NiemandFrontDoorMotion,
+                {            
             entities.BinarySensor.NiemandDriveMotion,
         };
 
@@ -288,49 +300,49 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
                  });
              });
 
-        cameras_person.StateChanges()
-             .Where(change => change.New.IsOn())
-             .SubscribeAsync(async change =>
-             {
-                 if (entities.AlarmControlPanel.Alarmo.IsDisarmed() || DateTime.Now.Hour is >= 7 and < 19)
-                     return;
+        //cameras_person.StateChanges()
+        //     .Where(change => change.New.IsOn())
+        //     .SubscribeAsync(async change =>
+        //     {
+        //         if (entities.AlarmControlPanel.Alarmo.IsDisarmed() || DateTime.Now.Hour is >= 7 and < 19)
+        //             return;
 
-                 pushNotifier.Notify(PushNotifier.Recipient.All, "🚨 Person On Drive 🚨", "There is a person on the drive", 1, true, "Anticipate.caf");
+        //         pushNotifier.Notify(PushNotifier.Recipient.All, "🚨 Person On Drive 🚨", "There is a person on the drive", 1, true, "Anticipate.caf");
 
-                 logger.LogDebug("Person Detected: {camera}", change.Entity.EntityId);
-                 alexa.TextToSpeech(new Alexa.Config()
-                 {
-                     Entity = entities.MediaPlayer.EugeneS5thEchoDot.EntityId, // Garage
-                     VolumeLevel = 1,
-                     VolumeResetDelay = 30,
-                     Message = "<audio src=\"soundbank://soundlibrary/scifi/amzn_sfx_scifi_alarm_03\"/>Alert, Alert, person detected on Drive",
-                     NotifyType = "tts",
-                     Whisper = false
-                 });
-                 await scheduler.Sleep(TimeSpan.FromSeconds(7));
-                 alexa.TextToSpeech(new Alexa.Config()
-                 {
-                     Entity = entities.MediaPlayer.EugeneS5thEchoDot.EntityId, // Garage
-                     VolumeLevel = 1,
-                     VolumeResetDelay = 30,
-                     Message = "<audio src=\"soundbank://soundlibrary/scifi/amzn_sfx_scifi_alarm_03\"/>Alert, Alert, person detected on Drive",
-                     NotifyType = "tts",
-                     Whisper = false
-                 });
-                 await scheduler.Sleep(TimeSpan.FromSeconds(30));
-                 entities.Light.Sofit.TurnOn();
-                 alexa.TextToSpeech(new Alexa.Config()
-                 {
-                     Entity = entities.MediaPlayer.Master.EntityId,
-                     VolumeLevel = 0.2,
-                     VolumeResetDelay = 30,
-                     Message = "Alert, person detected on Drive",
-                     NotifyType = "tts",
-                     Whisper = false
-                 });
-                 await scheduler.Sleep(TimeSpan.FromSeconds(300));
-                 entities.Light.Sofit.TurnOff();
-             });
+        //         logger.LogDebug("Person Detected: {camera}", change.Entity.EntityId);
+        //         alexa.TextToSpeech(new Alexa.Config()
+        //         {
+        //             Entity = entities.MediaPlayer.EugeneS5thEchoDot.EntityId, // Garage
+        //             VolumeLevel = 1,
+        //             VolumeResetDelay = 30,
+        //             Message = "<audio src=\"soundbank://soundlibrary/scifi/amzn_sfx_scifi_alarm_03\"/>Alert, Alert, person detected on Drive",
+        //             NotifyType = "tts",
+        //             Whisper = false
+        //         });
+        //         await scheduler.Sleep(TimeSpan.FromSeconds(7));
+        //         alexa.TextToSpeech(new Alexa.Config()
+        //         {
+        //             Entity = entities.MediaPlayer.EugeneS5thEchoDot.EntityId, // Garage
+        //             VolumeLevel = 1,
+        //             VolumeResetDelay = 30,
+        //             Message = "<audio src=\"soundbank://soundlibrary/scifi/amzn_sfx_scifi_alarm_03\"/>Alert, Alert, person detected on Drive",
+        //             NotifyType = "tts",
+        //             Whisper = false
+        //         });
+        //         await scheduler.Sleep(TimeSpan.FromSeconds(30));
+        //         entities.Light.Sofit.TurnOn();
+        //         alexa.TextToSpeech(new Alexa.Config()
+        //         {
+        //             Entity = entities.MediaPlayer.Master.EntityId,
+        //             VolumeLevel = 0.2,
+        //             VolumeResetDelay = 30,
+        //             Message = "Alert, person detected on Drive",
+        //             NotifyType = "tts",
+        //             Whisper = false
+        //         });
+        //         await scheduler.Sleep(TimeSpan.FromSeconds(300));
+        //         entities.Light.Sofit.TurnOff();
+        //     });
     }
 
     private void SimulateNightLights()
@@ -341,11 +353,27 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
         var armedAway = entities.AlarmControlPanel.Alarmo
             .ToBooleanObservable(s => s.IsArmedAway());
 
+        var armedNight = entities.AlarmControlPanel.Alarmo
+            .ToBooleanObservable(s => s.IsArmedNight());
+
+        var disarmed = entities.AlarmControlPanel.Alarmo
+            .ToBooleanObservable(s => s.IsDisarmed());
+
         nightTime.AndOp(armedAway)
-            .SubscribeTrueFalse(
-                () => entities.Switch.SimulateAllLights.TurnOn(),
-                () => entities.Switch.SimulateAllLights.TurnOff()
+            .SubscribeTrue(
+                () => entities.Switch.SimulateAllLights.TurnOn()
         );
+
+        nightTime.AndOp(armedNight)
+            .SubscribeTrue(
+                () => entities.Switch.SimulateDownstairsLights.TurnOn()
+        );
+
+        disarmed.SubscribeTrue(() =>
+        {
+            entities.Switch.SimulateAllLights.TurnOff();
+            entities.Switch.SimulateDownstairsLights.TurnOff();
+        });
     }
 
     private void ArmAlarm()
@@ -361,12 +389,13 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
         var lastDownstairsMotionWasHallway = common.MotionSensors.Downstairs
             .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
             .Merge()
-            .Select(sensor => string.Equals( sensor.Entity.EntityId, entities.BinarySensor.KonnectedHallway.EntityId, StringComparison.OrdinalIgnoreCase)  );
+            .Select(sensor => string.Equals(sensor.Entity.EntityId, entities.BinarySensor.KonnectedHallway.EntityId, StringComparison.OrdinalIgnoreCase))
+            .StartWith(false);
 
         // ---- Select the state observable from each sensor then merge and select the string "upstairs" for each event ----
         var upstairsMotion = common.MotionSensors.Upstairs
             .Select(sensor => sensor.StateChanges().Where(e => e.New?.State == "on"))
-            .Merge()            
+            .Merge()
             .Select(_ => "upstairs");
 
         // ---- Track any motion ----
@@ -418,7 +447,7 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
         var tvOff =
             entities.MediaPlayer.LoungeTv
                 .StateChanges()
-                .Select(e => e.New.IsOff())
+                .Select(e => e.New.IsOff() || e.New.IsUnavailable())
                 .StartWith(entities.MediaPlayer.LoungeTv.IsOff());
 
         // ---- Alarm Armed ----
@@ -434,7 +463,7 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
                 pcIdle,
                 tvOff,
                 alarmNotArmed, lastDownstairsMotionWasHallway,
-                (lastZone, isPcIdle, isTvOff,isAlarmNotArmed, isLastDownstairsMotionHallway) =>
+                (lastZone, isPcIdle, isTvOff, isAlarmNotArmed, isLastDownstairsMotionHallway) =>
                     new { lastZone, isPcIdle, isTvOff, isAlarmNotArmed, isLastDownstairsMotionHallway }
             );
 
@@ -451,7 +480,6 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
                 .Subscribe(_ =>
                 {
                     entities.AlarmControlPanel.Alarmo.AlarmArmNight();
-                    Beep(2);
 
                     foreach (var light in entities.Light.EnumerateAll().Where(e => e.Registration?.Labels?.Any(label => string.Equals(label.Id, "Downstairs", StringComparison.OrdinalIgnoreCase)) == true))
                     {

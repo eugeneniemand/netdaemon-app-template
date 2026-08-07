@@ -1,12 +1,5 @@
-﻿using Humanizer;
-using NetDaemon.Extensions.MqttEntityManager;
-using NetDaemon.HassModel.Integration;
+﻿using NetDaemon.Extensions.MqttEntityManager;
 using Niemand.Helpers;
-using Niemand.Helpers.Notifications;
-using Stateless.Graph;
-using System;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.Json;
 
 namespace Niemand;
 
@@ -14,31 +7,46 @@ public enum ButtonType
 {
     ChoreApproval,
     Bonus,
-    Penalty
+    Penalty,
+    Adjustment
+}
+
+public enum SensorType
+{
+    ChoreStatus
 }
 
 public static class KidConfig
 {
-    public static readonly string[] AllKidNames = { "jayden", "aaron", "gabriel" };
+    public static readonly string[] AllKidNames = ["jayden", "aaron", "gabriel"];
 
     // Pattern templates where {0} is replaced with kid name (lowercase)
     // Add more patterns here to easily extend functionality
     private static readonly string[] ButtonPrefixPatterns =
-    {
-        "button.kc_{0}",
-        "button.{0}_kidschores"
-    };
+    [
+        "button.{0}_choreops"        
+    ];
 
-    private const string HelperSensorPattern = "sensor.{0}_kidschores_ui_dashboard_helper";
+    // Pattern templates where {0} is replaced with kid name (lowercase)
+    // Add more patterns here to easily extend functionality
+    private static readonly string[] SensorPrefixPatterns =
+    [
+        "sensor.{0}_choreops"
+    ];
+
+    private const string HelperSensorPattern = "sensor.{0}_choreops_ui_dashboard_helper";
 
     public static string[] GetButtonPrefixes(string kidName) =>
         ButtonPrefixPatterns.Select(p => string.Format(p, kidName)).ToArray();
+
+    public static string[] GetSensorPrefixes(string kidName) =>
+        SensorPrefixPatterns.Select(p => string.Format(p, kidName)).ToArray();
 
     public static string GetHelperSensorEntityId(string kidName) =>
         string.Format(HelperSensorPattern, kidName);
 }
 
-[Focus]
+//[Focus]
 [NetDaemonApp]
 public class KidsChoresManager : IAsyncInitializable, IDisposable
 {
@@ -53,6 +61,7 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
 
     public SwitchEntity DisciplineManagerSwitch;
 
+    private bool IsNdUserOrHa(StateChange stateChange) => Shared.Parents.ContainsKey(stateChange.New?.Context?.UserId ?? "Netdaemon");
 
     public KidsChoresManager(IHaContext haContext, IMqttEntityManager entityManager, TimerManager timerManager, IScheduler scheduler, IAlexa alexa, ILogger<KidsChoresManager> logger)
     {
@@ -72,12 +81,15 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
         SubscribeToButtonType(ButtonType.ChoreApproval);
         SubscribeToButtonType(ButtonType.Bonus);
         SubscribeToButtonType(ButtonType.Penalty);
+        SubscribeToButtonType(ButtonType.Adjustment);
+
+        SubscribeToSensorType(SensorType.ChoreStatus);
     }
 
     // This is a helper method to map the button entity id, for ex button.kc_aaron_chore_approval_dishawasher, to the corresponding dashboard helper sensor entity id should resolve to sensor.kc_aaron_ui_dashboard_helper
     private string GetUiHelperEntityId(string entityId)
     {
-        var kidName = KidConfig.AllKidNames.FirstOrDefault(name => 
+        var kidName = KidConfig.AllKidNames.FirstOrDefault(name =>
             KidConfig.GetButtonPrefixes(name).Any(prefix => entityId.StartsWith(prefix)));
 
         if (kidName == null)
@@ -96,31 +108,100 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
             .Subscribe(c => HandleButtonPress(c, buttonType));
     }
 
+    private void SubscribeToSensorType(SensorType sensorType)
+    {
+        var patterns = GetSensorPatternsForType(sensorType);
+
+        // For chore status, subscribe to all state changes, throttle per entity, then batch
+        if (sensorType == SensorType.ChoreStatus)
+        {
+            _haContext
+                .StateChanges()
+                .Where(c => patterns.Any(pattern => c.Entity.EntityId.StartsWith(pattern)))
+                .Where(c => c.New?.State == "due" || c.New?.State == "overdue")
+                .GroupBy(c => c.Entity.EntityId)
+                .SelectMany(group => group.Throttle(TimeSpan.FromSeconds(3), _scheduler))
+                .Buffer(TimeSpan.FromSeconds(10), _scheduler)
+                .Where(changes => changes.Count > 0)
+                .Subscribe(changes => HandleBatchedChoreStatus(changes.ToList()));
+        }
+    }
+
     private string[] GetButtonPatternsForType(ButtonType buttonType)
     {
-        return buttonType switch
+        var suffixes = buttonType switch
         {
-            ButtonType.ChoreApproval => KidConfig.AllKidNames
-                .SelectMany(name => KidConfig.GetButtonPrefixes(name)
-                    .Where(p => p.Contains("kc_"))
-                    .Select(p => p + "_chore_approval"))
-                .ToArray(),
-            ButtonType.Bonus => KidConfig.AllKidNames
-                .SelectMany(name => KidConfig.GetButtonPrefixes(name)
-                    .Where(p => p.Contains("kidschores"))
-                    .Select(p => p + "_apply_bonus"))
-                .ToArray(),
-            ButtonType.Penalty => KidConfig.AllKidNames
-                .SelectMany(name => KidConfig.GetButtonPrefixes(name)
-                    .Where(p => p.Contains("kidschores"))
-                    .Select(p => p + "_apply_penalty"))
-                .ToArray(),
+            ButtonType.ChoreApproval => ["_approve_chore"],
+            ButtonType.Bonus => ["_apply_bonus"],
+            ButtonType.Penalty => ["_apply_penalty"],
+            ButtonType.Adjustment => ["_increment", "_decrement"],
             _ => Array.Empty<string>()
         };
+
+        return BuildButtonPatterns(suffixes);
     }
+
+    private string[] GetSensorPatternsForType(SensorType sensorType)
+    {
+        var suffixes = sensorType switch
+        {
+            SensorType.ChoreStatus => ["_chore_status"],
+            _ => Array.Empty<string>()
+        };
+
+        return BuildSensorPatterns(suffixes);
+    }
+
+    /// <summary>
+    /// Builds a collection of button pattern strings by combining kid names, button prefixes, and suffixes.
+    /// </summary>
+    /// <param name="suffixes">An array of suffixes to append to each prefix (e.g., "_on", "_off", "_long_press").</param>
+    /// <returns>
+    /// A string array containing all permutations of button patterns in the format: 
+    /// "{prefix}{suffix}" for each kid name and corresponding prefix.
+    /// </returns>
+    /// <remarks>
+    /// This method generates button pattern identifiers used for matching Home Assistant button entity names
+    /// or automation triggers across all configured children and their associated button prefixes.
+    /// Example: If kid names are ["Alice", "Bob"], prefixes for Alice are ["button.alice_chore1"], 
+    /// and suffixes are ["_on", "_short"], the result would include 
+    /// ["button.alice_chore1_on", "button.alice_chore1_short", ...].
+    /// </remarks>
+    private string[] BuildButtonPatterns(string[] suffixes) =>
+    KidConfig.AllKidNames
+        // Flatten each kid name to their associated button prefixes
+        .SelectMany(name => KidConfig.GetButtonPrefixes(name)
+            // Flatten each prefix to all possible suffix combinations
+            .SelectMany(prefix => suffixes.Select(suffix => prefix + suffix)))
+        .ToArray();
+
+    /// <summary>
+    /// Builds a collection of sensor pattern strings by combining kid names, sensor prefixes, and suffixes.
+    /// </summary>
+    /// <param name="suffixes">An array of suffixes to append to each prefix (e.g., "_chore_status").</param>
+    /// <returns>
+    /// A string array containing all permutations of sensor patterns in the format: 
+    /// "{prefix}{suffix}" for each kid name and corresponding sensor prefix.
+    /// </returns>
+    /// <remarks>
+    /// This method generates sensor pattern identifiers used for matching Home Assistant sensor entity names.
+    /// Sensors are matched only by the sensor prefix pattern from KidConfig, combined with the suffix.
+    /// Example: If kid names are ["Alice", "Bob"], sensor prefixes are ["sensor.alice_choreops"], 
+    /// and suffixes are ["_chore_status"], the result would include 
+    /// ["sensor.alice_choreops_chore_status", "sensor.bob_choreops_chore_status"].
+    /// </remarks>
+    private string[] BuildSensorPatterns(string[] suffixes) =>
+    KidConfig.AllKidNames
+        // Flatten each kid name to their associated sensor prefixes (filter to sensor. prefix only)
+        .SelectMany(name => KidConfig.GetSensorPrefixes(name)
+            // Flatten each prefix to all possible suffix combinations
+            .SelectMany(prefix => suffixes.Select(suffix => prefix + suffix)))
+        .ToArray();
 
     private void HandleButtonPress(StateChange c, ButtonType buttonType)
     {
+        if (!IsNdUserOrHa(c)) { return; }
+
         var uiHelperEntityId = GetUiHelperEntityId(c.Entity.EntityId);
         var context = new DashboardHelperContext(_haContext, uiHelperEntityId, _logger);
 
@@ -135,15 +216,106 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
             case ButtonType.Penalty:
                 HandlePenaltyPress(c, context);
                 break;
+            case ButtonType.Adjustment:
+                HandlePointAdjustment(c, context);
+                break;
+        }
+    }
+
+    private void HandleBatchedChoreStatus(List<StateChange> changes)
+    {
+        if (_entities.InputBoolean.Announcements.IsOff())
+            return;
+
+        // Group by status (due vs overdue) but only process overdue
+        var groupedByStatus = changes
+            .Where(c => c.New?.State == "overdue")
+            .GroupBy(c => c.New?.State);
+
+        foreach (var statusGroup in groupedByStatus)
+        {
+            var status = statusGroup.Key;
+            var choresByKid = new List<(string kidName, string choreName)>();
+
+            foreach (var change in statusGroup)
+            {
+                var sensor = change.Entity;
+                if (!sensor.Attributes.TryGetValue("user_name", out var kidName) ||
+                    !sensor.Attributes.TryGetValue("chore_name", out var choreName))
+                {
+                    _logger.LogWarning("Kid name or chore name attribute not found for entity {EntityId}", sensor.EntityId);
+                    continue;
+                }
+
+                choresByKid.Add((kidName.ToString(), choreName.ToString()));
+            }
+
+            if (choresByKid.Any())
+            {
+                AnnounceGroupedChoreStatus(status, choresByKid);
+            }
+        }
+    }
+
+    private void AnnounceGroupedChoreStatus(string status, List<(string kidName, string choreName)> choresByKid)
+    {
+        var mediaPlayers = _alexa.MediaPlayerEntityIdsForLabel("Downstairs")
+            .Union(_alexa.MediaPlayerEntityIdsForLabel("Upstairs"))
+            .ToList();
+
+        if (!mediaPlayers.Any())
+            return;
+
+        // Group by kid
+        var groupedByKid = choresByKid
+            .GroupBy(x => x.kidName)
+            .OrderBy(g => g.Key)
+            .ToList();
+
+        // Get unique chore names across all kids
+        var allChores = choresByKid
+            .Select(x => x.choreName)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+
+        // Format kid names with " and " between them
+        var kidNames = groupedByKid
+            .Select(g => g.Key)
+            .ToList();
+
+        var childrenStr = kidNames.Count == 1
+            ? kidNames[0]
+            : string.Join(" and ", kidNames);
+
+        var choresStr = string.Join(" and ", allChores);
+        var childrenAndChores = $"{childrenStr}, your {choresStr}";
+
+        string? announcementMessage = status switch
+        {
+            "due" => $"<amazon:emotion name='excited' intensity='high'>{childrenAndChores} is now due</amazon:emotion>",
+            "overdue" => $"<amazon:emotion name='disappointed' intensity='high'>{childrenAndChores} is overdue and you are losing points</amazon:emotion>",
+            _ => null
+        };
+
+        if (announcementMessage != null)
+        {
+            _alexa.Announce(new Alexa.Config()
+            {
+                Entities = mediaPlayers,
+                VolumeLevel = 0.5,
+                Message = announcementMessage,
+                UseDefaultVoice = true
+            });
         }
     }
 
     private void HandleChoreApproval(StateChange c, DashboardHelperContext context)
     {
-        var sensorEntityId = c.Entity.EntityId.Replace("button", "sensor").Replace("chore_approval", "chore_status");
+        var sensorEntityId = c.Entity.EntityId.Replace("button", "sensor").Replace("approve_chore", "chore_status");
         var sensor = _haContext.GetState(sensorEntityId);
 
-        if (!sensor.Attributes.TryGetValue("kid_name", out var kidName))
+        if (!sensor.Attributes.TryGetValue("user_name", out var kidName))
         {
             _logger.LogWarning("Kid name attribute not found for entity {EntityId}", sensorEntityId);
             return;
@@ -161,12 +333,23 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
             return;
         }
 
-        NotifyPointsStateChanged((chorePoints != null ? Convert.ToDouble(chorePoints) : 0), kidName.ToString(), choreName.ToString());
+        // Handle JsonElement conversion
+        double points = 0;
+        if (chorePoints is JsonElement jsonElement)
+        {
+            points = jsonElement.GetDouble();
+        }
+        else if (chorePoints != null)
+        {
+            points = Convert.ToDouble(chorePoints);
+        }
+
+        NotifyPointsStateChanged(points, kidName.ToString(), choreName.ToString());
     }
 
     private void HandleBonusPress(StateChange c, DashboardHelperContext context)
     {
-        var kidName = context.GetValue<string>("kid_name");
+        var kidName = context.GetValue<string>("user_name");
         var bonusName = context.GetArrayItemValue<string>("bonuses", "eid", c.Entity.EntityId, "name");
         var bonusPoints = context.GetArrayItemValue<double>("bonuses", "eid", c.Entity.EntityId, "points");
 
@@ -175,11 +358,20 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
 
     private void HandlePenaltyPress(StateChange c, DashboardHelperContext context)
     {
-        var kidName = context.GetValue<string>("kid_name");
+        var kidName = context.GetValue<string>("user_name");
         var penaltyName = context.GetArrayItemValue<string>("penalties", "eid", c.Entity.EntityId, "name");
         var penaltyPoints = context.GetArrayItemValue<double>("penalties", "eid", c.Entity.EntityId, "points");
 
         NotifyPointsStateChanged(penaltyPoints, kidName, penaltyName);
+    }
+
+    private void HandlePointAdjustment(StateChange c, DashboardHelperContext context)
+    {
+        var kidName = context.GetValue<string>("user_name");
+        var pointsName = context.GetArrayItemValue<string>("points_buttons", "eid", c.Entity.EntityId, "name");
+        var points = Convert.ToDouble(pointsName.Replace("Points ", ""));
+
+        NotifyPointsStateChanged(points, kidName, "");
     }
 
     private class DashboardHelperContext
@@ -240,7 +432,7 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
         {
             try
             {
-                var pathParts = path.Split(new[] { '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                var pathParts = path.Split(['[', '.'], StringSplitOptions.RemoveEmptyEntries);
                 if (pathParts.Length == 0)
                     return default;
 
@@ -279,7 +471,7 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
                     }
                     else
                     {
-                        var nextDotOrBracket = remainingPath.IndexOfAny(new[] { '.', '[' });
+                        var nextDotOrBracket = remainingPath.IndexOfAny(['.', '[']);
                         var propertyName = nextDotOrBracket == -1
                             ? remainingPath
                             : remainingPath.Substring(0, nextDotOrBracket);
@@ -400,24 +592,28 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
         var upstairs = _alexa.MediaPlayerEntityIdsForLabel("Upstairs");
         var sfx = "";
         string message = "";
+        string pointMessage = Math.Abs(points) == 1 ? "point" : "points";
+        string choreMessage = chore != "" ? $"{pointMessage} for {chore}" : $"bonus {pointMessage}";
 
-        if (points > 0)
+        switch (points)
         {
-            // format points to zero decimal integer
-            message = $"{childName}, you gained {points:#} points for {chore}";
-            sfx = "<audio src=\"soundbank://soundlibrary/cloth_leather_paper/money_coins/money_coins_03\"/>";
+            case 0:
+                message = $"{childName}, well done you completed, {chore}";
+                sfx = "<audio src=\"soundbank://soundlibrary/cloth_leather_paper/money_coins/money_coins_03\"/>";
+                break;
+            case > 0:
+                // format points to zero decimal integer
+                message = $"<amazon:emotion name=\"excited\" intensity=\"hight\">{childName}, you gained {points:#} {choreMessage}</amazon:emotion>";
+                sfx = "<audio src=\"soundbank://soundlibrary/cloth_leather_paper/money_coins/money_coins_03\"/>";
+                break;
+            default:
+                message = $"<amazon:emotion name=\"disappointed\" intensity=\"high\">{childName}, you lost {Math.Abs(points):#} {choreMessage}</amazon:emotion>";
+                sfx = "<audio src=\"soundbank://soundlibrary/telephones/pay_phones/pay_phones_05\"/>";
+                break;
         }
-        else
-        {
-            message = $"{childName}, you lost {points:#} points for {chore}";
-            sfx = "<audio src=\"soundbank://soundlibrary/telephones/pay_phones/pay_phones_05\"/>";
-        }
-
-        _alexa.TextToSpeech(new Alexa.Config() { Entities = downstairs, VolumeLevel = 0.5, Message = sfx, Whisper = false });
-        _alexa.TextToSpeech(new Alexa.Config() { Entities = downstairs, VolumeLevel = 0.5, Message = message, Whisper = false });
-
-        _alexa.TextToSpeech(new Alexa.Config() { Entities = upstairs, VolumeLevel = 0.5, Message = sfx, Whisper = false });
-        _alexa.TextToSpeech(new Alexa.Config() { Entities = upstairs, VolumeLevel = 0.5, Message = message, Whisper = false });
+        var media_players = downstairs.Union(upstairs).ToList();
+        _alexa.TextToSpeech(new Alexa.Config() { Entities = media_players, VolumeLevel = 0.5, Message = sfx, Whisper = false });
+        _alexa.TextToSpeech(new Alexa.Config() { Entities = media_players, VolumeLevel = 0.5, Message = message, Whisper = false });
     }
 
 
@@ -425,5 +621,24 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
     public async void Dispose()
     {
         await _entityManager.RemoveAsync(_switchDisciplineManagerEnabled);
+    }
+
+    /// <summary>
+    /// Compares two StateChange objects by entity ID and state to detect distinct chore status changes.
+    /// </summary>
+    private sealed class ChoreStateEqualityComparer : IEqualityComparer<StateChange>
+    {
+        public bool Equals(StateChange x, StateChange y)
+        {
+            if (x == null || y == null)
+                return x == y;
+
+            return x.Entity.EntityId == y.Entity.EntityId && x.New?.State == y.New?.State;
+        }
+
+        public int GetHashCode(StateChange obj)
+        {
+            return HashCode.Combine(obj?.Entity.EntityId, obj?.New?.State);
+        }
     }
 }

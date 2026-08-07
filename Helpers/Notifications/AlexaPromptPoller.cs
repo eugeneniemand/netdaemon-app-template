@@ -16,13 +16,35 @@ namespace Niemand.Helpers;
 /// - Multiple observable triggers merged together
 /// - Per-response-type action handlers
 /// - Daily reset or event-triggered reset
+/// - Boolean entity gate for persistent acknowledged state (survives restarts)
 /// - Structured logging throughout
+/// 
+/// Gate Entity Feature:
+/// When configured with .WithGateEntity(entityId, haContext), the poller will:
+/// - Only allow prompts when the gate entity is on (true)
+/// - Automatically turn off the gate entity when Acknowledge() is called
+/// - Automatically turn on the gate entity when ResetState() or a gate reset trigger fires
+/// - This allows the acknowledged state to persist in Home Assistant across restarts
+/// 
+/// Example:
+/// var poller = new AlexaPromptPoller(scheduler, alexa, logger, haContext)
+///     .AddTrigger(entities.BinarySensor.Motion.StateChanges().Where(e => e.New.IsOn()))
+///     .SetPrompt(new Alexa.Config { ... })
+///     .WithCooldown(TimeSpan.FromMinutes(3))
+///     .WithGateEntity("input_boolean.prompt_enabled", haContext)  // Persistent gate
+///     .WithDailyReset(Observable.Timer(Next6am(), TimeSpan.FromDays(1), scheduler))
+///     .WithGateReset(Observable.Timer(Next6am(), TimeSpan.FromDays(1), scheduler))  // Also resets gate
+///     .OnResponseYes(response => {
+///         poller.Acknowledge();  // This will turn off the gate entity
+///     })
+///     .Subscribe();
 /// </summary>
 public class AlexaPromptPoller
 {
     private readonly IScheduler _scheduler;
     private readonly IAlexa _alexa;
     private readonly ILogger _logger;
+    private IHaContext? _haContext;
 
     private readonly List<IObservable<Unit>> _triggers = new();
     private Alexa.Config _alexaconfig;
@@ -39,19 +61,25 @@ public class AlexaPromptPoller
     private DateTimeOffset _lastPromptTime = DateTimeOffset.MinValue;
     private bool _isWaitingForResponse = false;
     private bool _isAcknowledged = false;
-    
+
     // For stateful trigger management
     private readonly List<IObservable<bool>> _statefulTriggers = new();
     private readonly Subject<Unit> _statefulResetTrigger = new();
 
+    // For gate entity management
+    private string _gateEntityId = "";
+    private IObservable<Unit>? _gateResetTrigger;
+    private Func<bool> _predicate;
+
     // For managing disposables
     private readonly List<IDisposable> _subscriptions = new();
 
-    public AlexaPromptPoller(IScheduler scheduler, IAlexa alexa, ILogger logger)
+    public AlexaPromptPoller(IScheduler scheduler, IAlexa alexa, ILogger logger, IHaContext? haContext = null)
     {
         _scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
         _alexa = alexa ?? throw new ArgumentNullException(nameof(alexa));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _haContext = haContext;
     }
 
     /// <summary>
@@ -373,7 +401,76 @@ public class AlexaPromptPoller
         _isWaitingForResponse = false;
         _isAcknowledged = false;
         _statefulResetTrigger.OnNext(Unit.Default);
+
+        // Reset gate entity to on (true) if configured
+        if (!string.IsNullOrWhiteSpace(_gateEntityId) && _haContext != null)
+        {
+            _haContext.CallService("input_boolean", "turn_on", new ServiceTarget { EntityIds = new[] { _gateEntityId } });
+            _logger.LogDebug("Gate entity reset to on: {GateEntity}", _gateEntityId);
+        }
+
         _logger.LogDebug("AlexaPromptPoller state reset externally");
+    }
+
+    /// <summary>
+    /// Only execute triggers if the provided predicate returns true. Useful for global conditions that must be met for prompts to be allowed.
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public AlexaPromptPoller WhenPredicateTrue(Func<bool> predicate)
+    {
+        if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+        _predicate = predicate;
+        _logger.LogDebug("Predicate configured");
+        return this;    
+    }
+
+    /// <summary>
+    /// Set a boolean entity as a gate that controls whether prompts are allowed.
+    /// When acknowledged, the entity will be set to off (false).
+    /// When reset, the entity will be set to on (true).
+    /// The poller will only prompt if this entity is on (true).
+    /// 
+    /// This allows the acknowledged state to persist across restarts.
+    /// 
+    /// Example:
+    /// .WithGateEntity("input_boolean.jayden_tablet_enabled", haContext)
+    /// </summary>
+    public AlexaPromptPoller WithGateEntity(string entityId, IHaContext haContext)
+    {
+        if (string.IsNullOrWhiteSpace(entityId)) throw new ArgumentNullException(nameof(entityId));
+        _gateEntityId = entityId;
+        _haContext = haContext ?? throw new ArgumentNullException(nameof(haContext));
+        _logger.LogDebug("Gate entity configured: {GateEntity}", _gateEntityId);
+        return this;
+    }
+
+    /// <summary>
+    /// Set an observable trigger that will reset the gate entity to on (true).
+    /// Useful for resetting the gate entity at specific times (e.g., daily reset).
+    /// 
+    /// Example:
+    /// .WithGateReset(Observable.Timer(Next6am(), TimeSpan.FromDays(1), scheduler))
+    /// </summary>
+    public AlexaPromptPoller WithGateReset(IObservable<Unit> gateResetTrigger)
+    {
+        if (gateResetTrigger == null) throw new ArgumentNullException(nameof(gateResetTrigger));
+        _gateResetTrigger = gateResetTrigger;
+        _logger.LogDebug("Gate reset trigger configured");
+        return this;
+    }
+
+    /// <summary>
+    /// Set a gate reset trigger with a generic observable type.
+    /// The value is discarded and converted to Unit.
+    /// </summary>
+    public AlexaPromptPoller WithGateReset<T>(IObservable<T> gateResetTrigger)
+    {
+        if (gateResetTrigger == null) throw new ArgumentNullException(nameof(gateResetTrigger));
+        _gateResetTrigger = gateResetTrigger.Select(_ => Unit.Default);
+        _logger.LogDebug("Gate reset trigger configured with type {TriggerType}", typeof(T).Name);
+        return this;
     }
 
     /// <summary>
@@ -416,10 +513,32 @@ public class AlexaPromptPoller
         var throttledTriggers = mergedTriggers
             .Where(_ =>
             {
+                // Check gate entity state if configured
+                if (!string.IsNullOrWhiteSpace(_gateEntityId) && _haContext != null)
+                {
+                    var gateEntity = _haContext.Entity(_gateEntityId);
+                    if (gateEntity.State != "on")
+                    {
+                        _logger.LogTrace("Trigger ignored: gate entity is off");
+                        return false;
+                    }
+                }
+
+                if (_predicate != null)
+                {
+                    bool predicateResult = _predicate();
+                    if (!predicateResult)
+                    {
+                        _logger.LogTrace("Trigger ignored: predicate returned false");
+                        return false;
+                    }
+                    _logger.LogTrace("Triggered: predicate returned true");
+                }
+
                 // If acknowledged, don't process triggers
                 if (_isAcknowledged)
                 {
-                    //_logger.LogDebug("Trigger ignored: poller has been acknowledged");
+                    _logger.LogTrace("Trigger ignored: poller has been acknowledged");
                     return false;
                 }
 
@@ -428,11 +547,11 @@ public class AlexaPromptPoller
 
                 if (!canPrompt)
                 {
-                    //_logger.LogDebug(
-                    //    "Trigger ignored: cooldown active. Elapsed: {Elapsed}ms, Cooldown: {Cooldown}ms",
-                    //    elapsed.TotalMilliseconds,
-                    //    _cooldown.TotalMilliseconds
-                    //);
+                    _logger.LogTrace(
+                        "Trigger ignored: cooldown active. Elapsed: {Elapsed}ms, Cooldown: {Cooldown}ms",
+                        elapsed.TotalMilliseconds,
+                        _cooldown.TotalMilliseconds
+                    );
                 }
                 else
                 {
@@ -497,6 +616,15 @@ public class AlexaPromptPoller
             _subscriptions.Add(externalResetSubscription);
         }
 
+        if (_gateResetTrigger != null)
+        {
+            var gateResetSubscription = _gateResetTrigger
+                .Do(_ => _logger.LogDebug("Gate reset triggered for {EventId}", _eventId))
+                .Subscribe(_ => ResetState());
+
+            _subscriptions.Add(gateResetSubscription);
+        }
+
         _logger.LogInformation(
             "AlexaPromptPoller initialized: EventId={EventId}, MediaPlayer={MediaPlayer}, Cooldown={Cooldown}ms, Triggers={TriggerCount}, StatefulTriggers={StatefulCount}",
             _eventId,
@@ -543,6 +671,14 @@ public class AlexaPromptPoller
         _isAcknowledged = true;
         _isWaitingForResponse = false;
         _statefulResetTrigger.OnNext(Unit.Default);
+
+        // Set gate entity to off (false) if configured
+        if (!string.IsNullOrWhiteSpace(_gateEntityId) && _haContext != null)
+        {
+            _haContext.CallService("input_boolean", "turn_off", new ServiceTarget { EntityIds = new[] { _gateEntityId } });
+            _logger.LogDebug("Gate entity turned off: {GateEntity}", _gateEntityId);
+        }
+
         _logger.LogDebug("AlexaPromptPoller acknowledged - no further prompts will be sent until reset");
     }
 

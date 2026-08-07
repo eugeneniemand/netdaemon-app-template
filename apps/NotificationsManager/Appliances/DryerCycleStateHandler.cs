@@ -18,7 +18,6 @@ public class DryerCycleStateHandler : ICycleStateHandler
                 break;
             case CycleState.Paused:
                 break;
-            case CycleState.Unknown:
             default:
                 throw new ArgumentOutOfRangeException();
         }

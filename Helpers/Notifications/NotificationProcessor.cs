@@ -44,7 +44,8 @@ public class AlexaActionableNotificationDeliveryStrategy : INotificationDelivery
 
     public void Deliver(string formattedMessage, string entity, string notificationType, string eventId = "")
     {
-        _services.Script.ActivateAlexaActionableNotification(formattedMessage, eventId, entity);
+        _services.Mqtt.Publish("alexa_actionable_notification", $"{{\"text\": \"{formattedMessage}\", \"event\": \"{eventId}\"}}");
+        _services.MediaPlayer.PlayMedia(ServiceTarget.FromEntity(entity), new MediaPlayerPlayMediaParameters() { Media = new { media_content_type = "skill", media_content_id = "amzn1.ask.skill.9fd6a51d-54f1-43ec-9a74-cd3fbecd1664" } });
     }
 }
 
@@ -59,19 +60,22 @@ public class NotificationProcessor
     private readonly VolumeManager _volumeManager;
     private readonly MessageFormatter _messageFormatter;
     private readonly IDictionary<string, AlexaDeviceConfig> _devices;
+    private readonly ILogger<NotificationProcessor> _logger;
 
     public NotificationProcessor(
         IEntities entities,
         IScheduler scheduler,
         VolumeManager volumeManager,
         MessageFormatter messageFormatter,
-        IDictionary<string, AlexaDeviceConfig> devices)
+        IDictionary<string, AlexaDeviceConfig> devices,
+        ILogger<NotificationProcessor> logger)
     {
         _entities = entities;
         _scheduler = scheduler;
         _volumeManager = volumeManager;
         _messageFormatter = messageFormatter;
         _devices = devices;
+        _logger = logger;
     }
 
     /// <summary>
@@ -96,33 +100,40 @@ public class NotificationProcessor
         var volumeOverride = cfgs.Select(c => c.VolumeLevel).LastOrDefault(v => v is not null);
         var delayOverride = cfgs.Select(c => c.VolumeResetDelay).LastOrDefault(v => v is not null);
         var whisperOverride = cfgs.Select(c => c.Whisper).LastOrDefault(v => v is not null);
+        var useDefaultVoice = cfgs.Select(c => c.UseDefaultVoice).LastOrDefault();
 
-        var entitiesVolumeLevel = new Dictionary<string, double>();
-
+        var entitiesVolumeLevel = new Dictionary<string, double>();                
         // Phase 1: Store current volumes and set delivery volumes
         foreach (var entity in entities)
         {
+            _logger.LogDebug($"Store and set volumes for entity: {entity} with override volume: {volumeOverride}, delay: {delayOverride}, whisper: {whisperOverride}");
             _volumeManager.TryGetDeviceConfig(entity, out var deviceConfig);
             var (whisper, volume) = _volumeManager.GetVolumeDetailsForDevice(deviceConfig);
             _volumeManager.StoreCurrentVolume(entity, entitiesVolumeLevel);
             _volumeManager.SetVolume(entity, volumeOverride ?? volume);
         }
-
+        _logger.LogDebug($"Completed volume setup for entities: {string.Join(", ", entities)}. Waiting for stabilization...");
         // Phase 2: Wait for volume stabilization
         await _scheduler.Sleep(AlexaProcessingConfig.VolumeSetupDelay);
+        _logger.LogDebug($"Volume stabilized");
 
         // Phase 3: Deliver notifications to all entities
         foreach (var entity in entities)
         {
+            _logger.LogDebug($"Delivering notification to entity: {entity}");
             _volumeManager.TryGetDeviceConfig(entity, out var deviceConfig);
             var (whisper, volume) = _volumeManager.GetVolumeDetailsForDevice(deviceConfig);
-            var formatMessage = _messageFormatter.FormatMessage(message, voice, whisperOverride ?? whisper);
+            var formatMessage = _messageFormatter.FormatMessage(message, voice, whisperOverride ?? whisper, useDefaultVoice);
             strategy.Deliver(formatMessage, entity, notificationType, eventId);
+            _logger.LogDebug($"Delivered notification to entity: {entity} with message: {formatMessage}");
         }
 
         // Phase 4: Wait for message to finish and revert volume
         var words = _messageFormatter.GetWordCount(message);
+        _logger.LogDebug($"Waiting for message to finish. Word count: {words}, calculated delay: {TimeSpan.FromSeconds(words * AlexaProcessingConfig.WordDelay)}, override delay: {delayOverride}");
         await _scheduler.Sleep(TimeSpan.FromSeconds(delayOverride ?? words * AlexaProcessingConfig.WordDelay));
+        _logger.LogDebug($"Reverting volumes for entities: {string.Join(", ", entities)}");
         await _volumeManager.RestoreVolumesAsync(entitiesVolumeLevel);
+        _logger.LogDebug($"Completed volume restoration for entities: {string.Join(", ", entities)}");
     }
 }

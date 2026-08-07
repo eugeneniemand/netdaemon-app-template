@@ -13,6 +13,14 @@ public record PromptResponseEvent
     [JsonPropertyName("event_person_id")] public string? ResponsePersonId { get; init; }
 }
 
+public record PromptResponseTraceEvent
+{
+    
+    
+    [JsonPropertyName("event_id")] public string? EventId { get; init; }
+    [JsonPropertyName("message")] public string? Message { get; init; }
+}
+
 public record PromptResponse
 {
     public object Response { get; init; }

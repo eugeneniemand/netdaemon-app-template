@@ -492,7 +492,7 @@ public class Manager
 
     private void UpdateAttributes(bool showTurningOff = false)
     {
-        //_logger.LogDebug("{room} Updating Attributes", Name);
+        _logger.LogTrace("{room} Updating Attributes", Name);
 
         var attributes = showTurningOff
             ? new

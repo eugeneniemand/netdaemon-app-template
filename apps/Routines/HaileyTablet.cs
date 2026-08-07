@@ -9,21 +9,21 @@ namespace Niemand;
 
 [NetDaemonApp]
 //[Focus]
-public class JaydenTablet
+public class HaileyTablet
 {
-    private const string mediaPlayerId = "media_player.dining";
+    private const string mediaPlayerId = "media_player.office";
     private readonly IEntities _entities;
     private readonly IServices _services;
     private readonly IScheduler _scheduler;
-    private readonly ILogger<JaydenTablet> _logger;
+    private readonly ILogger<HaileyTablet> _logger;
     private AlexaPromptPoller? _alexaPoller;
     private readonly string[] _reminderMessages = new[]
     {
-        "Jayden, did you take your tablet today?",
-        "Jayden, have you had your tablet yet?",
-        "Jayden, don’t forget your tablet—have you taken it?",
-        "Jayden, is your tablet taken?",
-        "Jayden, quick check—did you take your tablet?"
+        "Hailey, did you take your tablet today?",
+        "Hailey, have you had your tablet yet?",
+        "Hailey, don’t forget your tablet—have you taken it?",
+        "Hailey, is your tablet taken?",
+        "Hailey, quick check—did you take your tablet?"
     };
 
     private readonly string[] _responseMessages = new[]
@@ -35,46 +35,42 @@ public class JaydenTablet
         "Remember to take it"
     };
 
-    public JaydenTablet(IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger<JaydenTablet> logger)
+    public HaileyTablet(IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger<HaileyTablet> logger)
     {
         _entities = entities;
         _services = services;
         _scheduler = scheduler;
         _logger = logger;
 
-        CreateDailyResetTimer(5).Subscribe(_ => _entities.InputBoolean.JaydenTablet.TurnOff());
+        CreateDailyResetTimer(8).Subscribe(_ => _entities.InputBoolean.HaileyTablet.TurnOff());
 
         // Create the poller (don't subscribe yet)
-        _alexaPoller = new AlexaPromptPoller(scheduler, alexa, logger)
-            .AddTrigger(entities.InputButton.TestRoutine.StateChanges())
-            .AddTrigger(entities.BinarySensor.KonnectedKitchen.StateChanges().Where(e => e.New.IsOn()))
-            .AddTrigger(entities.BinarySensor.KitchenMotion.StateChanges().Where(e => e.New.IsOn()))
-            .AddTrigger(entities.BinarySensor.UtilityMotion.StateChanges().Where(e => e.New.IsOn()))
-            .AddTrigger(entities.BinarySensor.BackDoor.StateChanges().Where(e => e.New.IsOn()))
-            .WhenPredicateTrue(_entities.InputBoolean.JaydenTablet.IsOff)
+        _alexaPoller = new AlexaPromptPoller(scheduler, alexa, logger)            
+            .AddTrigger(entities.BinarySensor.KonnectedBackOffice.StateChanges().Where(e => e.New.IsOn()))
+            .WhenPredicateTrue(_entities.InputBoolean.HaileyTablet.IsOff)
             .SetPrompt(new Alexa.Config()
             {
                 Message = _reminderMessages[RandomNumberGenerator.GetInt32(_reminderMessages.Length)], //get random message from array
                 Entity = mediaPlayerId,
                 Whisper = false,
                 VolumeLevel = GetVolumeLevel(),
-                EventId = "jayden_tablet"
+                EventId = "hailey_tablet"
             })
-            .WithCooldown(TimeSpan.FromMinutes(3))
-            .WithDailyReset(CreateDailyResetTimer(6))
+            .WithCooldown(TimeSpan.FromMinutes(15))
+            .WithDailyReset(CreateDailyResetTimer(8))
             .OnResponseYes(response =>
             {
                 var person = string.Equals(response.ResponsePersonName, "UNKNOWN", StringComparison.OrdinalIgnoreCase) ? "" : response.ResponsePersonName;
                 _logger.LogDebug("Tablet acknowledged by {Person}", person);
                 _alexaPoller?.Acknowledge();
-                _entities.InputBoolean.JaydenTablet.TurnOn();
+                _entities.InputBoolean.HaileyTablet.TurnOn();
                 alexa.TextToSpeech(new Alexa.Config()
                 {
                     Message = $"Thank you {person}",
-                    Entity = "media_player.dining",
+                    Entity = mediaPlayerId,
                     Whisper = false,
                     VolumeLevel = GetVolumeLevel(),
-                    EventId = "jayden_tablet"
+                    EventId = "hailey_tablet"
                 });
             })
             .OnResponseNotYes(response =>
@@ -83,10 +79,10 @@ public class JaydenTablet
                 alexa.TextToSpeech(new Alexa.Config()
                 {
                     Message = _responseMessages[RandomNumberGenerator.GetInt32(_responseMessages.Length)], //get random message from array
-                    Entity = "media_player.dining",
+                    Entity = mediaPlayerId,
                     Whisper = false,
                     VolumeLevel = GetVolumeLevel(),
-                    EventId = "jayden_tablet"
+                    EventId = "hailey_tablet"
                 });
             });
 
@@ -95,23 +91,8 @@ public class JaydenTablet
     }
 
     private double GetVolumeLevel()
-    {
-        if (DateTime.Now.Hour <= 5 || DateTime.Now.Hour >= 20)
-            return 0.2;
-
-        if (DateTime.Now.Hour == 6 && DateTime.Now.Minute <= 30)
-            return 0.3;
-
-        if (DateTime.Now.Hour == 6 && DateTime.Now.Minute > 30)
-            return 0.4;
-
-        if (DateTime.Now.Hour == 7 && DateTime.Now.Minute <= 30)
-            return 0.6;
-
-        if (DateTime.Now.Hour >= 7 && DateTime.Now.Minute >= 30)
-            return 0.7;
-
-        return 0.5;
+    {        
+        return 0.3;
     }
 
     private IObservable<long> CreateDailyResetTimer(int hour)

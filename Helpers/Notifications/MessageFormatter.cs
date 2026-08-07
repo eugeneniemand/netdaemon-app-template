@@ -14,11 +14,12 @@ public class MessageFormatter
     /// <param name="message">The base message text (may contain commas and audio tags)</param>
     /// <param name="voice">The Alexa voice name to apply</param>
     /// <param name="whisper">Whether to apply whisper effect instead of voice</param>
+    /// <param name="useDefaultVoice">Whether to use the default voice</param>
     /// <returns>SSML-formatted message</returns>
-    public string FormatMessage(string message, string voice, bool whisper)
+    public string FormatMessage(string message, string voice, bool whisper, bool useDefaultVoice)
     {
         var messageWithBreaks = AddBreaks(message);
-        return whisper ? ApplyWhisperEffect(messageWithBreaks) : ApplyVoiceEffect(messageWithBreaks, voice);
+        return whisper ? ApplyWhisperEffect(messageWithBreaks) : ApplyVoiceEffect(messageWithBreaks, voice, useDefaultVoice);
     }
 
     /// <summary>
@@ -49,8 +50,10 @@ public class MessageFormatter
     /// <summary>
     /// Wraps message in voice effect SSML tag.
     /// </summary>
-    private string ApplyVoiceEffect(string message, string voice)
+    private string ApplyVoiceEffect(string message, string voice, bool useDefaultVoice)
     {
+        if (useDefaultVoice)
+            return message;
         return $"<voice name='{voice}'>{message}</voice>";
     }
 

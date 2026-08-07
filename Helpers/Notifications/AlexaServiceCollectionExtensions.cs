@@ -49,7 +49,7 @@ public static class AlexaServiceCollectionExtensions
             var messageFormatter = provider.GetRequiredService<MessageFormatter>();
             var config = provider.GetRequiredService<IAppConfig<AlexaConfig>>();
 
-            return new NotificationProcessor(entities, scheduler, volumeManager, messageFormatter, config.Value.Devices);
+            return new NotificationProcessor(entities, scheduler, volumeManager, messageFormatter, config.Value.Devices, provider.GetRequiredService<ILogger<NotificationProcessor>>());
         });
 
         // Register PromptResponseHandler as a SINGLETON because it manages global event subscriptions
@@ -107,7 +107,7 @@ public static class AlexaServiceCollectionExtensions
             var config = provider.GetRequiredService<IAppConfig<AlexaConfig>>();
 
             return options.NotificationProcessorFactory?.Invoke(entities, scheduler, volumeManager, messageFormatter, config.Value.Devices)
-                ?? new NotificationProcessor(entities, scheduler, volumeManager, messageFormatter, config.Value.Devices);
+                ?? new NotificationProcessor(entities, scheduler, volumeManager, messageFormatter, config.Value.Devices, provider.GetRequiredService<ILogger<NotificationProcessor>>());
         });
 
         services.AddSingleton(provider =>

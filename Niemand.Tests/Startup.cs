@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging.Testing;
 using NetDaemon.AppModel;
 using NetDaemon.Extensions.MqttEntityManager;
 using NetDaemon.Extensions.Scheduler;
+using NetDaemon.Helpers;
+using Niemand.Tests.DisciplineManager;
 using Niemand.Tests.LightManager;
 using Niemand.Tests.Mocks;
 using Xunit.DependencyInjection.Logging;
@@ -40,6 +42,9 @@ public static class Startup
         services.AddTransient<RoutinesSut>();
         services.AddTransient<NotificationManagerSut>();
         services.AddTransient<People>();
+        services.AddTransient<TimerManager>();
+        services.AddTransient<ScreenTimeSut>();
+        services.AddTransient<KidsChoresManagerSut>();
     }
 
     private static ManagerConfig GetManagerConfig(StateChangeManager state, TestEntityBuilder entityBuilder)

@@ -36,23 +36,23 @@
     </ItemGroup>
     <ItemGroup>
         <!--<PackageReference Include="AutomationPipelines" Version="0.2.0" />-->
-        <PackageReference Include="CodeCasa.NetDaemon.Extensions.Observables" Version="1.4.4" />
-        <PackageReference Include="Humanizer.Core" Version="3.0.1" />
-        <PackageReference Include="NetDaemon.AppModel" Version="25.45.1" />
-        <PackageReference Include="NetDaemon.Extensions.Logging" Version="25.45.1" />
-        <PackageReference Include="NetDaemon.Extensions.Mqtt" Version="25.45.1" />
-        <PackageReference Include="NetDaemon.Extensions.Scheduling" Version="25.45.1" />
-        <PackageReference Include="NetDaemon.Extensions.Tts" Version="25.45.1" />
-        <PackageReference Include="NetDaemon.HassModel" Version="25.45.1" />
-        <PackageReference Include="NetDaemon.HassModel.Integration" Version="25.45.1" />
-        <PackageReference Include="NetDaemon.Runtime" Version="25.45.1" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
-        <PackageReference Include="Microsoft.Reactive.Testing" Version="6.1.0" />
+        <PackageReference Include="CodeCasa.NetDaemon.Extensions.Observables" Version="1.22.0" />
+        <PackageReference Include="Humanizer.Core" Version="3.0.10" />
+        <PackageReference Include="NetDaemon.AppModel" Version="26.27.0-alpha-13" />
+        <PackageReference Include="NetDaemon.Extensions.Logging" Version="26.27.0-alpha-13" />
+        <PackageReference Include="NetDaemon.Extensions.Mqtt" Version="26.27.0-alpha-13" />
+        <PackageReference Include="NetDaemon.Extensions.Scheduling" Version="26.27.0-alpha-13" />
+        <PackageReference Include="NetDaemon.Extensions.Tts" Version="26.27.0-alpha-13" />
+        <PackageReference Include="NetDaemon.HassModel" Version="26.27.0-alpha-13" />
+        <PackageReference Include="NetDaemon.HassModel.Integration" Version="26.27.0-alpha-13" />
+        <PackageReference Include="NetDaemon.Runtime" Version="26.27.0-alpha-13" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.6.26359.118" />
+        <PackageReference Include="Microsoft.Reactive.Testing" Version="7.0.0-rc.1" />
         <PackageReference Include="NetEscapades.Configuration.Yaml" Version="3.1.0" />
-        <PackageReference Include="Polly" Version="8.6.4" />
-        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-        <PackageReference Include="stateless" Version="5.20.0" />
-        <PackageReference Include="System.Reactive" Version="6.1.0" />
+        <PackageReference Include="Polly" Version="8.7.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+        <PackageReference Include="stateless" Version="5.20.1" />
+        <PackageReference Include="System.Reactive" Version="7.0.0-rc.1" />
     </ItemGroup>
     <ItemGroup>
         <None Update="appsettings.json">

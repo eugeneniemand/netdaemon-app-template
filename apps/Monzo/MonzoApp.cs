@@ -19,10 +19,9 @@ public class MonzoApp : IAsyncInitializable
     private readonly string _accountId = "acc_0000AJeEzK6iaxm13KsTGz"; // From Monzo API
     private readonly string _billsPotId = "pot_0000AO5mGcxSUSc0QAKauX"; // Source pot ID
     private readonly string _targetPotId = "pot_target_id"; // Target pot ID
-
-
     private decimal PoundsToPence(decimal amount) => (amount * 100);
     private decimal PenceToPounds(decimal amount) => (amount / 100);
+    private int _warningCount = 0;
 
 
     public MonzoApp(IHaContext ha, ILogger<MonzoApp> logger, IScheduler scheduler, PushNotifier pushNotifier)
@@ -50,6 +49,9 @@ public class MonzoApp : IAsyncInitializable
         try
         {
             await _monzoClient.WhoAmIAsync(cancellationToken);
+            //await _monzoClient.GetAccountsAsync(cancellationToken);
+            //await _monzoClient.GetPotsAsync(_accountId, cancellationToken);
+
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -93,25 +95,39 @@ public class MonzoApp : IAsyncInitializable
     {
         try
         {
-            var billsBalance = await _monzoClient.GetBalanceAsync(_billsPotId);
             var accountBalance = await _monzoClient.GetBalanceAsync(_accountId);
-            if (billsBalance != null && PenceToPounds(billsBalance.Balance) < 100)
+            var billsBalance = await _monzoClient.GetPotBalanceAsync(_accountId, "Bills");
+
+            var accountBalanceInPounds = PenceToPounds(accountBalance.Balance);
+            if (accountBalanceInPounds >= 150)
+                return;
+
+            var billsBalanceInPounds = PenceToPounds(billsBalance);
+            if (billsBalanceInPounds < 150)
             {
-                _pushNotifier.Notify(PushNotifier.Recipient.All, "Bills Balance Depleted", "Pot does not have enough to replensih main account");
+                HandleInsufficientBillsBalance();
                 return;
             }
 
-            if (accountBalance != null && PenceToPounds(accountBalance.Balance) < 100)
-            {
-                _logger.LogInformation("Account balance below threshhold of £100 moving money");
+            _warningCount = 0;
+            _logger.LogInformation("Account balance below threshold of £150, moving money");
 
-                await _monzoClient.WithdrawPotAsync(_accountId, _billsPotId, PoundsToPence(100) - accountBalance.Balance);
-            }
+            var amountToWithdraw = PoundsToPence(150) - accountBalance.Balance;
+            await _monzoClient.WithdrawPotAsync(_accountId, _billsPotId, amountToWithdraw);
         }
         catch (Exception ex)
         {
-            _logger.LogError("An error occured: {ex}", ex);
+            _logger.LogError("An error occurred: {ex}", ex);
         }
+    }
+
+    private void HandleInsufficientBillsBalance()
+    {
+        if (_warningCount > 3)
+            return;
+
+        _pushNotifier.Notify(PushNotifier.Recipient.All, "Bills Balance Depleted", "Pot does not have enough to replenish main account");
+        _warningCount++;
     }
 
 }

@@ -1,5 +1,5 @@
 ﻿using HomeAssistantGenerated;
-using NetDaemon.Extensions.Observables;
+using CodeCasa.NetDaemon.Extensions.Observables;
 using NetDaemon.HassModel.Entities;
 using Niemand.Helpers;
 using Niemand.Helpers.Notifications;

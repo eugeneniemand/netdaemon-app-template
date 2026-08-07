@@ -84,6 +84,7 @@ public class VolumeManager
     {
         foreach (var (entity, volume) in savedVolumes)
         {
+            if (volume < 0) continue; // Skip if volume was not available
             SetVolume(entity, volume);
         }
     }

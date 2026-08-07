@@ -1,7 +1,7 @@
 ﻿using NetDaemon.Extensions.MqttEntityManager;
 using NetDaemon.Helpers;
 using Niemand.Helpers;
-using NetDaemon.Extensions.Observables;
+using CodeCasa.NetDaemon.Extensions.Observables;
 
 namespace Niemand;
 
@@ -52,7 +52,9 @@ public class Office : IAsyncInitializable, IAsyncDisposable
                  });
 
         _entities.Sensor.EugeneDesktopLastactive.StateChanges().Sample(TimeSpan.FromMinutes(1), _scheduler)
-                 .Subscribe(async s => { _logger.LogDebug("EugeneDesktopLastactive throttled log"); });
+                 .Subscribe(async s => { 
+                     //_logger.LogDebug("EugeneDesktopLastactive throttled log"); 
+                 });
 
         _entities.Sensor.EugeneDesktopLastactive.StateChanges()
                  .Subscribe(async _ =>
@@ -66,7 +68,7 @@ public class Office : IAsyncInitializable, IAsyncDisposable
             {
                 if (_entities.Light.Office.IsOn())
                 {
-                    _entities.Light.Office.TurnOn(brightnessPct: 71);
+                    _entities.Light.Office.TurnOn(brightnessPct: 100);
                 }
             });
 
@@ -74,7 +76,7 @@ public class Office : IAsyncInitializable, IAsyncDisposable
         {
             if (_entities.Light.Office.IsOn())
             {
-                _entities.Light.Office.TurnOn(brightnessPct: 71);
+                _entities.Light.Office.TurnOn(brightnessPct: 100);
             }
         },
         () =>

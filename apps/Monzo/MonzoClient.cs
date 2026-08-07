@@ -217,7 +217,7 @@ public class MonzoClient
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<MonzoBalanceResponse?> GetBalanceAsync(string accountId, CancellationToken cancellationToken = default)
+    public async Task<MonzoBalanceResponse> GetBalanceAsync(string accountId, CancellationToken cancellationToken = default)
     {
         //Check and refresh token if expired
         if (DateTime.UtcNow >= _tokenExpiry)
@@ -241,7 +241,17 @@ public class MonzoClient
         }
 
         var json = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<MonzoBalanceResponse>(json) ?? null;
+        return JsonSerializer.Deserialize<MonzoBalanceResponse>(json) ?? new MonzoBalanceResponse();
+    }
+
+    public async Task<decimal> GetPotBalanceAsync(string accountId, string potName)
+    {
+        var response = await GetPotsAsync(accountId);
+
+        return response?.Pots
+            .FirstOrDefault(p =>
+                string.Equals(p.Name, potName, StringComparison.OrdinalIgnoreCase))
+            ?.Balance ?? 0;
     }
 
     // Return raw balance JSON (useful for callers that prefer to parse locally)
@@ -284,6 +294,48 @@ public class MonzoClient
 
         var json = await response.Content.ReadAsStringAsync();
         _logger.LogDebug("Monzo WhoAmI {whoAmI}", json);
+    }
+
+    public async Task GetAccountsAsync(CancellationToken cancellationToken = default)
+    {
+        //Check and refresh token if expired
+        if (DateTime.UtcNow >= _tokenExpiry)
+        {
+            await RefreshTokenAsync();
+        }
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"accounts");
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
+
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Failed to get accounts: {response.StatusCode}");
+        }
+
+        var json = await response.Content.ReadAsStringAsync();
+        _logger.LogDebug("Accounts {accounts}", json);
+    }
+
+    public async Task<PotsResponse?> GetPotsAsync(string accountId, CancellationToken cancellationToken = default)
+    {
+        //Check and refresh token if expired
+        if (DateTime.UtcNow >= _tokenExpiry)
+        {
+            await RefreshTokenAsync();
+        }
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"pots?current_account_id={accountId}");
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
+
+        var response = await _retryPolicy.ExecuteAsync(async ct => await _httpClient.SendAsync(request, ct), cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Failed to get pots: {response.StatusCode}");
+        }
+
+        var json = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<PotsResponse>(json) ?? null;
     }
 
     public string GetAuthorizeUrl()
@@ -426,4 +478,73 @@ public class MonzoBalanceResponse
 
     [JsonPropertyName("spend_today")]
     public long SpendToday { get; set; }  // The amount spent from this account today (considered from approx 4am onwards)
+}
+
+public class PotsResponse
+{
+    [JsonPropertyName("pots")]
+    public List<Pot> Pots { get; set; } = new();
+}
+
+public class Pot
+{
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("style")]
+    public string Style { get; set; } = string.Empty;
+
+    [JsonPropertyName("balance")]
+    public long Balance { get; set; }
+
+    [JsonPropertyName("currency")]
+    public string Currency { get; set; } = string.Empty;
+
+    [JsonPropertyName("goal_amount")]
+    public long GoalAmount { get; set; }
+
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = string.Empty;
+
+    [JsonPropertyName("product_id")]
+    public string ProductId { get; set; } = string.Empty;
+
+    [JsonPropertyName("current_account_id")]
+    public string CurrentAccountId { get; set; } = string.Empty;
+
+    [JsonPropertyName("cover_image_url")]
+    public string CoverImageUrl { get; set; } = string.Empty;
+
+    [JsonPropertyName("isa_wrapper")]
+    public string IsaWrapper { get; set; } = string.Empty;
+
+    [JsonPropertyName("round_up")]
+    public bool RoundUp { get; set; }
+
+    [JsonPropertyName("round_up_multiplier")]
+    public int? RoundUpMultiplier { get; set; }
+
+    [JsonPropertyName("is_tax_pot")]
+    public bool IsTaxPot { get; set; }
+
+    [JsonPropertyName("created")]
+    public DateTime Created { get; set; }
+
+    [JsonPropertyName("updated")]
+    public DateTime Updated { get; set; }
+
+    [JsonPropertyName("deleted")]
+    public bool Deleted { get; set; }
+
+    [JsonPropertyName("locked")]
+    public bool Locked { get; set; }
+
+    [JsonPropertyName("available_for_bills")]
+    public bool AvailableForBills { get; set; }
+
+    [JsonPropertyName("has_virtual_cards")]
+    public bool HasVirtualCards { get; set; }
 }

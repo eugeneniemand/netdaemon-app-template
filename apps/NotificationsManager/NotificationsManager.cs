@@ -89,10 +89,18 @@ public class NotificationsManager
     {
         sensor.StateChanges().Subscribe(s =>
         {
-            cycleStateHandler.HandleCycleState(applianceNotification.CycleState, applianceReminder, applianceAcknowledge);
-            if (applianceNotification.CycleState != CycleState.Ready) return;
-            var notification = applianceNotification.GetNotification(applianceNotification.CycleState, LastPrompt(applianceNotification.EventId));
-            SendNotification(notification, mediaPlayer.EntityId);
+            try
+            {
+
+                cycleStateHandler.HandleCycleState(applianceNotification.CycleState, applianceReminder, applianceAcknowledge);
+                if (applianceNotification.CycleState != CycleState.Ready) return;
+                var notification = applianceNotification.GetNotification(applianceNotification.CycleState, LastPrompt(applianceNotification.EventId));
+                SendNotification(notification, mediaPlayer.EntityId);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                _logger.LogError(ex, "Invalid cycle state for {sensor}", sensor.EntityId);
+            }
         });
     }
 

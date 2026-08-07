@@ -11,8 +11,6 @@ LightManagerV2.ManagerConfig:
       PresenceEntities:
         - binary_sensor.office_motion
       KeepAliveEntities:
-        - binary_sensor.eugenes_macbook_active
-        - binary_sensor.haileys_macbook_air_active
         - binary_sensor.eugene_desktop_active
       ControlEntities:
         - light.office
@@ -153,7 +151,7 @@ LightManagerV2.ManagerConfig:
       PresenceEntities:
         - binary_sensor.aaron_motion
       ControlEntities:
-        - light.boys_nightlight
+        - light.boys_main
       LuxEntity: sensor.aaron_lux
       LuxlimitEntity: input_number.aaron_lux_limit
       NightTimeEntity: input_select.house_mode
@@ -283,7 +281,7 @@ LightManagerV2.ManagerConfig:
         - night
         - sleeping
       NightControlEntities:
-        - light.lounge_floor
+        - light.lounge_accent
       # CircadianSwitchEntity: switch.adaptive_lighting_floor
       RandomStates:
         - armed_home

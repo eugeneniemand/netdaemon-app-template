@@ -88,22 +88,15 @@ public class Routines
               });
 
         // Coming Down Stairs When Alarm is Armed Night
-        var staircaseMotionSensors = new[]
-        {
-            entities.BinarySensor.KonnectedHallway.StateChanges(),
-        };
+        entities.BinarySensor.KonnectedHallway.StateChanges()
+            .Where(e => e.New.IsOn())
+            .Subscribe(_ =>
+            {
+                if (!entities.AlarmControlPanel.Alarmo.IsArmedNight()) return;
 
-        Observable.Merge(staircaseMotionSensors)
-                  .Select(e => e.New.State)
-                  .Throttle(TimeSpan.FromSeconds(1), scheduler)
-                  .Where(s => string.Equals(s, "on", StringComparison.InvariantCultureIgnoreCase))
-                  .Subscribe(_ =>
-                  {
-                      if (!entities.AlarmControlPanel.Alarmo.IsArmedNight()) return;
-
-                      logger.LogInformation("Disarming Alarm - Motion on stairs");
-                      entities.AlarmControlPanel.Alarmo.AlarmDisarm();
-                  });
+                logger.LogInformation("Disarming Alarm - Motion on stairs");
+                entities.AlarmControlPanel.Alarmo.AlarmDisarm();
+            });
 
     }
 }

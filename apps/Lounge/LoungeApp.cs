@@ -5,21 +5,20 @@
 //using HomeAssistantGenerated;
 //using NetDaemon.Extensions.Observables;
 
-//[NetDaemonApp]
-//[Focus]
-//public class LoungeApp(Entities entities, Services services, ILogger<LoungeApp> logger, IScheduler scheduler, IPipeline<bool> TurnTvOffPipeline) : IAsyncInitializable
-//{
-//    public async Task InitializeAsync(CancellationToken cancellationToken)
-//    {
-//        TurnTvOffPipeline.SetDefault(false)            
-//            .RegisterNode<LightChangedNode>()
-//            .RegisterNode<OfficeLightChangedNode>()
-//            .SetOutputHandler(output =>
-//            {
-//                logger.LogInformation($"Output: {output}\n\n");
-//            }, false);
-//    }
-//}
+[NetDaemonApp]
+[Focus]
+public class LoungeApp(Entities entities, Services services, ILogger<LoungeApp> logger, IScheduler scheduler) : IAsyncInitializable
+{
+    public async Task InitializeAsync(CancellationToken cancellationToken)
+    {
+        entities.MediaPlayer.LoungeSonos.StateChanges()
+            .WhenStateIsFor(s => s.State == "idle", TimeSpan.FromMinutes(15), scheduler)
+            .Subscribe(s =>
+            {
+                entities.MediaPlayer.LoungeTv.TurnOff();
+            });
+    }
+}
 
 //public class VolumeChangedNode : PipelineNode<bool>
 //{

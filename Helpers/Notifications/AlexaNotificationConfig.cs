@@ -43,6 +43,8 @@ public class AlexaNotificationConfig
     /// </summary>
     public string Entity { get; set; } = "";
 
+    public bool UseDefaultVoice { get; set; } = false;
+
     private List<string> _entities = new();
 
     /// <summary>

@@ -9,9 +9,8 @@ namespace Niemand.Helpers.Notifications;
 /// </summary>
 public class PromptResponseHandler
 {
-    private static bool _eventSubscriptionInitialized = false;
-    private static readonly object _lockObject = new object();
     private static Dictionary<string, AlexaPeopleConfig> _people = new();
+    private bool _subscriptionSetup = false;
 
     private readonly Subject<PromptResponse> _promptResponses;
     private readonly ILogger<PromptResponseHandler> _logger;
@@ -28,19 +27,16 @@ public class PromptResponseHandler
 
     /// <summary>
     /// Sets up subscription to Home Assistant alexa_actionable_notification events.
-    /// This method is thread-safe and only initializes the subscription once.
+    /// This method is thread-safe and only initializes the subscription once per instance.
     /// </summary>
     public void SetupEventSubscription(IHaContext haContext, Dictionary<string, AlexaPeopleConfig> people)
     {
-        // Ensure event subscription is only set up once, even if called from multiple instances
-        lock (_lockObject)
-        {
-            if (_eventSubscriptionInitialized)
-                return;
+        // Ensure event subscription is only set up once per instance
+        if (_subscriptionSetup)
+            return;
 
-            _eventSubscriptionInitialized = true;
-            _people = people;
-        }
+        _subscriptionSetup = true;
+        _people = people;
 
         haContext.Events.Filter<PromptResponseEvent>("alexa_actionable_notification")
             .Do(e => _logger.LogDebug("Received alexa_actionable_notification event {eventData}", e))
@@ -60,6 +56,12 @@ public class PromptResponseHandler
 
                     _promptResponses.OnNext(responseEvent);
                 });
+
+        haContext.Events.Filter<PromptResponseTraceEvent>("alexa_actionable_notification_trace")            
+            .Subscribe(responseEvent =>
+            {
+                _logger.LogDebug("Received alexa_actionable_notification_trace event {eventData}", responseEvent);
+            });
     }
 
     /// <summary>

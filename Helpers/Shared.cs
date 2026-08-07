@@ -7,6 +7,13 @@ public static class Shared
         Cheap3HourWindowStarted
     }
 
+    public static Dictionary<string,string> Parents => new()
+    {
+        ["7e9bc4b47c824ebe874c71e83554399c"] = "Mum",
+        ["09dfab37423c4f7a9a7413ca84bdca76"] = "Dad",
+        ["ef606e2918da4355ba036a019cdcc6a0"] = "Netdaemon"        
+    };
+
 
 }
 
@@ -63,8 +70,7 @@ public class Common(IHaContext haContext, IEntities entities)
             _entities.BinarySensor.KitchenMotion,            
             _entities.BinarySensor.DiningMotion,
             _entities.BinarySensor.LoungeMotion,
-            _entities.BinarySensor.UtilityMotion,
-            _entities.BinarySensor.ToiletMotion,
+            _entities.BinarySensor.UtilityMotion            
         ];
 
         public BinarySensorEntity[] Upstairs =>

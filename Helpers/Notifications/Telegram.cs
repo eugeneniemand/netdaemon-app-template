@@ -46,8 +46,7 @@ public class TelegramCallbackHandler
         bot.EditMessage(new TelegramBotEditMessageParameters()
         {
             Message = message,
-            MessageId = e.Message.MessageId.ToString(),
-            ChatId = e.Message.Chat.Id.ToString(),
+            MessageId = e.Message.MessageId.ToString(),            
             InlineKeyboard = new List<string>()
         });
     }
