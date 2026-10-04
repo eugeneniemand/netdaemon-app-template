@@ -24,7 +24,7 @@ public class Security(IHaContext ha, IEntities entities, IServices services, ILo
         AlarmFailure();
         AlarmTriggered();
 
-        SimulateNightLights();
+        //SimulateNightLights();
         DrivewayMotionAlarm();
         DoorBeep();
         // LastMotionSensorWatchdog removed - Common.MotionEntities now tracks last sensors reactively

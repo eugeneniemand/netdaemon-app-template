@@ -96,6 +96,9 @@ public class JaydenTablet
 
     private double GetVolumeLevel()
     {
+        if (_entities.BinarySensor.UkSchoolTermsHampshirePoulnerJuniorSchoolDay.IsOff())
+            return 0.3;
+
         if (DateTime.Now.Hour <= 5 || DateTime.Now.Hour >= 20)
             return 0.2;
 

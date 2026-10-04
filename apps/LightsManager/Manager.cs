@@ -19,6 +19,14 @@ public class Manager
     private IServices _services;
     private IDisposable _overrideSchedule = Disposable.Empty;
 
+    // Track which lights had explicit brightness set in service calls
+    // Key: entity_id, Value: timestamp when brightness was set
+    private readonly Dictionary<string, DateTimeOffset> _explicitBrightnessServiceCalls = new();
+
+    // Track all light.turn_on service calls (even without explicit brightness)
+    // to distinguish between "turn on" (with service call) vs state restore (no service call)
+    private readonly Dictionary<string, DateTimeOffset> _allTurnOnServiceCalls = new();
+
     public bool Debug { get; }
     public bool IsAnyControlEntityOn => AllControlEntities.Any(e => e.IsOn());
     private bool AllControlEntitiesAreOff => AllControlEntities.All(e => e.IsOff());
@@ -72,15 +80,173 @@ public class Manager
         await SetupEnabledSwitch();
         SubscribePresenceOnEvent();
         SubscribePresenceOffEvent();
+        SubscribeLightTurnOnServiceCalls();
         SubscribeOverrideEvent();
-        //SubscribeManualTurnOnOverrideEvent();
         SubscribeManualTurnOffOverrideEvent();
         SubscribeHouseModeEvent();
-        SubscribeTurnOnEvent();
         SubscribeGuard();
     }
 
     private bool IsNdUserOrHa(StateChange stateChange) => stateChange.New?.Context?.UserId == null || stateChange.New?.Context?.UserId == _ndUserId;
+
+    private void SubscribeLightTurnOnServiceCalls()
+    {
+        _haContext.Events
+            .Where(ev => ev.EventType == "call_service")
+            .Subscribe(ev =>
+            {
+                try
+                {
+                    if (ev.DataElement?.ValueKind == JsonValueKind.Object)
+                    {
+                        var root = ev.DataElement.Value;
+
+                        var isDomainLight = root.TryGetProperty("domain", out var domain) && 
+                                           domain.GetString() == "light";
+                        var isServiceTurnOn = root.TryGetProperty("service", out var service) && 
+                                             service.GetString() == "turn_on";
+
+                        if (isDomainLight && isServiceTurnOn)
+                        {
+                            // Check if this call is from NetDaemon itself - if so, ignore it
+                            var isFromNetDaemon = false;
+                            if (root.TryGetProperty("context", out var contextValue) && contextValue.ValueKind == JsonValueKind.Object)
+                            {
+                                if (contextValue.TryGetProperty("user_id", out var userId))
+                                {
+                                    if (userId.GetString() == _ndUserId)
+                                        isFromNetDaemon = true;
+                                }
+                            }
+
+                            if (!isFromNetDaemon && root.TryGetProperty("service_data", out var serviceData))
+                            {
+                                var entityIds = ExtractEntityIds(serviceData);
+                                var relevantEntityIds = entityIds.Where(IsLightInThisManager).ToList();
+
+                                if (relevantEntityIds.Count > 0)
+                                {
+                                    var timestamp = _scheduler.Now;
+
+                                    foreach (var entityId in relevantEntityIds)
+                                    {
+                                        _allTurnOnServiceCalls[entityId] = timestamp;
+                                    }
+
+                                    var hasBrightnessPct = serviceData.TryGetProperty("brightness_pct", out var brightnessPctValue);
+                                    var hasBrightness = serviceData.TryGetProperty("brightness", out var brightnessValue);
+
+                                    var brightnessVal = 0;
+                                    var hasExplicitBrightness = false;
+
+                                    if (hasBrightnessPct)
+                                    {
+                                        brightnessVal = brightnessPctValue.GetInt32();
+                                        hasExplicitBrightness = true;
+                                    }
+                                    else if (hasBrightness)
+                                    {
+                                        brightnessVal = brightnessValue.GetInt32();
+                                        hasExplicitBrightness = true;
+                                    }
+
+                                    if (hasExplicitBrightness)
+                                    {
+                                        _logger.LogDebug("{room} User commanded brightness: {brightness}%", Name, brightnessVal);
+                                        foreach (var entityId in relevantEntityIds)
+                                        {
+                                            _explicitBrightnessServiceCalls[entityId] = timestamp;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "{room} Error processing service call event", Name);
+                }
+            });
+    }
+
+    private List<string> ExtractEntityIds(JsonElement serviceData)
+    {
+        var result = new List<string>();
+
+        if (serviceData.TryGetProperty("entity_id", out var entityIdValue))
+        {
+            if (entityIdValue.ValueKind == JsonValueKind.String)
+            {
+                // Single entity_id as string
+                var id = entityIdValue.GetString();
+                if (!string.IsNullOrEmpty(id))
+                    result.Add(id);
+            }
+            else if (entityIdValue.ValueKind == JsonValueKind.Array)
+            {
+                // Multiple entity_ids as array
+                foreach (var item in entityIdValue.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.String)
+                    {
+                        var id = item.GetString();
+                        if (!string.IsNullOrEmpty(id))
+                            result.Add(id);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private bool IsLightInThisManager(string entityId)
+    {
+        // Check if this entity_id belongs to this manager's lights
+        return AllControlEntities.Any(e => e.EntityId == entityId);
+    }
+
+    private bool WasExplicitBrightnessSet(string entityId)
+    {
+        if (_explicitBrightnessServiceCalls.TryGetValue(entityId, out var timestamp))
+        {
+            var elapsed = (_scheduler.Now - timestamp).TotalMilliseconds;
+
+            if (elapsed < 500)
+            {
+                _explicitBrightnessServiceCalls.Remove(entityId);
+                _allTurnOnServiceCalls.Remove(entityId);
+                return true;
+            }
+            else if (elapsed > 5000)
+            {
+                _explicitBrightnessServiceCalls.Remove(entityId);
+            }
+        }
+
+        return false;
+    }
+
+    private bool WasUserServiceCallMade(string entityId)
+    {
+        if (_allTurnOnServiceCalls.TryGetValue(entityId, out var timestamp))
+        {
+            var elapsed = (_scheduler.Now - timestamp).TotalMilliseconds;
+
+            if (elapsed < 500)
+            {
+                _allTurnOnServiceCalls.Remove(entityId);
+                return true;
+            }
+            else if (elapsed > 5000)
+            {
+                _allTurnOnServiceCalls.Remove(entityId);
+            }
+        }
+
+        return false;
+    }
 
     private bool LightAttributesOverride(StateChange<LightEntity, EntityState<LightAttributes>> e) =>
         !IsNdUserOrHa(e) &&
@@ -179,13 +345,11 @@ public class Manager
 
             _scheduler.Sleep(TimeSpan.FromMilliseconds(250)).GetAwaiter().GetResult();
 
-            //TurnOffEntities("House Mode Change", true);
             foreach (var entity in controlEntities)
             {
                 entity.TurnOn(new LightTurnOnParameters() { BrightnessPct = DynamicBrightness, ColorTempKelvin = IsNightMode ? entity.Attributes?.MinColorTempKelvin : entity.Attributes?.MaxColorTempKelvin ?? 5000 });
             }
 
-            //TurnOnEntities("House Mode Change", true);
             UpdateAttributes();
 
             WaitAllTasks();
@@ -216,70 +380,42 @@ public class Manager
             });
     }
 
-    //private void SubscribeManualTurnOnOverrideEvent()
-    //{
-    //    _logger.LogDebug("{room} Subscribed to Manual Turn On Override Events", Name);
-    //    AllControlEntities
-    //        .StateAllChanges()
-    //        .Where(LightTurnedOnManually)
-    //        .Subscribe(e =>
-    //        {
-    //            _logger.LogDebug("{room} Manual Turn On Override for {light} by user", Name, e.New?.EntityId);
-    //            LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
-    //            ResetOverride();                
-    //            TurnOnLightWithColorAndBrightness(e.Entity);
-    //            UpdateAttributes(true);
-
-    //            WaitAllTasks();
-    //        });
-    //}
-
-    private void SubscribeTurnOnEvent()
-    {
-        // _logger.LogDebug("{room} Subscribed to Manual Turn On Override Events", Name);
-        // AllControlEntities
-        //     .StateAllChanges()
-        //     .Where(LightTurnedOnNd)
-        //     .Subscribe(e =>
-        //     {
-        //         _logger.LogDebug("{room} Nd Turn On for {light}", Name, e.New?.EntityId);
-        //         LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
-        //         
-        //         e.Entity.TurnOn( new LightTurnOnParameters() { BrightnessPct = IsNightMode ? 1 : 100, ColorTemp = IsNightMode ? 550 : 100});
-        //         
-        //         UpdateAttributes(true);
-        //         WaitAllTasks();
-        //     });
-    }
-
     private void SubscribeOverrideEvent()
     {
-        _logger.LogDebug("{room} Subscribed to Attribute Override Events", Name);
         AllControlEntities
             .StateAllChanges()
             .Where(e => LightTurnedOnManually(e) || LightAttributesOverride(e))
-            .Buffer(TimeSpan.FromMilliseconds(100), _scheduler) // Buffer events in a 100ms window
-            .Where(buffer => buffer.Any()) // Ignore empty buffers
-            .Select(buffer =>
-            {
-                // If there's more than one event, take the last one (it has brightness/color)
-                // If there's only one event, take it (it might be the only "on" event)
-                Console.WriteLine($"Buffer size: {buffer.Count}");
-                var chosenEvent = buffer.Last();
-                Console.WriteLine($"Chosen event: {chosenEvent.New?.State}, Brightness: {chosenEvent.New?.Attributes?.Brightness}");
-                return buffer.Last();
-            })
+            .Buffer(TimeSpan.FromMilliseconds(100), _scheduler)
+            .Where(buffer => buffer.Any())
+            .Select(buffer => buffer.Last())
             .Subscribe(e =>
             {
-                _logger.LogDebug("OLD:" + JsonSerializer.Serialize(e.Old));
-                _logger.LogDebug("NEW:" + JsonSerializer.Serialize(e.New));
-                _logger.LogDebug("{room} Attribute Override by user", Name);
-                LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override Triggered");
-
                 if (LightAttributesOverride(e))
-                    LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Override attributes supplied");
-                else
-                    TurnOnLightWithColorAndBrightness(e.Entity);
+                {
+                    LogInLogbook(e.New?.EntityId ?? "UNKNOWN", "Brightness/color adjusted by user");
+                }
+                else if (LightTurnedOnManually(e))
+                {
+                    var entityId = e.New?.EntityId;
+                    var hadExplicitBrightness = entityId != null && WasExplicitBrightnessSet(entityId);
+                    var userMadeServiceCall = entityId != null && WasUserServiceCallMade(entityId);
+
+                    if (hadExplicitBrightness)
+                    {
+                        _logger.LogInformation("{room} User turned on {entity}", Name, entityId);
+                        LogInLogbook(entityId ?? "UNKNOWN", "User-specified brightness");
+                    }
+                    else if (userMadeServiceCall)
+                    {
+                        _logger.LogInformation("{room} User turned on {entity}", Name, entityId);
+                        LogInLogbook(entityId ?? "UNKNOWN", "Turned on by user");
+                    }
+                    else
+                    {
+                        _logger.LogDebug("{room} Applying night/day mode to {entity}", Name, entityId);
+                        TurnOnLightWithColorAndBrightness(e.Entity);
+                    }
+                }
 
                 ResetOverride();
             });
@@ -356,12 +492,6 @@ public class Manager
             _logger.LogDebug("{room} Cant turn off - Occupied", Name);
             return;
         }
-
-        //if (!ignoreConditions && ConditionEntityStateNotMet)
-        //{
-        //    _logger.LogDebug("{room} Cant turn off - Condition not met {conditionEntity}!={state}", Name, ConditionEntity?.EntityId, ConditionEntityState);
-        //    return;
-        //}
 
         var triggerMsg = $"Turned off by {trigger ?? "UNKNOWN"}";
         _logger.LogDebug("{room} Turn Off by {trigger}", Name, triggerMsg);

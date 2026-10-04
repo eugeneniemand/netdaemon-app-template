@@ -7,12 +7,16 @@ public static class Shared
         Cheap3HourWindowStarted
     }
 
+    //Alexa = "d626b560717e4c92b5701d71820c8246"
+
     public static Dictionary<string,string> Parents => new()
     {
         ["7e9bc4b47c824ebe874c71e83554399c"] = "Mum",
         ["09dfab37423c4f7a9a7413ca84bdca76"] = "Dad",
         ["ef606e2918da4355ba036a019cdcc6a0"] = "Netdaemon"        
     };
+
+    public static bool IsParent(StateChange stateChange) => stateChange.New?.Context?.UserId != null && Parents.ContainsKey(stateChange.New?.Context?.UserId);
 
 
 }

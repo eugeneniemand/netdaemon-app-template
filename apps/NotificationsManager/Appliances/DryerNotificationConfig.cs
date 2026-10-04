@@ -23,12 +23,12 @@ public class DryerNotificationConfig : IApplianceNotificationConfig
     public ICycleStateHandler CycleStateHandler => new DryerCycleStateHandler();
     public Dictionary<string, CycleState> CycleStates => new()
     {
-        { "run", CycleState.Running },
-        { "stop", CycleState.Ready },
-        { "pause", CycleState.Paused }
+        { "active", CycleState.Running },
+        { "idle", CycleState.Ready },
+        { "idle", CycleState.Paused }
     };
 
     public string Name => "Dryer";
-    public NumericSensorEntity RemainingTime => new NumericSensorEntity(_ha, _entities.Sensor.TumbleDryerDryerCompletionTime.EntityId); 
-    public SensorEntity Status => _entities.Sensor.TumbleDryerDryerMachineState;
+    public NumericSensorEntity RemainingTime => new NumericSensorEntity(_ha, _entities.Sensor.SamsungDryerCompletionTime.EntityId); 
+    public SensorEntity Status => _entities.Sensor.SamsungDryerMachineState;
 }

@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 
 namespace Niemand;
 
-[Focus]
+//[Focus]
 [NetDaemonApp]
 public class ScreenTime : IAsyncInitializable, IDisposable
 {
@@ -43,7 +43,7 @@ public class ScreenTime : IAsyncInitializable, IDisposable
     private readonly IServices _services;
     private readonly ILogger<ScreenTime> _logger;
 
-    private readonly string _screenTimeRequestUrl = "http://10.10.40.14:8000/screentime";
+    private readonly string _screenTimeRequestUrl = "http://screentime.niemand.uk/screentime";
     private IDisposable? _warningNotificationSubscription;
 
     // State machine
@@ -54,9 +54,11 @@ public class ScreenTime : IAsyncInitializable, IDisposable
 
     // Scheduled action disposables for cancellation
     private IDisposable? _timerStartDisposable;
-    private IDisposable? _warningNotificationDisposable;
+    private List<IDisposable> _warningNotificationDisposables = [];
     private IDisposable? _expirationDisposable;
     private string? _newSource;
+    private string? _oldSource;
+    private int _incorrectPinAttempts = 0;
 
     public ScreenTime(IHaContext haContext, IMqttEntityManager entityManager, TimerManager timerManager, IScheduler scheduler, IAlexa alexa, IServices services, ILogger<ScreenTime> logger)
     {
@@ -79,17 +81,15 @@ public class ScreenTime : IAsyncInitializable, IDisposable
             .OnEntry(OpenScreenTimeRequestPage)
             .OnEntry(ResetScreenTimeState)
             .Permit(ScreenTimeTrigger.Unlock, ScreenTimeState.Unlocked)
-            // permit unlock and  grant screentime from locked state
             .Permit(ScreenTimeTrigger.GrantScreenTime, ScreenTimeState.Unlocked)
             .PermitReentry(ScreenTimeTrigger.Lock)
-            //.PermitReentry(ScreenTimeTrigger.TvSourceChanged)
             .OnEntryFrom(_grantScreenTimeTrigger, (kidName, minutes) => GrantScreenTime(kidName, minutes));
 
         _stateMachine.Configure(ScreenTimeState.Unlocked)
             .Permit(ScreenTimeTrigger.Lock, ScreenTimeState.Locked)            
             .PermitReentry(ScreenTimeTrigger.Unlock)
-            //.PermitReentry(ScreenTimeTrigger.TvSourceChanged)
             .PermitReentry(ScreenTimeTrigger.TvTurnedOn)
+            .PermitReentry(ScreenTimeTrigger.GrantScreenTime)
             .OnEntryFrom(_grantScreenTimeTrigger, (kidName, minutes) => GrantScreenTime(kidName, minutes));
     }
 
@@ -98,16 +98,20 @@ public class ScreenTime : IAsyncInitializable, IDisposable
         // When TV turns on, fire the state machine transition
         _entities.MediaPlayer.LoungeTv.StateChanges()
             .Where(s => s.New.IsOn())
-            .Subscribe(_ => _stateMachine.Fire(ScreenTimeTrigger.Lock));
+            .Subscribe(_ => {
+
+                _stateMachine.Fire(ScreenTimeTrigger.Lock); 
+            });
 
         // When source changes and new source is not "Web Browser" store the intened source to allow switching to it after PIN validation
         _entities.MediaPlayer.LoungeTv.StateAllChanges()
             .Where(e => e.Entity.IsOn() && e.New?.Attributes?.Source != e.Old?.Attributes?.Source)
-            .Where(e => e.New?.Attributes?.Source != "Web Browser")
+//            .Where(e => e.New?.Attributes?.Source != "Web Browser")
             .Subscribe(e =>
             {
                 _logger.LogInformation("TV source changed to {NewSource} from {OldSource}", e.New?.Attributes?.Source, e.Old?.Attributes?.Source);
                 _newSource = e.New?.Attributes?.Source;
+                _oldSource = e.Old?.Attributes?.Source;
             });
 
         // When source changes, fire the state machine transition
@@ -119,7 +123,33 @@ public class ScreenTime : IAsyncInitializable, IDisposable
         // When TV turns off, fire the state machine transition
         _entities.MediaPlayer.LoungeTv.StateChanges()
             .Where(s => s.New.IsOff())
-            .Subscribe(_ => _stateMachine.Fire(ScreenTimeTrigger.Lock));
+            .Subscribe(_ => {
+                _stateMachine.Fire(ScreenTimeTrigger.Lock);
+                _newSource = null;
+                _oldSource = null;
+            });
+
+        _entities.InputButton.GrantScreentime.StateAllChanges()
+            .Subscribe(_ =>
+            {
+                _logger.LogInformation("Grant Screentime button pressed");
+                _stateMachine.Fire(_grantScreenTimeTrigger, "Manual", int.Parse(_entities.Counter.ScreentimeMinutes.State ?? "0"));
+            });
+
+        _entities.InputButton.CancelScreentime.StateAllChanges()
+            .Subscribe(_ =>
+            {
+                _logger.LogInformation("Cancel Screentime button pressed");
+                ResetScreenTimeState();
+                _stateMachine.Fire(ScreenTimeTrigger.Lock);
+            });
+
+        _entities.DeviceTracker.JaydenAllSeries.StateChanges()
+            .Where(s => s.New.State == "home")
+            .Subscribe(_ =>
+            {
+                _services.ShellCommand.JaydenPcShutdown();
+            });
 
         // Subscribe to reward approvals for Jayden
         SubscribeToScreenTimeReward("Jayden", new[]
@@ -146,10 +176,30 @@ public class ScreenTime : IAsyncInitializable, IDisposable
         });
 
         _haContext.Events.Filter<ScreenTimeEventData>("screentime_request")
+            .Where(e => e.Data.ValidPin)
             .Subscribe(e =>
             {
+                _incorrectPinAttempts = 0; // Reset incorrect attempts on successful PIN entry
                 _stateMachine.Fire(_grantScreenTimeTrigger, "PIN", e.Data.ScreentimeMinutes);
                 _logger.LogInformation("Unlocked by PIN");
+            });
+
+        _haContext.Events.Filter<ScreenTimeEventData>("screentime_request")
+            .Where(e => !e.Data.ValidPin)
+            .Subscribe(e =>
+            {
+                if (_incorrectPinAttempts >= 2)
+                {
+                    _logger.LogWarning("Too many incorrect PIN attempts. Turning on Discipline Manager.");
+                    _entities.Switch.DisciplineManagerEnabled.TurnOn();
+                    _incorrectPinAttempts = 0; // Reset after locking
+                }
+                else
+                {
+                    _logger.LogWarning("Incorrect PIN attempt {AttemptNumber}", _incorrectPinAttempts + 1);
+                }
+                _incorrectPinAttempts++;
+                _logger.LogInformation("Incorrect PIN");
             });
 
         _stateMachine.Fire(ScreenTimeTrigger.Lock);
@@ -162,8 +212,11 @@ public class ScreenTime : IAsyncInitializable, IDisposable
     {
         foreach (var (button, minutes) in rewards)
         {
-            button.StateChanges().Subscribe(_ =>
+            button.StateChanges().Subscribe(stateChange =>
             {
+                if (!Shared.IsParent(stateChange))
+                    return;
+                
                 _logger.LogInformation("{kidName} received {minutes} minutes of screen time", kidName, minutes);
                 _stateMachine.Fire(_grantScreenTimeTrigger, kidName, minutes);
             });
@@ -191,33 +244,56 @@ public class ScreenTime : IAsyncInitializable, IDisposable
             // New duration is longer, so cancel existing schedules
             _logger.LogInformation("Cancelling existing schedules for {activeChild} to grant longer screen time to {kidName}. Old remaining: {oldRemaining}s, New duration: {newDuration}s", _activeChild, kidName, remainingTime.TotalSeconds, duration.TotalSeconds);
             _timerStartDisposable?.Dispose();
-            _warningNotificationDisposable?.Dispose();
+            _warningNotificationDisposables.ForEach(d => d.Dispose());
+            _warningNotificationDisposables.Clear();
             _expirationDisposable?.Dispose();
         }
 
         _expirationTime = newExpirationTime;
         _activeChild = kidName;
 
+        _services.Notify.LoungeTv(new NotifyLoungeTvParameters()
+        {
+            Message = $"Screentime granted for {minutes} minutes."
+        });
+
         // Redirect from request page to normal content
         //OpenBrowserUrl("http://10.10.40.14:8000/");
 
         // Set source to _newsource
-        _services.MediaPlayer.SelectSource(ServiceTarget.FromEntity(_entities.MediaPlayer.LoungeTv.EntityId), new MediaPlayerSelectSourceParameters() { Source = _newSource });
 
+        if (_newSource == null || _newSource == "Web Browser")
+            _services.MediaPlayer.SelectSource(ServiceTarget.FromEntity(_entities.MediaPlayer.LoungeTv.EntityId), new MediaPlayerSelectSourceParameters() { Source = "Home Dashboard" });
+        
         // Start the screentime timer
         _timerStartDisposable = _scheduler.Schedule(TimeSpan.FromSeconds(1), async () =>
         await _timerManager.StartAsync("timer.screentime_remaining", duration));
 
-        // Calculate warning time (5 minutes before end)
-        var warningDelay = duration - TimeSpan.FromMinutes(5);
-
-        if (warningDelay.TotalSeconds > 0)
+        // Schedule per-minute warnings for the last 5 minutes
+        _warningNotificationDisposables.Clear();
+        var warningHandlers = new (int minutesRemaining, Func<Task> handler)[]
         {
-            // Schedule warning notification
-            _warningNotificationDisposable = _scheduler.Schedule(warningDelay, async () =>
+            (5, async () => await SendWarningNotification(kidName, 5)),
+            (4, async () => await SendWarningNotification(kidName, 4)),
+            (3, async () => await SendWarningNotification(kidName, 3)),
+            (2, async () => {
+                // Example: Alexa announcement at 2 minutes
+                await SendWarningNotification(kidName, 2);
+            }),
+            (1, async () => {
+                // Example: Reduce volume at 1 minute
+                await SendWarningNotification(kidName, 1);
+            }),
+        };
+
+        foreach (var (minutesRemaining, handler) in warningHandlers)
+        {
+            var delay = duration - TimeSpan.FromMinutes(minutesRemaining);
+            if (delay.TotalSeconds > 0)
             {
-                await SendWarningNotification(kidName, 5);
-            });
+                _warningNotificationDisposables.Add(
+                    _scheduler.Schedule(delay, async () => await handler()));
+            }
         }
 
         // Schedule redirect back to request page when timer ends
@@ -271,7 +347,7 @@ public class ScreenTime : IAsyncInitializable, IDisposable
                 Message = message
             });
 
-            _services.Notify.LoungeTv( new NotifyLoungeTvParameters()
+            _services.Notify.LoungeTv(new NotifyLoungeTvParameters()
             {
                 Message = message
             });
@@ -317,11 +393,13 @@ public class ScreenTime : IAsyncInitializable, IDisposable
         _logger.LogInformation("Resetting screentime state from {CurrentChild}", _activeChild ?? "None");
         _activeChild = null;
         _expirationTime = DateTime.MinValue;
+        _timerManager.ChangeAsync("timer.screentime_remaining", TimeSpan.Zero).Wait();
 
         // Dispose of all scheduled actions
         _timerStartDisposable?.Dispose();
-        _warningNotificationDisposable?.Dispose();
-        _expirationDisposable?.Dispose();        
+        _warningNotificationDisposables.ForEach(d => d.Dispose());
+        _warningNotificationDisposables.Clear();
+        _expirationDisposable?.Dispose();
     }
 
     public void Dispose()
@@ -337,4 +415,6 @@ internal class ScreenTimeEventData
     // get the json property "screentime_minutes" and map it to ScreentimeMinutes
     [JsonPropertyName("screentime_minutes")]
     public int ScreentimeMinutes { get; set; }
+    [JsonPropertyName("valid_pin")]
+    public bool ValidPin { get; set; }
 }

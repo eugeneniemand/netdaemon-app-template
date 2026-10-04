@@ -32,8 +32,8 @@ public class Routines
         // Arriving Home
         foreach (var person in people.Persons)
             person.Person.StateChanges()
-                  .Where(change => string.Equals(change.Old.State, "not_home", StringComparison.InvariantCultureIgnoreCase))
-                  .Where(change => string.Equals(change.New.State, "home", StringComparison.InvariantCultureIgnoreCase))
+                  .Where(change => !string.Equals(change.Old?.State, "home", StringComparison.InvariantCultureIgnoreCase))
+                  .Where(change => string.Equals(change.New?.State, "home", StringComparison.InvariantCultureIgnoreCase))
                   .Subscribe(change =>
                   {
                       var person = change.Entity.EntityId.Replace("person.", "");

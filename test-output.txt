@@ -1,0 +1,428 @@
+  Determining projects to restore...
+C:\eugene\netdaemon-app-template\Niemand.Tests\Niemand.Tests.csproj : warning NU1603: Niemand.Tests depends on Xunit.DependencyInjection (>= 8.11.0) but Xunit.DependencyInjection 8.11.0 was not found. Xunit.DependencyInjection 9.0.0 was resolved instead.
+C:\eugene\netdaemon-extentions-testing\NetDaemon.Extensions.Testing\NetDaemon.Extensions.Testing.csproj : warning NU1603: NetDaemon.Extensions.Testing depends on Xunit.DependencyInjection (>= 8.11.0) but Xunit.DependencyInjection 8.11.0 was not found. Xunit.DependencyInjection 9.0.0 was resolved instead. [C:\eugene\netdaemon-app-template\Niemand.Tests\Niemand.Tests.csproj]
+C:\eugene\netdaemon-extentions-testing\NetDaemon.Extensions.Testing\NetDaemon.Extensions.Testing.csproj : warning NU1603: NetDaemon.Extensions.Testing depends on Xunit.DependencyInjection.Logging (>= 8.11.0) but Xunit.DependencyInjection.Logging 8.11.0 was not found. Xunit.DependencyInjection.Logging 9.0.0 was resolved instead. [C:\eugene\netdaemon-app-template\Niemand.Tests\Niemand.Tests.csproj]
+C:\eugene\netdaemon-app-template\Niemand.Tests\Niemand.Tests.csproj : warning NU1603: Niemand.Tests depends on Xunit.DependencyInjection.Logging (>= 8.11.0) but Xunit.DependencyInjection.Logging 8.11.0 was not found. Xunit.DependencyInjection.Logging 9.0.0 was resolved instead.
+  All projects are up-to-date for restore.
+C:\eugene\netdaemon-app-template\Niemand.Tests\Niemand.Tests.csproj : warning NU1603: Niemand.Tests depends on Xunit.DependencyInjection (>= 8.11.0) but Xunit.DependencyInjection 8.11.0 was not found. Xunit.DependencyInjection 9.0.0 was resolved instead.
+C:\eugene\netdaemon-app-template\Niemand.Tests\Niemand.Tests.csproj : warning NU1603: Niemand.Tests depends on Xunit.DependencyInjection.Logging (>= 8.11.0) but Xunit.DependencyInjection.Logging 8.11.0 was not found. Xunit.DependencyInjection.Logging 9.0.0 was resolved instead.
+C:\eugene\netdaemon-extentions-testing\NetDaemon.Extensions.Testing\NetDaemon.Extensions.Testing.csproj : warning NU1603: NetDaemon.Extensions.Testing depends on Xunit.DependencyInjection (>= 8.11.0) but Xunit.DependencyInjection 8.11.0 was not found. Xunit.DependencyInjection 9.0.0 was resolved instead.
+C:\eugene\netdaemon-extentions-testing\NetDaemon.Extensions.Testing\NetDaemon.Extensions.Testing.csproj : warning NU1603: NetDaemon.Extensions.Testing depends on Xunit.DependencyInjection.Logging (>= 8.11.0) but Xunit.DependencyInjection.Logging 8.11.0 was not found. Xunit.DependencyInjection.Logging 9.0.0 was resolved instead.
+  daemonapp -> C:\eugene\netdaemon-app-template\bin\Debug\net10.0\daemonapp.dll
+  NetDaemon.Extensions.Testing -> C:\eugene\netdaemon-extentions-testing\NetDaemon.Extensions.Testing\bin\Debug\net10.0\NetDaemon.Extensions.Testing.dll
+  Niemand.Tests -> C:\eugene\netdaemon-app-template\Niemand.Tests\bin\Debug\net10.0\Niemand.Tests.dll
+Test run for C:\eugene\netdaemon-app-template\Niemand.Tests\bin\Debug\net10.0\Niemand.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.36]     NetDaemonApps.Tests.NotificationsManagerTests.PromptWhenPromptedMoreThan15MinutesAgo [FAIL]
+[xUnit.net 00:00:00.38]     NetDaemonApps.Tests.NotificationsManagerTests.PromptWhenThereHasBeenNoPreviousPrompt [FAIL]
+[xUnit.net 00:00:00.39]     NetDaemonApps.Tests.NotificationsManagerTests.DontPromptWhenPromptedInTheLast15Minutes [FAIL]
+[xUnit.net 00:00:00.39]     NetDaemonApps.Tests.NotificationsManagerTests.AcknowledgePromptWhenPromptResponseIsNo [FAIL]
+[xUnit.net 00:00:00.39]     NetDaemonApps.Tests.NotificationsManagerTests.AnnounceWhenAnnouncedMoreThan60MinutesAgo [FAIL]
+[xUnit.net 00:00:00.39]     NetDaemonApps.Tests.NotificationsManagerTests.DontAnnounceWhenAnnouncedInTheLast60Minutes [FAIL]
+  Failed NetDaemonApps.Tests.NotificationsManagerTests.PromptWhenPromptedMoreThan15MinutesAgo [14 ms]
+  Error Message:
+   System.ArgumentException : An item with the same key has already been added. Key: idle
+  Stack Trace:
+     at System.Collections.Generic.Dictionary`2.TryInsert(TKey key, TValue value, InsertionBehavior behavior)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Niemand.NotificationManager.WasherNotificationConfig.get_CycleStates() in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\WasherNotificationConfig.cs:line 23
+   at Niemand.NotificationManager.ApplianceNotification..ctor(IScheduler scheduler, IApplianceNotificationConfig config, ILogger`1 logger) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceNotification.cs:line 38
+   at NetDaemon.ApplianceFactory.CreateAppliance(String applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 15
+   at System.Linq.Enumerable.ArraySelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)
+   at System.Linq.Enumerable.ArraySelectIterator`2.ToList()
+   at NetDaemon.ApplianceFactory.CreateAppliances(String[] applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 9
+   at NetDaemon.NotificationsManager..ctor(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger`1 logger, IApplianceFactory applianceFactory) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\NotificationsManager.cs:line 29
+   at Niemand.Tests.NotificationManagerSut.Init() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationManagerSut.cs:line 8
+   at NetDaemonApps.Tests.NotificationsManagerTests.PromptWhenPromptedMoreThan15MinutesAgo() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationsManagerTests.cs:line 106
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed NetDaemonApps.Tests.NotificationsManagerTests.PromptWhenThereHasBeenNoPreviousPrompt [< 1 ms]
+  Error Message:
+   System.ArgumentException : An item with the same key has already been added. Key: idle
+  Stack Trace:
+     at System.Collections.Generic.Dictionary`2.TryInsert(TKey key, TValue value, InsertionBehavior behavior)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Niemand.NotificationManager.WasherNotificationConfig.get_CycleStates() in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\WasherNotificationConfig.cs:line 23
+   at Niemand.NotificationManager.ApplianceNotification..ctor(IScheduler scheduler, IApplianceNotificationConfig config, ILogger`1 logger) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceNotification.cs:line 38
+   at NetDaemon.ApplianceFactory.CreateAppliance(String applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 15
+   at System.Linq.Enumerable.ArraySelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)
+   at System.Linq.Enumerable.ArraySelectIterator`2.ToList()
+   at NetDaemon.ApplianceFactory.CreateAppliances(String[] applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 9
+   at NetDaemon.NotificationsManager..ctor(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger`1 logger, IApplianceFactory applianceFactory) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\NotificationsManager.cs:line 29
+   at Niemand.Tests.NotificationManagerSut.Init() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationManagerSut.cs:line 8
+   at NetDaemonApps.Tests.NotificationsManagerTests.PromptWhenThereHasBeenNoPreviousPrompt() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationsManagerTests.cs:line 124
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed NetDaemonApps.Tests.NotificationsManagerTests.DontPromptWhenPromptedInTheLast15Minutes [< 1 ms]
+  Error Message:
+   System.ArgumentException : An item with the same key has already been added. Key: idle
+  Stack Trace:
+     at System.Collections.Generic.Dictionary`2.TryInsert(TKey key, TValue value, InsertionBehavior behavior)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Niemand.NotificationManager.WasherNotificationConfig.get_CycleStates() in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\WasherNotificationConfig.cs:line 23
+   at Niemand.NotificationManager.ApplianceNotification..ctor(IScheduler scheduler, IApplianceNotificationConfig config, ILogger`1 logger) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceNotification.cs:line 38
+   at NetDaemon.ApplianceFactory.CreateAppliance(String applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 15
+   at System.Linq.Enumerable.ArraySelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)
+   at System.Linq.Enumerable.ArraySelectIterator`2.ToList()
+   at NetDaemon.ApplianceFactory.CreateAppliances(String[] applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 9
+   at NetDaemon.NotificationsManager..ctor(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger`1 logger, IApplianceFactory applianceFactory) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\NotificationsManager.cs:line 29
+   at Niemand.Tests.NotificationManagerSut.Init() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationManagerSut.cs:line 8
+   at NetDaemonApps.Tests.NotificationsManagerTests.DontPromptWhenPromptedInTheLast15Minutes() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationsManagerTests.cs:line 88
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed NetDaemonApps.Tests.NotificationsManagerTests.AcknowledgePromptWhenPromptResponseIsNo [< 1 ms]
+  Error Message:
+   System.ArgumentException : An item with the same key has already been added. Key: idle
+  Stack Trace:
+     at System.Collections.Generic.Dictionary`2.TryInsert(TKey key, TValue value, InsertionBehavior behavior)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Niemand.NotificationManager.WasherNotificationConfig.get_CycleStates() in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\WasherNotificationConfig.cs:line 23
+   at Niemand.NotificationManager.ApplianceNotification..ctor(IScheduler scheduler, IApplianceNotificationConfig config, ILogger`1 logger) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceNotification.cs:line 38
+   at NetDaemon.ApplianceFactory.CreateAppliance(String applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 15
+   at System.Linq.Enumerable.ArraySelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)
+   at System.Linq.Enumerable.ArraySelectIterator`2.ToList()
+   at NetDaemon.ApplianceFactory.CreateAppliances(String[] applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 9
+   at NetDaemon.NotificationsManager..ctor(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger`1 logger, IApplianceFactory applianceFactory) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\NotificationsManager.cs:line 29
+   at Niemand.Tests.NotificationManagerSut.Init() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationManagerSut.cs:line 8
+   at NetDaemonApps.Tests.NotificationsManagerTests.AcknowledgePromptWhenPromptResponseIsNo() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationsManagerTests.cs:line 27
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed NetDaemonApps.Tests.NotificationsManagerTests.AnnounceWhenAnnouncedMoreThan60MinutesAgo [< 1 ms]
+  Error Message:
+   System.ArgumentException : An item with the same key has already been added. Key: idle
+  Stack Trace:
+     at System.Collections.Generic.Dictionary`2.TryInsert(TKey key, TValue value, InsertionBehavior behavior)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Niemand.NotificationManager.WasherNotificationConfig.get_CycleStates() in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\WasherNotificationConfig.cs:line 23
+   at Niemand.NotificationManager.ApplianceNotification..ctor(IScheduler scheduler, IApplianceNotificationConfig config, ILogger`1 logger) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceNotification.cs:line 38
+   at NetDaemon.ApplianceFactory.CreateAppliance(String applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 15
+   at System.Linq.Enumerable.ArraySelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)
+   at System.Linq.Enumerable.ArraySelectIterator`2.ToList()
+   at NetDaemon.ApplianceFactory.CreateAppliances(String[] applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 9
+   at NetDaemon.NotificationsManager..ctor(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger`1 logger, IApplianceFactory applianceFactory) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\NotificationsManager.cs:line 29
+   at Niemand.Tests.NotificationManagerSut.Init() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationManagerSut.cs:line 8
+   at NetDaemonApps.Tests.NotificationsManagerTests.AnnounceWhenAnnouncedMoreThan60MinutesAgo() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationsManagerTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed NetDaemonApps.Tests.NotificationsManagerTests.DontAnnounceWhenAnnouncedInTheLast60Minutes [< 1 ms]
+  Error Message:
+   System.ArgumentException : An item with the same key has already been added. Key: idle
+  Stack Trace:
+     at System.Collections.Generic.Dictionary`2.TryInsert(TKey key, TValue value, InsertionBehavior behavior)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Niemand.NotificationManager.WasherNotificationConfig.get_CycleStates() in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\WasherNotificationConfig.cs:line 23
+   at Niemand.NotificationManager.ApplianceNotification..ctor(IScheduler scheduler, IApplianceNotificationConfig config, ILogger`1 logger) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceNotification.cs:line 38
+   at NetDaemon.ApplianceFactory.CreateAppliance(String applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 15
+   at System.Linq.Enumerable.ArraySelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)
+   at System.Linq.Enumerable.ArraySelectIterator`2.ToList()
+   at NetDaemon.ApplianceFactory.CreateAppliances(String[] applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 9
+   at NetDaemon.NotificationsManager..ctor(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger`1 logger, IApplianceFactory applianceFactory) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\NotificationsManager.cs:line 29
+   at Niemand.Tests.NotificationManagerSut.Init() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationManagerSut.cs:line 8
+   at NetDaemonApps.Tests.NotificationsManagerTests.DontAnnounceWhenAnnouncedInTheLast60Minutes() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationsManagerTests.cs:line 67
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.40]     NetDaemonApps.Tests.NotificationsManagerTests.AcknowledgePromptAndResetWhenPromptResponseIsYes [FAIL]
+  Failed NetDaemonApps.Tests.NotificationsManagerTests.AcknowledgePromptAndResetWhenPromptResponseIsYes [< 1 ms]
+  Error Message:
+   System.ArgumentException : An item with the same key has already been added. Key: idle
+  Stack Trace:
+     at System.Collections.Generic.Dictionary`2.TryInsert(TKey key, TValue value, InsertionBehavior behavior)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Niemand.NotificationManager.WasherNotificationConfig.get_CycleStates() in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\WasherNotificationConfig.cs:line 23
+   at Niemand.NotificationManager.ApplianceNotification..ctor(IScheduler scheduler, IApplianceNotificationConfig config, ILogger`1 logger) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceNotification.cs:line 38
+   at NetDaemon.ApplianceFactory.CreateAppliance(String applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 15
+   at System.Linq.Enumerable.ArraySelectIterator`2.Fill(ReadOnlySpan`1 source, Span`1 destination, Func`2 func)
+   at System.Linq.Enumerable.ArraySelectIterator`2.ToList()
+   at NetDaemon.ApplianceFactory.CreateAppliances(String[] applianceType) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\Appliances\ApplianceFactory.cs:line 9
+   at NetDaemon.NotificationsManager..ctor(IHaContext haContext, IEntities entities, IServices services, IAlexa alexa, IScheduler scheduler, ILogger`1 logger, IApplianceFactory applianceFactory) in C:\eugene\netdaemon-app-template\apps\NotificationsManager\NotificationsManager.cs:line 29
+   at Niemand.Tests.NotificationManagerSut.Init() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationManagerSut.cs:line 8
+   at NetDaemonApps.Tests.NotificationsManagerTests.AcknowledgePromptAndResetWhenPromptResponseIsYes() in C:\eugene\netdaemon-app-template\Niemand.Tests\Notifications\NotificationsManagerTests.cs:line 14
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.43]     Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeGranted_WhenWebOstTvCommandIsCalled_ThenServiceCallShouldContainCorrectEntityAndPayload [FAIL]
+  Failed Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeGranted_WhenWebOstTvCommandIsCalled_ThenServiceCallShouldContainCorrectEntityAndPayload [47 ms]
+  Error Message:
+   Expected webostServiceCalls not to be empty because webostv service should be called.
+  Stack Trace:
+     at FluentAssertions.Collections.GenericCollectionAssertions`3.<NotBeEmpty>b__59_0(AssertionChain chain)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+   at Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeGranted_WhenWebOstTvCommandIsCalled_ThenServiceCallShouldContainCorrectEntityAndPayload() in C:\eugene\netdaemon-app-template\Niemand.Tests\DisciplineManager\ScreenTimeTests.cs:line 454
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.44]     Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeActiveFor20Minutes_When15MinutesElapse_ThenWarningNotificationIsScheduled [FAIL]
+  Failed Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeActiveFor20Minutes_When15MinutesElapse_ThenWarningNotificationIsScheduled [12 ms]
+  Error Message:
+   Expected _sut.Alexa.AnnounceCalls.Count to be greater than 0 because Warning announcement should be made 5 minutes before expiration, but found 0.
+  Stack Trace:
+     at FluentAssertions.Numeric.NumericAssertionsBase`3.BeGreaterThan(T expected, String because, Object[] becauseArgs)
+   at Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeActiveFor20Minutes_When15MinutesElapse_ThenWarningNotificationIsScheduled() in C:\eugene\netdaemon-app-template\Niemand.Tests\DisciplineManager\ScreenTimeTests.cs:line 221
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.45]     Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeExpires_WhenTimerEndsAfter20Minutes_ThenExpirationHandlerInvokesAnnouncement [FAIL]
+  Failed Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeExpires_WhenTimerEndsAfter20Minutes_ThenExpirationHandlerInvokesAnnouncement [3 ms]
+  Error Message:
+   Expected _sut.Alexa.AnnounceCalls not to be empty because Expiration announcement should be made.
+  Stack Trace:
+     at FluentAssertions.Collections.GenericCollectionAssertions`3.<NotBeEmpty>b__59_0(AssertionChain chain)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+   at Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeExpires_WhenTimerEndsAfter20Minutes_ThenExpirationHandlerInvokesAnnouncement() in C:\eugene\netdaemon-app-template\Niemand.Tests\DisciplineManager\ScreenTimeTests.cs:line 239
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.45]     Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeGrantedFor15Minutes_WhenCalculatingWarningDelay_ThenWarningDelaysExactly15Minutes [FAIL]
+[xUnit.net 00:00:00.45]     Niemand.Tests.KitchenFacts.CheapEnergyActive_TriggersNotification [FAIL]
+  Failed Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeGrantedFor15Minutes_WhenCalculatingWarningDelay_ThenWarningDelaysExactly15Minutes [1 ms]
+  Error Message:
+   Expected announcesAt15Min to be greater than 0, but found 0.
+  Stack Trace:
+     at FluentAssertions.Numeric.NumericAssertionsBase`3.BeGreaterThan(T expected, String because, Object[] becauseArgs)
+   at Niemand.Tests.DisciplineManager.ScreenTimeTests.GivenScreenTimeGrantedFor15Minutes_WhenCalculatingWarningDelay_ThenWarningDelaysExactly15Minutes() in C:\eugene\netdaemon-app-template\Niemand.Tests\DisciplineManager\ScreenTimeTests.cs:line 431
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed Niemand.Tests.KitchenFacts.CheapEnergyActive_TriggersNotification [9 ms]
+  Error Message:
+   Expected sut.State.ServiceCalls {empty} to contain equivalent of NetDaemon.Extensions.Testing.TestServiceCall
+{
+    Data =
+    {
+        Message = "3 Hour Cheap Energy Started: "
+    },
+    Domain = "notify",
+    Service = "twinstead",
+    Target = <null>
+}.
+
+With configuration:
+- Prefer the declared type of the members
+- Compare enums by value
+- Compare tuples by their properties
+- Compare anonymous types by their properties
+- Compare records by their members
+- Include non-browsable members
+- Match (JSON) member by name (or throw)
+- Be strict about the order of items in byte arrays
+- Without automatic conversion
+
+  Stack Trace:
+     at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, String because, Object[] becauseArgs)
+   at Niemand.Tests.KitchenFacts.CheapEnergyActive_TriggersNotification() in C:\eugene\netdaemon-app-template\Niemand.Tests\KitchenTests.cs:line 64
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.46]     Niemand.Tests.LightManager.ConditionAndLuxTests.GivenDayMode_WhenMotionTurnsLightOn_ThenAutomaticDayBrightnessIsUsed [FAIL]
+[xUnit.net 00:00:00.46]     Niemand.Tests.LightManager.RandomizerTests.GivenMixedRoomStates_WhenRandomizerStops_ThenOnlyMatchingManagersAreRestored [FAIL]
+  Failed Niemand.Tests.LightManager.ConditionAndLuxTests.GivenDayMode_WhenMotionTurnsLightOn_ThenAutomaticDayBrightnessIsUsed [8 ms]
+  Error Message:
+   Expected state.ServiceCalls.Filter(Domain.Light) {
+    NetDaemon.Extensions.Testing.TestServiceCall
+    {
+        Data = HomeAssistantGenerated.LightTurnOnParameters
+        {
+            AdditionalFields = <null>,
+            BrightnessPct = <null>,
+            BrightnessStepPct = <null>,
+            ColorTempKelvin = <null>,
+            Effect = <null>,
+            RgbColor = <null>,
+            Transition = <null>
+        },
+        Domain = "light",
+        Service = "turn_on",
+        Target = NetDaemon.HassModel.Entities.ServiceTarget
+        {
+            AreaIds = <null>,
+            DeviceIds = <null>,
+            EntityIds = {"light.bulb_1"},
+            FloorIds = <null>,
+            LabelIds = <null>
+        }
+    },
+    NetDaemon.Extensions.Testing.TestServiceCall
+    {
+        Data = HomeAssistantGenerated.LightTurnOnParameters
+        {
+            AdditionalFields = <null>,
+            BrightnessPct = <null>,
+            BrightnessStepPct = <null>,
+            ColorTempKelvin = <null>,
+            Effect = <null>,
+            RgbColor = <null>,
+            Transition = <null>
+        },
+        Domain = "light",
+        Service = "turn_on",
+        Target = NetDaemon.HassModel.Entities.ServiceTarget
+        {
+            AreaIds = <null>,
+            DeviceIds = <null>,
+            EntityIds = {"light.bulb_2"},
+            FloorIds = <null>,
+            LabelIds = <null>
+        }
+    }
+} to contain equivalent of {
+    Data = HomeAssistantGenerated.LightTurnOnParameters
+    {
+        AdditionalFields = <null>,
+        BrightnessPct = 100L,
+        BrightnessStepPct = <null>,
+        ColorTempKelvin = <null>,
+        Effect = <null>,
+        RgbColor = <null>,
+        Transition = <null>
+    },
+    Domain = "light",
+    Service = "turn_on",
+    Target =
+    {
+        EntityIds = {"light.bulb_1"}
+    }
+}.
+
+With configuration:
+- Prefer the declared type of the members
+- Compare enums by value
+- Compare tuples by their properties
+- Compare anonymous types by their properties
+- Compare records by their members
+- Include non-browsable members
+- Match (JSON) member by name (or throw)
+- Be strict about the order of items in byte arrays
+- Without automatic conversion
+
+  Stack Trace:
+     at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, String because, Object[] becauseArgs)
+   at Niemand.Tests.LightManager.ConditionAndLuxTests.GivenDayMode_WhenMotionTurnsLightOn_ThenAutomaticDayBrightnessIsUsed() in C:\eugene\netdaemon-app-template\Niemand.Tests\LightManager\ConditionAndLuxTests.cs:line 173
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed Niemand.Tests.LightManager.RandomizerTests.GivenMixedRoomStates_WhenRandomizerStops_ThenOnlyMatchingManagersAreRestored [6 ms]
+  Error Message:
+   Expected state.ServiceCalls.Filter(Domain.Switch) {
+    NetDaemon.Extensions.Testing.TestServiceCall
+    {
+        Data = <null>,
+        Domain = "switch",
+        Service = "turn_on",
+        Target = NetDaemon.HassModel.Entities.ServiceTarget
+        {
+            AreaIds = <null>,
+            DeviceIds = <null>,
+            EntityIds = {"switch.light_manager_testroom"},
+            FloorIds = <null>,
+            LabelIds = <null>
+        }
+    },
+    NetDaemon.Extensions.Testing.TestServiceCall
+    {
+        Data = <null>,
+        Domain = "switch",
+        Service = "turn_on",
+        Target = NetDaemon.HassModel.Entities.ServiceTarget
+        {
+            AreaIds = <null>,
+            DeviceIds = <null>,
+            EntityIds = {"switch.light_manager_otherroom"},
+            FloorIds = <null>,
+            LabelIds = <null>
+        }
+    }
+} to contain equivalent of {
+    Domain = "switch",
+    Service = "turn_off",
+    Target =
+    {
+        EntityIds = {"switch.light_manager_testroom"}
+    }
+}.
+
+With configuration:
+- Prefer the declared type of the members
+- Compare enums by value
+- Compare tuples by their properties
+- Compare anonymous types by their properties
+- Compare records by their members
+- Include non-browsable members
+- Match (JSON) member by name (or throw)
+- Be strict about the order of items in byte arrays
+- Without automatic conversion
+
+  Stack Trace:
+     at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, String because, Object[] becauseArgs)
+   at Niemand.Tests.LightManager.RandomizerTests.GivenMixedRoomStates_WhenRandomizerStops_ThenOnlyMatchingManagersAreRestored() in C:\eugene\netdaemon-app-template\Niemand.Tests\LightManager\RandomizerTests.cs:line 97
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.47]     Niemand.Tests.LightManager.RandomizerTests.GivenTargetRequiresMultipleActiveRooms_WhenRandomizerAddsRooms_ThenExistingRandomLightsStayOn [FAIL]
+  Failed Niemand.Tests.LightManager.RandomizerTests.GivenTargetRequiresMultipleActiveRooms_WhenRandomizerAddsRooms_ThenExistingRandomLightsStayOn [3 ms]
+  Error Message:
+   Expected state.ServiceCalls.Filter(Domain.Light) {empty} to contain equivalent of {
+    Data = HomeAssistantGenerated.LightTurnOnParameters
+    {
+        AdditionalFields = <null>,
+        BrightnessPct = 100L,
+        BrightnessStepPct = <null>,
+        ColorTempKelvin = <null>,
+        Effect = <null>,
+        RgbColor = <null>,
+        Transition = <null>
+    },
+    Domain = "light",
+    Service = "turn_on",
+    Target =
+    {
+        EntityIds = {"light.bulb_1"}
+    }
+}.
+
+With configuration:
+- Prefer the declared type of the members
+- Compare enums by value
+- Compare tuples by their properties
+- Compare anonymous types by their properties
+- Compare records by their members
+- Include non-browsable members
+- Match (JSON) member by name (or throw)
+- Be strict about the order of items in byte arrays
+- Without automatic conversion
+
+  Stack Trace:
+     at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, Func`2 config, String because, Object[] becauseArgs)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainEquivalentOf[TExpectation](TExpectation expectation, String because, Object[] becauseArgs)
+   at Niemand.Tests.LightManager.RandomizerTests.GivenTargetRequiresMultipleActiveRooms_WhenRandomizerAddsRooms_ThenExistingRandomLightsStayOn() in C:\eugene\netdaemon-app-template\Niemand.Tests\LightManager\RandomizerTests.cs:line 156
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.49]     Niemand.Tests.LightManager.ConditionAndLuxTests.GivenConditionNotMet_WhenPresenceTimeoutExpires_ThenLightsAreNotTurnedOffByConditionCheck [FAIL]
+  Failed Niemand.Tests.LightManager.ConditionAndLuxTests.GivenConditionNotMet_WhenPresenceTimeoutExpires_ThenLightsAreNotTurnedOffByConditionCheck [13 ms]
+  Error Message:
+   Expected state.ServiceCalls.Filter(Domain.Light) to be empty, but found at least one item {
+    NetDaemon.Extensions.Testing.TestServiceCall
+    {
+        Data = HomeAssistantGenerated.LightTurnOffParameters
+        {
+            AdditionalFields = <null>,
+            Transition = <null>
+        },
+        Domain = "light",
+        Service = "turn_off",
+        Target = NetDaemon.HassModel.Entities.ServiceTarget
+        {
+            AreaIds = <null>,
+            DeviceIds = <null>,
+            EntityIds = {"light.bulb_1"},
+            FloorIds = <null>,
+            LabelIds = <null>
+        }
+    }
+}.
+  Stack Trace:
+     at FluentAssertions.Collections.GenericCollectionAssertions`3.<>c__DisplayClass10_0.<BeEmpty>b__0(AssertionChain chain)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.BeEmpty(String because, Object[] becauseArgs)
+   at Niemand.Tests.LightManager.ConditionAndLuxTests.GivenConditionNotMet_WhenPresenceTimeoutExpires_ThenLightsAreNotTurnedOffByConditionCheck() in C:\eugene\netdaemon-app-template\Niemand.Tests\LightManager\ConditionAndLuxTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    16, Passed:   112, Skipped:     0, Total:   128, Duration: 536 ms - Niemand.Tests.dll (net10.0)

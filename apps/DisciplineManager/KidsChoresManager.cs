@@ -612,6 +612,9 @@ public class KidsChoresManager : IAsyncInitializable, IDisposable
                 break;
         }
         var media_players = downstairs.Union(upstairs).ToList();
+        media_players.Remove("media_player.lounge");
+        media_players.Remove("media_player.eugene_s_sonos_arc");
+
         _alexa.TextToSpeech(new Alexa.Config() { Entities = media_players, VolumeLevel = 0.5, Message = sfx, Whisper = false });
         _alexa.TextToSpeech(new Alexa.Config() { Entities = media_players, VolumeLevel = 0.5, Message = message, Whisper = false });
     }

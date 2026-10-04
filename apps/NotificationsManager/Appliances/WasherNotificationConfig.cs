@@ -22,12 +22,12 @@ public class WasherNotificationConfig : IApplianceNotificationConfig
     public ICycleStateHandler CycleStateHandler => new WasherCycleStateHandler();
     public Dictionary<string, CycleState> CycleStates => new()
     {
-        { "run", CycleState.Running },
-        { "stop", CycleState.Ready },
-        { "pause", CycleState.Paused }
+        { "active", CycleState.Running },
+        { "idle", CycleState.Ready },
+        { "idle", CycleState.Paused }
     };
 
     public string Name => "Washer";
-    public NumericSensorEntity RemainingTime => new NumericSensorEntity(_ha, _entities.Sensor.WashingMachineWasherCompletionTime.EntityId);
-    public SensorEntity Status => _entities.Sensor.WashingMachineWasherMachineState;
+    public NumericSensorEntity RemainingTime => new NumericSensorEntity(_ha, _entities.Sensor.SamsungWasherCompletionTime.EntityId);
+    public SensorEntity Status => _entities.Sensor.SamsungWasherMachineState;
 }

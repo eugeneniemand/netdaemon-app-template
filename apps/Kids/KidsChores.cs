@@ -74,7 +74,9 @@ public class KidsChores(IEntities entities, IServices services, IAlexa alexa, IS
             try
             {
                 var kc_statuses = entities.Sensor.EnumerateAll().Where(e => e.EntityId.Contains("chore_status"));
-                var kc_morningRoutine = kc_statuses.Where(e => e.EntityState.State != "approved" && (e.Attributes?.Labels?.Any(label => string.Equals(label, "Morning Routine", StringComparison.OrdinalIgnoreCase)) ?? false));
+                var kc_morningRoutine = kc_statuses.Where(e => e.EntityState.State != "approved" &&
+                    e.Attributes?.Labels is IEnumerable<object> labels &&
+                    labels.Any(label => string.Equals(label?.ToString(), "Morning Routine", StringComparison.OrdinalIgnoreCase)));
                 var kc_summary = kc_morningRoutine.CountBy(e => e.Attributes.KidName);
                 var kc_messages = kc_summary.Select(kvp => $"{kvp.Key} has {kvp.Value}");
 

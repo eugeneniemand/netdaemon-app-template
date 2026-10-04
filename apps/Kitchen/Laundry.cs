@@ -36,8 +36,8 @@ public class Laundry
         private bool _finished;
         private CancellationTokenSource _cancellationTokenSource = new();
         private readonly BinarySensorEntity _remoteControlEntity;
-        private readonly SensorEntity _machineStateEntity;
-        private readonly SelectEntity _machineSelectEntity;
+        private readonly BinarySensorEntity _machineRunningEntity;
+        private readonly ButtonEntity _machineStartButtonEntity;
         private readonly string _applianceName;
         private readonly IScheduler _scheduler;
         private readonly ILogger _logger;
@@ -49,11 +49,38 @@ public class Laundry
         public bool IsFinished => _finished;
         public CancellationToken CancellationToken => _cancellationTokenSource.Token;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApplianceHandler"/> class for a single appliance (for example washer or dryer).
+        /// </summary>
+        /// <param name="jobStateEntity">
+        /// Home Assistant sensor that reports the current job/program lifecycle.
+        /// Expected to publish values such as <c>finished</c> / <c>finish</c>; those values are used to mark the appliance run as completed.
+        /// </param>
+        /// <param name="smartControlEntity">
+        /// Home Assistant binary sensor that indicates whether remote start/control is enabled for the appliance.
+        /// When this sensor turns on, a run is considered scheduled; when it turns off before completion, the pending run is cancelled.
+        /// </param>
+        /// <param name="machineRunningEntity">
+        /// Home Assistant binary sensor that reflects the appliance execution state after commands are sent.
+        /// This handler checks it for <c>on</c> to verify that a start command succeeded.
+        /// </param>
+        /// <param name="machineStartButtonEntity">
+        /// Home Assistant button entity used to send control commands to the appliance.
+        /// This handler issues <c>start</c> via <c>button.press</c> to start the appliance remotely.
+        /// </param>
+        /// <param name="applianceName">
+        /// Friendly appliance label used in logs and spoken/push notifications (for example <c>Washing machine</c>).
+        /// </param>
+        /// <param name="logger">Logger used for operational and failure diagnostics.</param>
+        /// <param name="scheduler">Scheduler used for non-blocking waits between command and state verification.</param>
+        /// <param name="alexa">Alexa integration used for voice announcements and text-to-speech notifications.</param>
+        /// <param name="services">Home Assistant services wrapper used to dispatch notification services.</param>
+        /// <param name="pushNotifier">Push notification helper used for mobile alerts on start failures.</param>
         public ApplianceHandler(
             SensorEntity jobStateEntity,
-            BinarySensorEntity remoteControlEntity,
-            SensorEntity machineStateEntity,
-            SelectEntity machineSelectEntity,
+            BinarySensorEntity smartControlEntity,
+            BinarySensorEntity machineRunningEntity,
+            ButtonEntity machineStartButtonEntity,
             string applianceName,            
             ILogger logger,
             IScheduler scheduler,
@@ -61,9 +88,9 @@ public class Laundry
             IServices services,
             PushNotifier pushNotifier)
         {
-            _remoteControlEntity = remoteControlEntity;
-            _machineStateEntity = machineStateEntity;
-            _machineSelectEntity = machineSelectEntity;
+            _remoteControlEntity = smartControlEntity;
+            _machineRunningEntity = machineRunningEntity;
+            _machineStartButtonEntity = machineStartButtonEntity;
             _applianceName = applianceName;
             _scheduler = scheduler;
             _logger = logger;
@@ -72,7 +99,7 @@ public class Laundry
             _pushNotifier = pushNotifier;
 
             SubscribeToStateChanges(jobStateEntity);
-            SubscribeToRemoteControl(remoteControlEntity, applianceName);
+            SubscribeToRemoteControl(smartControlEntity, applianceName);
         }
 
         public void ResetCancellationToken()
@@ -105,9 +132,17 @@ public class Laundry
                        _logger.LogWarning($"Retry {retryCount} for turning on appliance {context["ApplianceName"]}");
                    });
 
-                if (_remoteControlEntity?.IsOff() ?? true) return;
+                if (!_remoteControlEntity.IsOn() ) {
+                    _logger.LogInformation($"{_applianceName} remote control is off");
+                    return;
+                }
 
-                _logger.LogInformation($"{_applianceName} starting");
+                if (_machineRunningEntity.IsOn()) {
+                    _logger.LogInformation($"{_applianceName} is already running");
+                    return;
+                }
+
+                
 
                 var context = new Polly.Context
                 {
@@ -116,9 +151,10 @@ public class Laundry
 
                 var success = await retryPolicy.ExecuteAsync(async (context, cancellationToken) =>
                 {
-                    _machineSelectEntity.SelectOption(new SelectSelectOptionParameters() { Option = "run" });
-                    await _scheduler.Sleep(TimeSpan.FromMinutes(1));
-                    return await Task.FromResult(_machineStateEntity.State?.Equals("run", StringComparison.OrdinalIgnoreCase) ?? false);
+                    _logger.LogInformation($"{_applianceName} starting");
+                    _machineStartButtonEntity.Press();
+                    await _scheduler.Sleep(TimeSpan.FromMinutes(1));                    
+                    return await Task.FromResult(_machineRunningEntity.IsOn());
                 }, context, CancellationToken);
 
                 if (!success || CancellationToken.IsCancellationRequested)
@@ -129,6 +165,10 @@ public class Laundry
                     _services.Notify.Twinstead(message);
                     _pushNotifier.Notify(PushNotifier.Recipient.All, $"{_applianceName} Start Failed", message, 0.5, true, "shake.caf");
                     _logger.LogError("Failed to start {ApplianceName}", _applianceName);
+                }
+                else
+                {
+                    _logger.LogInformation($"{_applianceName} started successfully");
                 }
             }
             catch (Exception ex)
@@ -179,12 +219,11 @@ public class Laundry
         _services = services;
 
         _washingMachine = new ApplianceHandler(
-            entities.Sensor.WashingMachineWasherJobState,
-            entities.BinarySensor.WashingMachineRemoteControl,
-            entities.Sensor.WashingMachineWasherMachineState,
-            entities.Select.WashingMachine,
+            entities.Sensor.SamsungWasherProgress,
+            entities.BinarySensor.SamsungWasherSmartControl,
+            entities.BinarySensor.SamsungWasherRunning,
+            entities.Button.SamsungWasherStart,
             "Washing machine",
-
             _logger,
             _scheduler,
             _alexa,
@@ -193,10 +232,10 @@ public class Laundry
          );
 
         _dryer = new ApplianceHandler(
-            entities.Sensor.TumbleDryerDryerJobState,
-            entities.BinarySensor.TumbleDryerRemoteControl,
-            entities.Sensor.TumbleDryerDryerMachineState,
-            entities.Select.TumbleDryer,
+            entities.Sensor.SamsungDryerProgress,
+            entities.BinarySensor.SamsungDryerSmartControl,
+            entities.BinarySensor.SamsungDryerRunning,
+            entities.Button.SamsungDryerStart,
             "Tumble dryer",
             _logger,
             _scheduler,

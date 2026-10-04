@@ -93,7 +93,55 @@ public class SummaryRoutine : IAsyncInitializable
             });
         });
 
+        // Morning at 08:00 - check the next 24 hours of half-hourly rates for any negative (plunge) pricing
+        _scheduler.ScheduleCron("0 8 * * *", () => CheckPlungePricing());
+
         return Task.CompletedTask;
+    }
+
+    private void CheckPlungePricing()
+    {
+        try
+        {
+            var now = _scheduler.Now;
+            var windowEnd = now.AddHours(24);
+
+            var rates = _entities.Event.OctopusEnergyElectricity20m11971282000026960058CurrentDayRates.Attributes?.Rates
+                ?.Concat(_entities.Event.OctopusEnergyElectricity20m11971282000026960058NextDayRates.Attributes?.Rates ?? Enumerable.Empty<object>())
+                ?? Enumerable.Empty<object>();
+
+            var negativeSlots = new List<(DateTimeOffset Start, double Value)>();
+            foreach (var element in rates.OfType<JsonElement>())
+            {
+                if (element.TryGetProperty("start", out var startProp)
+                    && DateTimeOffset.TryParse(startProp.GetString(), out var start)
+                    && element.TryGetProperty("value_inc_vat", out var valueProp)
+                    && valueProp.ValueKind == JsonValueKind.Number)
+                {
+                    var value = valueProp.GetDouble();
+                    if (value < 0 && start >= now && start < windowEnd)
+                    {
+                        negativeSlots.Add((start, value));
+                    }
+                }
+            }
+
+            var slotTimes = negativeSlots
+                .OrderBy(x => x.Start)
+                .Select(x => x.Start.LocalDateTime.ToString("HH:mm"))
+                .ToList();
+
+            if (slotTimes.Count > 0)
+            {
+                var msg = $"I have plunge pricing at {string.Join(", ", slotTimes)}";
+                _alexa.Announce(new Alexa.Config() { Entity = "media_player.everywhere_2", Message = msg, VolumeLevel = 0.4, Whisper = false });
+                _services.Notify.Twinstead(new NotifyTwinsteadParameters() { Title = "Plunge Pricing", Message = msg });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking for plunge pricing");
+        }
     }
 
     private async Task Run(string url)

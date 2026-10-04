@@ -6,12 +6,12 @@
 //using NetDaemon.Extensions.Observables;
 
 [NetDaemonApp]
-[Focus]
+//[Focus]
 public class LoungeApp(Entities entities, Services services, ILogger<LoungeApp> logger, IScheduler scheduler) : IAsyncInitializable
 {
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
-        entities.MediaPlayer.LoungeSonos.StateChanges()
+        entities.MediaPlayer.Lounge.StateChanges()
             .WhenStateIsFor(s => s.State == "idle", TimeSpan.FromMinutes(15), scheduler)
             .Subscribe(s =>
             {
